@@ -1,0 +1,251 @@
+import { createStudent } from './actions'
+import { createClient } from '@/lib/supabase/server'
+
+type StudentsPageProps = {
+  searchParams: Promise<{
+    error?: string
+    success?: string
+  }>
+}
+
+export default async function StudentsPage({
+  searchParams,
+}: StudentsPageProps) {
+  const params = await searchParams
+
+  const supabase = await createClient()
+
+  const { data: branches } = await supabase
+    .from('branches')
+    .select('id, code, name, status')
+    .order('name')
+
+  const { data: students, error: studentsError } =
+    await supabase
+      .from('students')
+      .select(`
+        id,
+        student_code,
+        full_name,
+        default_branch_id,
+        admission_date,
+        status,
+        created_at
+      `)
+      .order('created_at', { ascending: false })
+
+  const branchMap = new Map(
+    (branches ?? []).map((branch) => [
+      branch.id,
+      branch.name,
+    ])
+  )
+
+  return (
+    <div>
+      <div className="mb-8">
+        <p className="text-sm font-medium text-gray-500">
+          People
+        </p>
+
+        <h1 className="mt-1 text-3xl font-bold text-gray-950">
+          Students
+        </h1>
+
+        <p className="mt-2 text-sm text-gray-500">
+          Manage Vibe Academy students.
+        </p>
+      </div>
+
+      {params.error && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {params.error}
+        </div>
+      )}
+
+      {params.success && (
+        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+          {params.success}
+        </div>
+      )}
+
+      <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-950">
+            Add Student
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-500">
+            Create a new student record.
+          </p>
+
+          <form
+            action={createStudent}
+            className="mt-6 space-y-5"
+          >
+            <div>
+              <label
+                htmlFor="student_code"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Student Code *
+              </label>
+
+              <input
+                id="student_code"
+                name="student_code"
+                required
+                placeholder="HV0001"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="full_name"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Full Name *
+              </label>
+
+              <input
+                id="full_name"
+                name="full_name"
+                required
+                placeholder="Nguyễn Văn A"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="default_branch_id"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Branch *
+              </label>
+
+              <select
+                id="default_branch_id"
+                name="default_branch_id"
+                required
+                defaultValue=""
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5"
+              >
+                <option value="" disabled>
+                  Select branch
+                </option>
+
+                {(branches ?? [])
+                  .filter(
+                    (branch) =>
+                      branch.status === 'ACTIVE'
+                  )
+                  .map((branch) => (
+                    <option
+                      key={branch.id}
+                      value={branch.id}
+                    >
+                      {branch.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-lg bg-gray-950 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800"
+            >
+              Create Student
+            </button>
+          </form>
+        </section>
+
+        <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <div className="border-b border-gray-200 px-6 py-5">
+            <h2 className="text-lg font-semibold text-gray-950">
+              Student List
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {students?.length ?? 0} students
+            </p>
+          </div>
+
+          {studentsError ? (
+            <div className="p-6 text-sm text-red-600">
+              Could not load students.
+            </div>
+          ) : !students ||
+            students.length === 0 ? (
+            <div className="p-10 text-center">
+              <p className="font-medium text-gray-700">
+                No students yet
+              </p>
+
+              <p className="mt-1 text-sm text-gray-400">
+                Create your first student.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
+                  <tr>
+                    <th className="px-6 py-3">
+                      Student
+                    </th>
+
+                    <th className="px-6 py-3">
+                      Branch
+                    </th>
+
+                    <th className="px-6 py-3">
+                      Admission
+                    </th>
+
+                    <th className="px-6 py-3">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y">
+                  {students.map((student) => (
+                    <tr key={student.id}>
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-gray-900">
+                          {student.full_name}
+                        </p>
+
+                        <p className="mt-1 text-xs text-gray-500">
+                          {student.student_code}
+                        </p>
+                      </td>
+
+                      <td className="px-6 py-4 text-gray-600">
+                        {branchMap.get(
+                          student.default_branch_id
+                        ) ?? '—'}
+                      </td>
+
+                      <td className="px-6 py-4 text-gray-600">
+                        {student.admission_date ?? '—'}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                          {student.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  )
+}
