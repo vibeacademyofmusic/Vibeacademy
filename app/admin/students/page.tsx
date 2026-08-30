@@ -1,4 +1,10 @@
-import { createStudent } from './actions'
+import Link from 'next/link'
+
+import {
+  createStudent,
+  setStudentStatus,
+} from './actions'
+
 import { createClient } from '@/lib/supabase/server'
 
 type StudentsPageProps = {
@@ -7,7 +13,6 @@ type StudentsPageProps = {
     success?: string
   }>
 }
-
 export default async function StudentsPage({
   searchParams,
 }: StudentsPageProps) {
@@ -190,26 +195,29 @@ export default async function StudentsPage({
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
-                  <tr>
-                    <th className="px-6 py-3">
-                      Student
-                    </th>
+              <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
+  <tr>
+    <th className="px-6 py-3">
+      Student
+    </th>
 
-                    <th className="px-6 py-3">
-                      Branch
-                    </th>
+    <th className="px-6 py-3">
+      Branch
+    </th>
 
-                    <th className="px-6 py-3">
-                      Admission
-                    </th>
+    <th className="px-6 py-3">
+      Admission
+    </th>
 
-                    <th className="px-6 py-3">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
+    <th className="px-6 py-3">
+      Status
+    </th>
 
+    <th className="px-6 py-3">
+      Actions
+    </th>
+  </tr>
+</thead>
                 <tbody className="divide-y">
                   {students.map((student) => (
                     <tr key={student.id}>
@@ -238,6 +246,43 @@ export default async function StudentsPage({
                           {student.status}
                         </span>
                       </td>
+                      <td className="px-6 py-4">
+  <div className="flex gap-2">
+    <Link
+      href={`/admin/students/${student.id}`}
+      className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50"
+    >
+      Edit
+    </Link>
+
+    <form action={setStudentStatus}>
+      <input
+        type="hidden"
+        name="id"
+        value={student.id}
+      />
+
+      <input
+        type="hidden"
+        name="status"
+        value={
+          student.status === 'ACTIVE'
+            ? 'INACTIVE'
+            : 'ACTIVE'
+        }
+      />
+
+      <button
+        type="submit"
+        className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50"
+      >
+        {student.status === 'ACTIVE'
+          ? 'Deactivate'
+          : 'Activate'}
+      </button>
+    </form>
+  </div>
+</td>
                     </tr>
                   ))}
                 </tbody>

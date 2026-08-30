@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-
+import Link from 'next/link'
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
 
@@ -17,9 +17,9 @@ export default async function AdminDashboardPage() {
       .select('*', { count: 'exact', head: true }),
 
     supabase
-      .from('branches')
-      .select('*', { count: 'exact', head: true }),
-  ])
+    .from('branches')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'ACTIVE'),])
 
   const studentsCount = studentsResult.count ?? 0
   const teachersCount = teachersResult.count ?? 0
