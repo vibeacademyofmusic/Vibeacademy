@@ -208,4 +208,103 @@ export async function setStudentStatus(formData: FormData) {
 
   revalidatePath('/admin')
   revalidatePath('/admin/students')
-}
+} 
+const ACADEMIC_PROGRESS_STATUSES = [
+    'NOT_STARTED',
+    'IN_PROGRESS',
+    'PASS',
+    'NOT_PASSED',
+    'EXEMPT',
+  ] as const
+  
+  export async function updateComponentProgressStatus(
+    formData: FormData
+  ) {
+    const supabase = await requireSuperAdmin()
+  
+    const progressId = String(
+      formData.get('progress_id') ?? ''
+    ).trim()
+  
+    const studentId = String(
+      formData.get('student_id') ?? ''
+    ).trim()
+  
+    const status = String(
+      formData.get('status') ?? ''
+    ).trim()
+  
+    if (
+      !progressId ||
+      !studentId ||
+      !ACADEMIC_PROGRESS_STATUSES.includes(
+        status as (typeof ACADEMIC_PROGRESS_STATUSES)[number]
+      )
+    ) {
+      throw new Error('Invalid component progress update')
+    }
+  
+    const { error } = await supabase
+      .from('student_component_progress')
+      .update({ status })
+      .eq('id', progressId)
+  
+    if (error) {
+      console.error(
+        'Component progress update error:',
+        error
+      )
+  
+      throw new Error(
+        'Could not update component progress'
+      )
+    }
+  
+    revalidatePath(`/admin/students/${studentId}`)
+  }
+  
+  export async function updateDirectSubjectProgressStatus(
+    formData: FormData
+  ) {
+    const supabase = await requireSuperAdmin()
+  
+    const progressId = String(
+      formData.get('progress_id') ?? ''
+    ).trim()
+  
+    const studentId = String(
+      formData.get('student_id') ?? ''
+    ).trim()
+  
+    const status = String(
+      formData.get('status') ?? ''
+    ).trim()
+  
+    if (
+      !progressId ||
+      !studentId ||
+      !ACADEMIC_PROGRESS_STATUSES.includes(
+        status as (typeof ACADEMIC_PROGRESS_STATUSES)[number]
+      )
+    ) {
+      throw new Error('Invalid subject progress update')
+    }
+  
+    const { error } = await supabase
+      .from('student_subject_progress')
+      .update({ status })
+      .eq('id', progressId)
+  
+    if (error) {
+      console.error(
+        'Subject progress update error:',
+        error
+      )
+  
+      throw new Error(
+        'Could not update subject progress'
+      )
+    }
+  
+    revalidatePath(`/admin/students/${studentId}`)
+  }

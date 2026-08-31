@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { updateStudent } from '../actions'
+import {
+    updateStudent,
+    updateComponentProgressStatus,
+    updateDirectSubjectProgressStatus,
+  } from '../actions'
 import { createClient } from '@/lib/supabase/server'
 
 type EditStudentPageProps = {
@@ -344,57 +348,126 @@ export default async function EditStudentPage({
         {item.subject?.name ?? 'Unnamed Subject'}
       </p>
 
-      <span
-        className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
-          item.status === 'PASS' || item.status === 'EXEMPT'
-            ? 'bg-green-50 text-green-700'
-            : item.status === 'IN_PROGRESS'
-              ? 'bg-amber-50 text-amber-700'
-              : item.status === 'NOT_PASSED'
-                ? 'bg-red-50 text-red-700'
-                : 'bg-gray-100 text-gray-600'
-        }`}
-      >
-        {item.status.replaceAll('_', ' ')}
-      </span>
+      {item.components.length === 0 ? (
+  <form
+    action={updateDirectSubjectProgressStatus}
+    className="flex items-center gap-2"
+  >
+    <input
+      type="hidden"
+      name="progress_id"
+      value={item.id}
+    />
+
+    <input
+      type="hidden"
+      name="student_id"
+      value={student.id}
+    />
+
+    <select
+      name="status"
+      defaultValue={item.status}
+      className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs font-medium text-gray-700"
+    >
+      <option value="NOT_STARTED">Not Started</option>
+      <option value="IN_PROGRESS">In Progress</option>
+      <option value="PASS">Pass</option>
+      <option value="NOT_PASSED">Not Passed</option>
+      <option value="EXEMPT">Exempt</option>
+    </select>
+
+    <button
+      type="submit"
+      className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+    >
+      Save
+    </button>
+  </form>
+) : (
+  <span
+    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+      item.status === 'PASS' || item.status === 'EXEMPT'
+        ? 'bg-green-50 text-green-700'
+        : item.status === 'IN_PROGRESS'
+          ? 'bg-amber-50 text-amber-700'
+          : item.status === 'NOT_PASSED'
+            ? 'bg-red-50 text-red-700'
+            : 'bg-gray-100 text-gray-600'
+    }`}
+  >
+    {item.status.replaceAll('_', ' ')}
+  </span>
+)}
     </div>
 
     {item.components.length > 0 && (
-      <div className="border-t border-gray-100 bg-gray-50 px-3 py-2">
-        <div className="space-y-1.5">
-          {item.components.map((componentItem) => (
-            <div
-              key={componentItem.id}
-              className="flex items-center justify-between gap-4 rounded-md px-3 py-2"
+  <div className="border-t border-gray-100 bg-gray-50 px-3 py-2">
+    <div className="space-y-1.5">
+      {item.components.map((componentItem) => (
+        <div
+          key={componentItem.id}
+          className="flex items-center justify-between gap-4 rounded-md px-3 py-2"
+        >
+          <div className="flex items-center gap-3">
+            <span className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+
+            <p className="text-sm text-gray-600">
+              {componentItem.component?.name ??
+                'Unnamed Component'}
+            </p>
+          </div>
+
+          <form
+            action={updateComponentProgressStatus}
+            className="flex items-center gap-2"
+          >
+            <input
+              type="hidden"
+              name="progress_id"
+              value={componentItem.id}
+            />
+
+            <input
+              type="hidden"
+              name="student_id"
+              value={student.id}
+            />
+
+            <select
+              name="status"
+              defaultValue={componentItem.status}
+              className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs font-medium text-gray-700"
             >
-              <div className="flex items-center gap-3">
-                <span className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+              <option value="NOT_STARTED">
+                Not Started
+              </option>
+              <option value="IN_PROGRESS">
+                In Progress
+              </option>
+              <option value="PASS">
+                Pass
+              </option>
+              <option value="NOT_PASSED">
+                Not Passed
+              </option>
+              <option value="EXEMPT">
+                Exempt
+              </option>
+            </select>
 
-                <p className="text-sm text-gray-600">
-                  {componentItem.component?.name ??
-                    'Unnamed Component'}
-                </p>
-              </div>
-
-              <span
-                className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-semibold ${
-                  componentItem.status === 'PASS' ||
-                  componentItem.status === 'EXEMPT'
-                    ? 'bg-green-50 text-green-700'
-                    : componentItem.status === 'IN_PROGRESS'
-                      ? 'bg-amber-50 text-amber-700'
-                      : componentItem.status === 'NOT_PASSED'
-                        ? 'bg-red-50 text-red-700'
-                        : 'bg-white text-gray-500'
-                }`}
-              >
-                {componentItem.status.replaceAll('_', ' ')}
-              </span>
-            </div>
-          ))}
+            <button
+              type="submit"
+              className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Save
+            </button>
+          </form>
         </div>
-      </div>
-    )}
+      ))}
+    </div>
+  </div>
+)}
   </div>
 ))
     }
