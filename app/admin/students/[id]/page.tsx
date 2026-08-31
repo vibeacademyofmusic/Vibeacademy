@@ -51,29 +51,132 @@ export default async function EditStudentPage({
     .from('branches')
     .select('id, name, status')
     .order('name')
+    const currentBranch = (branches ?? []).find(
+        (branch) => branch.id === student.default_branch_id
+      )
 
-  return (
-    <div className="max-w-3xl">
-      <Link
-        href="/admin/students"
-        className="text-sm font-medium text-gray-500 hover:text-gray-900"
-      >
-        ← Back to Students
-      </Link>
-
-      <div className="mt-6">
-        <p className="text-sm font-medium text-gray-500">
-          People
-        </p>
-
-        <h1 className="mt-1 text-3xl font-bold text-gray-950">
-          Edit Student
-        </h1>
-
-        <p className="mt-2 text-sm text-gray-500">
-          Update student profile and contact information.
-        </p>
-      </div>
+      return (
+        <div className="max-w-6xl">
+          <Link
+            href="/admin/students"
+            className="text-sm font-medium text-gray-500 hover:text-gray-900"
+          >
+            ← Back to Students
+          </Link>
+      
+          <div className="mt-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">
+                  Student Profile
+                </p>
+      
+                <h1 className="mt-1 text-3xl font-bold text-gray-950">
+                  {student.full_name}
+                </h1>
+      
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                  <span>{student.student_code}</span>
+      
+                  <span>•</span>
+      
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      student.status === 'ACTIVE'
+                        ? 'bg-green-50 text-green-700'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}
+                  >
+                    {student.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+      
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Current Branch
+                </p>
+      
+                <p className="mt-2 font-semibold text-gray-950">
+                  {currentBranch?.name ?? 'Not assigned'}
+                </p>
+              </div>
+      
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Admission Date
+                </p>
+      
+                <p className="mt-2 font-semibold text-gray-950">
+                  {student.admission_date ?? '—'}
+                </p>
+              </div>
+      
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Current Program
+                </p>
+      
+                <p className="mt-2 font-semibold text-gray-950">
+                  Not configured yet
+                </p>
+              </div>
+      
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Current Grade
+                </p>
+      
+                <p className="mt-2 font-semibold text-gray-950">
+                  Not configured yet
+                </p>
+              </div>
+            </div>
+      
+            <div className="mt-4 grid gap-4 lg:grid-cols-3">
+              <div className="rounded-xl border border-gray-200 bg-white p-5">
+                <p className="text-sm font-semibold text-gray-950">
+                  Academic Journey
+                </p>
+      
+                <p className="mt-2 text-sm text-gray-500">
+                  Program, grade progress and learning milestones will appear here.
+                </p>
+              </div>
+      
+              <div className="rounded-xl border border-gray-200 bg-white p-5">
+                <p className="text-sm font-semibold text-gray-950">
+                  Parents / Guardians
+                </p>
+      
+                <p className="mt-2 text-sm text-gray-500">
+                  No parent or guardian linked yet.
+                </p>
+              </div>
+      
+              <div className="rounded-xl border border-gray-200 bg-white p-5">
+                <p className="text-sm font-semibold text-gray-950">
+                  Academic Record
+                </p>
+      
+                <p className="mt-2 text-sm text-gray-500">
+                  Assessments, grade history and transcript will appear here.
+                </p>
+              </div>
+            </div>
+      
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold text-gray-950">
+                Edit Profile
+              </h2>
+      
+              <p className="mt-1 text-sm text-gray-500">
+                Update personal and contact information.
+              </p>
+            </div>
+          </div>
 
       {error && (
         <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

@@ -28,46 +28,47 @@ type StudentsPageProps = {
     const supabase = await createClient()
   
     const { data: branches } = await supabase
-    .from('branches')
-    .select('id, code, name, status')
-    .order('name')
+  .from('branches')
+  .select('id, code, name, status')
+  .order('name')
 
-    let studentsQuery = supabase
-    .from('students')
-    .select(`
-      id,
-      student_code,
-      full_name,
-      default_branch_id,
-      admission_date,
-      status,
-      created_at
-    `)
-    .order('created_at', { ascending: false })
-  
+let studentsQuery = supabase
+  .from('students')
+  .select(`
+    id,
+    student_code,
+    full_name,
+    default_branch_id,
+    admission_date,
+    status,
+    created_at
+  `)
+  .order('created_at', { ascending: false })
+
   if (q) {
-    if (branch) {
-        studentsQuery = studentsQuery.eq(
-          'default_branch_id',
-          branch
-        )
-      }
-      
-      if (
-        status === 'ACTIVE' ||
-        status === 'INACTIVE'
-      ) {
-        studentsQuery = studentsQuery.eq(
-          'status',
-          status
-        )
-      }
     const safeQuery = q
       .replace(/[%_,()]/g, ' ')
       .trim()
   
     studentsQuery = studentsQuery.or(
       `full_name.ilike.%${safeQuery}%,student_code.ilike.%${safeQuery}%`
+    )
+  }
+  
+  if (branch) {
+    studentsQuery = studentsQuery.eq(
+      'default_branch_id',
+      branch
+    )
+  }
+  
+  if (
+    status === 'ACTIVE' ||
+    status === 'INACTIVE'
+  ) {
+    studentsQuery = studentsQuery.eq(
+      'status',
+      status
     )
   }
   
