@@ -8,37 +8,73 @@ import {
 import { createClient } from '@/lib/supabase/server'
 
 type StudentsPageProps = {
-  searchParams: Promise<{
-    error?: string
-    success?: string
-  }>
-}
-export default async function StudentsPage({
-  searchParams,
-}: StudentsPageProps) {
-  const params = await searchParams
-
-  const supabase = await createClient()
-
-  const { data: branches } = await supabase
+    searchParams: Promise<{
+      error?: string
+      success?: string
+      q?: string
+      branch?: string
+        status?: string
+    }>
+  }
+  
+  export default async function StudentsPage({
+    searchParams,
+  }: StudentsPageProps) {
+    const params = await searchParams
+    const q = (params.q ?? '').trim()
+    const branch = (params.branch ?? '').trim()
+    const status = (params.status ?? '').trim()
+  
+    const supabase = await createClient()
+  
+    const { data: branches } = await supabase
     .from('branches')
     .select('id, code, name, status')
     .order('name')
 
-  const { data: students, error: studentsError } =
-    await supabase
-      .from('students')
-      .select(`
-        id,
-        student_code,
-        full_name,
-        default_branch_id,
-        admission_date,
-        status,
-        created_at
-      `)
-      .order('created_at', { ascending: false })
-
+    let studentsQuery = supabase
+    .from('students')
+    .select(`
+      id,
+      student_code,
+      full_name,
+      default_branch_id,
+      admission_date,
+      status,
+      created_at
+    `)
+    .order('created_at', { ascending: false })
+  
+  if (q) {
+    if (branch) {
+        studentsQuery = studentsQuery.eq(
+          'default_branch_id',
+          branch
+        )
+      }
+      
+      if (
+        status === 'ACTIVE' ||
+        status === 'INACTIVE'
+      ) {
+        studentsQuery = studentsQuery.eq(
+          'status',
+          status
+        )
+      }
+    const safeQuery = q
+      .replace(/[%_,()]/g, ' ')
+      .trim()
+  
+    studentsQuery = studentsQuery.or(
+      `full_name.ilike.%${safeQuery}%,student_code.ilike.%${safeQuery}%`
+    )
+  }
+  
+  const {
+    data: students,
+    error: studentsError,
+  } = await studentsQuery 
   const branchMap = new Map(
     (branches ?? []).map((branch) => [
       branch.id,
@@ -167,6 +203,63 @@ export default async function StudentsPage({
         </section>
 
         <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <div className="border-b border-gray-200 p-5">
+        <form
+  method="GET"
+  className="flex flex-col gap-3 lg:flex-row"
+>
+  <input
+    type="search"
+    name="q"
+    defaultValue={q}
+    placeholder="Search by student name or code..."
+    className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+  />
+
+  <select
+    name="branch"
+    defaultValue={branch}
+    className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+  >
+    <option value="">All branches</option>
+
+    {(branches ?? []).map((item) => (
+      <option
+        key={item.id}
+        value={item.id}
+      >
+        {item.name}
+      </option>
+    ))}
+  </select>
+
+  <select
+    name="status"
+    defaultValue={status}
+    className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+  >
+    <option value="">All statuses</option>
+    <option value="ACTIVE">Active</option>
+    <option value="INACTIVE">Inactive</option>
+  </select>
+
+  <button
+    type="submit"
+    className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800"
+  >
+    Search
+  </button>
+
+  {(q || branch || status) && (
+    <Link
+      href="/admin/students"
+      className="rounded-lg border border-gray-300 px-5 py-2.5 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
+    >
+      Clear
+    </Link>
+  )}
+</form>
+</div>
           <div className="border-b border-gray-200 px-6 py-5">
             <h2 className="text-lg font-semibold text-gray-950">
               Student List
