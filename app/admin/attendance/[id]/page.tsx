@@ -112,7 +112,9 @@ export default async function SessionDetailPage({
       original_ends_at,
       original_room_id,
       rescheduled_at,
-      reschedule_reason
+      reschedule_reason,
+      occurrence_type,
+      source_occurrence_id
     `)
     .eq('id', id)
     .maybeSingle()
@@ -146,6 +148,10 @@ export default async function SessionDetailPage({
     { data: room },
     { data: availableRooms, error: roomsError },
     { data: enrollments, error: enrollmentsError },
+    {
+      data: makeupParticipants,
+      error: participantsError,
+    },
     { data: attendance, error: attendanceError },
   ] = await Promise.all([
     supabase
@@ -181,6 +187,16 @@ export default async function SessionDetailPage({
       `)
       .eq('class_id', classItem.id),
 
+    occurrence.occurrence_type === 'MAKEUP'
+      ? supabase
+          .from('session_occurrence_participants')
+          .select('enrollment_id')
+          .eq('session_occurrence_id', occurrence.id)
+      : Promise.resolve({
+          data: [],
+          error: null,
+        }),
+
     supabase
       .from('attendance_records')
       .select(`
@@ -193,8 +209,18 @@ export default async function SessionDetailPage({
       .eq('session_occurrence_id', occurrence.id),
   ])
 
+  const makeupParticipantIds = new Set(
+    (makeupParticipants ?? []).map(
+      (participant) => participant.enrollment_id
+    )
+  )
+
   const roster = (enrollments ?? []).filter(
     (enrollment) => {
+      if (occurrence.occurrence_type === 'MAKEUP') {
+        return makeupParticipantIds.has(enrollment.id)
+      }
+
       const startDate =
         enrollment.started_at ??
         enrollment.enrolled_at
@@ -231,6 +257,7 @@ export default async function SessionDetailPage({
   const loadError =
     roomsError ||
     enrollmentsError ||
+    participantsError ||
     attendanceError ||
     studentsError
 
@@ -255,6 +282,8 @@ export default async function SessionDetailPage({
     occurrence.status === 'CANCELLED'
 
   const isFullyMarked =
+    (occurrence.occurrence_type !== 'MAKEUP' ||
+      roster.length > 0) &&
     (attendance?.length ?? 0) === roster.length
 
   const hasAttendance =
@@ -291,6 +320,27 @@ export default async function SessionDetailPage({
                 timezone
               )}
             </p>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span
+                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                  occurrence.occurrence_type === 'MAKEUP'
+                    ? 'bg-purple-50 text-purple-700'
+                    : 'bg-gray-100 text-gray-600'
+                }`}
+              >
+                {occurrence.occurrence_type}
+              </span>
+
+              {occurrence.source_occurrence_id && (
+                <Link
+                  href={`/admin/attendance/${occurrence.source_occurrence_id}`}
+                  className="text-xs font-semibold text-purple-700 hover:text-purple-900"
+                >
+                  View source session →
+                </Link>
+              )}
+            </div>
           </div>
 
           <span
@@ -647,8 +697,9 @@ export default async function SessionDetailPage({
             </h2>
 
             <p className="mt-1 text-sm text-gray-500">
-              Students enrolled in this class on the
-              occurrence date.
+              {occurrence.occurrence_type === 'MAKEUP'
+                ? 'Only the students explicitly selected for this makeup session.'
+                : 'Students enrolled in this class on the occurrence date.'}
             </p>
           </div>
 
@@ -666,8 +717,9 @@ export default async function SessionDetailPage({
               </p>
 
               <p className="mt-1 text-sm text-gray-400">
-                Check the class enrollment dates for this
-                occurrence.
+                {occurrence.occurrence_type === 'MAKEUP'
+                  ? 'This makeup session has no selected participants.'
+                  : 'Check the class enrollment dates for this occurrence.'}
               </p>
             </div>
           ) : (

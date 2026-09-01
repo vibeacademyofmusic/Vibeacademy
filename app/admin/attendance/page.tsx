@@ -86,7 +86,9 @@ export default async function AttendancePage({
         ends_at,
         room_id,
         status,
-        notes
+        notes,
+        occurrence_type,
+        source_occurrence_id
       `)
       .order('starts_at', { ascending: true })
       .limit(200),
@@ -434,6 +436,17 @@ export default async function AttendancePage({
                         <p className="mt-1 text-xs text-gray-500">
                           {classItem?.code ?? '—'}
                         </p>
+
+                        <span
+                          className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                            occurrence.occurrence_type ===
+                            'MAKEUP'
+                              ? 'bg-purple-50 text-purple-700'
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          {occurrence.occurrence_type}
+                        </span>
                       </td>
 
                       <td className="px-5 py-4">

@@ -281,7 +281,7 @@ export async function saveAttendance(
   const { data: occurrence } = await supabase
     .from('session_occurrences')
     .select(
-      'id, schedule_id, occurrence_date, status'
+      'id, schedule_id, occurrence_date, status, occurrence_type'
     )
     .eq('id', occurrenceId)
     .maybeSingle()
@@ -318,10 +318,20 @@ export async function saveAttendance(
       )
       .eq('class_id', schedule.class_id)
 
-  if (rosterError) {
+  const {
+    data: makeupParticipants,
+    error: participantsError,
+  } = occurrence.occurrence_type === 'MAKEUP'
+    ? await supabase
+        .from('session_occurrence_participants')
+        .select('enrollment_id')
+        .eq('session_occurrence_id', occurrenceId)
+    : { data: [], error: null }
+
+  if (rosterError || participantsError) {
     console.error(
       'Load attendance roster error:',
-      rosterError
+      rosterError ?? participantsError
     )
 
     redirect(
@@ -329,8 +339,18 @@ export async function saveAttendance(
     )
   }
 
+  const makeupParticipantIds = new Set(
+    (makeupParticipants ?? []).map(
+      (participant) => participant.enrollment_id
+    )
+  )
+
   const roster = (enrollments ?? []).filter(
     (enrollment) => {
+      if (occurrence.occurrence_type === 'MAKEUP') {
+        return makeupParticipantIds.has(enrollment.id)
+      }
+
       const startDate =
         enrollment.started_at ??
         enrollment.enrolled_at
