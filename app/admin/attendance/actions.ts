@@ -59,6 +59,127 @@ function isValidIsoDate(value: string) {
   )
 }
 
+type DateTimeParts = {
+  year: number
+  month: number
+  day: number
+  hour: number
+  minute: number
+}
+
+function getDateTimeParts(
+  value: Date,
+  timezone: string
+): DateTimeParts | null {
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZone: timezone,
+    }).formatToParts(value)
+
+    const values = Object.fromEntries(
+      parts.map((part) => [part.type, part.value])
+    )
+
+    return {
+      year: Number(values.year),
+      month: Number(values.month),
+      day: Number(values.day),
+      hour: Number(values.hour),
+      minute: Number(values.minute),
+    }
+  } catch {
+    return null
+  }
+}
+
+function localDateTimeToIso(
+  value: string,
+  timezone: string
+) {
+  const match = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/
+  )
+
+  if (!match) {
+    return null
+  }
+
+  const target: DateTimeParts = {
+    year: Number(match[1]),
+    month: Number(match[2]),
+    day: Number(match[3]),
+    hour: Number(match[4]),
+    minute: Number(match[5]),
+  }
+
+  const localTimestamp = Date.UTC(
+    target.year,
+    target.month - 1,
+    target.day,
+    target.hour,
+    target.minute
+  )
+
+  const normalized = new Date(localTimestamp)
+
+  if (
+    normalized.getUTCFullYear() !== target.year ||
+    normalized.getUTCMonth() + 1 !== target.month ||
+    normalized.getUTCDate() !== target.day ||
+    normalized.getUTCHours() !== target.hour ||
+    normalized.getUTCMinutes() !== target.minute
+  ) {
+    return null
+  }
+
+  let utcTimestamp = localTimestamp
+
+  for (let iteration = 0; iteration < 2; iteration += 1) {
+    const zoned = getDateTimeParts(
+      new Date(utcTimestamp),
+      timezone
+    )
+
+    if (!zoned) {
+      return null
+    }
+
+    const representedTimestamp = Date.UTC(
+      zoned.year,
+      zoned.month - 1,
+      zoned.day,
+      zoned.hour,
+      zoned.minute
+    )
+
+    utcTimestamp =
+      localTimestamp -
+      (representedTimestamp - utcTimestamp)
+  }
+
+  const result = new Date(utcTimestamp)
+  const verified = getDateTimeParts(result, timezone)
+
+  if (
+    !verified ||
+    verified.year !== target.year ||
+    verified.month !== target.month ||
+    verified.day !== target.day ||
+    verified.hour !== target.hour ||
+    verified.minute !== target.minute
+  ) {
+    return null
+  }
+
+  return result.toISOString()
+}
+
 export async function generateSessions(
   formData: FormData
 ) {
@@ -371,5 +492,176 @@ export async function setSessionStatus(
     `/admin/attendance/${occurrenceId}?success=${encodeURIComponent(
       successMessage
     )}`
+  )
+}
+
+export async function rescheduleSession(
+  formData: FormData
+) {
+  const { supabase } = await requireSuperAdmin()
+
+  const occurrenceId = String(
+    formData.get('occurrence_id') ?? ''
+  ).trim()
+
+  const startsAtLocal = String(
+    formData.get('starts_at_local') ?? ''
+  ).trim()
+
+  const endsAtLocal = String(
+    formData.get('ends_at_local') ?? ''
+  ).trim()
+
+  const roomId = String(
+    formData.get('room_id') ?? ''
+  ).trim()
+
+  const reason = String(
+    formData.get('reason') ?? ''
+  ).trim()
+
+  if (
+    !UUID_PATTERN.test(occurrenceId) ||
+    !UUID_PATTERN.test(roomId)
+  ) {
+    redirect(
+      '/admin/attendance?error=Invalid%20reschedule%20request'
+    )
+  }
+
+  if (!reason || reason.length > 500) {
+    redirect(
+      `/admin/attendance/${occurrenceId}?error=Please%20enter%20a%20reschedule%20reason%20of%20500%20characters%20or%20fewer`
+    )
+  }
+
+  const { data: occurrence } = await supabase
+    .from('session_occurrences')
+    .select('id, schedule_id')
+    .eq('id', occurrenceId)
+    .maybeSingle()
+
+  if (!occurrence) {
+    redirect(
+      '/admin/attendance?error=Session%20not%20found'
+    )
+  }
+
+  const { data: schedule } = await supabase
+    .from('schedules')
+    .select('timezone')
+    .eq('id', occurrence.schedule_id)
+    .maybeSingle()
+
+  if (!schedule) {
+    redirect(
+      `/admin/attendance/${occurrenceId}?error=Session%20schedule%20not%20found`
+    )
+  }
+
+  const startsAt = localDateTimeToIso(
+    startsAtLocal,
+    schedule.timezone
+  )
+
+  const endsAt = localDateTimeToIso(
+    endsAtLocal,
+    schedule.timezone
+  )
+
+  if (!startsAt || !endsAt) {
+    redirect(
+      `/admin/attendance/${occurrenceId}?error=Please%20enter%20a%20valid%20session%20date%20and%20time`
+    )
+  }
+
+  const { error } = await supabase.rpc(
+    'reschedule_session_occurrence',
+    {
+      p_occurrence_id: occurrenceId,
+      p_starts_at: startsAt,
+      p_ends_at: endsAt,
+      p_room_id: roomId,
+      p_reason: reason,
+    }
+  )
+
+  if (error) {
+    console.error('Reschedule session error:', error)
+
+    let message = 'Could not reschedule this session'
+
+    if (
+      error.message.includes(
+        'Only scheduled sessions can be rescheduled'
+      )
+    ) {
+      message = 'Only a scheduled session can be rescheduled'
+    } else if (
+      error.message.includes(
+        'Session with attendance cannot be rescheduled'
+      )
+    ) {
+      message =
+        'A session with attendance cannot be rescheduled'
+    } else if (
+      error.message.includes(
+        'This class already has an overlapping session'
+      )
+    ) {
+      message =
+        'This class already has another session at that time'
+    } else if (
+      error.message.includes(
+        'This room is already occupied'
+      )
+    ) {
+      message = 'This room is already occupied at that time'
+    } else if (
+      error.message.includes(
+        'A teacher assigned to this class'
+      )
+    ) {
+      message =
+        'A teacher assigned to this class is already teaching at that time'
+    } else if (
+      error.message.includes('Room is not available')
+    ) {
+      message = 'The selected room is not available'
+    } else if (
+      error.message.includes(
+        'Room must belong to the same branch'
+      )
+    ) {
+      message =
+        'The selected room must belong to this class branch'
+    } else if (
+      error.message.includes(
+        'Reschedule must change the time or room'
+      )
+    ) {
+      message = 'Change the session time or room first'
+    } else if (
+      error.message.includes(
+        'End time must be after start time'
+      )
+    ) {
+      message = 'End time must be after start time'
+    }
+
+    redirect(
+      `/admin/attendance/${occurrenceId}?error=${encodeURIComponent(
+        message
+      )}`
+    )
+  }
+
+  revalidatePath('/admin/attendance')
+  revalidatePath(
+    `/admin/attendance/${occurrenceId}`
+  )
+
+  redirect(
+    `/admin/attendance/${occurrenceId}?success=Session%20rescheduled`
   )
 }

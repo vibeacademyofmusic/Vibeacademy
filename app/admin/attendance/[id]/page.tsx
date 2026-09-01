@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 import {
+  rescheduleSession,
   saveAttendance,
   setSessionStatus,
 } from '../actions'
@@ -63,6 +64,27 @@ function formatTime(
   }).format(new Date(value))
 }
 
+function formatDateTimeLocal(
+  value: string,
+  timezone: string
+) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: timezone,
+  }).formatToParts(new Date(value))
+
+  const values = Object.fromEntries(
+    parts.map((part) => [part.type, part.value])
+  )
+
+  return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`
+}
+
 export default async function SessionDetailPage({
   params,
   searchParams,
@@ -85,7 +107,12 @@ export default async function SessionDetailPage({
       ends_at,
       room_id,
       status,
-      notes
+      notes,
+      original_starts_at,
+      original_ends_at,
+      original_room_id,
+      rescheduled_at,
+      reschedule_reason
     `)
     .eq('id', id)
     .maybeSingle()
@@ -117,6 +144,7 @@ export default async function SessionDetailPage({
   const [
     { data: branch },
     { data: room },
+    { data: availableRooms, error: roomsError },
     { data: enrollments, error: enrollmentsError },
     { data: attendance, error: attendanceError },
   ] = await Promise.all([
@@ -133,6 +161,13 @@ export default async function SessionDetailPage({
           .eq('id', occurrence.room_id)
           .maybeSingle()
       : Promise.resolve({ data: null }),
+
+    supabase
+      .from('rooms')
+      .select('id, code, name')
+      .eq('branch_id', classItem.branch_id)
+      .eq('status', 'ACTIVE')
+      .order('name'),
 
     supabase
       .from('enrollments')
@@ -194,6 +229,7 @@ export default async function SessionDetailPage({
   }
 
   const loadError =
+    roomsError ||
     enrollmentsError ||
     attendanceError ||
     studentsError
@@ -223,6 +259,10 @@ export default async function SessionDetailPage({
 
   const hasAttendance =
     (attendance?.length ?? 0) > 0
+
+  const canReschedule =
+    occurrence.status === 'SCHEDULED' &&
+    !hasAttendance
 
   return (
     <div className="max-w-6xl">
@@ -279,6 +319,19 @@ export default async function SessionDetailPage({
         {loadError && (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             Could not load the complete attendance roster.
+          </div>
+        )}
+
+        {occurrence.rescheduled_at && (
+          <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            Originally scheduled for{' '}
+            {formatDateTime(
+              occurrence.original_starts_at,
+              timezone
+            )}
+            {occurrence.reschedule_reason
+              ? ` · ${occurrence.reschedule_reason}`
+              : ''}
           </div>
         )}
 
@@ -348,6 +401,122 @@ export default async function SessionDetailPage({
             </p>
           </div>
         </div>
+
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-950">
+              Reschedule Session
+            </h2>
+
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-gray-500">
+              Change only this dated session. The recurring
+              master schedule and original session snapshot
+              stay unchanged.
+            </p>
+          </div>
+
+          {canReschedule ? (
+            <form
+              action={rescheduleSession}
+              className="mt-5 grid gap-4 lg:grid-cols-2"
+            >
+              <input
+                type="hidden"
+                name="occurrence_id"
+                value={occurrence.id}
+              />
+
+              <label className="text-sm font-medium text-gray-700">
+                New start
+
+                <input
+                  type="datetime-local"
+                  name="starts_at_local"
+                  defaultValue={formatDateTimeLocal(
+                    occurrence.starts_at,
+                    timezone
+                  )}
+                  required
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                />
+              </label>
+
+              <label className="text-sm font-medium text-gray-700">
+                New end
+
+                <input
+                  type="datetime-local"
+                  name="ends_at_local"
+                  defaultValue={formatDateTimeLocal(
+                    occurrence.ends_at,
+                    timezone
+                  )}
+                  required
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                />
+              </label>
+
+              <label className="text-sm font-medium text-gray-700">
+                Room
+
+                <select
+                  name="room_id"
+                  defaultValue={occurrence.room_id ?? ''}
+                  required
+                  className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                >
+                  <option value="" disabled>
+                    Select room
+                  </option>
+
+                  {(availableRooms ?? []).map(
+                    (availableRoom) => (
+                      <option
+                        key={availableRoom.id}
+                        value={availableRoom.id}
+                      >
+                        {availableRoom.name} ·{' '}
+                        {availableRoom.code}
+                      </option>
+                    )
+                  )}
+                </select>
+              </label>
+
+              <label className="text-sm font-medium text-gray-700 lg:row-span-2">
+                Reason
+
+                <textarea
+                  name="reason"
+                  required
+                  maxLength={500}
+                  rows={4}
+                  placeholder="Why is this session moving?"
+                  className="mt-2 w-full resize-y rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                />
+              </label>
+
+              <p className="text-xs text-gray-500">
+                Times use {timezone}.
+              </p>
+
+              <div className="flex justify-end lg:col-span-2">
+                <button
+                  type="submit"
+                  className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                >
+                  Reschedule Session
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="mt-5 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+              {hasAttendance
+                ? 'This session already has attendance and cannot be rescheduled.'
+                : 'Restore this session to Scheduled before rescheduling it.'}
+            </div>
+          )}
+        </section>
 
         <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
