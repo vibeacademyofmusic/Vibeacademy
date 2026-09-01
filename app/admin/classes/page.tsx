@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 import {
@@ -415,10 +416,16 @@ export default async function ClassesPage({
                         )}
                       </div>
 
-                      <form
-                        action={setClassStatus}
-                        className="flex items-center gap-2"
-                      >
+                      <Link
+  href={`/admin/classes/${classItem.id}`}
+  className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+>
+  Manage
+</Link>
+<form
+  action={setClassStatus}
+  className="flex items-center gap-2"
+>
                         <input
                           type="hidden"
                           name="id"
