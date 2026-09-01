@@ -40,6 +40,12 @@ const ATTENDANCE_STATUSES = new Set([
   'EXCUSED',
 ])
 
+const SESSION_STATUSES = new Set([
+  'SCHEDULED',
+  'COMPLETED',
+  'CANCELLED',
+])
+
 function isValidIsoDate(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return false
@@ -281,6 +287,89 @@ export async function saveAttendance(
       `${records.length} attendance record${
         records.length === 1 ? '' : 's'
       } saved`
+    )}`
+  )
+}
+
+export async function setSessionStatus(
+  formData: FormData
+) {
+  const { supabase } = await requireSuperAdmin()
+
+  const occurrenceId = String(
+    formData.get('occurrence_id') ?? ''
+  ).trim()
+
+  const targetStatus = String(
+    formData.get('target_status') ?? ''
+  ).trim()
+
+  if (
+    !UUID_PATTERN.test(occurrenceId) ||
+    !SESSION_STATUSES.has(targetStatus)
+  ) {
+    redirect(
+      '/admin/attendance?error=Invalid%20session%20status%20request'
+    )
+  }
+
+  const { error } = await supabase.rpc(
+    'set_session_occurrence_status',
+    {
+      p_occurrence_id: occurrenceId,
+      p_status: targetStatus,
+    }
+  )
+
+  if (error) {
+    console.error('Set session status error:', error)
+
+    let message = 'Could not update session status'
+
+    if (
+      error.message.includes(
+        'All students in the session roster must be marked'
+      )
+    ) {
+      message =
+        'Mark every student before completing this session'
+    } else if (
+      error.message.includes(
+        'A session with attendance records cannot be cancelled'
+      )
+    ) {
+      message =
+        'A session with attendance cannot be cancelled'
+    } else if (
+      error.message.includes(
+        'Invalid session status transition'
+      )
+    ) {
+      message = 'This session status change is not allowed'
+    }
+
+    redirect(
+      `/admin/attendance/${occurrenceId}?error=${encodeURIComponent(
+        message
+      )}`
+    )
+  }
+
+  revalidatePath('/admin/attendance')
+  revalidatePath(
+    `/admin/attendance/${occurrenceId}`
+  )
+
+  const successMessage =
+    targetStatus === 'COMPLETED'
+      ? 'Session completed'
+      : targetStatus === 'CANCELLED'
+        ? 'Session cancelled'
+        : 'Session restored to scheduled'
+
+  redirect(
+    `/admin/attendance/${occurrenceId}?success=${encodeURIComponent(
+      successMessage
     )}`
   )
 }

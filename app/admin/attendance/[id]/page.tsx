@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 
-import { saveAttendance } from '../actions'
+import {
+  saveAttendance,
+  setSessionStatus,
+} from '../actions'
 
 type SessionDetailPageProps = {
   params: Promise<{
@@ -215,6 +218,12 @@ export default async function SessionDetailPage({
   const isCancelled =
     occurrence.status === 'CANCELLED'
 
+  const isFullyMarked =
+    (attendance?.length ?? 0) === roster.length
+
+  const hasAttendance =
+    (attendance?.length ?? 0) > 0
+
   return (
     <div className="max-w-6xl">
       <Link
@@ -339,6 +348,128 @@ export default async function SessionDetailPage({
             </p>
           </div>
         </div>
+
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-950">
+                Session Status
+              </h2>
+
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
+                Complete a fully marked session, cancel a
+                session without attendance, or restore it to
+                Scheduled when corrections are needed.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              {occurrence.status === 'SCHEDULED' && (
+                <>
+                  <form action={setSessionStatus}>
+                    <input
+                      type="hidden"
+                      name="occurrence_id"
+                      value={occurrence.id}
+                    />
+
+                    <input
+                      type="hidden"
+                      name="target_status"
+                      value="COMPLETED"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={!isFullyMarked}
+                      title={
+                        isFullyMarked
+                          ? undefined
+                          : 'Mark every student first'
+                      }
+                      className="rounded-lg bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    >
+                      Complete Session
+                    </button>
+                  </form>
+
+                  <form action={setSessionStatus}>
+                    <input
+                      type="hidden"
+                      name="occurrence_id"
+                      value={occurrence.id}
+                    />
+
+                    <input
+                      type="hidden"
+                      name="target_status"
+                      value="CANCELLED"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={hasAttendance}
+                      title={
+                        hasAttendance
+                          ? 'Attendance already exists'
+                          : undefined
+                      }
+                      className="rounded-lg border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
+                    >
+                      Cancel Session
+                    </button>
+                  </form>
+                </>
+              )}
+
+              {occurrence.status === 'COMPLETED' && (
+                <form action={setSessionStatus}>
+                  <input
+                    type="hidden"
+                    name="occurrence_id"
+                    value={occurrence.id}
+                  />
+
+                  <input
+                    type="hidden"
+                    name="target_status"
+                    value="SCHEDULED"
+                  />
+
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                  >
+                    Reopen Session
+                  </button>
+                </form>
+              )}
+
+              {occurrence.status === 'CANCELLED' && (
+                <form action={setSessionStatus}>
+                  <input
+                    type="hidden"
+                    name="occurrence_id"
+                    value={occurrence.id}
+                  />
+
+                  <input
+                    type="hidden"
+                    name="target_status"
+                    value="SCHEDULED"
+                  />
+
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                  >
+                    Restore Session
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </section>
 
         <section className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white">
           <div className="border-b border-gray-200 px-6 py-5">
