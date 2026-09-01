@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { createClient } from '@/lib/supabase/server'
 
 import { generateSessions } from './actions'
@@ -387,6 +389,10 @@ export default async function AttendancePage({
                   <th className="px-5 py-3 font-medium">
                     Session Status
                   </th>
+
+                  <th className="px-5 py-3 text-right font-medium">
+                    Action
+                  </th>
                 </tr>
               </thead>
 
@@ -487,6 +493,15 @@ export default async function AttendancePage({
                         >
                           {occurrence.status}
                         </span>
+                      </td>
+
+                      <td className="px-5 py-4 text-right">
+                        <Link
+                          href={`/admin/attendance/${occurrence.id}`}
+                          className="inline-flex rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                        >
+                          Open Session
+                        </Link>
                       </td>
                     </tr>
                   )
