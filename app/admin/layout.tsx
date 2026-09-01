@@ -13,6 +13,7 @@ const navigation = [
   { name: 'Academic', href: '/admin/academic' },
 { name: 'Courses', href: '/admin/courses' },
 { name: 'Classes', href: '/admin/classes' },
+{ name: 'Rooms', href: '/admin/rooms' },
 { name: 'Schedule', href: '/admin/schedule' },
   { name: 'Attendance', href: '/admin/attendance' },
   { name: 'Tuition', href: '/admin/tuition' },
