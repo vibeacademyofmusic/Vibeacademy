@@ -1,5 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 
+import { generateSessions } from './actions'
+
+type AttendancePageProps = {
+  searchParams: Promise<{
+    error?: string
+    success?: string
+  }>
+}
+
 const SESSION_STATUS_STYLES: Record<
   string,
   string
@@ -34,8 +43,28 @@ function formatSessionTime(
   }).format(new Date(value))
 }
 
-export default async function AttendancePage() {
+export default async function AttendancePage({
+  searchParams,
+}: AttendancePageProps) {
+  const { error, success } = await searchParams
+
   const supabase = await createClient()
+
+  const today = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(new Date())
+
+  const defaultToDateValue = new Date(
+    `${today}T00:00:00Z`
+  )
+
+  defaultToDateValue.setUTCDate(
+    defaultToDateValue.getUTCDate() + 90
+  )
+
+  const defaultToDate = defaultToDateValue
+    .toISOString()
+    .slice(0, 10)
 
   const [
     { data: occurrences, error: occurrencesError },
@@ -198,11 +227,87 @@ export default async function AttendancePage() {
         </p>
       </div>
 
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+          {success}
+        </div>
+      )}
+
       {loadError && (
         <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           Could not load session and attendance data.
         </div>
       )}
+
+      <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-6">
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-950">
+              Generate Dated Sessions
+            </h2>
+
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
+              Create concrete session occurrences from all
+              active recurring schedules in this date range.
+              Existing sessions will not be duplicated.
+            </p>
+          </div>
+
+          <form
+            action={generateSessions}
+            className="grid gap-4 sm:grid-cols-[180px_180px_auto] sm:items-end"
+          >
+            <div>
+              <label
+                htmlFor="from_date"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                From
+              </label>
+
+              <input
+                id="from_date"
+                name="from_date"
+                type="date"
+                required
+                defaultValue={today}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="to_date"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                To
+              </label>
+
+              <input
+                id="to_date"
+                name="to_date"
+                type="date"
+                required
+                defaultValue={defaultToDate}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+            >
+              Generate Sessions
+            </button>
+          </form>
+        </div>
+      </section>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-5">
