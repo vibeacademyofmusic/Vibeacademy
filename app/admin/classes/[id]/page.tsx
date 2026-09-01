@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-
+import StudentEnrollmentSection from './StudentEnrollmentSection'
 import { createClient } from '@/lib/supabase/server'
 
 import {
@@ -425,33 +425,10 @@ export default async function ClassDetailPage({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-950">
-                  Students
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-500">
-                  Students enrolled in this class.
-                </p>
-              </div>
-
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-                {enrolledStudents ?? 0} enrolled
-              </span>
-            </div>
-
-            <div className="mt-6 rounded-xl border border-dashed border-gray-300 p-6 text-center">
-              <p className="text-sm font-medium text-gray-700">
-                No student management UI yet
-              </p>
-
-              <p className="mt-1 text-xs text-gray-400">
-                Student enrollment will be added next.
-              </p>
-            </div>
-          </section>
+          <StudentEnrollmentSection
+  classId={classItem.id}
+  capacity={classItem.capacity}
+/>
         </div>
 
         <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
