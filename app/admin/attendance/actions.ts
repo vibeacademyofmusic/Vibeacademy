@@ -685,3 +685,208 @@ export async function rescheduleSession(
     `/admin/attendance/${occurrenceId}?success=Session%20rescheduled`
   )
 }
+
+export async function createMakeupSession(
+  formData: FormData
+) {
+  const { supabase } = await requireSuperAdmin()
+
+  const sourceOccurrenceId = String(
+    formData.get('source_occurrence_id') ?? ''
+  ).trim()
+
+  const startsAtLocal = String(
+    formData.get('starts_at_local') ?? ''
+  ).trim()
+
+  const endsAtLocal = String(
+    formData.get('ends_at_local') ?? ''
+  ).trim()
+
+  const roomId = String(
+    formData.get('room_id') ?? ''
+  ).trim()
+
+  const reason = String(
+    formData.get('reason') ?? ''
+  ).trim()
+
+  const enrollmentIds = formData
+    .getAll('enrollment_id')
+    .map((value) => String(value).trim())
+
+  if (
+    !UUID_PATTERN.test(sourceOccurrenceId) ||
+    !UUID_PATTERN.test(roomId)
+  ) {
+    redirect(
+      '/admin/attendance?error=Invalid%20makeup%20session%20request'
+    )
+  }
+
+  if (
+    enrollmentIds.length === 0 ||
+    enrollmentIds.some(
+      (enrollmentId) =>
+        !UUID_PATTERN.test(enrollmentId)
+    ) ||
+    new Set(enrollmentIds).size !==
+      enrollmentIds.length
+  ) {
+    redirect(
+      `/admin/attendance/${sourceOccurrenceId}?error=Select%20at%20least%20one%20valid%20makeup%20participant`
+    )
+  }
+
+  if (!reason || reason.length > 500) {
+    redirect(
+      `/admin/attendance/${sourceOccurrenceId}?error=Please%20enter%20a%20makeup%20reason%20of%20500%20characters%20or%20fewer`
+    )
+  }
+
+  const { data: sourceOccurrence } = await supabase
+    .from('session_occurrences')
+    .select('id, schedule_id')
+    .eq('id', sourceOccurrenceId)
+    .maybeSingle()
+
+  if (!sourceOccurrence) {
+    redirect(
+      '/admin/attendance?error=Source%20session%20not%20found'
+    )
+  }
+
+  const { data: schedule } = await supabase
+    .from('schedules')
+    .select('timezone')
+    .eq('id', sourceOccurrence.schedule_id)
+    .maybeSingle()
+
+  if (!schedule) {
+    redirect(
+      `/admin/attendance/${sourceOccurrenceId}?error=Session%20schedule%20not%20found`
+    )
+  }
+
+  const startsAt = localDateTimeToIso(
+    startsAtLocal,
+    schedule.timezone
+  )
+
+  const endsAt = localDateTimeToIso(
+    endsAtLocal,
+    schedule.timezone
+  )
+
+  if (!startsAt || !endsAt) {
+    redirect(
+      `/admin/attendance/${sourceOccurrenceId}?error=Please%20enter%20a%20valid%20makeup%20date%20and%20time`
+    )
+  }
+
+  const { data: makeupId, error } =
+    await supabase.rpc(
+      'create_makeup_session_occurrence',
+      {
+        p_source_occurrence_id:
+          sourceOccurrenceId,
+        p_starts_at: startsAt,
+        p_ends_at: endsAt,
+        p_room_id: roomId,
+        p_enrollment_ids: enrollmentIds,
+        p_reason: reason,
+      }
+    )
+
+  if (error) {
+    console.error('Create makeup session error:', error)
+
+    let message = 'Could not create this makeup session'
+
+    if (
+      error.message.includes(
+        'must reference a regular source occurrence'
+      )
+    ) {
+      message =
+        'A makeup session must start from a regular session'
+    } else if (
+      error.message.includes(
+        'requires a completed or cancelled source session'
+      )
+    ) {
+      message =
+        'Complete or cancel the source session first'
+    } else if (
+      error.message.includes(
+        'must belong to the source roster'
+      )
+    ) {
+      message =
+        'Every selected student must belong to the source session roster'
+    } else if (
+      error.message.includes(
+        'This class already has an overlapping session'
+      )
+    ) {
+      message =
+        'This class already has another session at that time'
+    } else if (
+      error.message.includes(
+        'This room is already occupied'
+      )
+    ) {
+      message = 'This room is already occupied at that time'
+    } else if (
+      error.message.includes(
+        'A teacher assigned to this class'
+      )
+    ) {
+      message =
+        'A teacher assigned to this class is already teaching at that time'
+    } else if (
+      error.message.includes('Room is not available')
+    ) {
+      message = 'The selected room is not available'
+    } else if (
+      error.message.includes(
+        'Room must belong to the same branch'
+      )
+    ) {
+      message =
+        'The selected room must belong to this class branch'
+    } else if (
+      error.message.includes(
+        'End time must be after start time'
+      )
+    ) {
+      message = 'End time must be after start time'
+    }
+
+    redirect(
+      `/admin/attendance/${sourceOccurrenceId}?error=${encodeURIComponent(
+        message
+      )}`
+    )
+  }
+
+  revalidatePath('/admin/attendance')
+  revalidatePath(
+    `/admin/attendance/${sourceOccurrenceId}`
+  )
+
+  if (
+    typeof makeupId === 'string' &&
+    UUID_PATTERN.test(makeupId)
+  ) {
+    revalidatePath(`/admin/attendance/${makeupId}`)
+
+    redirect(
+      `/admin/attendance/${makeupId}?success=Makeup%20session%20created`
+    )
+  }
+
+  redirect(
+    `/admin/attendance/${sourceOccurrenceId}?success=Makeup%20session%20created`
+  )
+}

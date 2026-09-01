@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 import {
+  createMakeupSession,
   rescheduleSession,
   saveAttendance,
   setSessionStatus,
@@ -292,6 +293,12 @@ export default async function SessionDetailPage({
   const canReschedule =
     occurrence.status === 'SCHEDULED' &&
     !hasAttendance
+
+  const canCreateMakeup =
+    occurrence.occurrence_type === 'REGULAR' &&
+    ['COMPLETED', 'CANCELLED'].includes(
+      occurrence.status
+    )
 
   return (
     <div className="max-w-6xl">
@@ -689,6 +696,163 @@ export default async function SessionDetailPage({
             </div>
           </div>
         </section>
+
+        {canCreateMakeup && (
+          <section className="mt-6 rounded-2xl border border-purple-200 bg-white p-6">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-950">
+                Create Makeup Session
+              </h2>
+
+              <p className="mt-1 max-w-3xl text-sm leading-6 text-gray-500">
+                Create a separate dated session linked to this
+                regular source. Only the students selected below
+                will appear in its attendance roster.
+              </p>
+            </div>
+
+            {roster.length === 0 ? (
+              <div className="mt-5 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                This source session has no eligible students for a
+                makeup roster.
+              </div>
+            ) : (
+              <form
+                action={createMakeupSession}
+                className="mt-5 grid gap-4 lg:grid-cols-2"
+              >
+                <input
+                  type="hidden"
+                  name="source_occurrence_id"
+                  value={occurrence.id}
+                />
+
+                <label className="text-sm font-medium text-gray-700">
+                  Makeup start
+
+                  <input
+                    type="datetime-local"
+                    name="starts_at_local"
+                    required
+                    className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-purple-700"
+                  />
+                </label>
+
+                <label className="text-sm font-medium text-gray-700">
+                  Makeup end
+
+                  <input
+                    type="datetime-local"
+                    name="ends_at_local"
+                    required
+                    className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-purple-700"
+                  />
+                </label>
+
+                <label className="text-sm font-medium text-gray-700">
+                  Room
+
+                  <select
+                    name="room_id"
+                    defaultValue={occurrence.room_id ?? ''}
+                    required
+                    className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-purple-700"
+                  >
+                    <option value="" disabled>
+                      Select room
+                    </option>
+
+                    {(availableRooms ?? []).map(
+                      (availableRoom) => (
+                        <option
+                          key={availableRoom.id}
+                          value={availableRoom.id}
+                        >
+                          {availableRoom.name} ·{' '}
+                          {availableRoom.code}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </label>
+
+                <label className="text-sm font-medium text-gray-700">
+                  Reason
+
+                  <textarea
+                    name="reason"
+                    required
+                    maxLength={500}
+                    rows={3}
+                    placeholder="Why is this makeup session needed?"
+                    className="mt-2 w-full resize-y rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-purple-700"
+                  />
+                </label>
+
+                <fieldset className="lg:col-span-2">
+                  <legend className="text-sm font-medium text-gray-700">
+                    Makeup participants
+                  </legend>
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    Select at least one student. Times use{' '}
+                    {timezone}.
+                  </p>
+
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {roster.map((enrollment) => {
+                      const student = studentMap.get(
+                        enrollment.student_id
+                      )
+
+                      const record = attendanceMap.get(
+                        enrollment.id
+                      )
+
+                      return (
+                        <label
+                          key={enrollment.id}
+                          className="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 p-4 transition hover:border-purple-300 hover:bg-purple-50/40"
+                        >
+                          <input
+                            type="checkbox"
+                            name="enrollment_id"
+                            value={enrollment.id}
+                            className="mt-1 h-4 w-4 rounded border-gray-300 accent-purple-700"
+                          />
+
+                          <span className="min-w-0">
+                            <span className="block font-semibold text-gray-950">
+                              {student?.preferred_name ||
+                                student?.full_name ||
+                                'Unknown Student'}
+                            </span>
+
+                            <span className="mt-1 block text-xs text-gray-500">
+                              {student?.student_code ?? '—'}
+                              {record?.status
+                                ? ` · ${record.status}`
+                                : ''}
+                            </span>
+                          </span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </fieldset>
+
+                <div className="flex justify-end lg:col-span-2">
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-purple-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-800"
+                  >
+                    Create Makeup Session
+                  </button>
+                </div>
+              </form>
+            )}
+          </section>
+        )}
 
         <section className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white">
           <div className="border-b border-gray-200 px-6 py-5">
