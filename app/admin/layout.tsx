@@ -12,6 +12,7 @@ const navigation = [
   { name: 'Teachers', href: '/admin/teachers' },
   { name: 'Academic', href: '/admin/academic' },
 { name: 'Courses', href: '/admin/courses' },
+{ name: 'Classes', href: '/admin/classes' },
 { name: 'Schedule', href: '/admin/schedule' },
   { name: 'Attendance', href: '/admin/attendance' },
   { name: 'Tuition', href: '/admin/tuition' },
