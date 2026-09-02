@@ -28,6 +28,14 @@ type StudentSummary = {
   preferred_name: string | null
 }
 
+type MakeupCreditSummary = {
+  id: string
+  enrollment_id: string
+  source_occurrence_id: string
+  source_reason: string
+  created_at: string
+}
+
 const SESSION_STATUS_STYLES: Record<
   string,
   string
@@ -235,21 +243,73 @@ export default async function SessionDetailPage({
     }
   )
 
+  const canCreateMakeup =
+    occurrence.occurrence_type === 'REGULAR' &&
+    ['COMPLETED', 'CANCELLED'].includes(
+      occurrence.status
+    )
+
+  let availableMakeupCredits: MakeupCreditSummary[] = []
+  let makeupCreditsError: unknown = null
+
+  if (canCreateMakeup && (enrollments?.length ?? 0) > 0) {
+    const creditResult = await supabase
+      .from('makeup_credits')
+      .select(`
+        id,
+        enrollment_id,
+        source_occurrence_id,
+        source_reason,
+        created_at
+      `)
+      .eq('status', 'AVAILABLE')
+      .in(
+        'enrollment_id',
+        (enrollments ?? []).map(
+          (enrollment) => enrollment.id
+        )
+      )
+      .order('created_at', { ascending: true })
+
+    availableMakeupCredits =
+      (creditResult.data ?? []) as MakeupCreditSummary[]
+    makeupCreditsError = creditResult.error
+  }
+
+  const availableCreditCounts = new Map<string, number>()
+
+  for (const credit of availableMakeupCredits) {
+    availableCreditCounts.set(
+      credit.enrollment_id,
+      (availableCreditCounts.get(credit.enrollment_id) ?? 0) +
+        1
+    )
+  }
+
+  const makeupEligibleEnrollments = (
+    enrollments ?? []
+  ).filter((enrollment) =>
+    availableCreditCounts.has(enrollment.id)
+  )
+
   let students: StudentSummary[] = []
   let studentsError = null
 
-  if (roster.length > 0) {
+  const studentIds = Array.from(
+    new Set(
+      [...roster, ...makeupEligibleEnrollments].map(
+        (enrollment) => enrollment.student_id
+      )
+    )
+  )
+
+  if (studentIds.length > 0) {
     const studentResult = await supabase
       .from('students')
       .select(
         'id, student_code, full_name, preferred_name'
       )
-      .in(
-        'id',
-        roster.map(
-          (enrollment) => enrollment.student_id
-        )
-      )
+      .in('id', studentIds)
 
     students = (studentResult.data ?? []) as StudentSummary[]
     studentsError = studentResult.error
@@ -260,6 +320,7 @@ export default async function SessionDetailPage({
     enrollmentsError ||
     participantsError ||
     attendanceError ||
+    makeupCreditsError ||
     studentsError
 
   const studentMap = new Map(
@@ -279,8 +340,8 @@ export default async function SessionDetailPage({
   const timezone =
     schedule.timezone ?? 'Asia/Ho_Chi_Minh'
 
-  const isCancelled =
-    occurrence.status === 'CANCELLED'
+  const isAttendanceLocked =
+    occurrence.status !== 'SCHEDULED'
 
   const isFullyMarked =
     (occurrence.occurrence_type !== 'MAKEUP' ||
@@ -293,12 +354,6 @@ export default async function SessionDetailPage({
   const canReschedule =
     occurrence.status === 'SCHEDULED' &&
     !hasAttendance
-
-  const canCreateMakeup =
-    occurrence.occurrence_type === 'REGULAR' &&
-    ['COMPLETED', 'CANCELLED'].includes(
-      occurrence.status
-    )
 
   return (
     <div className="max-w-6xl">
@@ -648,7 +703,8 @@ export default async function SessionDetailPage({
                 </>
               )}
 
-              {occurrence.status === 'COMPLETED' && (
+              {occurrence.status === 'COMPLETED' &&
+                occurrence.occurrence_type === 'REGULAR' && (
                 <form action={setSessionStatus}>
                   <input
                     type="hidden"
@@ -669,9 +725,10 @@ export default async function SessionDetailPage({
                     Reopen Session
                   </button>
                 </form>
-              )}
+                )}
 
-              {occurrence.status === 'CANCELLED' && (
+              {occurrence.status === 'CANCELLED' &&
+                occurrence.occurrence_type === 'REGULAR' && (
                 <form action={setSessionStatus}>
                   <input
                     type="hidden"
@@ -692,7 +749,16 @@ export default async function SessionDetailPage({
                     Restore Session
                   </button>
                 </form>
-              )}
+                )}
+
+              {occurrence.occurrence_type === 'MAKEUP' &&
+                ['COMPLETED', 'CANCELLED'].includes(
+                  occurrence.status
+                ) && (
+                  <span className="rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-600">
+                    Final makeup status
+                  </span>
+                )}
             </div>
           </div>
         </section>
@@ -711,10 +777,10 @@ export default async function SessionDetailPage({
               </p>
             </div>
 
-            {roster.length === 0 ? (
+            {makeupEligibleEnrollments.length === 0 ? (
               <div className="mt-5 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
-                This source session has no eligible students for a
-                makeup roster.
+                No student in this class currently has an
+                available makeup credit.
               </div>
             ) : (
               <form
@@ -800,14 +866,15 @@ export default async function SessionDetailPage({
                   </p>
 
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {roster.map((enrollment) => {
+                    {makeupEligibleEnrollments.map((enrollment) => {
                       const student = studentMap.get(
                         enrollment.student_id
                       )
 
-                      const record = attendanceMap.get(
-                        enrollment.id
-                      )
+                      const creditCount =
+                        availableCreditCounts.get(
+                          enrollment.id
+                        ) ?? 0
 
                       return (
                         <label
@@ -830,9 +897,12 @@ export default async function SessionDetailPage({
 
                             <span className="mt-1 block text-xs text-gray-500">
                               {student?.student_code ?? '—'}
-                              {record?.status
-                                ? ` · ${record.status}`
-                                : ''}
+                              {' · '}
+                              {creditCount}{' '}
+                              {creditCount === 1
+                                ? 'credit'
+                                : 'credits'}{' '}
+                              available
                             </span>
                           </span>
                         </label>
@@ -867,10 +937,10 @@ export default async function SessionDetailPage({
             </p>
           </div>
 
-          {isCancelled && (
-            <div className="border-b border-red-200 bg-red-50 px-6 py-4 text-sm text-red-700">
-              Attendance is locked because this session is
-              cancelled.
+          {isAttendanceLocked && (
+            <div className="border-b border-amber-200 bg-amber-50 px-6 py-4 text-sm text-amber-800">
+              Attendance is locked because this session is no
+              longer Scheduled.
             </div>
           )}
 
@@ -942,7 +1012,7 @@ export default async function SessionDetailPage({
                               defaultValue={
                                 record?.status ?? ''
                               }
-                              disabled={isCancelled}
+                              disabled={isAttendanceLocked}
                               className="min-w-40 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900 disabled:bg-gray-100"
                             >
                               <option value="" disabled>
@@ -973,7 +1043,7 @@ export default async function SessionDetailPage({
                               defaultValue={
                                 record?.notes ?? ''
                               }
-                              disabled={isCancelled}
+                              disabled={isAttendanceLocked}
                               maxLength={500}
                               placeholder="Optional note"
                               className="w-full min-w-64 rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900 disabled:bg-gray-100"
@@ -989,7 +1059,7 @@ export default async function SessionDetailPage({
               <div className="flex justify-end border-t border-gray-200 bg-gray-50 px-6 py-4">
                 <button
                   type="submit"
-                  disabled={isCancelled}
+                  disabled={isAttendanceLocked}
                   className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
                 >
                   Save Attendance

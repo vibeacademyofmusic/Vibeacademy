@@ -292,9 +292,9 @@ export async function saveAttendance(
     )
   }
 
-  if (occurrence.status === 'CANCELLED') {
+  if (occurrence.status !== 'SCHEDULED') {
     redirect(
-      `/admin/attendance/${occurrenceId}?error=Attendance%20cannot%20be%20recorded%20for%20a%20cancelled%20session`
+      `/admin/attendance/${occurrenceId}?error=Attendance%20can%20only%20be%20changed%20while%20the%20session%20is%20Scheduled`
     )
   }
 
@@ -487,6 +487,20 @@ export async function setSessionStatus(
       )
     ) {
       message = 'This session status change is not allowed'
+    } else if (
+      error.message.includes(
+        'Cannot reopen a source session while its makeup credit is reserved or used'
+      )
+    ) {
+      message =
+        'This source session cannot be reopened because a makeup credit is reserved or used'
+    } else if (
+      error.message.includes(
+        'Completed or cancelled makeup sessions cannot be reopened'
+      )
+    ) {
+      message =
+        'A completed or cancelled makeup session cannot be reopened'
     }
 
     redirect(
@@ -824,6 +838,13 @@ export async function createMakeupSession(
     ) {
       message =
         'Every selected student must belong to the source session roster'
+    } else if (
+      error.message.includes(
+        'does not have an available makeup credit'
+      )
+    ) {
+      message =
+        'One or more selected students no longer has an available makeup credit'
     } else if (
       error.message.includes(
         'This class already has an overlapping session'
