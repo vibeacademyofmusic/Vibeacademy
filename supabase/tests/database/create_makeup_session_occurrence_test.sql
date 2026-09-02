@@ -312,7 +312,7 @@ values
     '2026-09-07 09:00:00+07',
     '2026-09-07 10:00:00+07',
     '55000000-0000-0000-0000-000000000021',
-    'COMPLETED',
+    'SCHEDULED',
     'REGULAR',
     null
   ),
@@ -371,6 +371,27 @@ values
     'REGULAR',
     null
   );
+
+insert into public.attendance_records (
+  session_occurrence_id,
+  enrollment_id,
+  status
+)
+values
+  (
+    '95000000-0000-0000-0000-000000000011',
+    '75000000-0000-0000-0000-000000000021',
+    'EXCUSED'
+  ),
+  (
+    '95000000-0000-0000-0000-000000000011',
+    '75000000-0000-0000-0000-000000000022',
+    'EXCUSED'
+  );
+
+update public.session_occurrences
+set status = 'COMPLETED'
+where id = '95000000-0000-0000-0000-000000000011';
 
 create temporary table makeup_test_result (
   id uuid not null
@@ -534,8 +555,8 @@ select throws_ok(
     )
   $$,
   'P0001',
-  'Every makeup participant must belong to the source roster',
-  'rejects a participant outside the source-date roster'
+  'Selected student does not have an available makeup credit for this class',
+  'rejects a participant without an available makeup credit'
 );
 
 select throws_ok(

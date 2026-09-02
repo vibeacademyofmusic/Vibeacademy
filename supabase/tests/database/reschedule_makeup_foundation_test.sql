@@ -367,6 +367,10 @@ select throws_ok(
   'rejects makeup lineage across different classes'
 );
 
+update public.session_occurrences
+set status = 'CANCELLED'
+where id = '93000000-0000-0000-0000-000000000001';
+
 select lives_ok(
   $$
     insert into public.session_occurrence_participants (
