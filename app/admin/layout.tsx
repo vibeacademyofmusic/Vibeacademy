@@ -117,8 +117,19 @@ export default async function AdminLayout({
               </p>
             </div>
 
-            <div className="text-sm text-gray-500">
-              {profile?.full_name ?? 'Administrator'}
+            <div className="flex items-center gap-3">
+              <div className="hidden text-sm text-gray-500 sm:block">
+                {profile?.full_name ?? 'Administrator'}
+              </div>
+
+              <form action={logout} className="lg:hidden">
+                <button
+                  type="submit"
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Sign out
+                </button>
+              </form>
             </div>
           </div>
         </header>
