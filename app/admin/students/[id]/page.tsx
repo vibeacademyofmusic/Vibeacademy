@@ -67,40 +67,31 @@ export default async function EditStudentPage({
   .select('id, code, name, sequence_no')
   .eq('id', enrollment?.current_level_id ?? '')
   .maybeSingle()
-  const {
-    data: currentLevelProgress,
-    error: currentLevelProgressError,
-  } = await supabase
+  const { data: currentLevelProgress } = await supabase
     .from('student_level_progress')
     .select('id, status')
     .eq('enrollment_id', enrollment?.id ?? '')
     .eq('level_id', currentLevel?.id ?? '')
     .maybeSingle()
   
-  const {
-    data: subjectProgressRows,
-    error: subjectProgressError,
-  } = currentLevelProgress?.id
+  const { data: subjectProgressRows } = currentLevelProgress?.id
     ? await supabase
         .from('student_subject_progress')
         .select('id, subject_id, status')
         .eq('level_progress_id', currentLevelProgress.id)
-    : { data: [], error: null }
+    : { data: [] }
   
   const subjectIds = (subjectProgressRows ?? []).map(
     (row) => row.subject_id
   )
   
-  const {
-    data: subjectDefinitions,
-    error: subjectDefinitionsError,
-  } =
+  const { data: subjectDefinitions } =
     subjectIds.length > 0
       ? await supabase
           .from('curriculum_subjects')
           .select('id, name, sort_order')
           .in('id', subjectIds)
-      : { data: [], error: null }
+      : { data: [] }
   
   const subjectMap = new Map(
     (subjectDefinitions ?? []).map((subject) => [
@@ -120,31 +111,25 @@ export default async function EditStudentPage({
     (item) => item.id
   )
   
-  const {
-    data: componentProgressRows,
-    error: componentProgressError,
-  } =
+  const { data: componentProgressRows } =
     subjectProgressIds.length > 0
       ? await supabase
           .from('student_component_progress')
           .select('id, subject_progress_id, component_id, status')
           .in('subject_progress_id', subjectProgressIds)
-      : { data: [], error: null }
+      : { data: [] }
   
   const componentIds = (componentProgressRows ?? []).map(
     (row) => row.component_id
   )
   
-  const {
-    data: componentDefinitions,
-    error: componentDefinitionsError,
-  } =
+  const { data: componentDefinitions } =
     componentIds.length > 0
       ? await supabase
           .from('curriculum_subject_components')
           .select('id, subject_id, name, sort_order')
           .in('id', componentIds)
-      : { data: [], error: null }
+      : { data: [] }
       const componentDefinitionMap = new Map(
         (componentDefinitions ?? []).map((component) => [
           component.id,
