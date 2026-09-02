@@ -11,16 +11,11 @@ const navigation = [
   { name: 'Students', href: '/admin/students' },
   { name: 'Teachers', href: '/admin/teachers' },
   { name: 'Academic', href: '/admin/academic' },
-{ name: 'Courses', href: '/admin/courses' },
-{ name: 'Classes', href: '/admin/classes' },
-{ name: 'Rooms', href: '/admin/rooms' },
-{ name: 'Schedule', href: '/admin/schedule' },
+  { name: 'Courses', href: '/admin/courses' },
+  { name: 'Classes', href: '/admin/classes' },
+  { name: 'Rooms', href: '/admin/rooms' },
+  { name: 'Schedule', href: '/admin/schedule' },
   { name: 'Attendance', href: '/admin/attendance' },
-  { name: 'Tuition', href: '/admin/tuition' },
-  { name: 'E-learning', href: '/admin/lms' },
-  { name: 'Exams', href: '/admin/exams' },
-  { name: 'Reports', href: '/admin/reports' },
-  { name: 'Settings', href: '/admin/settings' },
 ]
 
 export default async function AdminLayout({
@@ -127,6 +122,23 @@ export default async function AdminLayout({
             </div>
           </div>
         </header>
+
+        <nav
+          aria-label="Admin navigation"
+          className="overflow-x-auto border-b border-gray-200 bg-white px-4 py-3 lg:hidden"
+        >
+          <div className="flex min-w-max gap-2">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-950"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
 
         <main className="px-6 py-8 lg:px-8">
           <div className="mx-auto max-w-7xl">{children}</div>
