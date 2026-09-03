@@ -166,6 +166,112 @@ export async function setCourseStatus(formData: FormData) {
   )
 }
 
+export async function updateCourse(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+
+  const id = String(formData.get('id') ?? '').trim()
+  const curriculumId = String(
+    formData.get('curriculum_id') ?? ''
+  ).trim()
+  const levelIdValue = String(
+    formData.get('level_id') ?? ''
+  ).trim()
+  const levelId = levelIdValue || null
+  const code = String(formData.get('code') ?? '')
+    .normalize('NFKC')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .trim()
+    .replace(/\s+/g, '_')
+    .toUpperCase()
+  const name = String(formData.get('name') ?? '').trim()
+  const description = String(
+    formData.get('description') ?? ''
+  ).trim()
+  const status = String(
+    formData.get('status') ?? ''
+  ).trim()
+
+  if (
+    !UUID_PATTERN.test(id) ||
+    !curriculumId ||
+    !code ||
+    !name ||
+    !['ACTIVE', 'INACTIVE'].includes(status)
+  ) {
+    redirect(
+      `/admin/courses/${id}/edit?error=Please%20complete%20all%20required%20fields`
+    )
+  }
+
+  if (!/^[A-Z0-9_-]{2,50}$/.test(code)) {
+    redirect(
+      `/admin/courses/${id}/edit?error=Invalid%20course%20code`
+    )
+  }
+
+  const { data: curriculum } = await supabase
+    .from('curriculums')
+    .select('id')
+    .eq('id', curriculumId)
+    .eq('status', 'ACTIVE')
+    .maybeSingle()
+
+  if (!curriculum) {
+    redirect(
+      `/admin/courses/${id}/edit?error=Invalid%20or%20inactive%20curriculum`
+    )
+  }
+
+  if (levelId) {
+    const { data: level } = await supabase
+      .from('curriculum_levels')
+      .select('id')
+      .eq('id', levelId)
+      .eq('curriculum_id', curriculumId)
+      .eq('status', 'ACTIVE')
+      .maybeSingle()
+
+    if (!level) {
+      redirect(
+        `/admin/courses/${id}/edit?error=Selected%20level%20does%20not%20belong%20to%20this%20curriculum`
+      )
+    }
+  }
+
+  const { data: updatedCourse, error } = await supabase
+    .from('courses')
+    .update({
+      curriculum_id: curriculumId,
+      level_id: levelId,
+      code,
+      name,
+      description: description || null,
+      status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select('id')
+    .maybeSingle()
+
+  if (error || !updatedCourse) {
+    const message =
+      error?.code === '23505'
+        ? 'This course code already exists'
+        : 'Could not update course'
+
+    redirect(
+      `/admin/courses/${id}/edit?error=${encodeURIComponent(message)}`
+    )
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/admin/courses')
+  revalidatePath('/admin/classes')
+  revalidatePath(`/admin/courses/${id}/edit`)
+
+  redirect('/admin/courses?success=Course%20updated')
+}
+
 export async function deleteCourse(formData: FormData) {
   const supabase = await requireSuperAdmin()
   const id = String(formData.get('id') ?? '').trim()

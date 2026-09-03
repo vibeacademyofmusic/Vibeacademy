@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { createClient } from '@/lib/supabase/server'
 
 import {
@@ -329,6 +331,13 @@ export default async function CoursesPage({
                     </div>
 
                     <div className="flex shrink-0 gap-2">
+                      <Link
+                        href={`/admin/courses/${course.id}/edit`}
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                      >
+                        Edit
+                      </Link>
+
                       <form action={setCourseStatus}>
                         <input
                           type="hidden"
