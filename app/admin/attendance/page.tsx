@@ -8,8 +8,18 @@ type AttendancePageProps = {
   searchParams: Promise<{
     error?: string
     success?: string
+    status?: string
+    type?: string
   }>
 }
+
+const SESSION_STATUSES = new Set([
+  'SCHEDULED',
+  'COMPLETED',
+  'CANCELLED',
+])
+
+const SESSION_TYPES = new Set(['REGULAR', 'MAKEUP'])
 
 const SESSION_STATUS_STYLES: Record<
   string,
@@ -48,7 +58,24 @@ function formatSessionTime(
 export default async function AttendancePage({
   searchParams,
 }: AttendancePageProps) {
-  const { error, success } = await searchParams
+  const {
+    error,
+    success,
+    status: requestedStatus,
+    type: requestedType,
+  } = await searchParams
+
+  const statusFilter = SESSION_STATUSES.has(
+    requestedStatus ?? ''
+  )
+    ? requestedStatus
+    : ''
+
+  const typeFilter = SESSION_TYPES.has(
+    requestedType ?? ''
+  )
+    ? requestedType
+    : ''
 
   const supabase = await createClient()
 
@@ -190,7 +217,15 @@ export default async function AttendancePage({
     )
   }
 
-  const statusCounts = (occurrences ?? []).reduce(
+  const filteredOccurrences = (occurrences ?? []).filter(
+    (occurrence) =>
+      (!statusFilter ||
+        occurrence.status === statusFilter) &&
+      (!typeFilter ||
+        occurrence.occurrence_type === typeFilter)
+  )
+
+  const statusCounts = filteredOccurrences.reduce(
     (counts, occurrence) => {
       if (occurrence.status === 'SCHEDULED') {
         counts.scheduled += 1
@@ -313,6 +348,57 @@ export default async function AttendancePage({
         </div>
       </section>
 
+      <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5">
+        <form className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <label className="text-sm font-medium text-gray-700">
+            Session status
+
+            <select
+              name="status"
+              defaultValue={statusFilter}
+              className="mt-2 block w-full min-w-44 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+            >
+              <option value="">All statuses</option>
+              <option value="SCHEDULED">Scheduled</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            Session type
+
+            <select
+              name="type"
+              defaultValue={typeFilter}
+              className="mt-2 block w-full min-w-44 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+            >
+              <option value="">All types</option>
+              <option value="REGULAR">Regular</option>
+              <option value="MAKEUP">Makeup</option>
+            </select>
+          </label>
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              className="rounded-lg bg-gray-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+            >
+              Apply Filters
+            </button>
+
+            {(statusFilter || typeFilter) && (
+              <Link
+                href="/admin/attendance"
+                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Clear
+              </Link>
+            )}
+          </div>
+        </form>
+      </section>
+
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-5">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -320,7 +406,7 @@ export default async function AttendancePage({
           </p>
 
           <p className="mt-2 text-3xl font-bold text-gray-950">
-            {occurrences?.length ?? 0}
+            {filteredOccurrences.length}
           </p>
         </div>
 
@@ -355,15 +441,16 @@ export default async function AttendancePage({
         </div>
       </div>
 
-      {!occurrences || occurrences.length === 0 ? (
+      {filteredOccurrences.length === 0 ? (
         <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
           <p className="text-sm font-semibold text-gray-800">
             No dated sessions yet
           </p>
 
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500">
-            Master schedules do not appear here until session
-            occurrences are generated for a date range.
+            {statusFilter || typeFilter
+              ? 'No sessions match the selected filters.'
+              : 'Master schedules do not appear here until session occurrences are generated for a date range.'}
           </p>
         </div>
       ) : (
@@ -399,7 +486,7 @@ export default async function AttendancePage({
               </thead>
 
               <tbody className="divide-y divide-gray-100">
-                {occurrences.map((occurrence) => {
+                {filteredOccurrences.map((occurrence) => {
                   const schedule = scheduleMap.get(
                     occurrence.schedule_id
                   )
