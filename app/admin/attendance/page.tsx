@@ -447,6 +447,17 @@ export default async function AttendancePage({
                         >
                           {occurrence.occurrence_type}
                         </span>
+
+                        {occurrence.occurrence_type ===
+                          'MAKEUP' &&
+                          occurrence.source_occurrence_id && (
+                            <Link
+                              href={`/admin/attendance/${occurrence.source_occurrence_id}`}
+                              className="ml-2 inline-flex text-xs font-medium text-purple-700 underline decoration-purple-300 underline-offset-2 hover:text-purple-900"
+                            >
+                              View source
+                            </Link>
+                          )}
                       </td>
 
                       <td className="px-5 py-4">
