@@ -2,8 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 
 import {
   createCourse,
+  deleteCourse,
   setCourseStatus,
 } from './actions'
+import DeleteCourseButton from './delete-course-button'
 
 type CoursesPageProps = {
   searchParams: Promise<{
@@ -326,32 +328,46 @@ export default async function CoursesPage({
                       )}
                     </div>
 
-                    <form action={setCourseStatus}>
-                      <input
-                        type="hidden"
-                        name="id"
-                        value={course.id}
-                      />
+                    <div className="flex shrink-0 gap-2">
+                      <form action={setCourseStatus}>
+                        <input
+                          type="hidden"
+                          name="id"
+                          value={course.id}
+                        />
 
-                      <input
-                        type="hidden"
-                        name="status"
-                        value={
-                          course.status === 'ACTIVE'
-                            ? 'INACTIVE'
-                            : 'ACTIVE'
-                        }
-                      />
+                        <input
+                          type="hidden"
+                          name="status"
+                          value={
+                            course.status === 'ACTIVE'
+                              ? 'INACTIVE'
+                              : 'ACTIVE'
+                          }
+                        />
 
-                      <button
-                        type="submit"
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                      >
-                        {course.status === 'ACTIVE'
-                          ? 'Deactivate'
-                          : 'Activate'}
-                      </button>
-                    </form>
+                        <button
+                          type="submit"
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                          {course.status === 'ACTIVE'
+                            ? 'Deactivate'
+                            : 'Activate'}
+                        </button>
+                      </form>
+
+                      <form action={deleteCourse}>
+                        <input
+                          type="hidden"
+                          name="id"
+                          value={course.id}
+                        />
+
+                        <DeleteCourseButton
+                          courseName={course.name}
+                        />
+                      </form>
+                    </div>
                   </div>
                 )
               })}

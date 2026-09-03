@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 async function requireSuperAdmin() {
   const supabase = await createClient()
 
@@ -161,4 +164,57 @@ export async function setCourseStatus(formData: FormData) {
   redirect(
     '/admin/courses?success=Course%20status%20updated'
   )
+}
+
+export async function deleteCourse(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const id = String(formData.get('id') ?? '').trim()
+
+  if (!UUID_PATTERN.test(id)) {
+    redirect('/admin/courses?error=Invalid%20course')
+  }
+
+  const { count, error: classesError } =
+    await supabase
+      .from('classes')
+      .select('id', { count: 'exact', head: true })
+      .eq('course_id', id)
+
+  if (classesError) {
+    redirect(
+      '/admin/courses?error=Could%20not%20verify%20course%20usage'
+    )
+  }
+
+  if ((count ?? 0) > 0) {
+    redirect(
+      '/admin/courses?error=This%20course%20is%20used%20by%20one%20or%20more%20classes.%20Delete%20those%20classes%20first'
+    )
+  }
+
+  const { data: deletedCourse, error } = await supabase
+    .from('courses')
+    .delete()
+    .eq('id', id)
+    .select('id')
+    .maybeSingle()
+
+  if (error || !deletedCourse) {
+    console.error('Delete course error:', error)
+
+    const message =
+      error?.code === '23503'
+        ? 'This course is now in use and cannot be deleted'
+        : 'Course was not deleted. Please reload and try again'
+
+    redirect(
+      `/admin/courses?error=${encodeURIComponent(message)}`
+    )
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/admin/courses')
+  revalidatePath('/admin/classes')
+
+  redirect('/admin/courses?success=Course%20deleted')
 }
