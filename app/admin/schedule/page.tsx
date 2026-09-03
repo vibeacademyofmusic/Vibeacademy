@@ -4,6 +4,7 @@ import {
   createSchedule,
   setScheduleStatus,
 } from './actions'
+import ScheduleTimeFields from './schedule-time-fields'
 
 type SchedulePageProps = {
   searchParams: Promise<{
@@ -21,14 +22,6 @@ const DAYS: Record<number, string> = {
   6: 'Saturday',
   7: 'Sunday',
 }
-
-const HOURS = Array.from({ length: 12 }, (_, index) =>
-  String(index + 1)
-)
-
-const MINUTES = Array.from({ length: 12 }, (_, index) =>
-  String(index * 5).padStart(2, '0')
-)
 
 function formatScheduleTime(value: string) {
   const [hourValue, minute = '00'] = value.split(':')
@@ -343,99 +336,7 @@ export default async function SchedulePage({
               </div>
 
               {/* Time */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-sm font-medium text-gray-700">
-                    Start *
-                  </p>
-
-                  <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
-                    <select
-                      name="start_hour"
-                      aria-label="Start hour"
-                      required
-                      defaultValue=""
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
-                    >
-                      <option value="" disabled>Hour</option>
-                      {HOURS.map((hour) => (
-                        <option key={hour} value={hour}>{hour}</option>
-                      ))}
-                    </select>
-
-                    <select
-                      name="start_minute"
-                      aria-label="Start minute"
-                      required
-                      defaultValue="00"
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
-                    >
-                      {MINUTES.map((minute) => (
-                        <option key={minute} value={minute}>{minute}</option>
-                      ))}
-                    </select>
-
-                    <select
-                      name="start_period"
-                      aria-label="Start AM or PM"
-                      required
-                      defaultValue="PM"
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
-                    >
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-sm font-medium text-gray-700">
-                    End *
-                  </p>
-
-                  <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
-                    <select
-                      name="end_hour"
-                      aria-label="End hour"
-                      required
-                      defaultValue=""
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
-                    >
-                      <option value="" disabled>Hour</option>
-                      {HOURS.map((hour) => (
-                        <option key={hour} value={hour}>{hour}</option>
-                      ))}
-                    </select>
-
-                    <select
-                      name="end_minute"
-                      aria-label="End minute"
-                      required
-                      defaultValue="00"
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
-                    >
-                      {MINUTES.map((minute) => (
-                        <option key={minute} value={minute}>{minute}</option>
-                      ))}
-                    </select>
-
-                    <select
-                      name="end_period"
-                      aria-label="End AM or PM"
-                      required
-                      defaultValue="PM"
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
-                    >
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <p className="-mt-3 text-xs text-gray-400">
-                Example: 6:00 PM to 7:30 PM.
-              </p>
+              <ScheduleTimeFields />
 
               {/* Effective dates */}
               <div>

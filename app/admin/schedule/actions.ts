@@ -37,22 +37,29 @@ function timeToMinutes(value: string) {
 }
 
 function parse12HourTime(
-  hourValue: FormDataEntryValue | null,
-  minuteValue: FormDataEntryValue | null,
+  timeValue: FormDataEntryValue | null,
   periodValue: FormDataEntryValue | null
 ) {
-  const hour = Number(hourValue)
-  const minute = Number(minuteValue)
+  const match = String(timeValue ?? '')
+    .trim()
+    .match(/^(\d{1,2})(?::([0-5]\d))?$/)
   const period = String(periodValue ?? '')
 
   if (
-    !Number.isInteger(hour) ||
+    !match ||
+    !['AM', 'PM'].includes(period)
+  ) {
+    return null
+  }
+
+  const hour = Number(match[1])
+  const minute = Number(match[2] ?? '0')
+
+  if (
     hour < 1 ||
     hour > 12 ||
-    !Number.isInteger(minute) ||
     minute < 0 ||
-    minute > 59 ||
-    !['AM', 'PM'].includes(period)
+    minute > 59
   ) {
     return null
   }
@@ -64,6 +71,15 @@ function parse12HourTime(
 
   return `${String(hour24).padStart(2, '0')}:${String(
     minute
+  ).padStart(2, '0')}`
+}
+
+function minutesToTime(totalMinutes: number) {
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  return `${String(hours).padStart(2, '0')}:${String(
+    minutes
   ).padStart(2, '0')}`
 }
 
@@ -109,16 +125,24 @@ export async function createSchedule(
   )
 
   const startTime = parse12HourTime(
-    formData.get('start_hour'),
-    formData.get('start_minute'),
+    formData.get('start_time'),
     formData.get('start_period')
   )
 
-  const endTime = parse12HourTime(
-    formData.get('end_hour'),
-    formData.get('end_minute'),
-    formData.get('end_period')
+  const durationMinutes = Number(
+    formData.get('duration_minutes')
   )
+
+  const endMinuteValue = startTime
+    ? timeToMinutes(startTime) + durationMinutes
+    : 0
+
+  const endTime =
+    Number.isInteger(durationMinutes) &&
+    [45, 60, 90, 120].includes(durationMinutes) &&
+    endMinuteValue < 24 * 60
+      ? minutesToTime(endMinuteValue)
+      : null
 
   const effectiveFrom = String(
     formData.get('effective_from') ?? ''
