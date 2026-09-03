@@ -16,6 +16,25 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Local database verification
+
+Docker must be running before starting the local Supabase stack.
+
+```bash
+npm run db:start
+npm run db:reset
+npm run test:db
+```
+
+To run only the Makeup Credit Ledger lifecycle tests:
+
+```bash
+npm run test:makeup-credit
+```
+
+Always run the reset and database tests locally before applying migrations to a
+hosted environment.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
