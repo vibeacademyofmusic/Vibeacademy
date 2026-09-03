@@ -32,7 +32,7 @@ type MakeupCreditSummary = {
   id: string
   enrollment_id: string
   source_occurrence_id: string
-  source_reason: string
+  source_reason: 'EXCUSED' | 'SESSION_CANCELLED'
   created_at: string
 }
 
@@ -277,12 +277,37 @@ export default async function SessionDetailPage({
   }
 
   const availableCreditCounts = new Map<string, number>()
+  const availableCreditReasons = new Map<
+    string,
+    {
+      excused: number
+      sessionCancelled: number
+    }
+  >()
 
   for (const credit of availableMakeupCredits) {
     availableCreditCounts.set(
       credit.enrollment_id,
       (availableCreditCounts.get(credit.enrollment_id) ?? 0) +
         1
+    )
+
+    const reasons = availableCreditReasons.get(
+      credit.enrollment_id
+    ) ?? {
+      excused: 0,
+      sessionCancelled: 0,
+    }
+
+    if (credit.source_reason === 'EXCUSED') {
+      reasons.excused += 1
+    } else {
+      reasons.sessionCancelled += 1
+    }
+
+    availableCreditReasons.set(
+      credit.enrollment_id,
+      reasons
     )
   }
 
@@ -876,6 +901,14 @@ export default async function SessionDetailPage({
                           enrollment.id
                         ) ?? 0
 
+                      const creditReasons =
+                        availableCreditReasons.get(
+                          enrollment.id
+                        ) ?? {
+                          excused: 0,
+                          sessionCancelled: 0,
+                        }
+
                       return (
                         <label
                           key={enrollment.id}
@@ -903,6 +936,24 @@ export default async function SessionDetailPage({
                                 ? 'credit'
                                 : 'credits'}{' '}
                               available
+                            </span>
+
+                            <span className="mt-1 block text-xs text-gray-500">
+                              {creditReasons.excused > 0 && (
+                                <>
+                                  {creditReasons.excused} from
+                                  excused absence
+                                </>
+                              )}
+                              {creditReasons.excused > 0 &&
+                                creditReasons.sessionCancelled > 0 &&
+                                ' · '}
+                              {creditReasons.sessionCancelled > 0 && (
+                                <>
+                                  {creditReasons.sessionCancelled} from
+                                  cancelled session
+                                </>
+                              )}
                             </span>
                           </span>
                         </label>
