@@ -162,6 +162,10 @@ export default async function SessionDetailPage({
       error: participantsError,
     },
     { data: attendance, error: attendanceError },
+    {
+      data: relatedMakeupSessions,
+      error: relatedMakeupSessionsError,
+    },
   ] = await Promise.all([
     supabase
       .from('branches')
@@ -216,6 +220,17 @@ export default async function SessionDetailPage({
         marked_at
       `)
       .eq('session_occurrence_id', occurrence.id),
+
+    occurrence.occurrence_type === 'REGULAR'
+      ? supabase
+          .from('session_occurrences')
+          .select('id, starts_at, status')
+          .eq('source_occurrence_id', occurrence.id)
+          .order('starts_at', { ascending: true })
+      : Promise.resolve({
+          data: [],
+          error: null,
+        }),
   ])
 
   const makeupParticipantIds = new Set(
@@ -345,6 +360,7 @@ export default async function SessionDetailPage({
     enrollmentsError ||
     participantsError ||
     attendanceError ||
+    relatedMakeupSessionsError ||
     makeupCreditsError ||
     studentsError
 
@@ -787,6 +803,50 @@ export default async function SessionDetailPage({
             </div>
           </div>
         </section>
+
+        {occurrence.occurrence_type === 'REGULAR' &&
+          (relatedMakeupSessions?.length ?? 0) > 0 && (
+            <section className="mt-6 rounded-2xl border border-purple-200 bg-white p-6">
+              <h2 className="text-lg font-semibold text-gray-950">
+                Related Makeup Sessions
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Makeup sessions created from this source
+                session.
+              </p>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {(relatedMakeupSessions ?? []).map(
+                  (makeupSession) => (
+                    <Link
+                      key={makeupSession.id}
+                      href={`/admin/attendance/${makeupSession.id}`}
+                      className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 px-4 py-3 transition hover:border-purple-300 hover:bg-purple-50/40"
+                    >
+                      <span className="text-sm font-medium text-gray-900">
+                        {formatDateTime(
+                          makeupSession.starts_at,
+                          timezone
+                        )}
+                      </span>
+
+                      <span
+                        className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                          SESSION_STATUS_STYLES[
+                            makeupSession.status
+                          ] ??
+                          'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {makeupSession.status}
+                      </span>
+                    </Link>
+                  )
+                )}
+              </div>
+            </section>
+          )}
 
         {canCreateMakeup && (
           <section className="mt-6 rounded-2xl border border-purple-200 bg-white p-6">
