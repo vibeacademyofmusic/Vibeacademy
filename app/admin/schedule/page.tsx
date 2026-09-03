@@ -298,42 +298,35 @@ export default async function SchedulePage({
               </div>
 
               {/* Day */}
-              <div>
-                <label
-                  htmlFor="day_of_week"
-                  className="mb-2 block text-sm font-medium text-gray-700"
-                >
-                  Day *
-                </label>
+              <fieldset>
+                <legend className="text-sm font-medium text-gray-700">
+                  Class days *
+                </legend>
 
-                <select
-                  id="day_of_week"
-                  name="day_of_week"
-                  required
-                  defaultValue=""
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-                >
-                  <option
-                    value=""
-                    disabled
-                  >
-                    Select day
-                  </option>
+                <p className="mt-1 text-xs text-gray-400">
+                  Select every weekly meeting day. Example:
+                  Monday + Wednesday for Thứ 2–4.
+                </p>
 
-                  {Object.entries(
-                    DAYS
-                  ).map(
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {Object.entries(DAYS).map(
                     ([value, label]) => (
-                      <option
+                      <label
                         key={value}
-                        value={value}
+                        className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition hover:border-gray-400 hover:bg-gray-50"
                       >
+                        <input
+                          type="checkbox"
+                          name="day_of_week"
+                          value={value}
+                          className="h-4 w-4 rounded border-gray-300 accent-gray-950"
+                        />
                         {label}
-                      </option>
+                      </label>
                     )
                   )}
-                </select>
-              </div>
+                </div>
+              </fieldset>
 
               {/* Time */}
               <ScheduleTimeFields />

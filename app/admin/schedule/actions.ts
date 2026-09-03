@@ -120,9 +120,13 @@ export async function createSchedule(
     formData.get('room_id') ?? ''
   ).trim()
 
-  const dayOfWeek = Number(
-    formData.get('day_of_week')
-  )
+  const daysOfWeek = Array.from(
+    new Set(
+      formData
+        .getAll('day_of_week')
+        .map((value) => Number(value))
+    )
+  ).sort((a, b) => a - b)
 
   const startTime = parse12HourTime(
     formData.get('start_time'),
@@ -162,7 +166,7 @@ export async function createSchedule(
   if (
     !classId ||
     !roomId ||
-    !dayOfWeek ||
+    daysOfWeek.length === 0 ||
     !startTime ||
     !endTime ||
     !effectiveFrom
@@ -173,9 +177,12 @@ export async function createSchedule(
   }
 
   if (
-    !Number.isInteger(dayOfWeek) ||
-    dayOfWeek < 1 ||
-    dayOfWeek > 7
+    daysOfWeek.some(
+      (dayOfWeek) =>
+        !Number.isInteger(dayOfWeek) ||
+        dayOfWeek < 1 ||
+        dayOfWeek > 7
+    )
   ) {
     redirect(
       '/admin/schedule?error=Invalid%20day%20of%20week'
@@ -272,7 +279,7 @@ export async function createSchedule(
         effective_to,
         status
       `)
-      .eq('day_of_week', dayOfWeek)
+      .in('day_of_week', daysOfWeek)
       .eq('status', 'ACTIVE')
 
   const conflictingSchedules =
@@ -392,18 +399,20 @@ export async function createSchedule(
 
   const { error } = await supabase
     .from('schedules')
-    .insert({
-      class_id: classId,
-      room_id: roomId,
-      day_of_week: dayOfWeek,
-      start_time: startTime,
-      end_time: endTime,
-      effective_from: effectiveFrom,
-      effective_to: effectiveTo,
-      timezone: 'Asia/Ho_Chi_Minh',
-      notes: notes || null,
-      status: 'ACTIVE',
-    })
+    .insert(
+      daysOfWeek.map((dayOfWeek) => ({
+        class_id: classId,
+        room_id: roomId,
+        day_of_week: dayOfWeek,
+        start_time: startTime,
+        end_time: endTime,
+        effective_from: effectiveFrom,
+        effective_to: effectiveTo,
+        timezone: 'Asia/Ho_Chi_Minh',
+        notes: notes || null,
+        status: 'ACTIVE',
+      }))
+    )
 
   if (error) {
     console.error(
@@ -429,7 +438,11 @@ export async function createSchedule(
   )
 
   redirect(
-    '/admin/schedule?success=Schedule%20created%20successfully'
+    `/admin/schedule?success=${encodeURIComponent(
+      `${daysOfWeek.length} weekly schedule${
+        daysOfWeek.length === 1 ? '' : 's'
+      } created successfully`
+    )}`
   )
 }
 
