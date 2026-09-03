@@ -12,6 +12,7 @@ type AttendancePageProps = {
     type?: string
     from?: string
     to?: string
+    q?: string
   }>
 }
 
@@ -68,6 +69,7 @@ export default async function AttendancePage({
     type: requestedType,
     from: requestedFromDate,
     to: requestedToDate,
+    q: requestedQuery,
   } = await searchParams
 
   const statusFilter = SESSION_STATUSES.has(
@@ -93,6 +95,11 @@ export default async function AttendancePage({
   )
     ? requestedToDate
     : ''
+
+  const searchQuery = (requestedQuery ?? '')
+    .trim()
+    .slice(0, 100)
+    .toLocaleLowerCase()
 
   const supabase = await createClient()
 
@@ -235,15 +242,48 @@ export default async function AttendancePage({
   }
 
   const filteredOccurrences = (occurrences ?? []).filter(
-    (occurrence) =>
-      (!statusFilter ||
-        occurrence.status === statusFilter) &&
-      (!typeFilter ||
-        occurrence.occurrence_type === typeFilter) &&
-      (!fromDateFilter ||
-        occurrence.occurrence_date >= fromDateFilter) &&
-      (!toDateFilter ||
-        occurrence.occurrence_date <= toDateFilter)
+    (occurrence) => {
+      const schedule = scheduleMap.get(
+        occurrence.schedule_id
+      )
+
+      const classItem = schedule
+        ? classMap.get(schedule.class_id)
+        : null
+
+      const branch = classItem
+        ? branchMap.get(classItem.branch_id)
+        : null
+
+      const room = occurrence.room_id
+        ? roomMap.get(occurrence.room_id)
+        : null
+
+      const searchableText = [
+        classItem?.name,
+        classItem?.code,
+        branch?.name,
+        branch?.code,
+        room?.name,
+        room?.code,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase()
+
+      return (
+        (!statusFilter ||
+          occurrence.status === statusFilter) &&
+        (!typeFilter ||
+          occurrence.occurrence_type === typeFilter) &&
+        (!fromDateFilter ||
+          occurrence.occurrence_date >= fromDateFilter) &&
+        (!toDateFilter ||
+          occurrence.occurrence_date <= toDateFilter) &&
+        (!searchQuery ||
+          searchableText.includes(searchQuery))
+      )
+    }
   )
 
   const statusCounts = filteredOccurrences.reduce(
@@ -370,7 +410,20 @@ export default async function AttendancePage({
       </section>
 
       <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5">
-        <form className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto] xl:items-end">
+        <form className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(5,minmax(0,1fr))_auto] xl:items-end">
+          <label className="text-sm font-medium text-gray-700">
+            Search
+
+            <input
+              type="search"
+              name="q"
+              defaultValue={requestedQuery?.slice(0, 100) ?? ''}
+              maxLength={100}
+              placeholder="Class, branch, or room"
+              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+            />
+          </label>
+
           <label className="text-sm font-medium text-gray-700">
             Session status
 
@@ -433,7 +486,8 @@ export default async function AttendancePage({
             {(statusFilter ||
               typeFilter ||
               fromDateFilter ||
-              toDateFilter) && (
+              toDateFilter ||
+              searchQuery) && (
               <Link
                 href="/admin/attendance"
                 className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
@@ -497,7 +551,8 @@ export default async function AttendancePage({
             {statusFilter ||
             typeFilter ||
             fromDateFilter ||
-            toDateFilter
+            toDateFilter ||
+            searchQuery
               ? 'No sessions match the selected filters.'
               : 'Master schedules do not appear here until session occurrences are generated for a date range.'}
           </p>
