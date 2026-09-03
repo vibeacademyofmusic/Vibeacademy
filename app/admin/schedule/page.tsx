@@ -22,6 +22,23 @@ const DAYS: Record<number, string> = {
   7: 'Sunday',
 }
 
+const HOURS = Array.from({ length: 12 }, (_, index) =>
+  String(index + 1)
+)
+
+const MINUTES = Array.from({ length: 12 }, (_, index) =>
+  String(index * 5).padStart(2, '0')
+)
+
+function formatScheduleTime(value: string) {
+  const [hourValue, minute = '00'] = value.split(':')
+  const hour24 = Number(hourValue)
+  const period = hour24 >= 12 ? 'PM' : 'AM'
+  const hour12 = hour24 % 12 || 12
+
+  return `${hour12}:${minute} ${period}`
+}
+
 export default async function SchedulePage({
   searchParams,
 }: SchedulePageProps) {
@@ -326,41 +343,99 @@ export default async function SchedulePage({
               </div>
 
               {/* Time */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="start_time"
-                    className="mb-2 block text-sm font-medium text-gray-700"
-                  >
+                  <p className="mb-2 text-sm font-medium text-gray-700">
                     Start *
-                  </label>
+                  </p>
 
-                  <input
-                    id="start_time"
-                    name="start_time"
-                    type="time"
-                    required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-                  />
+                  <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
+                    <select
+                      name="start_hour"
+                      aria-label="Start hour"
+                      required
+                      defaultValue=""
+                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
+                    >
+                      <option value="" disabled>Hour</option>
+                      {HOURS.map((hour) => (
+                        <option key={hour} value={hour}>{hour}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      name="start_minute"
+                      aria-label="Start minute"
+                      required
+                      defaultValue="00"
+                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
+                    >
+                      {MINUTES.map((minute) => (
+                        <option key={minute} value={minute}>{minute}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      name="start_period"
+                      aria-label="Start AM or PM"
+                      required
+                      defaultValue="PM"
+                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="end_time"
-                    className="mb-2 block text-sm font-medium text-gray-700"
-                  >
+                  <p className="mb-2 text-sm font-medium text-gray-700">
                     End *
-                  </label>
+                  </p>
 
-                  <input
-                    id="end_time"
-                    name="end_time"
-                    type="time"
-                    required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-                  />
+                  <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
+                    <select
+                      name="end_hour"
+                      aria-label="End hour"
+                      required
+                      defaultValue=""
+                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
+                    >
+                      <option value="" disabled>Hour</option>
+                      {HOURS.map((hour) => (
+                        <option key={hour} value={hour}>{hour}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      name="end_minute"
+                      aria-label="End minute"
+                      required
+                      defaultValue="00"
+                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
+                    >
+                      {MINUTES.map((minute) => (
+                        <option key={minute} value={minute}>{minute}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      name="end_period"
+                      aria-label="End AM or PM"
+                      required
+                      defaultValue="PM"
+                      className="rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm outline-none focus:border-gray-900"
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
               </div>
+
+              <p className="-mt-3 text-xs text-gray-400">
+                Example: 6:00 PM to 7:30 PM.
+              </p>
 
               {/* Effective dates */}
               <div>
@@ -544,14 +619,12 @@ export default async function SchedulePage({
                               </p>
 
                               <p className="mt-1 text-xs text-gray-500">
-                                {schedule.start_time.slice(
-                                  0,
-                                  5
+                                {formatScheduleTime(
+                                  schedule.start_time
                                 )}{' '}
                                 –{' '}
-                                {schedule.end_time.slice(
-                                  0,
-                                  5
+                                {formatScheduleTime(
+                                  schedule.end_time
                                 )}
                               </p>
                             </td>

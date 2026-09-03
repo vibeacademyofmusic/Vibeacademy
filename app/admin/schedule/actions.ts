@@ -36,6 +36,37 @@ function timeToMinutes(value: string) {
   return hours * 60 + minutes
 }
 
+function parse12HourTime(
+  hourValue: FormDataEntryValue | null,
+  minuteValue: FormDataEntryValue | null,
+  periodValue: FormDataEntryValue | null
+) {
+  const hour = Number(hourValue)
+  const minute = Number(minuteValue)
+  const period = String(periodValue ?? '')
+
+  if (
+    !Number.isInteger(hour) ||
+    hour < 1 ||
+    hour > 12 ||
+    !Number.isInteger(minute) ||
+    minute < 0 ||
+    minute > 59 ||
+    !['AM', 'PM'].includes(period)
+  ) {
+    return null
+  }
+
+  const hour24 =
+    period === 'AM'
+      ? hour % 12
+      : (hour % 12) + 12
+
+  return `${String(hour24).padStart(2, '0')}:${String(
+    minute
+  ).padStart(2, '0')}`
+}
+
 function timeRangesOverlap(
   startA: string,
   endA: string,
@@ -77,13 +108,17 @@ export async function createSchedule(
     formData.get('day_of_week')
   )
 
-  const startTime = String(
-    formData.get('start_time') ?? ''
-  ).trim()
+  const startTime = parse12HourTime(
+    formData.get('start_hour'),
+    formData.get('start_minute'),
+    formData.get('start_period')
+  )
 
-  const endTime = String(
-    formData.get('end_time') ?? ''
-  ).trim()
+  const endTime = parse12HourTime(
+    formData.get('end_hour'),
+    formData.get('end_minute'),
+    formData.get('end_period')
+  )
 
   const effectiveFrom = String(
     formData.get('effective_from') ?? ''
