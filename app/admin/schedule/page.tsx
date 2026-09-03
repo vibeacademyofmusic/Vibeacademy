@@ -2,8 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 
 import {
   createSchedule,
+  deleteSchedule,
   setScheduleStatus,
 } from './actions'
+import DeleteScheduleButton from './delete-schedule-button'
 import ScheduleTimeFields from './schedule-time-fields'
 
 type SchedulePageProps = {
@@ -553,12 +555,13 @@ export default async function SchedulePage({
                               </span>
                             </td>
 
-                            <td className="px-5 py-4 text-right">
-                              <form
-                                action={
-                                  setScheduleStatus
-                                }
-                              >
+                            <td className="px-5 py-4">
+                              <div className="flex justify-end gap-2">
+                                <form
+                                  action={
+                                    setScheduleStatus
+                                  }
+                                >
                                 <input
                                   type="hidden"
                                   name="id"
@@ -587,7 +590,20 @@ export default async function SchedulePage({
                                     ? 'Deactivate'
                                     : 'Activate'}
                                 </button>
-                              </form>
+                                </form>
+
+                                <form action={deleteSchedule}>
+                                  <input
+                                    type="hidden"
+                                    name="id"
+                                    value={schedule.id}
+                                  />
+
+                                  <DeleteScheduleButton
+                                    scheduleLabel={`${classItem?.name ?? 'this schedule'} on ${DAYS[schedule.day_of_week] ?? `day ${schedule.day_of_week}`}`}
+                                  />
+                                </form>
+                              </div>
                             </td>
                           </tr>
                         )

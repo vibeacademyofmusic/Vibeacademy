@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 async function requireSuperAdmin() {
   const supabase = await createClient()
 
@@ -491,5 +494,79 @@ export async function setScheduleStatus(
 
   redirect(
     '/admin/schedule?success=Schedule%20status%20updated'
+  )
+}
+
+export async function deleteSchedule(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+
+  const id = String(formData.get('id') ?? '').trim()
+
+  if (!UUID_PATTERN.test(id)) {
+    redirect(
+      '/admin/schedule?error=Invalid%20schedule'
+    )
+  }
+
+  const { data: schedule, error: scheduleError } =
+    await supabase
+      .from('schedules')
+      .select('id, class_id')
+      .eq('id', id)
+      .maybeSingle()
+
+  if (scheduleError || !schedule) {
+    redirect(
+      '/admin/schedule?error=Schedule%20not%20found'
+    )
+  }
+
+  const { count, error: occurrenceError } =
+    await supabase
+      .from('session_occurrences')
+      .select('id', { count: 'exact', head: true })
+      .eq('schedule_id', id)
+
+  if (occurrenceError) {
+    console.error(
+      'Check schedule sessions error:',
+      occurrenceError
+    )
+
+    redirect(
+      '/admin/schedule?error=Could%20not%20verify%20schedule%20history'
+    )
+  }
+
+  if ((count ?? 0) > 0) {
+    redirect(
+      '/admin/schedule?error=This%20schedule%20already%20has%20sessions.%20Deactivate%20it%20to%20preserve%20attendance%20history'
+    )
+  }
+
+  const { error } = await supabase
+    .from('schedules')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    console.error('Delete schedule error:', error)
+
+    const message =
+      error.code === '23503'
+        ? 'This schedule now has related sessions. Deactivate it instead'
+        : 'Could not delete schedule'
+
+    redirect(
+      `/admin/schedule?error=${encodeURIComponent(message)}`
+    )
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/admin/schedule')
+  revalidatePath(`/admin/classes/${schedule.class_id}`)
+
+  redirect(
+    '/admin/schedule?success=Schedule%20deleted'
   )
 }
