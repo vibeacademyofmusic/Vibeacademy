@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { refresh, revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
@@ -544,18 +544,23 @@ export async function deleteSchedule(formData: FormData) {
     )
   }
 
-  const { error } = await supabase
+  const {
+    data: deletedSchedule,
+    error,
+  } = await supabase
     .from('schedules')
     .delete()
     .eq('id', id)
+    .select('id')
+    .maybeSingle()
 
-  if (error) {
+  if (error || !deletedSchedule) {
     console.error('Delete schedule error:', error)
 
     const message =
-      error.code === '23503'
+      error?.code === '23503'
         ? 'This schedule now has related sessions. Deactivate it instead'
-        : 'Could not delete schedule'
+        : 'Schedule was not deleted. Please reload and try again'
 
     redirect(
       `/admin/schedule?error=${encodeURIComponent(message)}`
@@ -565,6 +570,7 @@ export async function deleteSchedule(formData: FormData) {
   revalidatePath('/admin')
   revalidatePath('/admin/schedule')
   revalidatePath(`/admin/classes/${schedule.class_id}`)
+  refresh()
 
   redirect(
     '/admin/schedule?success=Schedule%20deleted'
