@@ -3,8 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 
 import {
   createClass,
+  deleteClass,
   setClassStatus,
 } from './actions'
+import DeleteClassButton from './delete-class-button'
 
 type ClassesPageProps = {
   searchParams: Promise<{
@@ -460,6 +462,18 @@ export default async function ClassesPage({
                         >
                           Update
                         </button>
+                      </form>
+
+                      <form action={deleteClass}>
+                        <input
+                          type="hidden"
+                          name="id"
+                          value={classItem.id}
+                        />
+
+                        <DeleteClassButton
+                          className={classItem.name}
+                        />
                       </form>
                     </div>
                   </div>

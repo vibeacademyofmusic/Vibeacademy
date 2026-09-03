@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 async function requireSuperAdmin() {
   const supabase = await createClient()
 
@@ -241,4 +244,63 @@ export async function setClassStatus(
   redirect(
     '/admin/classes?success=Class%20status%20updated'
   )
+}
+
+export async function deleteClass(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const id = String(formData.get('id') ?? '').trim()
+
+  if (!UUID_PATTERN.test(id)) {
+    redirect('/admin/classes?error=Invalid%20class')
+  }
+
+  const [enrollmentResult, scheduleResult] =
+    await Promise.all([
+      supabase
+        .from('enrollments')
+        .select('id', { count: 'exact', head: true })
+        .eq('class_id', id),
+      supabase
+        .from('schedules')
+        .select('id', { count: 'exact', head: true })
+        .eq('class_id', id),
+    ])
+
+  if (enrollmentResult.error || scheduleResult.error) {
+    redirect(
+      '/admin/classes?error=Could%20not%20verify%20class%20history'
+    )
+  }
+
+  if ((enrollmentResult.count ?? 0) > 0) {
+    redirect(
+      '/admin/classes?error=This%20class%20still%20has%20student%20enrollments.%20Remove%20them%20before%20deleting%20the%20class'
+    )
+  }
+
+  if ((scheduleResult.count ?? 0) > 0) {
+    redirect(
+      '/admin/classes?error=This%20class%20still%20has%20schedules.%20Delete%20or%20deactivate%20them%20first'
+    )
+  }
+
+  const { data: deletedClass, error } = await supabase
+    .from('classes')
+    .delete()
+    .eq('id', id)
+    .select('id')
+    .maybeSingle()
+
+  if (error || !deletedClass) {
+    console.error('Delete class error:', error)
+
+    redirect(
+      '/admin/classes?error=Class%20was%20not%20deleted.%20Please%20reload%20and%20try%20again'
+    )
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/admin/classes')
+
+  redirect('/admin/classes?success=Class%20deleted')
 }
