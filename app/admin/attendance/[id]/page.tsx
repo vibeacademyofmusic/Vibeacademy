@@ -45,6 +45,13 @@ const SESSION_STATUS_STYLES: Record<
   CANCELLED: 'bg-red-50 text-red-700',
 }
 
+const CREDIT_STATUS_STYLES: Record<string, string> = {
+  AVAILABLE: 'bg-blue-50 text-blue-700',
+  RESERVED: 'bg-amber-50 text-amber-700',
+  USED: 'bg-green-50 text-green-700',
+  CANCELLED: 'bg-gray-100 text-gray-600',
+}
+
 function formatDateTime(
   value: string,
   timezone: string
@@ -203,7 +210,14 @@ export default async function SessionDetailPage({
     occurrence.occurrence_type === 'MAKEUP'
       ? supabase
           .from('session_occurrence_participants')
-          .select('enrollment_id')
+          .select(`
+            enrollment_id,
+            makeup_credit:makeup_credits!makeup_credit_id(
+              status,
+              source_reason,
+              source_occurrence_id
+            )
+          `)
           .eq('session_occurrence_id', occurrence.id)
       : Promise.resolve({
           data: [],
@@ -237,6 +251,13 @@ export default async function SessionDetailPage({
     (makeupParticipants ?? []).map(
       (participant) => participant.enrollment_id
     )
+  )
+
+  const makeupCreditByEnrollment = new Map(
+    (makeupParticipants ?? []).map((participant) => [
+      participant.enrollment_id,
+      participant.makeup_credit[0] ?? null,
+    ])
   )
 
   const roster = (enrollments ?? []).filter(
@@ -1103,6 +1124,11 @@ export default async function SessionDetailPage({
                         enrollment.id
                       )
 
+                      const makeupCredit =
+                        makeupCreditByEnrollment.get(
+                          enrollment.id
+                        )
+
                       return (
                         <tr key={enrollment.id}>
                           <td className="px-5 py-4">
@@ -1115,6 +1141,32 @@ export default async function SessionDetailPage({
                             <p className="mt-1 text-xs text-gray-500">
                               {student?.student_code ?? '—'}
                             </p>
+
+                            {makeupCredit && (
+                              <div className="mt-2 flex flex-wrap items-center gap-2">
+                                <span
+                                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                                    CREDIT_STATUS_STYLES[
+                                      makeupCredit.status
+                                    ] ??
+                                    'bg-gray-100 text-gray-600'
+                                  }`}
+                                >
+                                  Credit {makeupCredit.status}
+                                </span>
+
+                                <Link
+                                  href={`/admin/attendance/${makeupCredit.source_occurrence_id}`}
+                                  className="text-xs font-medium text-purple-700 hover:text-purple-900"
+                                >
+                                  {makeupCredit.source_reason ===
+                                  'EXCUSED'
+                                    ? 'Excused absence source'
+                                    : 'Cancelled session source'}{' '}
+                                  →
+                                </Link>
+                              </div>
+                            )}
                           </td>
 
                           <td className="px-5 py-4">
