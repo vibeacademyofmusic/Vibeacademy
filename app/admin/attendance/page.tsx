@@ -10,6 +10,8 @@ type AttendancePageProps = {
     success?: string
     status?: string
     type?: string
+    from?: string
+    to?: string
   }>
 }
 
@@ -20,6 +22,7 @@ const SESSION_STATUSES = new Set([
 ])
 
 const SESSION_TYPES = new Set(['REGULAR', 'MAKEUP'])
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
 const SESSION_STATUS_STYLES: Record<
   string,
@@ -63,6 +66,8 @@ export default async function AttendancePage({
     success,
     status: requestedStatus,
     type: requestedType,
+    from: requestedFromDate,
+    to: requestedToDate,
   } = await searchParams
 
   const statusFilter = SESSION_STATUSES.has(
@@ -75,6 +80,18 @@ export default async function AttendancePage({
     requestedType ?? ''
   )
     ? requestedType
+    : ''
+
+  const fromDateFilter = DATE_PATTERN.test(
+    requestedFromDate ?? ''
+  )
+    ? requestedFromDate
+    : ''
+
+  const toDateFilter = DATE_PATTERN.test(
+    requestedToDate ?? ''
+  )
+    ? requestedToDate
     : ''
 
   const supabase = await createClient()
@@ -222,7 +239,11 @@ export default async function AttendancePage({
       (!statusFilter ||
         occurrence.status === statusFilter) &&
       (!typeFilter ||
-        occurrence.occurrence_type === typeFilter)
+        occurrence.occurrence_type === typeFilter) &&
+      (!fromDateFilter ||
+        occurrence.occurrence_date >= fromDateFilter) &&
+      (!toDateFilter ||
+        occurrence.occurrence_date <= toDateFilter)
   )
 
   const statusCounts = filteredOccurrences.reduce(
@@ -349,7 +370,7 @@ export default async function AttendancePage({
       </section>
 
       <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5">
-        <form className="flex flex-col gap-4 sm:flex-row sm:items-end">
+        <form className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto] xl:items-end">
           <label className="text-sm font-medium text-gray-700">
             Session status
 
@@ -379,6 +400,28 @@ export default async function AttendancePage({
             </select>
           </label>
 
+          <label className="text-sm font-medium text-gray-700">
+            From date
+
+            <input
+              type="date"
+              name="from"
+              defaultValue={fromDateFilter}
+              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+            />
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            To date
+
+            <input
+              type="date"
+              name="to"
+              defaultValue={toDateFilter}
+              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+            />
+          </label>
+
           <div className="flex gap-3">
             <button
               type="submit"
@@ -387,7 +430,10 @@ export default async function AttendancePage({
               Apply Filters
             </button>
 
-            {(statusFilter || typeFilter) && (
+            {(statusFilter ||
+              typeFilter ||
+              fromDateFilter ||
+              toDateFilter) && (
               <Link
                 href="/admin/attendance"
                 className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
@@ -448,7 +494,10 @@ export default async function AttendancePage({
           </p>
 
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500">
-            {statusFilter || typeFilter
+            {statusFilter ||
+            typeFilter ||
+            fromDateFilter ||
+            toDateFilter
               ? 'No sessions match the selected filters.'
               : 'Master schedules do not appear here until session occurrences are generated for a date range.'}
           </p>
