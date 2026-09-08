@@ -351,15 +351,14 @@ export async function saveAttendance(
         return makeupParticipantIds.has(enrollment.id)
       }
 
-      const startDate =
-        enrollment.started_at ??
-        enrollment.enrolled_at
+      if (!enrollment.started_at) {
+        return false
+      }
 
       return (
-        startDate <= occurrence.occurrence_date &&
+        enrollment.started_at <= occurrence.occurrence_date &&
         (!enrollment.ended_at ||
-          enrollment.ended_at >=
-            occurrence.occurrence_date)
+          enrollment.ended_at >= occurrence.occurrence_date)
       )
     }
   )

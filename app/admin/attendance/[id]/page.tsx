@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-
+import SessionJournals from '@/app/admin/learning-journals/SessionJournals'
 import {
   createMakeupSession,
   rescheduleSession,
@@ -252,6 +252,31 @@ export default async function SessionDetailPage({
       (participant) => participant.enrollment_id
     )
   )
+  let pausedEnrollmentIds = new Set<string>()
+
+if (
+  occurrence.occurrence_type === 'REGULAR' &&
+  (enrollments?.length ?? 0) > 0
+) {
+  const { data: activePauses, error: pausesError } = await supabase
+    .from('enrollment_pauses')
+    .select('enrollment_id')
+    .eq('status', 'ACTIVE')
+    .lte('starts_on', occurrence.occurrence_date)
+    .gte('ends_on', occurrence.occurrence_date)
+    .in(
+      'enrollment_id',
+      (enrollments ?? []).map((enrollment) => enrollment.id)
+    )
+
+  if (pausesError) {
+    throw new Error('Không thể kiểm tra trạng thái bảo lưu của học viên')
+  }
+
+  pausedEnrollmentIds = new Set(
+    (activePauses ?? []).map((pause) => pause.enrollment_id)
+  )
+}
 
   const makeupCreditByEnrollment = new Map(
     (makeupParticipants ?? []).map((participant) => [
@@ -266,19 +291,18 @@ export default async function SessionDetailPage({
         return makeupParticipantIds.has(enrollment.id)
       }
 
-      const startDate =
-        enrollment.started_at ??
-        enrollment.enrolled_at
+      if (!enrollment.started_at) {
+        return false
+      }
 
       return (
-        startDate <= occurrence.occurrence_date &&
+        enrollment.started_at <= occurrence.occurrence_date &&
         (!enrollment.ended_at ||
-          enrollment.ended_at >=
-            occurrence.occurrence_date)
+          enrollment.ended_at >= occurrence.occurrence_date) &&
+        !pausedEnrollmentIds.has(enrollment.id)
       )
     }
   )
-
   const canCreateMakeup =
     occurrence.occurrence_type === 'REGULAR' &&
     ['COMPLETED', 'CANCELLED'].includes(
@@ -324,8 +348,7 @@ export default async function SessionDetailPage({
   for (const credit of availableMakeupCredits) {
     availableCreditCounts.set(
       credit.enrollment_id,
-      (availableCreditCounts.get(credit.enrollment_id) ?? 0) +
-        1
+      (availableCreditCounts.get(credit.enrollment_id) ?? 0) + 1
     )
 
     const reasons = availableCreditReasons.get(
@@ -1230,8 +1253,12 @@ export default async function SessionDetailPage({
               </div>
             </form>
           )}
-        </section>
-      </div>
-    </div>
-  )
+                </section>
+
+<div className="mt-6">
+  <SessionJournals occurrenceId={occurrence.id} />
+</div>
+</div>
+</div>
+)
 }

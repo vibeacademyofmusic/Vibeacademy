@@ -1,5 +1,7 @@
+import StudentJournals from '@/app/admin/learning-journals/StudentJournals'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import ClassEnrollments from './ClassEnrollments'
 
 import {
     updateStudent,
@@ -469,7 +471,12 @@ export default async function EditStudentPage({
                 </p>
               </div>
             </div>
-      
+            <ClassEnrollments studentId={student.id} />
+
+<StudentJournals studentId={student.id} />
+              <StudentJournals studentId={student.id} />
+              <StudentJournals studentId={student.id} />
+            <StudentJournals studentId={student.id} />
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-950">
                 Edit Profile
