@@ -173,10 +173,11 @@ begin
   if not exists (
     select 1
     from public.branches
-    where code = 'V01'
+    where code in ('V01', 'CT01')
+      and name = 'Vibe Academy Cần Thơ'
   ) then
     raise exception
-      'Branch V01 was not found. Cannot create Can Tho tuition pricing.';
+      'Vibe Academy Can Tho branch was not found. Cannot create Can Tho tuition pricing.';
   end if;
 end;
 $$;
@@ -213,7 +214,8 @@ where tp.code in (
   'VIBE_3_MONTHS',
   'VIBE_12_MONTHS'
 )
-and b.code = 'V01'
+and b.code in ('V01', 'CT01')
+and b.name = 'Vibe Academy Cần Thơ'
 on conflict (
   tuition_plan_id,
   branch_id
