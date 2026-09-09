@@ -175,21 +175,56 @@ export async function enrollStudent(
     formData: FormData
   ) {
     const supabase = await requireSuperAdmin()
-  
+
     const classId = String(
       formData.get('class_id') ?? ''
     ).trim()
-  
+
     const studentId = String(
       formData.get('student_id') ?? ''
     ).trim()
-  
-    if (!classId || !studentId) {
+    const enrolledAt = String(
+      formData.get('enrolled_at') ?? ''
+    ).trim()
+
+    const startedAt = String(
+      formData.get('started_at') ?? ''
+    ).trim()
+    if (
+      !classId ||
+      !studentId ||
+      !enrolledAt ||
+      !startedAt
+    ) {
       redirect(
-        `/admin/classes/${classId}?error=Invalid%20student%20enrollment`
+        `/admin/classes/${classId}?error=${encodeURIComponent(
+          'Học sinh, ngày ghi danh và ngày bắt đầu học là bắt buộc'
+        )}`
       )
     }
-  
+
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/
+
+    if (
+      !datePattern.test(enrolledAt) ||
+      !datePattern.test(startedAt)
+    ) {
+      redirect(
+        `/admin/classes/${classId}?error=${encodeURIComponent(
+          'Ngày ghi danh hoặc ngày bắt đầu học không hợp lệ'
+        )}`
+      )
+    }
+
+    if (startedAt < enrolledAt) {
+      redirect(
+        `/admin/classes/${classId}?error=${encodeURIComponent(
+          'Ngày bắt đầu học không được trước ngày ghi danh'
+        )}`
+      )
+    }
+
+
     const { data: classItem } = await supabase
       .from('classes')
       .select(`
@@ -200,13 +235,13 @@ export async function enrollStudent(
       `)
       .eq('id', classId)
       .maybeSingle()
-  
+
     if (!classItem) {
       redirect(
         '/admin/classes?error=Class%20not%20found'
       )
     }
-  
+
     if (
       ['COMPLETED', 'CANCELLED'].includes(
         classItem.status
@@ -216,19 +251,19 @@ export async function enrollStudent(
         `/admin/classes/${classId}?error=Students%20cannot%20be%20enrolled%20in%20a%20completed%20or%20cancelled%20class`
       )
     }
-  
+
     const { data: student } = await supabase
       .from('students')
       .select('id, status')
       .eq('id', studentId)
       .maybeSingle()
-  
+
     if (!student || student.status !== 'ACTIVE') {
       redirect(
         `/admin/classes/${classId}?error=Student%20is%20not%20active`
       )
     }
-  
+
     const { data: existingEnrollment } =
       await supabase
         .from('enrollments')
@@ -240,7 +275,7 @@ export async function enrollStudent(
         .eq('student_id', studentId)
         .eq('class_id', classId)
         .maybeSingle()
-  
+
     if (
       existingEnrollment &&
       ['ACTIVE', 'PAUSED'].includes(
@@ -251,7 +286,7 @@ export async function enrollStudent(
         `/admin/classes/${classId}?error=Student%20is%20already%20enrolled%20in%20this%20class`
       )
     }
-  
+
     const {
       count: occupiedSeats,
       error: capacityError,
@@ -263,18 +298,18 @@ export async function enrollStudent(
       })
       .eq('class_id', classId)
       .in('status', ['ACTIVE', 'PAUSED'])
-  
+
     if (capacityError) {
       console.error(
         'Capacity check error:',
         capacityError
       )
-  
+
       redirect(
         `/admin/classes/${classId}?error=Could%20not%20check%20class%20capacity`
       )
     }
-  
+
     if (
       (occupiedSeats ?? 0) >= classItem.capacity
     ) {
@@ -282,17 +317,17 @@ export async function enrollStudent(
         `/admin/classes/${classId}?error=Class%20is%20already%20full`
       )
     }
-  
+
     const { data: course } = await supabase
       .from('courses')
       .select('id, curriculum_id')
       .eq('id', classItem.course_id)
       .maybeSingle()
-  
+
     let academicEnrollmentId: string | null =
       existingEnrollment
         ?.student_curriculum_enrollment_id ?? null
-  
+
     if (course?.curriculum_id) {
       const {
         data: academicEnrollments,
@@ -309,15 +344,13 @@ export async function enrollStudent(
           ascending: false,
         })
         .limit(1)
-  
+
       academicEnrollmentId =
         academicEnrollments?.[0]?.id ?? null
     }
-  
-    const today = new Date()
-      .toISOString()
-      .slice(0, 10)
-  
+
+
+
     if (existingEnrollment) {
       const { error } = await supabase
         .from('enrollments')
@@ -325,17 +358,18 @@ export async function enrollStudent(
           student_curriculum_enrollment_id:
             academicEnrollmentId,
           status: 'ACTIVE',
-          started_at: today,
+          enrolled_at: enrolledAt,
+        started_at: startedAt,
           ended_at: null,
         })
         .eq('id', existingEnrollment.id)
-  
+
       if (error) {
         console.error(
           'Reactivate enrollment error:',
           error
         )
-  
+
         redirect(
           `/admin/classes/${classId}?error=Could%20not%20enroll%20student`
         )
@@ -348,55 +382,55 @@ export async function enrollStudent(
           class_id: classId,
           student_curriculum_enrollment_id:
             academicEnrollmentId,
-          enrolled_at: today,
-          started_at: today,
+            enrolled_at: enrolledAt,
+            started_at: startedAt,
           status: 'ACTIVE',
         })
-  
+
       if (error) {
         console.error(
           'Enroll student error:',
           error
         )
-  
+
         if (error.code === '23505') {
           redirect(
             `/admin/classes/${classId}?error=Student%20is%20already%20enrolled`
           )
         }
-  
+
         redirect(
           `/admin/classes/${classId}?error=Could%20not%20enroll%20student`
         )
       }
     }
-  
+
     revalidatePath('/admin/classes')
     revalidatePath(`/admin/classes/${classId}`)
     revalidatePath(`/admin/students/${studentId}`)
-  
+
     redirect(
       `/admin/classes/${classId}?success=Student%20enrolled%20successfully`
     )
   }
-  
+
   export async function withdrawStudent(
     formData: FormData
   ) {
     const supabase = await requireSuperAdmin()
-  
+
     const enrollmentId = String(
       formData.get('enrollment_id') ?? ''
     ).trim()
-  
+
     const classId = String(
       formData.get('class_id') ?? ''
     ).trim()
-  
+
     const studentId = String(
       formData.get('student_id') ?? ''
     ).trim()
-  
+
     if (
       !enrollmentId ||
       !classId ||
@@ -406,11 +440,11 @@ export async function enrollStudent(
         `/admin/classes/${classId}?error=Invalid%20student%20enrollment`
       )
     }
-  
+
     const today = new Date()
       .toISOString()
       .slice(0, 10)
-  
+
     const { error } = await supabase
       .from('enrollments')
       .update({
@@ -421,22 +455,22 @@ export async function enrollStudent(
       .eq('class_id', classId)
       .eq('student_id', studentId)
       .in('status', ['ACTIVE', 'PAUSED'])
-  
+
     if (error) {
       console.error(
         'Withdraw student error:',
         error
       )
-  
+
       redirect(
         `/admin/classes/${classId}?error=Could%20not%20withdraw%20student`
       )
     }
-  
+
     revalidatePath('/admin/classes')
     revalidatePath(`/admin/classes/${classId}`)
     revalidatePath(`/admin/students/${studentId}`)
-  
+
     redirect(
       `/admin/classes/${classId}?success=Student%20withdrawn%20successfully`
     )

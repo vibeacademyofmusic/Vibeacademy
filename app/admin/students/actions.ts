@@ -44,13 +44,36 @@ export async function createStudent(formData: FormData) {
     formData.get('default_branch_id') ?? ''
   ).trim()
 
-  if (!studentCode || !fullName || !branchId) {
+  const admissionDate = String(
+    formData.get('admission_date') ?? ''
+  ).trim()
+
+  if (
+    !studentCode ||
+    !fullName ||
+    !branchId ||
+    !admissionDate
+  ) {
     redirect(
-      '/admin/students?error=Student%20code%2C%20name%20and%20branch%20are%20required'
+      '/admin/students?error=' +
+        encodeURIComponent(
+          'Mã học sinh, họ tên, chi nhánh và ngày đăng ký là bắt buộc'
+        )
     )
   }
 
-  const today = new Date().toISOString().slice(0, 10)
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(
+      admissionDate
+    )
+  ) {
+    redirect(
+      '/admin/students?error=' +
+        encodeURIComponent(
+          'Ngày đăng ký không hợp lệ'
+        )
+    )
+  }
 
   const { error } = await supabase
     .from('students')
@@ -58,21 +81,30 @@ export async function createStudent(formData: FormData) {
       student_code: studentCode,
       full_name: fullName,
       default_branch_id: branchId,
-      admission_date: today,
+      admission_date: admissionDate,
       status: 'ACTIVE',
     })
 
   if (error) {
-    console.error('Create student error:', error)
+    console.error(
+      'Create student error:',
+      error
+    )
 
     if (error.code === '23505') {
       redirect(
-        '/admin/students?error=Student%20code%20already%20exists'
+        '/admin/students?error=' +
+          encodeURIComponent(
+            'Mã học sinh đã tồn tại'
+          )
       )
     }
 
     redirect(
-      '/admin/students?error=Could%20not%20create%20student'
+      '/admin/students?error=' +
+        encodeURIComponent(
+          'Không thể tạo học sinh'
+        )
     )
   }
 
@@ -80,7 +112,10 @@ export async function createStudent(formData: FormData) {
   revalidatePath('/admin/students')
 
   redirect(
-    '/admin/students?success=Student%20created%20successfully'
+    '/admin/students?success=' +
+      encodeURIComponent(
+        'Đã tạo học sinh thành công'
+      )
   )
 }
 

@@ -17,6 +17,12 @@ export default async function StudentEnrollmentSection({
   capacity,
 }: StudentEnrollmentSectionProps) {
   const supabase = await createClient()
+  const todayInVietnam = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date())
 
   const { data: classEnrollments } = await supabase
     .from('enrollments')
@@ -143,13 +149,23 @@ export default async function StudentEnrollmentSection({
                       {enrollment.status}
                     </span>
 
-                    <span className="text-xs text-gray-400">
-                      Since:{' '}
-                      {enrollment.started_at ??
-                        enrollment.enrolled_at}
-                    </span>
-                  </div>
-                </div>
+                    <div className="text-xs text-gray-400">
+  <p>
+    Ngày ghi danh:{' '}
+    <span className="font-medium text-gray-600">
+      {enrollment.enrolled_at}
+    </span>
+  </p>
+
+  <p className="mt-1">
+    Ngày bắt đầu học:{' '}
+    <span className="font-semibold text-gray-700">
+      {enrollment.started_at ?? 'Chưa bắt đầu'}
+    </span>
+  </p>
+</div>
+</div>
+</div>
 
                 <form action={withdrawStudent}>
                   <input
@@ -230,6 +246,51 @@ export default async function StudentEnrollmentSection({
                 </option>
               ))}
             </select>
+            <div className="grid gap-3 sm:grid-cols-2">
+  <div>
+    <label
+      htmlFor="enrolled_at"
+      className="mb-1.5 block text-sm font-medium text-gray-700"
+    >
+      Ngày ghi danh lớp *
+    </label>
+
+    <input
+      id="enrolled_at"
+      name="enrolled_at"
+      type="date"
+      required
+      defaultValue={todayInVietnam}
+      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
+    />
+
+    <p className="mt-1 text-xs text-gray-500">
+      Ngày học sinh được đăng ký vào lớp.
+    </p>
+  </div>
+
+  <div>
+    <label
+      htmlFor="started_at"
+      className="mb-1.5 block text-sm font-medium text-gray-700"
+    >
+      Ngày bắt đầu học *
+    </label>
+
+    <input
+      id="started_at"
+      name="started_at"
+      type="date"
+      required
+      defaultValue={todayInVietnam}
+      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
+    />
+
+    <p className="mt-1 text-xs text-gray-500">
+      Đây là mốc bắt đầu học và tính học phí.
+    </p>
+  </div>
+</div>
 
             <button
               type="submit"

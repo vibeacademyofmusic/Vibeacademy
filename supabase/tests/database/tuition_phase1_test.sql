@@ -308,7 +308,7 @@ select is(
 
 
 -- =========================================================
--- 9. PLAN SNAPSHOT
+-- 9. PLAN / BRANCH / PRICE SNAPSHOT
 -- =========================================================
 
 select ok(
@@ -317,11 +317,15 @@ select ok(
       plan_code_snapshot = 'VIBE_3_MONTHS'
       and plan_name_snapshot = 'VIBE 3 MONTHS'
       and duration_months_snapshot = 3
-      and amount = 3000000
+      and branch_code_snapshot = 'TUITION-TEST-BRANCH'
+      and list_price = 4500000
+      and discount_type = 'NONE'
+      and discount_amount = 0
+      and amount = 4500000
     from public.enrollment_tuition
     where id = 'b1000000-0000-0000-0000-000000000001'
   ),
-  'tuition term snapshots plan and agreed amount'
+  'tuition term snapshots plan, branch, list price, and final amount'
 );
 
 
@@ -434,7 +438,7 @@ select throws_ok(
     where id = 'b1000000-0000-0000-0000-000000000001'
   $$,
   'P0001',
-  'Core tuition term fields are immutable',
+  'Core tuition term snapshots are immutable',
   'rejects rewriting core tuition history'
 );
 

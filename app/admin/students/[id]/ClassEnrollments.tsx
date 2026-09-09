@@ -75,13 +75,23 @@ export default async function ClassEnrollments({
                     </p>
                   </div>
 
-                  <Link
-                    href={`/admin/enrollments/${row.id}/pauses`}
-                    className="text-sm font-medium text-blue-700 underline"
-                  >
-                    Quản lý bảo lưu / lịch sử
-                  </Link>
-                </div>
+
+                    <div className="flex flex-col items-end gap-2">
+                    <Link
+                      href={`/admin/enrollments/${row.id}/tuition`}
+                      className="text-sm font-medium text-blue-700 underline"
+                    >
+                      Quản lý học phí / Gia hạn
+                    </Link>
+
+                    <Link
+                      href={`/admin/enrollments/${row.id}/pauses`}
+                      className="text-sm font-medium text-blue-700 underline"
+                    >
+                      Quản lý bảo lưu / lịch sử
+                    </Link>
+                  </div>
+                  </div>
 
                 <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
                   <div>

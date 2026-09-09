@@ -24,6 +24,12 @@ type StudentsPageProps = {
     const q = (params.q ?? '').trim()
     const branch = (params.branch ?? '').trim()
     const status = (params.status ?? '').trim()
+    const todayInVietnam = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date())
   
     const supabase = await createClient()
   
@@ -193,7 +199,28 @@ let studentsQuery = supabase
                   ))}
               </select>
             </div>
+            <div>
+  <label
+    htmlFor="admission_date"
+    className="mb-2 block text-sm font-medium text-gray-700"
+  >
+    Ngày đăng ký tại Vibe *
+  </label>
 
+  <input
+    id="admission_date"
+    name="admission_date"
+    type="date"
+    required
+    defaultValue={todayInVietnam}
+    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
+  />
+
+  <p className="mt-1.5 text-xs text-gray-500">
+    Ngày học sinh đăng ký hoặc được tiếp nhận vào Vibe Academy.
+    Đây chưa phải là ngày bắt đầu học của từng lớp.
+  </p>
+</div>
             <button
               type="submit"
               className="w-full rounded-lg bg-gray-950 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800"
