@@ -33,7 +33,7 @@ type StudentsPageProps = {
   
     const supabase = await createClient()
   
-    const { data: branches } = await supabase
+    const branchesQuery = supabase
   .from('branches')
   .select('id, code, name, status')
   .order('name')
@@ -78,10 +78,8 @@ let studentsQuery = supabase
     )
   }
   
-  const {
-    data: students,
-    error: studentsError,
-  } = await studentsQuery 
+  const [{ data: branches }, { data: students, error: studentsError }] =
+    await Promise.all([branchesQuery, studentsQuery])
   const branchMap = new Map(
     (branches ?? []).map((branch) => [
       branch.id,
