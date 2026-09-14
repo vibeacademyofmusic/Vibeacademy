@@ -343,3 +343,160 @@ const ACADEMIC_PROGRESS_STATUSES = [
   
     revalidatePath(`/admin/students/${studentId}`)
   }
+  export async function assignStudentAcademicProgram(
+    formData: FormData
+  ) {
+    const supabase = await requireSuperAdmin()
+
+    const studentId = String(
+      formData.get('student_id') ?? ''
+    ).trim()
+
+    const curriculumId = String(
+      formData.get('curriculum_id') ?? ''
+    ).trim()
+
+    const levelId = String(
+      formData.get('level_id') ?? ''
+    ).trim()
+
+    const startedAt = String(
+      formData.get('started_at') ?? ''
+    ).trim()
+
+    const isPrimary =
+      formData.get('is_primary') === 'on'
+
+    const returnPath = `/admin/students/${studentId}`
+
+    if (
+      !studentId ||
+      !curriculumId ||
+      !levelId ||
+      !startedAt
+    ) {
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          "Vui lòng chọn học viên, chương trình, bậc học và ngày bắt đầu"
+        )}`
+      )
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startedAt)) {
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          "Ngày bắt đầu học không hợp lệ"
+        )}`
+      )
+    }
+
+    const { error } = await supabase.rpc(
+      'assign_student_academic_program',
+      {
+        p_student_id: studentId,
+        p_curriculum_id: curriculumId,
+        p_level_id: levelId,
+        p_started_at: startedAt,
+        p_is_primary: isPrimary,
+      }
+    )
+
+    if (error) {
+      console.error(
+        'Assign academic program error:',
+        error
+      )
+
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          error.message ||
+            "Không thể gán chương trình học"
+        )}`
+      )
+    }
+
+    revalidatePath('/admin/students')
+    revalidatePath(returnPath)
+
+    redirect(
+      `${returnPath}?success=${encodeURIComponent(
+        "Đã gán chương trình học"
+      )}`
+    )
+  }
+  export async function startStudentAcademicLevel(
+    formData: FormData
+  ) {
+    const supabase = await requireSuperAdmin()
+
+    const studentId = String(
+      formData.get('student_id') ?? ''
+    ).trim()
+
+    const enrollmentId = String(
+      formData.get('enrollment_id') ?? ''
+    ).trim()
+
+    const levelId = String(
+      formData.get('level_id') ?? ''
+    ).trim()
+
+    const startedAt = String(
+      formData.get('started_at') ?? ''
+    ).trim()
+
+    const returnPath = `/admin/students/${studentId}`
+
+    if (
+      !studentId ||
+      !enrollmentId ||
+      !levelId ||
+      !startedAt
+    ) {
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          "Vui lòng chọn ghi danh, bậc học và ngày bắt đầu"
+        )}`
+      )
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startedAt)) {
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          "Ngày bắt đầu học không hợp lệ"
+        )}`
+      )
+    }
+
+    const { error } = await supabase.rpc(
+      'start_student_academic_level',
+      {
+        p_enrollment_id: enrollmentId,
+        p_level_id: levelId,
+        p_started_at: startedAt,
+      }
+    )
+
+    if (error) {
+      console.error(
+        'Start academic level error:',
+        error
+      )
+
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          error.message ||
+            "Không thể bắt đầu bậc học"
+        )}`
+      )
+    }
+
+    revalidatePath('/admin/students')
+    revalidatePath(returnPath)
+
+    redirect(
+      `${returnPath}?success=${encodeURIComponent(
+        "Đã bắt đầu bậc học"
+      )}`
+    )
+  }
