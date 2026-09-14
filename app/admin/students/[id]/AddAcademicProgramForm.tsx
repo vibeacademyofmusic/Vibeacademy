@@ -7,9 +7,8 @@ type Props = {
   activeCurriculums: { id: string; name: string }[]
   activeLevels: { id: string; curriculum_id: string; name: string }[]
   academicProgramEnrollments: { curriculum_id: string }[]
-  today: string
 }
-export default function AddAcademicProgramForm({ student, activeCurriculums, activeLevels, academicProgramEnrollments, today }: Props) {
+export default function AddAcademicProgramForm({ student, activeCurriculums, activeLevels, academicProgramEnrollments }: Props) {
   const [curriculumId, setCurriculumId] = useState('')
   const assignedCurriculumIds = new Set(academicProgramEnrollments.map(item => item.curriculum_id))
   const hasAvailableAcademicProgram = activeCurriculums.some(item => !assignedCurriculumIds.has(item.id))
@@ -115,7 +114,6 @@ return (            <div className="rounded-xl border border-gray-200 bg-white p
       <input
         type="date"
         name="started_at"
-        max={today}
         required
         className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
       />

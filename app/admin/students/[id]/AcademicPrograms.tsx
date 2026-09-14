@@ -67,7 +67,7 @@ const { data: activeLevels, error: activeLevelsError } = await supabase
   if (activeLevelsError) throw activeLevelsError
 
 
-return <AddAcademicProgramForm student={student} activeCurriculums={activeCurriculums ?? []} activeLevels={activeLevels ?? []} academicProgramEnrollments={academicProgramEnrollments ?? []} today={vietnamToday()} />
+return <AddAcademicProgramForm student={student} activeCurriculums={activeCurriculums ?? []} activeLevels={activeLevels ?? []} academicProgramEnrollments={academicProgramEnrollments ?? []} />
 }
 async function ProgramJourney({ student, enrollment }: { student: { id: string }; enrollment: Enrollment }) {
   const supabase = await createClient()
@@ -87,7 +87,7 @@ async function ProgramJourney({ student, enrollment }: { student: { id: string }
 
   const { data: currentLevelProgress, error: currentLevelProgressError } = currentLevel ? await supabase
     .from('student_level_progress')
-    .select('id, status')
+    .select('id, status, started_at')
     .eq('enrollment_id', enrollment.id)
     .eq('level_id', currentLevel.id)
     .maybeSingle() : { data: null, error: null }
@@ -286,7 +286,16 @@ const { data: academicRecordComponents, error: academicRecordComponentsError } =
       components: item.components.map(c => ({ ...c.component, progressStatus: c.status })) })))
   const inProgressLevels = (academicRecordLevelProgress ?? []).filter(row => row.status === 'IN_PROGRESS')
   const inconsistent = inProgressLevels.length > 1 || (inProgressLevels.length === 1 && inProgressLevels[0].level_id !== enrollment.current_level_id)
-  const canEdit = !inconsistent && enrollment.status === 'ACTIVE' && currentLevelProgress?.status === 'IN_PROGRESS'
+  const isCurrentLevelScheduled =
+    currentLevelProgress?.status === 'IN_PROGRESS' &&
+    !!currentLevelProgress.started_at &&
+    currentLevelProgress.started_at > vietnamToday()
+
+  const canEdit =
+    !inconsistent &&
+    enrollment.status === 'ACTIVE' &&
+    currentLevelProgress?.status === 'IN_PROGRESS' &&
+    !isCurrentLevelScheduled
 return (<div className="space-y-5">            <div className="rounded-xl border border-gray-200 bg-white p-5">
   <p className="text-sm font-semibold text-gray-950">
     Lộ trình học tập — {curriculum?.name} {enrollment.is_primary ? "· Chương trình chính" : ""}
@@ -340,7 +349,6 @@ return (<div className="space-y-5">            <div className="rounded-xl border
         <input
           type="date"
           name="started_at"
-          max={vietnamToday()}
           required
           className="rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
         />
@@ -357,7 +365,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 )}
   <p className="mt-2 text-sm text-gray-500">
     {curriculum?.name ?? "Chưa có chương trình"} •{' '}
-    {currentLevel?.name ?? "Chưa có bậc học"} — {displayLabel(currentLevelProgress?.status ?? "NOT_STARTED")}
+    {currentLevel?.name ?? "Chưa có bậc học"} — {isCurrentLevelScheduled ? "Đã lên lịch" : displayLabel(currentLevelProgress?.status ?? "NOT_STARTED")}
   </p>
 
   {inconsistent && <p role="alert" className="mt-2 text-sm text-red-700">Dữ liệu bậc đang học không khớp. Cần kiểm tra trước khi cập nhật.</p>}
@@ -618,7 +626,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
         return (
           <details
             key={levelProgress.id}
-            open={levelProgress.status === "IN_PROGRESS"}
+            open={levelProgress.status === "IN_PROGRESS" && !(levelProgress.started_at && levelProgress.started_at > vietnamToday())}
             className="rounded-lg border border-gray-200"
           >
             <summary className="cursor-pointer list-none px-4 py-4">
@@ -659,12 +667,16 @@ return (<div className="space-y-5">            <div className="rounded-xl border
                   className={
                     levelProgress.status === "COMPLETED"
                       ? "w-fit rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700"
-                      : "w-fit rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                      : levelProgress.started_at && levelProgress.started_at > vietnamToday()
+                        ? "w-fit rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"
+                        : "w-fit rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
                   }
                 >
                   {levelProgress.status === "COMPLETED"
                     ? "Đã hoàn thành"
-                    : "Đang học"}
+                    : levelProgress.started_at && levelProgress.started_at > vietnamToday()
+                      ? "Đã lên lịch"
+                      : "Đang học"}
                 </span>
               </div>
             </summary>

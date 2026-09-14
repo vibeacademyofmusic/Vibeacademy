@@ -4,7 +4,7 @@ select no_plan();
 -- Deterministic identifiers and transaction-scoped fixtures only.
 create function pg_temp.aid(text) returns uuid language sql immutable as $$ select md5('academic-hardening-' || $1)::uuid $$;
 insert into public.curriculums(id,code,name) values (pg_temp.aid('c'),'HARDEN-C','Hardening'),(pg_temp.aid('other'),'HARDEN-OTHER','Other');
-insert into public.students(id,student_code,full_name) select pg_temp.aid(s), 'HARDEN-'||s,s from unnest(array['A','B','C','D']) s;
+insert into public.students(id,student_code,full_name) select pg_temp.aid(s), 'HARDEN-'||s,s from unnest(array['A','B','C','D','E']) s;
 insert into public.curriculum_levels(id,curriculum_id,code,name,sequence_no)
 select pg_temp.aid('l'||n),pg_temp.aid('c'),'L'||n,'Grade '||n,n from generate_series(1,4) n;
 insert into public.curriculum_subjects(id,level_id,family_code,code,name,completion_rule)
@@ -26,7 +26,7 @@ create function pg_temp.pass(text,int) returns void language sql as $$ update pu
 
 -- Deliberately use a session timezone whose calendar date is ahead of Vietnam.
 set local timezone = 'Pacific/Kiritimati';
-select throws_ok($$select public.assign_student_academic_program(pg_temp.aid('A'),pg_temp.aid('c'),pg_temp.aid('l1'),(now() at time zone 'Asia/Ho_Chi_Minh')::date+1)$$,'P0001','Academic assignment start date cannot be in the future','future assignment uses Vietnam date');
+select lives_ok($$select public.assign_student_academic_program(pg_temp.aid('E'),pg_temp.aid('c'),pg_temp.aid('l1'),(now() at time zone 'Asia/Ho_Chi_Minh')::date+1)$$,'future assignment accepted using Vietnam date');
 select lives_ok($$select public.assign_student_academic_program(pg_temp.aid('A'),pg_temp.aid('c'),pg_temp.aid('l1'),(now() at time zone 'Asia/Ho_Chi_Minh')::date)$$,'Vietnam today accepted independent of session timezone');
 select lives_ok($$select public.assign_student_academic_program(pg_temp.aid('B'),pg_temp.aid('c'),pg_temp.aid('l1'),(now() at time zone 'Asia/Ho_Chi_Minh')::date)$$,'second student assigned independently');
 select throws_ok($$select public.assign_student_academic_program(pg_temp.aid('A'),pg_temp.aid('c'),pg_temp.aid('l1'),current_date-1)$$,'P0001','Student already has an active enrollment in this curriculum','duplicate active enrollment rejected');
