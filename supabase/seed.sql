@@ -1,0 +1,3 @@
+-- System roles belong to migrations (20260914170000_seed_system_roles.sql).
+-- Provision a local admin with: npm run local:bootstrap-admin
+-- Intentionally no auth users, passwords, role assignments, or duplicate role seeds.
