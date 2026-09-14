@@ -1,6 +1,6 @@
 import { displayLabel } from '@/lib/display'
 import { createClient } from '@/lib/supabase/server'
-import { updateComponentProgressStatus, updateDirectSubjectProgressStatus, startStudentAcademicLevel } from '../actions'
+import { updateComponentProgressStatus, updateDirectSubjectProgressStatus, startStudentAcademicLevel, updateStudentAcademicEnrollmentStartDate } from '../actions'
 import { gradeProgressPercent } from './academic-progress'
 import AddAcademicProgramForm from './AddAcademicProgramForm'
 
@@ -301,6 +301,50 @@ return (<div className="space-y-5">            <div className="rounded-xl border
     Lộ trình học tập — {curriculum?.name} {enrollment.is_primary ? "· Chương trình chính" : ""}
     <span className="ml-2 text-sm text-gray-500">{displayLabel(enrollment.status)}</span>
   </p>
+
+  <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+    <form
+      action={updateStudentAcademicEnrollmentStartDate}
+      className="flex flex-col gap-3 sm:flex-row sm:items-end"
+    >
+      <input
+        type="hidden"
+        name="student_id"
+        value={student.id}
+      />
+      <input
+        type="hidden"
+        name="enrollment_id"
+        value={enrollment.id}
+      />
+
+      <div>
+        <label className="mb-1.5 block text-xs font-medium text-gray-600">
+          Ngày bắt đầu chương trình
+        </label>
+        <input
+          type="date"
+          name="started_at"
+          defaultValue={enrollment.started_at}
+          required
+          disabled={enrollment.status !== 'ACTIVE'}
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={enrollment.status !== 'ACTIVE'}
+        className="rounded-lg bg-gray-950 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        Lưu ngày bắt đầu
+      </button>
+    </form>
+
+    <p className="mt-2 text-xs text-gray-500">
+      Chỉ có thể thay đổi khi chương trình chưa phát sinh tiến độ học tập thực tế.
+    </p>
+  </div>
   {availableLevel && availableLevelProgress && (
   <div className="rounded-xl border border-gray-200 bg-white p-5">
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">

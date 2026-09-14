@@ -504,3 +504,71 @@ const ACADEMIC_PROGRESS_STATUSES = [
       )}`
     )
   }
+
+
+export async function updateStudentAcademicEnrollmentStartDate(
+  formData: FormData
+) {
+  const supabase = await requireSuperAdmin()
+
+  const studentId = String(
+    formData.get('student_id') ?? ''
+  ).trim()
+
+  const enrollmentId = String(
+    formData.get('enrollment_id') ?? ''
+  ).trim()
+
+  const startedAt = String(
+    formData.get('started_at') ?? ''
+  ).trim()
+
+  const returnPath = `/admin/students/${studentId}`
+
+  if (!studentId || !enrollmentId || !startedAt) {
+    redirect(
+      `${returnPath}?error=${encodeURIComponent(
+        "Vui lòng nhập ngày bắt đầu chương trình"
+      )}`
+    )
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(startedAt)) {
+    redirect(
+      `${returnPath}?error=${encodeURIComponent(
+        "Ngày bắt đầu chương trình không hợp lệ"
+      )}`
+    )
+  }
+
+  const { error } = await supabase.rpc(
+    'update_student_academic_enrollment_start_date',
+    {
+      p_enrollment_id: enrollmentId,
+      p_started_at: startedAt,
+    }
+  )
+
+  if (error) {
+    console.error(
+      'Update academic enrollment start date error:',
+      error
+    )
+
+    redirect(
+      `${returnPath}?error=${encodeURIComponent(
+        error.message ||
+          "Không thể cập nhật ngày bắt đầu chương trình"
+      )}`
+    )
+  }
+
+  revalidatePath('/admin/students')
+  revalidatePath(returnPath)
+
+  redirect(
+    `${returnPath}?success=${encodeURIComponent(
+      "Đã cập nhật ngày bắt đầu chương trình"
+    )}`
+  )
+}
