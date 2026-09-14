@@ -70,12 +70,13 @@ export default async function AdminLayout({
           <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
             {navigation.map((item) => (
               <Link
-                key={item.href}
-                href={item.href}
-                className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 hover:text-gray-950"
-              >
-                {item.name}
-              </Link>
+              key={item.href}
+              href={item.href}
+              prefetch={false}
+              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 hover:text-gray-950"
+            >
+              {item.name}
+            </Link>
             ))}
           </nav>
 
@@ -143,6 +144,7 @@ export default async function AdminLayout({
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 className="rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-950"
               >
                 {item.name}
