@@ -56,7 +56,7 @@ export default async function AdminLayout({
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-gray-200 bg-white lg:block">
         <div className="flex h-full flex-col">
           <div className="border-b border-gray-200 px-6 py-6">
-            <Link href="/admin">
+          <Link href="/admin" prefetch={false}>
               <h1 className="text-xl font-bold text-gray-900">
                 Vibe Academy
               </h1>

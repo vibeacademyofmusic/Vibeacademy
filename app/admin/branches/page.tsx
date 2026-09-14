@@ -232,9 +232,10 @@ export default async function BranchesPage({
 
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/admin/branches/${branch.id}`}
-                            className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                        <Link
+                          href={`/admin/branches/${branch.id}`}
+                          prefetch={false}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
                           >
                             Edit
                           </Link>
