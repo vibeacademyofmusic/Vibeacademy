@@ -6,16 +6,16 @@ import { logout } from '@/app/login/actions'
 import { createClient } from '@/lib/supabase/server'
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin' },
-  { name: 'Branches', href: '/admin/branches' },
-  { name: 'Students', href: '/admin/students' },
-  { name: 'Teachers', href: '/admin/teachers' },
-  { name: 'Academic', href: '/admin/academic' },
-  { name: 'Courses', href: '/admin/courses' },
-  { name: 'Classes', href: '/admin/classes' },
-  { name: 'Rooms', href: '/admin/rooms' },
-  { name: 'Schedule', href: '/admin/schedule' },
-  { name: 'Attendance', href: '/admin/attendance' },
+  { name: "Bảng điều khiển", href: '/admin' },
+  { name: "Chi nhánh", href: '/admin/branches' },
+  { name: "Học viên", href: '/admin/students' },
+  { name: "Giáo viên", href: '/admin/teachers' },
+  { name: "Đào tạo", href: '/admin/academic' },
+  { name: "Khóa học", href: '/admin/courses' },
+  { name: "Lớp học", href: '/admin/classes' },
+  { name: "Phòng học", href: '/admin/rooms' },
+  { name: "Lịch học", href: '/admin/schedule' },
+  { name: "Điểm danh", href: '/admin/attendance' },
 ]
 
 export default async function AdminLayout({
@@ -40,7 +40,7 @@ export default async function AdminLayout({
   )
 
   if (roleError || !isSuperAdmin) {
-    redirect('/login?error=Unauthorized')
+    redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
   }
 
   const userId = claimsData.claims.sub
@@ -63,7 +63,7 @@ export default async function AdminLayout({
             </Link>
 
             <p className="mt-1 text-xs text-gray-500">
-              Management System
+              Hệ thống quản lý
             </p>
           </div>
 
@@ -81,14 +81,14 @@ export default async function AdminLayout({
 
           <div className="border-t border-gray-200 p-4">
             <div className="mb-4 px-2">
-              <p className="text-xs text-gray-500">Signed in as</p>
+              <p className="text-xs text-gray-500">Đăng nhập với tài khoản</p>
 
               <p className="mt-1 truncate text-sm font-medium text-gray-900">
-                {profile?.full_name ?? 'Administrator'}
+                {profile?.full_name ?? "Quản trị viên"}
               </p>
 
               <p className="mt-1 text-xs font-medium text-gray-400">
-                SUPER_ADMIN
+                Quản trị viên cấp cao
               </p>
             </div>
 
@@ -97,7 +97,7 @@ export default async function AdminLayout({
                 type="submit"
                 className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
               >
-                Sign out
+                Đăng xuất
               </button>
             </form>
           </div>
@@ -109,17 +109,17 @@ export default async function AdminLayout({
           <div className="mx-auto flex max-w-7xl items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-900">
-                Vibe Academy System
+                Hệ thống Vibe Academy
               </p>
 
               <p className="text-xs text-gray-500">
-                Administration
+                Quản trị
               </p>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="hidden text-sm text-gray-500 sm:block">
-                {profile?.full_name ?? 'Administrator'}
+                {profile?.full_name ?? "Quản trị viên"}
               </div>
 
               <form action={logout} className="lg:hidden">
@@ -127,7 +127,7 @@ export default async function AdminLayout({
                   type="submit"
                   className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 >
-                  Sign out
+                  Đăng xuất
                 </button>
               </form>
             </div>
@@ -135,7 +135,7 @@ export default async function AdminLayout({
         </header>
 
         <nav
-          aria-label="Admin navigation"
+          aria-label="Điều hướng quản trị"
           className="overflow-x-auto border-b border-gray-200 bg-white px-4 py-3 lg:hidden"
         >
           <div className="flex min-w-max gap-2">

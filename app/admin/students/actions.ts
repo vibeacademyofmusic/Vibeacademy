@@ -21,7 +21,7 @@ async function requireSuperAdmin() {
     })
 
   if (roleError || !isSuperAdmin) {
-    redirect('/login?error=Unauthorized')
+    redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
   }
 
   return supabase
@@ -198,12 +198,12 @@ export async function updateStudent(formData: FormData) {
 
     if (error.code === '23505') {
       redirect(
-        `/admin/students/${id}?error=Student%20code%20already%20exists`
+        `/admin/students/${id}?error=M%C3%A3%20h%E1%BB%8Dc%20vi%C3%AAn%20%C4%91%C3%A3%20t%E1%BB%93n%20t%E1%BA%A1i`
       )
     }
 
     redirect(
-      `/admin/students/${id}?error=Could%20not%20update%20student`
+      `/admin/students/${id}?error=Kh%C3%B4ng%20th%E1%BB%83%20c%E1%BA%ADp%20nh%E1%BA%ADt%20h%E1%BB%8Dc%20vi%C3%AAn`
     )
   }
 
@@ -212,7 +212,7 @@ export async function updateStudent(formData: FormData) {
   revalidatePath(`/admin/students/${id}`)
 
   redirect(
-    '/admin/students?success=Student%20updated%20successfully'
+    '/admin/students?success=%C4%90%C3%A3%20c%E1%BA%ADp%20nh%E1%BA%ADt%20h%E1%BB%8Dc%20vi%C3%AAn'
   )
 }
 
@@ -222,9 +222,11 @@ export async function setStudentStatus(formData: FormData) {
   const id = String(formData.get('id') ?? '').trim()
   const status = String(formData.get('status') ?? '').trim()
 
+
+
   if (!id || !['ACTIVE', 'INACTIVE'].includes(status)) {
     redirect(
-      '/admin/students?error=Invalid%20student%20status'
+      '/admin/students?error=Tr%E1%BA%A1ng%20th%C3%A1i%20h%E1%BB%8Dc%20vi%C3%AAn%20kh%C3%B4ng%20h%E1%BB%A3p%20l%E1%BB%87'
     )
   }
 
@@ -237,13 +239,13 @@ export async function setStudentStatus(formData: FormData) {
     console.error('Student status error:', error)
 
     redirect(
-      '/admin/students?error=Could%20not%20change%20student%20status'
+      '/admin/students?error=Kh%C3%B4ng%20th%E1%BB%83%20thay%20%C4%91%E1%BB%95i%20tr%E1%BA%A1ng%20th%C3%A1i%20h%E1%BB%8Dc%20vi%C3%AAn'
     )
   }
 
   revalidatePath('/admin')
   revalidatePath('/admin/students')
-} 
+}
 const ACADEMIC_PROGRESS_STATUSES = [
     'NOT_STARTED',
     'IN_PROGRESS',
@@ -251,24 +253,26 @@ const ACADEMIC_PROGRESS_STATUSES = [
     'NOT_PASSED',
     'EXEMPT',
   ] as const
-  
+
   export async function updateComponentProgressStatus(
     formData: FormData
   ) {
     const supabase = await requireSuperAdmin()
-  
+
     const progressId = String(
       formData.get('progress_id') ?? ''
     ).trim()
-  
+
     const studentId = String(
       formData.get('student_id') ?? ''
     ).trim()
-  
+
     const status = String(
       formData.get('status') ?? ''
     ).trim()
-  
+
+
+
     if (
       !progressId ||
       !studentId ||
@@ -276,45 +280,45 @@ const ACADEMIC_PROGRESS_STATUSES = [
         status as (typeof ACADEMIC_PROGRESS_STATUSES)[number]
       )
     ) {
-      throw new Error('Invalid component progress update')
+      throw new Error("Thông tin cập nhật tiến độ môn học không hợp lệ")
     }
-  
+
     const { error } = await supabase
       .from('student_component_progress')
       .update({ status })
       .eq('id', progressId)
-  
+
     if (error) {
       console.error(
         'Component progress update error:',
         error
       )
-  
+
       throw new Error(
-        'Could not update component progress'
+        "Không thể cập nhật tiến độ học phần"
       )
     }
-  
+
     revalidatePath(`/admin/students/${studentId}`)
   }
-  
+
   export async function updateDirectSubjectProgressStatus(
     formData: FormData
   ) {
     const supabase = await requireSuperAdmin()
-  
+
     const progressId = String(
       formData.get('progress_id') ?? ''
     ).trim()
-  
+
     const studentId = String(
       formData.get('student_id') ?? ''
     ).trim()
-  
+
     const status = String(
       formData.get('status') ?? ''
     ).trim()
-  
+
     if (
       !progressId ||
       !studentId ||
@@ -322,25 +326,25 @@ const ACADEMIC_PROGRESS_STATUSES = [
         status as (typeof ACADEMIC_PROGRESS_STATUSES)[number]
       )
     ) {
-      throw new Error('Invalid subject progress update')
+      throw new Error("Thông tin cập nhật tiến độ môn học không hợp lệ")
     }
-  
+
     const { error } = await supabase
       .from('student_subject_progress')
       .update({ status })
       .eq('id', progressId)
-  
+
     if (error) {
       console.error(
         'Subject progress update error:',
         error
       )
-  
+
       throw new Error(
-        'Could not update subject progress'
+        "Không thể cập nhật tiến độ môn học"
       )
     }
-  
+
     revalidatePath(`/admin/students/${studentId}`)
   }
   export async function assignStudentAcademicProgram(

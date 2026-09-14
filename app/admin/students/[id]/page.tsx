@@ -1,3 +1,4 @@
+import { displayLabel } from '@/lib/display'
 import StudentJournals from '@/app/admin/learning-journals/StudentJournals'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -58,14 +59,14 @@ export default async function EditStudentPage({
             href="/admin/students"
             className="text-sm font-medium text-gray-500 hover:text-gray-900"
           >
-            ← Back to Students
+            ← Quay lại danh sách học viên
           </Link>
 
           <div className="mt-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  Student Profile
+                  Hồ sơ học viên
                 </p>
 
                 <h1 className="mt-1 text-3xl font-bold text-gray-950">
@@ -84,7 +85,7 @@ export default async function EditStudentPage({
                         : 'bg-gray-100 text-gray-600'
                     }`}
                   >
-                    {student.status}
+                    {displayLabel(student.status)}
                   </span>
                 </div>
               </div>
@@ -113,11 +114,11 @@ export default async function EditStudentPage({
             <StudentJournals studentId={student.id} />
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-950">
-                Edit Profile
+                Chỉnh sửa hồ sơ
               </h2>
-      
+
               <p className="mt-1 text-sm text-gray-500">
-                Update personal and contact information.
+                Cập nhật thông tin cá nhân và liên hệ.
               </p>
             </div>
 
@@ -136,7 +137,7 @@ export default async function EditStudentPage({
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Student Code *
+              Mã học viên *
             </label>
 
             <input
@@ -149,7 +150,7 @@ export default async function EditStudentPage({
 
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Full Name *
+              Họ và tên *
             </label>
 
             <input
@@ -163,7 +164,7 @@ export default async function EditStudentPage({
 
         <div>
           <label className="mb-2 block text-sm font-medium">
-            Preferred Name
+            Tên thường gọi
           </label>
 
           <input
@@ -175,7 +176,7 @@ export default async function EditStudentPage({
 
         <div>
           <label className="mb-2 block text-sm font-medium">
-            Branch *
+            Chi nhánh *
           </label>
 
           <select
@@ -198,7 +199,7 @@ export default async function EditStudentPage({
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Date of Birth
+              Ngày sinh
             </label>
 
             <input
@@ -211,7 +212,7 @@ export default async function EditStudentPage({
 
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Gender
+              Giới tính
             </label>
 
             <select
@@ -219,12 +220,12 @@ export default async function EditStudentPage({
               defaultValue={student.gender ?? ''}
               className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5"
             >
-              <option value="">Not specified</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="OTHER">Other</option>
+              <option value="">Chưa cung cấp</option>
+              <option value="MALE">Nam</option>
+              <option value="FEMALE">Nữ</option>
+              <option value="OTHER">Khác</option>
               <option value="UNSPECIFIED">
-                Unspecified
+                Không xác định
               </option>
             </select>
           </div>
@@ -233,7 +234,7 @@ export default async function EditStudentPage({
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Phone
+              Điện thoại
             </label>
 
             <input
@@ -259,7 +260,7 @@ export default async function EditStudentPage({
 
         <div>
           <label className="mb-2 block text-sm font-medium">
-            Admission Date
+            Ngày nhập học
           </label>
 
           <input
@@ -272,7 +273,7 @@ export default async function EditStudentPage({
 
         <div>
           <label className="mb-2 block text-sm font-medium">
-            Address
+            Địa chỉ
           </label>
 
           <textarea
@@ -285,7 +286,7 @@ export default async function EditStudentPage({
 
         <div>
           <label className="mb-2 block text-sm font-medium">
-            Notes
+            Ghi chú
           </label>
 
           <textarea
@@ -298,11 +299,11 @@ export default async function EditStudentPage({
 
         <div className="rounded-xl bg-gray-50 p-4">
           <p className="text-xs text-gray-500">
-            Current Status
+            Trạng thái hiện tại
           </p>
 
           <p className="mt-1 font-semibold text-gray-900">
-            {student.status}
+            {displayLabel(student.status)}
           </p>
         </div>
 
@@ -311,14 +312,14 @@ export default async function EditStudentPage({
             type="submit"
             className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white"
           >
-            Save Changes
+            Lưu thay đổi
           </button>
 
           <Link
             href="/admin/students"
             className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium"
           >
-            Cancel
+            Hủy
           </Link>
         </div>
       </form>
