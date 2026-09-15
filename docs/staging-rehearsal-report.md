@@ -26,6 +26,14 @@ Teacher history migration `20260916093000` (commit `9091339`) passed **14/14 sta
 
 Local validation: **38 files / 684 pgTAP PASS**, **103 app/bootstrap PASS**, relevant ESLint and diff check PASS. Default build PASS after removing generated Turbopack cache from an earlier sandbox port-binding failure; Webpack build also PASS. Historical portal UI and broader FINANCE/academic staff delegation remain pending. This does not certify the full Phase 4 rollout or production readiness.
 
+## Phase 4 — Finance/Payroll read increment
+
+Migration `20260916095000` applied to staging after explicit Phase 4 authorization was rechecked. Automatic review initially interpreted authorization as only identity/browser setup; the same command was approved after presenting the Master Plan's Finance read operations/Payroll scope. No workaround, user-role assignment, production mutation or expanded financial mutation RPC was used.
+
+Read-policy replay: **49 Finance + 31 Payroll assertions PASS**, all fixture transactions rolled back. FINANCE branch/global assignments work only with matching active permissions; inactive/expired/missing-permission cases return no rows. Teacher self-read requires payroll.view_own. Local **39 files / 735 pgTAP**, **103 app/bootstrap**, default build, relevant ESLint and diff check PASS. These tests do not certify a FINANCE UI/login rollout or all tuition/forecast/report staff paths. Owner maker-checker thresholds and emergency-override decisions remain pending before expanding financial approval workflows.
+
+Final read-only reconciliation after all Phase 4 replays: **55 migrations; 5 students; 4 classes; 5 enrollments; 4 sessions; one tuition / 5,500,000 VND; zero invoices, payments, refunds, payroll periods and payrolls**. Difference remains **0 VND**. Temporary replay SQL/results/build logs were removed.
+
 ## Historical Payroll remediation checkpoint
 
 Owner authorized continuing the Payroll correction. Commit `bda734d` adds `20260916090000_harden_payroll_self_read.sql`; no historical migration changed. `can_read_own_payroll` requires ACTIVE profile/teacher and an active, date-valid TEACHER assignment matching the payroll branch (or a global assignment). Both period and payroll-row RLS use this check. Approved/finalized state and SUPER_ADMIN compatibility remain intact.
