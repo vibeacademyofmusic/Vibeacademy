@@ -18,5 +18,5 @@ test('active menu chooses the most specific existing URL', () => {
 })
 test('unimplemented domains are omitted and existing finance routes are present', () => {
   assert.ok(!navigationGroups.some(g => /CRM|E-LEARNING|KHO/.test(g.name)))
-  assert.equal(navigationGroups.find(g => g.name === 'TÀI CHÍNH').items.length, 7)
+  assert.equal(navigationGroups.find(g => g.name === 'TÀI CHÍNH').items.length, 8)
 })

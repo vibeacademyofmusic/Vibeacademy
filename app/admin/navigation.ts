@@ -23,6 +23,7 @@ export const navigationGroups = [
     { name: 'Thanh toán', href: '/admin/finance/payments' },
     { name: 'Công nợ', href: '/admin/finance/receivables' },
     { name: 'Hoàn tiền', href: '/admin/finance/refunds' },
+    { name: 'Số dư khách hàng', href: '/admin/finance/credits' },
     { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },
   ] },
   { name: 'NHÂN SỰ', items: [

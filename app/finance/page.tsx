@@ -60,7 +60,15 @@ export default async function FinanceWorkspace({searchParams}:{searchParams:Prom
     {selected&&<Panel title={operationNames[selected.operation]}>
       <p>{selected.reason}</p><p>Trạng thái: {states.find(s=>s.id===selected.status)?.name||selected.status}</p>
       <p>Chứng từ gốc: {String(source.invoice_number||source.payment_number||source.refund_number||sourcePayroll.teacher_name||selected.target_id)}</p>
-      {selected.operation==='PAYROLL_CORRECTION'?<>
+      {['APPLY_CUSTOMER_CREDIT','REFUND_CUSTOMER_CREDIT'].includes(selected.operation)?<>
+        <p>Credit còn lại khi lập: {money(Number(record(source.credit).remaining_credit),currency)} • Số tiền yêu cầu: {money(Number(source.amount),currency)}</p>
+        <p>Thanh toán gốc: {String(record(source.credit).payment_id)} • Đích phân bổ: {String(record(source.obligation).invoice_number || record(source.obligation).id || 'Hoàn qua Payment gốc')}</p>
+        <p>Không tạo doanh thu từ credit. Mọi chứng từ gốc được giữ nguyên.</p>
+      </>:selected.operation==='OPENING_RECEIVABLE_CORRECTION'?<>
+        <p>Mở sổ gốc: {money(Number(source.original_amount),currency)} • Giá trị trước sửa: {money(Number(source.old_amount),currency)} • Giá trị đúng: {money(Number(source.corrected_amount),currency)} • Chênh lệch: {money(Number(source.delta),currency)}</p>
+        <p>Nguồn nhập: {String(source.source_reference)} • Lô: {String(source.migration_batch_id)}</p>
+        <p>Chỉ điều chỉnh công nợ; không tạo thu tiền hoặc doanh thu. Bản gốc giữ nguyên.</p>
+      </>:selected.operation==='PAYROLL_CORRECTION'?<>
         <p>Giá trị dòng gốc: {money(Number(source.original_amount),currency)} • Đích sửa đúng: {money(Number(source.corrected_amount),currency)} • Chênh lệch lần này: {money(Number(source.delta),currency)}</p>
         <p>{details.run_type==='OFF_CYCLE_CORRECTION'?'Đợt correction khẩn cấp riêng':'Kỳ nhận correction: '+String(record(source.target_period).starts_on||'')}</p>
         <p>Bảng lương gốc được giữ nguyên. Mã nguồn: {selected.target_id}</p>

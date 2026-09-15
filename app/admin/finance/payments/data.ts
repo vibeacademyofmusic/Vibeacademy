@@ -1,17 +1,18 @@
 import { all, rows, invoiceFields, type Invoice, type DB } from '../query'
 import { pageNumber, pageSize, uuidPattern, type Params } from '../operations'
 export type Payment = { id: string; payment_number: string; student_id_snapshot: string; branch_name_snapshot: string; branch_id_snapshot: string; currency: string; amount: number; payment_method: string; paid_at: string; reference: string | null; status: string }
-export type Allocation = { id: string; payment_id: string; invoice_id: string; amount: number; invoices: { invoice_number: string } }
+export type Allocation = { id: string; payment_id: string; invoice_id: string | null; opening_receivable_id: string | null; amount: number; released_to_credit?: number; invoices: { invoice_number: string } | null }
 export type RefundAmount = { id: string; payment_id: string; amount: number; status: string }
 export const paymentFields = 'id,payment_number,student_id_snapshot,branch_name_snapshot,branch_id_snapshot,currency,amount,payment_method,paid_at,reference,status'
 export const total = (rows: { amount: number }[]) => rows.reduce((sum, r) => sum + Math.round(Number(r.amount) * 100), 0) / 100
 export async function paymentTotals(db: DB, ids: string[], includeRefunds = true) {
   if (!ids.length) return { allocations: [] as Allocation[], refunds: [] as RefundAmount[] }
-  const [allocations, refunds] = await Promise.all([
-    all<Allocation>((a, b) => db.from('payment_allocations').select('id,payment_id,invoice_id,amount,invoices(invoice_number)').in('payment_id', ids).order('id').range(a, b).returns<Allocation[]>()),
+  const [allocations, refunds, credits] = await Promise.all([
+    all<Allocation>((a, b) => db.from('payment_allocations').select('id,payment_id,invoice_id,opening_receivable_id,amount,invoices(invoice_number)').in('payment_id', ids).order('id').range(a, b).returns<Allocation[]>()),
     includeRefunds ? all<RefundAmount>((a, b) => db.from('refunds').select('id,payment_id,amount,status').in('payment_id', ids).eq('status', 'POSTED').order('id').range(a, b).returns<RefundAmount[]>()) : Promise.resolve([] as RefundAmount[]),
+    all<{ source_allocation_id: string | null; amount: number }>((a, b) => db.from('customer_credits').select('source_allocation_id,amount').in('payment_id', ids).order('id').range(a, b)),
   ])
-  return { allocations, refunds }
+  return { allocations: allocations.map(a => ({ ...a, released_to_credit: total(credits.filter(c => c.source_allocation_id === a.id)) })), refunds }
 }
 export async function paymentList(db: DB, params: Params, onlyPosted = false, includeTotals = true) {
   const page = pageNumber(params.page)
@@ -37,3 +38,11 @@ export async function allocationInvoices(db: DB, payment: Payment, params: Param
   const result = await rows(db.from('invoice_receivables').select(invoiceFields).eq('student_id_snapshot', payment.student_id_snapshot).eq('currency', payment.currency).eq('invoice_status', 'ISSUED').gt('outstanding_balance', 0).order('due_on').order('invoice_id').range((page - 1) * pageSize, page * pageSize).returns<Invoice[]>())
   return { data: result.slice(0, pageSize), page, more: result.length > pageSize }
 }
+
+export type OpeningBalance = { id: string; opening_as_of_date: string; currency: string; outstanding_balance: number }
+export async function allocationOpenings(db: DB, payment: Payment, params: Params) {
+  const page = pageNumber(params.opening_page)
+  const result = await rows(db.from('opening_receivable_balances').select('id,opening_as_of_date,currency,outstanding_balance').eq('student_id', payment.student_id_snapshot).eq('branch_id', payment.branch_id_snapshot).eq('currency', payment.currency).eq('reversed', false).gt('outstanding_balance', 0).order('opening_as_of_date').order('id').range((page - 1) * pageSize, page * pageSize).returns<OpeningBalance[]>())
+  return { data: result.slice(0, pageSize), page, more: result.length > pageSize }
+}
+export const effectiveAllocationTotal = (allocations: Allocation[]) => total(allocations.map(a => ({ amount: Number(a.amount) - Number(a.released_to_credit ?? 0) })))
