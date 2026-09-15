@@ -1,4 +1,5 @@
 begin;
+\ir ../helpers/approved_finance.inc
 
 create extension if not exists pgtap;
 
@@ -255,7 +256,7 @@ select is(
 -- CREATE + ALLOCATE REFUND
 -- =========================================================
 
-select public.create_refund(
+select pg_temp.create_refund(
   (
     select id
     from public.payments
@@ -267,7 +268,7 @@ select public.create_refund(
   null
 );
 
-select public.allocate_refund_to_payment_allocation(
+select pg_temp.allocate_refund_to_payment_allocation(
   (
     select id
     from public.refunds

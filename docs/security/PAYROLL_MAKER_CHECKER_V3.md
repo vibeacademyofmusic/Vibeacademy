@@ -38,7 +38,9 @@ Local fixture is clearly labeled `V3-PAYROLL` / `V3-PAYROLL-TEACHER`; its finali
 period is retained as test history. No payout occurred. Browser session logged
 out and closed. No production or staging mutation occurred for this checkpoint.
 
-## Remaining Phase 1 work
+## Remaining work at this historical checkpoint
+
+Superseded for local implementation by `FINANCIAL_APPROVAL_PHASE1_V3.md`.
 
 This is the payroll approval portion, not completion of all financial
 authorization. Refund/payment-void maker-checker, general correction/reversal

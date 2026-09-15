@@ -1,0 +1,133 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select no_plan();
+insert into public.branches(id,code,name) values('ed100000-0000-0000-0000-000000000001','V3-MC-A','V3 MC A'),('ed100000-0000-0000-0000-000000000002','V3-MC-B','V3 MC B');
+insert into auth.users(id) select ('ed000000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid from generate_series(1,6) n;
+insert into public.profiles(id,status) select id,'ACTIVE' from auth.users where id::text like 'ed000000-%';
+insert into public.user_roles(user_id,role_id,branch_id)
+select ('ed000000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,r.id,
+case when n=1 then null else ('ed100000-0000-0000-0000-'||case when n=5 then '000000000002' else '000000000001' end)::uuid end
+from generate_series(1,6) n join public.roles r on r.code=case n when 1 then 'SUPER_ADMIN' when 4 then 'BRANCH_ADMIN' when 6 then 'TEACHER' else 'FINANCE' end;
+insert into public.students(id,student_code,full_name,default_branch_id) values('ed200000-0000-0000-0000-000000000001','V3-MC-S','MC student','ed100000-0000-0000-0000-000000000001');
+insert into public.payments(id,payment_number,student_id_snapshot,branch_id_snapshot,branch_code_snapshot,branch_name_snapshot,amount,currency,payment_method,paid_at)
+select ('ed400000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,'MC-PAY-'||n,'ed200000-0000-0000-0000-000000000001',
+case when n=3 then 'ed100000-0000-0000-0000-000000000002'::uuid else 'ed100000-0000-0000-0000-000000000001'::uuid end,'MC','MC',1000,'VND','CASH',now() from generate_series(1,3) n;
+insert into public.teachers(id,teacher_code,full_name) values('ed300000-0000-0000-0000-000000000001','V3-MC-T','MC teacher');
+insert into public.payroll_periods(id,branch_id,starts_on,ends_on,status,generated_by)
+select ('ed500000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,'ed100000-0000-0000-0000-000000000001',
+('2026-'||lpad((n+7)::text,2,'0')||'-01')::date,(('2026-'||lpad((n+7)::text,2,'0')||'-01')::date+interval '1 month - 1 day')::date,'GENERATED','ed000000-0000-0000-0000-000000000001'
+from generate_series(1,3) n;
+insert into public.teacher_payrolls(id,period_id,teacher_id,branch_id,teacher_name,pay_type,currency,base_salary,gross_amount)
+select ('ed600000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,('ed500000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,
+'ed300000-0000-0000-0000-000000000001','ed100000-0000-0000-0000-000000000001','MC teacher','MONTHLY','VND',1000,1000 from generate_series(1,3) n;
+insert into public.payroll_earning_lines(id,payroll_id,actual_teacher_id,branch_id,earned_on,earning_type,rate,amount)
+values('ed700000-0000-0000-0000-000000000001','ed600000-0000-0000-0000-000000000001','ed300000-0000-0000-0000-000000000001','ed100000-0000-0000-0000-000000000001','2026-08-01','MONTHLY_BASE',1000,1000);
+update public.payroll_periods set status='FINALIZED',approved_by='ed000000-0000-0000-0000-000000000003',finalized_by='ed000000-0000-0000-0000-000000000003' where id='ed500000-0000-0000-0000-000000000001';
+create temp table original_payroll as select to_jsonb(t) snapshot from public.teacher_payrolls t where id='ed600000-0000-0000-0000-000000000001';
+create temp table test_ids(name text primary key,id uuid);
+grant all on test_ids to authenticated;grant select on original_payroll to authenticated;
+create function pg_temp.make(label text,op text,target uuid,details jsonb) returns uuid language plpgsql as $$ declare result uuid;begin
+ result:=public.request_financial_action(op,target,details,label,gen_random_uuid());insert into test_ids values(label,result);return result;end $$;
+insert into public.user_roles(user_id,role_id,branch_id) select 'ed000000-0000-0000-0000-000000000002',id,'ed100000-0000-0000-0000-000000000001' from public.roles where code='SUPER_ADMIN';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select lives_ok($$select pg_temp.make('refund-one','REFUND','ed400000-0000-0000-0000-000000000001','{"amount":100,"refunded_at":"2026-09-16T00:00:00+07:00"}')$$,'Maker submits refund');
+select is((select count(*) from public.refunds where payment_id='ed400000-0000-0000-0000-000000000001'),0::bigint,'Pending refund changes no ledger');
+select is(public.is_global_super_admin(),false,'Branch-scoped SA assignment is not global authority');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked','MAKER_CHECKER_EMERGENCY','Try mixed roles')$$,'P0001','Valid SUPER_ADMIN emergency override reason and type required','Branch SA cannot borrow FINANCE scope for emergency');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'P0001','Maker cannot approve own financial request','Refund self approval denied');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000004',true);
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'P0001','Unauthorized','Branch admin refund approval denied');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000005',true);
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'P0001','Unauthorized','Cross branch approval denied');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000006',true);
+select throws_ok($$select pg_temp.make('teacher-request','REFUND','ed400000-0000-0000-0000-000000000001','{"amount":100,"refunded_at":"2026-09-16T00:00:00+07:00"}')$$,'P0001','Unauthorized','Teacher financial request denied');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select throws_ok($$select pg_temp.make('other-branch','REFUND','ed400000-0000-0000-0000-000000000003','{"amount":100,"refunded_at":"2026-09-16T00:00:00+07:00"}')$$,'P0001','Unauthorized','Maker cannot request other branch');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+update public.profiles set status='INACTIVE' where id='ed000000-0000-0000-0000-000000000003';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'P0001','Unauthorized','Inactive financial checker denied');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+update public.profiles set status='ACTIVE' where id='ed000000-0000-0000-0000-000000000003';
+update public.user_roles set valid_until=now()-interval '1 day' where user_id='ed000000-0000-0000-0000-000000000003';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'P0001','Unauthorized','Expired financial checker denied');
+reset role;
+update public.user_roles set valid_until=null where user_id='ed000000-0000-0000-0000-000000000003';
+set local role authenticated;
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'Different FINANCE checker posts refund');
+select is((select sum(amount) from public.refunds where payment_id='ed400000-0000-0000-0000-000000000001'),100::numeric,'Approved refund amount exact');
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='refund-one'),'Checked')$$,'Approval retry idempotent');
+select is((select count(*) from public.refunds where payment_id='ed400000-0000-0000-0000-000000000001'),1::bigint,'Approval retry no duplicate refund');
+select is((select count(*) from public.financial_approval_events where request_id=(select id from test_ids where name='refund-one')),3::bigint,'Request approval posting all audited');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select lives_ok($$select public.request_financial_action(operation,target_id,details,reason,idempotency_key) from public.financial_approval_requests where id=(select id from test_ids where name='refund-one')$$,'Request retry after posting idempotent');
+select throws_ok($$select public.request_financial_action(operation,target_id,details,'Changed reason',idempotency_key) from public.financial_approval_requests where id=(select id from test_ids where name='refund-one')$$,'P0001','Idempotency key already used for different request','Changed retry rejected');
+select throws_ok($$select pg_temp.make('excess','REFUND','ed400000-0000-0000-0000-000000000001','{"amount":9999,"refunded_at":"2026-09-16T00:00:00+07:00"}')$$,'P0001','Refund exceeds the remaining refundable payment amount','Over refund rejected');
+select throws_ok($$select pg_temp.make('void-with-refund','VOID_PAYMENT','ed400000-0000-0000-0000-000000000001','{}')$$,'P0001','Reverse posted refunds before voiding payment','Cannot orphan posted refund by voiding payment');
+select lives_ok($$select pg_temp.make('void-two','VOID_PAYMENT','ed400000-0000-0000-0000-000000000002','{}')$$,'Maker requests payment void');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='void-two'),'Checked')$$,'P0001','Maker cannot approve own financial request','Payment void self approval denied');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='void-two'),'Checked')$$,'Different checker voids payment');
+select is((select status from public.payments where id='ed400000-0000-0000-0000-000000000002'),'VOIDED'::text,'Payment void status recorded');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000001',true);
+select lives_ok($$select pg_temp.make('emergency','REFUND','ed400000-0000-0000-0000-000000000001','{"amount":100,"refunded_at":"2026-09-16T00:00:00+07:00"}')$$,'SA requests refund');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='emergency'),'Checked')$$,'P0001','Maker cannot approve own financial request','SA normal self approval denied');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='emergency'),'Checked','MAKER_CHECKER_EMERGENCY',' ')$$,'P0001','Valid SUPER_ADMIN emergency override reason and type required','Blank emergency reason denied');
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='emergency'),'Checked','MAKER_CHECKER_EMERGENCY','Local emergency test')$$,'SA explicit audited emergency succeeds');
+select is((select count(*) from public.financial_approval_events where request_id=(select id from test_ids where name='emergency') and event='EMERGENCY_OVERRIDE' and override_type='MAKER_CHECKER_EMERGENCY' and reason='Local emergency test' and before_snapshot is not null and after_snapshot is not null and performed_by=auth.uid() and performed_at is not null),1::bigint,'Emergency full audit present');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select lives_ok($$select pg_temp.make('correction','PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000001','{"corrected_amount":1200,"earning_id":"ed700000-0000-0000-0000-000000000001","run_type":"NEXT_OPEN_PERIOD"}')$$,'Request next open correction');
+select is((select gross_amount from public.teacher_payrolls where id='ed600000-0000-0000-0000-000000000002'),1000::numeric,'Pending correction changes no target total');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='correction'),'Checked')$$,'P0001','Maker cannot approve own financial request','Correction maker checker enforced');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='correction'),'Checked')$$,'Correction checker posts to next open period');
+select is((select gross_amount from public.teacher_payrolls where id='ed600000-0000-0000-0000-000000000002'),1200::numeric,'Next open period receives exact delta');
+select is((select gross_amount from public.teacher_payrolls where id='ed600000-0000-0000-0000-000000000003'),1000::numeric,'Later open period unchanged');
+select is((select to_jsonb(t) from public.teacher_payrolls t where id='ed600000-0000-0000-0000-000000000001'),(select snapshot from original_payroll),'Original finalized payroll byte equivalent');
+select is((select count(*) from public.payroll_corrections c join public.payroll_adjustments a on a.id=c.posted_adjustment_id where c.id=(select id from test_ids where name='correction') and c.original_amount=1000 and c.corrected_amount=1200 and c.delta=200 and a.kind='CORRECTION' and a.created_by=c.maker_user_id and c.checker_user_id=auth.uid()),1::bigint,'Correction stores linked original corrected delta maker checker');
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='correction'),'Checked')$$,'Correction retry idempotent');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select throws_ok($$select pg_temp.make('same-correction','PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000001','{"corrected_amount":1200,"earning_id":"ed700000-0000-0000-0000-000000000001","run_type":"NEXT_OPEN_PERIOD"}')$$,'P0001','Correction has no remaining delta','No duplicate economic correction');
+select lives_ok($$select pg_temp.make('second-correction','PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000001','{"corrected_amount":1150,"earning_id":"ed700000-0000-0000-0000-000000000001","run_type":"NEXT_OPEN_PERIOD"}')$$,'Second correction requests corrected target');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='second-correction'),'Checked')$$,'Second correction approved');
+select is((select delta from public.payroll_corrections where id=(select id from test_ids where name='second-correction')),-50::numeric,'Second correction deducts previously posted delta');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select lives_ok($$select pg_temp.make('off-cycle','PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000001','{"corrected_amount":1250,"earning_id":"ed700000-0000-0000-0000-000000000001","run_type":"OFF_CYCLE_CORRECTION"}')$$,'Off cycle request');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='off-cycle'),'Checked')$$,'P0001','Maker cannot approve own financial request','Off cycle does not silently bypass maker checker');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='off-cycle'),'Checked')$$,'Off cycle different checker posts');
+select is((select correction_amount from public.payroll_off_cycle_correction_runs where id=(select id from test_ids where name='off-cycle')),100::numeric,'Off cycle exact remaining delta');
+select is((select gross_amount from public.teacher_payrolls where id='ed600000-0000-0000-0000-000000000002'),1150::numeric,'Off cycle does not change regular period');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select lives_ok($$select pg_temp.make('stale-one','PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000001','{"corrected_amount":1300,"earning_id":"ed700000-0000-0000-0000-000000000001","run_type":"OFF_CYCLE_CORRECTION"}')$$,'First concurrent correction requested');
+select lives_ok($$select pg_temp.make('stale-two','PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000001','{"corrected_amount":1350,"earning_id":"ed700000-0000-0000-0000-000000000001","run_type":"OFF_CYCLE_CORRECTION"}')$$,'Second concurrent correction requested');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select lives_ok($$select public.approve_financial_action((select id from test_ids where name='stale-one'),'Checked')$$,'First correction wins');
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='stale-two'),'Checked')$$,'P0001','Source changed; cancel and create a new request','Stale correction cannot overpay');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select lives_ok($$select public.cancel_financial_action((select id from test_ids where name='stale-two'),'Replace stale request')$$,'Maker cancels stale request');
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000003',true);
+select throws_ok($$select public.approve_financial_action((select id from test_ids where name='stale-two'),'Checked')$$,'P0001','Request is not pending approval','Cancelled cannot approve');
+select throws_ok($$select public.create_refund('ed400000-0000-0000-0000-000000000001',1,now(),'Bypass')$$,'P0001','Financial approval required','Legacy refund bypass closed');
+select throws_ok($$select public.void_payment('ed400000-0000-0000-0000-000000000001','Bypass')$$,'P0001','Financial approval required','Legacy void bypass closed');
+select throws_ok($$select finance_private.void_payment('ed400000-0000-0000-0000-000000000001','Bypass')$$,'42501',null,'Private engine not callable by authenticated');
+select throws_ok($$update public.financial_approval_requests set status='POSTED'$$,'42501',null,'Direct approval DML denied');
+reset role;
+select throws_ok($$update public.payroll_corrections set delta=999 where id=(select id from test_ids where name='correction')$$,'P0001','Financial approval history is immutable','Correction ledger immutable');
+select throws_ok($$delete from public.financial_approval_events where request_id=(select id from test_ids where name='refund-one')$$,'P0001','Financial approval history is immutable','Approval audit immutable');
+select throws_ok($$update public.teacher_payrolls set gross_amount=0 where id='ed600000-0000-0000-0000-000000000001'$$,'P0001','Approved payroll is immutable','Original payroll cannot be overwritten');
+update public.payroll_periods set status='FINALIZED' where id='ed500000-0000-0000-0000-000000000002';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ed000000-0000-0000-0000-000000000002',true);
+select throws_ok($$select public.request_financial_action('PAYROLL_CORRECTION','ed600000-0000-0000-0000-000000000002',jsonb_build_object('adjustment_id',(select posted_adjustment_id from public.payroll_corrections where id=(select id from test_ids where name='correction')),'corrected_amount',250,'run_type','OFF_CYCLE_CORRECTION'),'Nested correction',gen_random_uuid())$$,'P0001','Correct the original source line, not a posted correction line','Correction cannot double-count through nested correction line');
+reset role;
+select * from finish();
+rollback;

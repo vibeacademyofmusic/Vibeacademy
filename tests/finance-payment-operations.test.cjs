@@ -24,7 +24,7 @@ test('invalid amounts reject before RPC; wrong currency backend error is transla
 test('void payment requires reason and confirmation; valid request calls void RPC', async () => {
   const h = harness(); const action = h.load('payments/actions.ts').voidPayment
   await redirected(action, { payment_id: id(1), reason: 'Điều chỉnh' }); assert.equal(h.calls.length, 1)
-  await redirected(action, { payment_id: id(1), reason: 'Điều chỉnh', confirm: 'yes' }); assert.equal(h.calls.at(-1).rpc, 'void_payment')
+  await redirected(action, { idempotency_key: id(80), payment_id: id(1), reason: 'Điều chỉnh', confirm: 'yes' }); assert.equal(h.calls.at(-1).rpc, 'request_financial_action'); assert.equal(h.calls.at(-1).args.p_operation, 'VOID_PAYMENT')
 })
 
 test('payment list derives remaining and displays void warning in selected detail', async () => {

@@ -1,4 +1,5 @@
 begin;
+\ir ../helpers/approved_finance.inc
 
 create extension if not exists pgtap;
 
@@ -303,7 +304,7 @@ select is(
 -- CREATE PARTIAL REFUND
 -- =========================================================
 
-select public.create_refund(
+select pg_temp.create_refund(
   (
     select id
     from public.payments
@@ -350,7 +351,7 @@ select is(
 -- ALLOCATE REFUND BACK TO ORIGINAL PAYMENT ALLOCATION
 -- =========================================================
 
-select public.allocate_refund_to_payment_allocation(
+select pg_temp.allocate_refund_to_payment_allocation(
   (
     select id
     from public.refunds
@@ -425,7 +426,7 @@ select is(
 
 select throws_ok(
   $$
-    select public.create_refund(
+    select pg_temp.create_refund(
       (
         select id
         from public.payments
@@ -485,7 +486,7 @@ select public.allocate_payment_to_invoice(
 
 select throws_ok(
   $$
-    select public.allocate_refund_to_payment_allocation(
+    select pg_temp.allocate_refund_to_payment_allocation(
       (
         select id
         from public.refunds
@@ -537,7 +538,7 @@ set local role authenticated;
 
 select lives_ok(
   $$
-    select public.void_refund(
+    select pg_temp.void_refund(
       (
         select id
         from public.refunds

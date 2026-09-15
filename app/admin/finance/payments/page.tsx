@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { branches, findStudents, studentNames } from '../query'
@@ -32,7 +33,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
         <h3 className="font-semibold">Phân bổ vào hóa đơn</h3>
         <Table headers={['Hóa đơn', 'Hạn thanh toán', 'Trạng thái', 'Còn nợ', 'Phân bổ']} rows={(invoices?.data ?? []).map(i => [i.invoice_number, dateText(i.due_on), i.receivable_status, money(i.outstanding_balance, i.currency), detail.allocations.some(a => a.invoice_id === i.invoice_id) ? 'Đã có phân bổ từ thanh toán này' : <form action={allocatePayment} key={i.invoice_id} className="space-y-2"><input type="hidden" name="payment_id" value={payment.id} /><input type="hidden" name="selected" value={payment.id} /><input type="hidden" name="invoice_id" value={i.invoice_id} /><Field name="amount" label={'Số tiền cho ' + i.invoice_number} type="number" max={Math.min(Number(i.outstanding_balance), Number(payment.amount) - total(detail.allocations))} /><SubmitButton>Phân bổ</SubmitButton></form>])} />
         {invoices && <Pager path="/admin/finance/payments" params={params} page={invoices.page} more={invoices.more} keyName="invoice_page" />}
-        <form action={voidPayment} className="space-y-3"><input type="hidden" name="payment_id" value={payment.id} /><input type="hidden" name="selected" value={payment.id} /><Field name="reason" label="Lý do vô hiệu thanh toán" /><Confirm text="Vô hiệu thanh toán có thể làm công nợ mở lại. Tôi xác nhận thao tác." /><SubmitButton>Vô hiệu thanh toán</SubmitButton></form>
+        <form action={voidPayment} className="space-y-3"><input type="hidden" name="idempotency_key" value={randomUUID()}/><input type="hidden" name="payment_id" value={payment.id} /><input type="hidden" name="selected" value={payment.id} /><Field name="reason" label="Lý do vô hiệu thanh toán" /><Confirm text="Vô hiệu thanh toán có thể làm công nợ mở lại. Tôi xác nhận thao tác." /><SubmitButton>Gửi yêu cầu vô hiệu thanh toán</SubmitButton></form>
       </>}
     </Panel>}
     <Panel title="Ghi nhận thanh toán mới">

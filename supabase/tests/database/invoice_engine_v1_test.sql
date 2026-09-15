@@ -1,4 +1,5 @@
 begin;
+\ir ../helpers/approved_finance.inc
 
 create extension if not exists pgtap;
 
@@ -412,7 +413,7 @@ set local role authenticated;
 
 select lives_ok(
   $$
-    select public.cancel_invoice(
+    select pg_temp.cancel_invoice(
       (
         select id
         from public.invoices

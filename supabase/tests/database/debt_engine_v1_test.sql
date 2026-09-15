@@ -1,4 +1,5 @@
 begin;
+\ir ../helpers/approved_finance.inc
 
 create extension if not exists pgtap;
 
@@ -480,7 +481,7 @@ select is(
 -- VOID SECOND PAYMENT
 -- =========================================================
 
-select public.void_payment(
+select pg_temp.void_payment(
   (
     select id
     from public.payments

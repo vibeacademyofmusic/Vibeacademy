@@ -1,4 +1,5 @@
 begin;
+\ir ../helpers/approved_finance.inc
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 -- Fixture identities are scoped; test transaction rolls back.
@@ -188,8 +189,8 @@ select create_payment('61000000-0000-0000-0000-000000000001','11000000-0000-0000
 select create_payment('61000000-0000-0000-0000-000000000002','11000000-0000-0000-0000-000000000002',1000,'VND','CASH');
 select allocate_payment_to_invoice(p.id,i.id,500) from payments p join invoices i on i.student_id_snapshot=p.student_id_snapshot
 where p.student_id_snapshot in ('61000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000002');
-select create_refund(id,100,now(),'Scope test') from payments where student_id_snapshot in ('61000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000002');
-select allocate_refund_to_payment_allocation(r.id,a.id,100) from refunds r join payment_allocations a on a.payment_id=r.payment_id
+select pg_temp.create_refund(id,100,now(),'Scope test') from payments where student_id_snapshot in ('61000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000002');
+select pg_temp.allocate_refund_to_payment_allocation(r.id,a.id,100) from refunds r join payment_allocations a on a.payment_id=r.payment_id
 where r.student_id_snapshot in ('61000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000002');
 insert into auth.users(id) values('bf000000-0000-4000-8000-000000000001');
 insert into profiles(id) values('bf000000-0000-4000-8000-000000000001');

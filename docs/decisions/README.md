@@ -6,8 +6,12 @@ This folder contains owner-approved decisions that are binding for implementatio
 
 ### Financial maker-checker
 - `FINANCIAL_MAKER_CHECKER_OWNER_DECISIONS_V1.md`
-- Status: OWNER_APPROVED; implementation pending
+- Status: OWNER_APPROVED; financial workflows implemented locally, staging replay pending
 - Scope: sensitive finance approvals, payroll separation and audited emergency override.
+
+### Post-finalization payroll correction
+- `PAYROLL_POST_FINALIZATION_CORRECTION_V1.md`
+- Status: OWNER_APPROVED; next-open-period and audited off-cycle workflows implemented locally.
 
 ### Music Theory E-learning
 - `MUSIC_THEORY_OWNER_DECISIONS_V1.md`

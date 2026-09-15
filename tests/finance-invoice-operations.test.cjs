@@ -23,7 +23,7 @@ test('invoice issue passes dates and confirmation to existing workflow', async (
 
 test('cancel database error is safe and preserves selection; no invalidation on failure', async () => {
   const h = harness({}, { message: 'SECRET SQL relation internal.customer' })
-  const url = await redirected(h.load('invoices/actions.ts').cancelInvoice, { invoice_id: id(2), selected: id(2), reason: 'Sai hóa đơn', confirm: 'yes' })
+  const url = await redirected(h.load('invoices/actions.ts').cancelInvoice, { invoice_status:'DRAFT', invoice_id: id(2), selected: id(2), reason: 'Sai hóa đơn', confirm: 'yes' })
   assert.ok(url.searchParams.has('error')); assert.doesNotMatch(url.href, /SECRET|customer/)
   assert.equal(url.searchParams.get('selected'), id(2)); assert.equal(h.invalidated.length, 0)
 })

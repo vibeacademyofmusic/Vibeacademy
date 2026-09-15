@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { createClient } from '@/lib/supabase/server'
 import { branches, invoiceList, selectedInvoice } from '../query'
 import { type Params, vietnamDateTime } from '../operations'
@@ -22,8 +23,8 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
         <Field name="issued_on" label="Ngày phát hành" type="date" value={vietnamDateTime().slice(0, 10)} /><Field name="due_on" label="Hạn thanh toán" type="date" />
         <Confirm text="Xác nhận phát hành hóa đơn và ghi nhận công nợ." /><SubmitButton>Phát hành hóa đơn</SubmitButton>
       </form>}
-      {['DRAFT', 'ISSUED'].includes(selected.invoice_status) && (Number(selected.gross_allocated_amount) > 0 ? <p>Hóa đơn có phân bổ thanh toán đã ghi nhận; không thể hủy trực tiếp.</p> : <form action={cancelInvoice} className="space-y-3">
-        <input type="hidden" name="invoice_id" value={selected.invoice_id} /><input type="hidden" name="selected" value={selected.invoice_id} /><Field name="reason" label="Lý do hủy hóa đơn" /><Confirm text="Xác nhận hủy hóa đơn này." /><SubmitButton>Hủy hóa đơn</SubmitButton>
+      {['DRAFT', 'ISSUED'].includes(selected.invoice_status) && (Number(selected.gross_allocated_amount) > 0 ? <p>Hóa đơn có phân bổ thanh toán đã ghi nhận; không thể hủy trực tiếp.</p> : <form action={cancelInvoice} className="space-y-3"><input type="hidden" name="idempotency_key" value={randomUUID()}/><input type="hidden" name="invoice_status" value={selected.invoice_status}/>
+        <input type="hidden" name="invoice_id" value={selected.invoice_id} /><input type="hidden" name="selected" value={selected.invoice_id} /><Field name="reason" label="Lý do hủy hóa đơn" /><Confirm text="Xác nhận hủy hóa đơn này." /><SubmitButton>{selected.invoice_status==='DRAFT'?'Hủy hóa đơn':'Gửi yêu cầu hủy hóa đơn'}</SubmitButton>
       </form>)}
     </Panel>}
     <Panel title="Tạo hóa đơn từ kỳ học phí"><p className="text-sm text-gray-600">Chỉ hiển thị kỳ học phí chưa có hóa đơn và chưa bị hủy. Mỗi trang tối đa 25 kỳ.</p>

@@ -1,9 +1,11 @@
 'use server'
+import { financeContext } from '../../finance/authorization'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient, uuidPattern, validDate } from '../finance/operations'
 export async function payrollAction(form:FormData) {
- const db=await adminClient(),get=(key:string)=>String(form.get(key)??'').trim()
+ const get=(key:string)=>String(form.get(key)??'').trim()
+ const db=get('action')==='transition'?(await financeContext()).db:await adminClient()
  const action=get('action'),pid=get('period'),teacher=get('teacher'),note=get('note')
  const args:Record<string,string|number|null>={}
  let rpc='',error=''
@@ -14,7 +16,8 @@ export async function payrollAction(form:FormData) {
  else if(action==='transition'&&uid(pid)&&['DRAFT','REVIEW','APPROVED','FINALIZED'].includes(get('status'))&&/^\d+$/.test(get('version'))&&Number(get('version'))>0&&note&&note.length<=2000&&get('confirm')==='yes') {rpc='transition_payroll';Object.assign(args,{p_period:pid,p_version:Number(get('version')),p_status:get('status'),p_note:note}); if(get('override_type')||get('override_reason')) { if(['APPROVED','FINALIZED'].includes(get('status'))&&get('override_type')==='MAKER_CHECKER_EMERGENCY'&&get('override_reason')&&get('override_reason').length<=2000) {rpc='transition_payroll_with_override';Object.assign(args,{p_override_type:get('override_type'),p_override_reason:get('override_reason')})} else {rpc='';error='Ngoại lệ khẩn cấp cần đúng loại và lý do rõ ràng.'} }}
  else if(action==='adjust'&&uid(get('payroll'))&&uid(pid)&&['BONUS','DEDUCTION','CORRECTION'].includes(get('kind'))&&amount(get('amount'))&&note&&note.length<=2000) {rpc='add_payroll_adjustment';Object.assign(args,{p_payroll:get('payroll'),p_kind:get('kind'),p_amount:get('amount'),p_reason:note})}
  else error='Vui lòng kiểm tra dữ liệu, ngày hiệu lực và xác nhận.'
- let destination=uid(pid)?'/admin/payroll/'+pid:'/admin/payroll'
+ const base=get('workspace')==='finance'?'/finance/payroll':'/admin/payroll'
+ let destination=uid(pid)?base+'/'+pid:base
  if(rpc) {
   try {const result=await db.rpc(rpc,args);if(result.error) {
    const messages:Record<string,string>={
@@ -31,5 +34,6 @@ export async function payrollAction(form:FormData) {
   } catch {error='Chưa xác nhận được kết quả. Hãy tải lại trước khi thử lại.'}
  }
  revalidatePath('/admin/payroll','layout')
+ revalidatePath('/finance','layout')
  redirect(destination+'?'+new URLSearchParams(error?{error}:{success:'Đã lưu thao tác bảng lương.'}))
 }
