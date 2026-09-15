@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 import { generateSessions } from './actions'
+import { attendanceLoadMessage, loadVisibleAttendance } from './attendance-loader'
 
 type AttendancePageProps = {
   searchParams: Promise<{
@@ -100,7 +101,7 @@ export default async function AttendancePage({
     requestedToDate ?? ''
   )
     ? requestedToDate
-    : requestedFromDate || today
+    : fromDateFilter
 
   const searchQuery = (requestedQuery ?? '')
     .trim()
@@ -127,7 +128,6 @@ export default async function AttendancePage({
     { data: classes, error: classesError },
     { data: branches, error: branchesError },
     { data: rooms, error: roomsError },
-    { data: attendance, error: attendanceError },
     { data: teachers, error: teachersError },
   ] = await Promise.all([
     supabase
@@ -168,19 +168,21 @@ export default async function AttendancePage({
       .from('rooms')
       .select('id, code, name'),
 
-    supabase
-      .from('attendance_records')
-      .select('session_occurrence_id, status'),
     supabase.from('teachers').select('id,full_name,teacher_code'),
   ])
 
-  const loadError =
-    occurrencesError ||
-    schedulesError ||
-    classesError ||
-    branchesError ||
-    roomsError ||
-    attendanceError || teachersError
+  const { data: attendance, error: attendanceError } = await loadVisibleAttendance(
+    supabase, occurrencesError ? [] : (occurrences ?? []).map(item => item.id)
+  )
+  const sourceErrors = {
+    session_actual_teachers: occurrencesError, schedules: schedulesError,
+    classes: classesError, branches: branchesError, rooms: roomsError,
+    attendance_records: attendanceError, teachers: teachersError,
+  }
+  const loadError = attendanceLoadMessage(sourceErrors)
+  for (const [source, failure] of Object.entries(sourceErrors)) {
+    if (failure) console.error('Attendance source failed', { source, code: failure.code })
+  }
 
   const scheduleMap = new Map(
     (schedules ?? []).map((schedule) => [
@@ -352,8 +354,8 @@ export default async function AttendancePage({
       )}
 
       {loadError && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          Could not load session and attendance data.
+        <div role="alert" className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {loadError}
         </div>
       )}
 
