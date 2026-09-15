@@ -182,6 +182,8 @@ values (
 on conflict (code) do nothing;
 
 
+-- Authorization requires an active account as well as the role assignment.
+insert into public.profiles(id, status) values ('df000000-0000-0000-0000-000000000001', 'ACTIVE');
 insert into public.user_roles (
   user_id,
   role_id

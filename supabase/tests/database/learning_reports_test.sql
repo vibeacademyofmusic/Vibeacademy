@@ -165,6 +165,8 @@ insert into public.attendance_records (id, session_occurrence_id, enrollment_id,
 values ('a1000000-0000-0000-0000-000000000001', '91000000-0000-0000-0000-000000000001', '71000000-0000-0000-0000-000000000001', 'PRESENT');
 insert into auth.users (id) values ('b1000000-0000-0000-0000-000000000001'), ('b1000000-0000-0000-0000-000000000002');
 insert into public.roles (code, name) values ('SUPER_ADMIN', 'Admin') on conflict (code) do nothing;
+-- Authorization requires an active account as well as the role assignment.
+insert into public.profiles(id, status) values ('b1000000-0000-0000-0000-000000000001', 'ACTIVE');
 insert into public.user_roles (user_id, role_id) select 'b1000000-0000-0000-0000-000000000001', id from public.roles where code = 'SUPER_ADMIN';
 select set_config('request.jwt.claim.sub', 'b1000000-0000-0000-0000-000000000001', true);
 set local role authenticated;

@@ -3,6 +3,11 @@ begin;
 create extension if not exists pgtap;
 
 select plan(9);
+-- Business tests use an authorized identity after RPC authorization hardening.
+insert into auth.users(id) values('ad000000-0000-4000-8000-000000000001');
+insert into profiles(id) values('ad000000-0000-4000-8000-000000000001');
+insert into user_roles(user_id,role_id) select 'ad000000-0000-4000-8000-000000000001',id from roles where code='SUPER_ADMIN';
+select set_config('request.jwt.claim.sub','ad000000-0000-4000-8000-000000000001',true);
 
 -- ============================================================
 -- Fixtures

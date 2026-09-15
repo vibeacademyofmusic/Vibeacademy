@@ -3,30 +3,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { createClient } from '@/lib/supabase/server'
+import { requireAdminPermission } from '../../../lib/authorization'
 
 async function requireSuperAdmin() {
-  const supabase = await createClient()
-
-  const { data: claimsData, error: claimsError } =
-    await supabase.auth.getClaims()
-
-  if (claimsError || !claimsData?.claims) {
-    redirect('/login')
-  }
-
-  const { data: isSuperAdmin, error: roleError } = await supabase.rpc(
-    'has_role',
-    {
-      role_code: 'SUPER_ADMIN',
-    }
-  )
-
-  if (roleError || !isSuperAdmin) {
-    redirect('/login?error=Unauthorized')
-  }
-
-  return supabase
+  return requireAdminPermission('branches.manage')
 }
 
 export async function createBranch(formData: FormData) {
