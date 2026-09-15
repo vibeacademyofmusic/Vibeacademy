@@ -11,7 +11,7 @@ function load(file, mocks = {}) {
   const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 },
   }).outputText
-  const module = { exports: {} }
+  const loadedModule = { exports: {} }
   const localRequire = name => {
     if (name in mocks) return mocks[name]
     if (name.startsWith('.')) {
@@ -20,8 +20,8 @@ function load(file, mocks = {}) {
     }
     return require(name)
   }
-  new Function('require', 'module', 'exports', output)(localRequire, module, module.exports)
-  return module.exports
+  new Function('require', 'module', 'exports', output)(localRequire, loadedModule, loadedModule.exports)
+  return loadedModule.exports
 }
 const { gradeProgressPercent, subjectProgressValue } = load(path.join(base, 'academic-progress.ts'))
 const component = (progressStatus, extra = {}) => ({ status: 'ACTIVE', is_required: true, progressStatus, ...extra })

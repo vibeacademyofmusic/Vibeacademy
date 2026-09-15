@@ -5,6 +5,10 @@ with schema extensions;
 
 select plan(8);
 
+-- This generator intentionally covers every ACTIVE schedule. Isolate existing
+-- schedules only within this rollback-only test, so populated staging is valid.
+update public.schedules set status='INACTIVE' where status='ACTIVE';
+
 insert into public.branches (
   id,
   code,

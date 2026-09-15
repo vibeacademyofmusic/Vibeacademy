@@ -1,6 +1,68 @@
 # Staging migration rehearsal
 
-Date: 2026-09-15. Status: **CURRENT SECURITY REHEARSAL PASS — broader V2 rollout pending; production HOLD**.
+Current: 2026-09-16. Status: **V3 PHASE 3 PASS — production HOLD**.
+
+## Master Plan V3 — Phase 3 completed (2026-09-16)
+
+**PASS for the current implemented security/financial surface. Production HOLD.** The owner explicitly authorized only staging project `owpfqwdrmyzcmjahehek`; production `qhznfywwrhmcwbkujclm` received no migration, data, environment or deployment change. The earlier sections below are historical checkpoints.
+
+### Applied migrations and exact reconciliation
+
+Applied, in order: `20260916100000`, `20260916110000`, `20260916111000`, `20260916120000`. The staging ledger changed **55 → 59** and contains exactly these four additional versions. No ledger repair, skipped migration, timestamp change or CLI upgrade was used.
+
+| Metric | Before migration | After migration | After full rehearsal |
+|---|---:|---:|---:|
+| Migrations | 55 | 59 | 59 |
+| Students | 5 | 5 | 5 |
+| Class enrollments | 5 | 5 | 5 |
+| Tuition rows | 1 | 1 | 1 |
+| Representative tuition (VND) | 5,500,000 | 5,500,000 | 5,500,000 |
+| Invoices | 0 | 0 | 0 |
+| Payments | 0 | 0 | 0 |
+| Refunds | 0 | 0 | 0 |
+| Payroll periods / teacher payrolls | 0 / 0 | 0 / 0 | 0 / 0 |
+| Payroll corrections | Table not yet present | 0 | 0 |
+
+Tuition difference **0 VND**. No unintended financial records survived rehearsal. Eleven additional synthetic auth identities/profiles and their role assignments were intentionally provisioned for authentication checks; all eleven profiles were set INACTIVE afterward. Their identity/audit rows remain, without active application access. Existing business fixtures were not deleted.
+
+### Security evidence
+
+All **43 pgTAP files / 858 assertions PASS on staging** and independently **43 / 858 PASS on local**. Populated transactional fixtures exercise real authenticated database roles, positive access and negative boundaries; financial fixture changes roll back. Coverage includes:
+
+| Required scenario | Evidence |
+|---|---|
+| SUPER_ADMIN and scoped/expired/inactive role behavior | Authorization, relationship, finance-read and security-consistency suites |
+| FINANCE_MAKER cannot approve own refund/payment void | Financial approval workflow suite; pending requests leave ledgers unchanged |
+| FINANCE_CHECKER approval, retries and audit | Financial approval workflow and invoice-cancellation suites |
+| Payroll maker-checker and finalized immutability | Payroll maker-checker, financial approval and payroll foundation suites |
+| Next-open-period and off-cycle payroll correction | Financial approval suite asserts exact delta, original line linkage, maker/checker and unchanged original finalized row |
+| SUPER_ADMIN emergency override | Explicit type/reason required; branch-scoped SUPER_ADMIN cannot borrow global authority; audit asserted |
+| BRANCH_ADMIN_A / BRANCH_ADMIN_B | Branch/relationship and financial scope suites; positive same-branch and denied cross-branch |
+| TEACHER_ACTIVE / SUBSTITUTE_TEACHER | Session assignment, feedback actual-teacher and relationship suites |
+| TEACHER_FORMER | Historical teacher suite: actual taught sessions/authored journals retained; current profile/other authors denied |
+| PARENT_ACTIVE / PARENT_INACTIVE / STUDENT | Student-parent history, relationship and feedback authorization suites: own/linked-child only, invalid links/inactive identities denied |
+
+Additionally **38 real-JWT assertions PASS across all 11 named rehearsal identities**: account/role checks, finance and branch scope, inactive existing-session denial, expired role denial and inactive-parent RPC denial. These newly created JWT actors were not linked to business teacher/parent/student records. Populated pgTAP fixtures, rather than empty reads by those actors, supply the positive/negative business-relationship evidence. Dedicated parent/student portal UI is not implemented and is not certified by this rehearsal.
+
+### Runner corrections and reproducibility
+
+The linked CLI's temporary login does not inherit fixture-setup privileges. For staging replay only, temporary copies add transaction-local `SET ROLE postgres` and `search_path=public,extensions` at transaction start, and restore the same fixture role where the source uses `RESET ROLE`. Original `SET ROLE authenticated`, JWT identities and every assertion remain unchanged. Referenced test helpers are expanded into the temporary file because individual-file Docker mounts do not include sibling helper paths. No grants or RLS are weakened on staging.
+
+Run sorted test files in batches of at most ten, obtaining a fresh linked CLI login per batch, and do not run another linked DB CLI command concurrently. Batch results were **10/193, 10/263, 10/168, 10/191, 3/43** (files/assertions), totaling **43/858**. Earlier full-run failures were test-runner setup/credential expiry, not passing evidence. One genuine test-fixture assumption was corrected: `session_occurrences_test.sql` now temporarily inactivates existing schedules inside its rollback-only transaction, so its global generator assertion is isolated on populated databases. Its eight assertions pass locally and on staging. No engine change was needed.
+
+### Browser and application validation
+
+An isolated local app at `127.0.0.1:3001` used staging-only public credentials; the repository environment was untouched. SUPER_ADMIN Dashboard, Attendance, Finance and Payroll loaded without source errors. Finance maker/checker each reached `/finance`; maker access to the SUPER_ADMIN Finance route was denied. Branch A/B Operations showed distinct populated student/class sets; a direct cross-branch student URL returned not-found. INACTIVE parent login was denied. Desktop 1440×1000 and mobile 390×844 checked; Payroll, Finance and Operations had document width equal to the mobile viewport. No browser error logs observed. Empty financial lists are a UI smoke check, not a substitute for populated financial assertions above.
+
+- Application/action/bootstrap tests: **118/118 PASS**, zero skipped.
+- Build: **PASS**.
+- Repository-wide ESLint: **PASS**, zero warnings after scoped CommonJS configuration and a test-loader local-variable rename. No business logic changed.
+- `git diff --check`: **PASS**.
+
+Browser signed out; temporary tab closed and viewport restored. Isolated app stopped. Temporary staging credentials, generated passwords, test copies, scripts and app artifacts were removed after recording this report. No secret is stored in Git or project env files. Production remains behind this schema and **requires separate explicit approval**; no push/deploy was performed. Phase 4 may now proceed locally under the approved migration specification.
+
+
+Historical report (2026-09-15 onward):
 
 ## Master Plan V2 update
 
