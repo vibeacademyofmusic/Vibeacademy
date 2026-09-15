@@ -27,6 +27,7 @@ export const navigationGroups = [
     { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },
   ] },
   { name: 'NHÂN SỰ', items: [
+    { name: 'Nhân viên', href: '/admin/employees' },
     { name: 'Giáo viên', href: '/admin/teachers' },
     { name: 'Bảng lương', href: '/admin/payroll' },
   ] },
