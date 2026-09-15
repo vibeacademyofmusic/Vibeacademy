@@ -1,14 +1,14 @@
 # Legacy Migration V1 — implementation gate
 
-Date: 2026-09-16. Status: **OWNER DECISION PENDING**.
+Date: 2026-09-16. Status: **OWNER DECISION CONFIRMED — implementation in progress**.
 
-Phase 3 is complete at staging ledger 59 with 43 database files / 858 tests and 118 application/bootstrap tests passing. Production remains HOLD. No Legacy Migration business tables or import functions have been created at this checkpoint.
+Phase 3 is complete at staging ledger 59 with 43 database files / 858 tests and 118 application/bootstrap tests passing. Production remains HOLD. That was the Phase 3 baseline. Phase 4 now has a local review/import implementation; see `PHASE4_LOCAL_VALIDATION.md` for tested scope and remaining rollout gates.
 
 ## Confirmed contract
 
 Use the approved summary and full `VIBE_Legacy_Student_Migration_Specification_V1.docx`: current/opening state only, durable `(source_system, source_entity_type, source_reference)` identity, immutable raw payload, explicit reviews, dry-run without business writes, atomic student import, resume, exact reconciliation, no fabricated earlier Grade passes, and non-cash opening receivables/settlements. These rules do not need renewed approval.
 
-## Decision required: financial baseline without a mapped class
+## Confirmed decision: financial baseline without a mapped class
 
 The specification describes unmatched class/teacher assignment as a warning when core student/enrollment/finance can import safely. The existing schema requires:
 
@@ -22,7 +22,7 @@ Owner options:
 1. **Recommended V1:** classify this whole row `NEEDS_REVIEW` until an exact class is approved. Raw/normalized data and dry-run evidence remain available, but no student-unit business writes occur. This explicitly makes missing class blocking for rows requiring class enrollment/tuition; it does not create fake classes.
 2. Support full import before class assignment: explicitly approve an enrollment/tuition model for unassigned learners, including the activation anchor and branch security scope, then implement and test that model before enabling import.
 
-Neither option has been selected by Codex. A question has been sent to the owner. No schema relaxation or implicit business default has been applied.
+Owner selected option 1 on 2026-09-16. Unresolved identity/finance remains only in migration review state. No business enrollment or opening finance may be created until class/curriculum/grade mapping is confirmed and the row approved. Import then creates student, enrollment and opening finance atomically; reruns must remain idempotent. No permanent financial-only business model or placeholder class is allowed.
 
 ## Implementation sequence after the decision
 

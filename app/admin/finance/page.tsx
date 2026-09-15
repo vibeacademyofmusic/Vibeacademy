@@ -47,7 +47,7 @@ export default async function FinancePage() {
       ]} /></div>)}
     </Section>
     <Section title="Công nợ và hóa đơn hiện tại">
-      <p className="text-sm text-gray-500">Tổng hợp toàn bộ hóa đơn đã phát hành và thanh toán đã phân bổ, không giới hạn trong tháng này.</p>
+      <p className="text-sm text-gray-500">Tổng công nợ gồm công nợ hóa đơn và công nợ mở sổ đã duyệt. Số hóa đơn, giá trị phát hành và thanh toán phân bổ không tính số dư mở sổ; số dư mở sổ không phải tiền thu mới.</p>
       {data.finance === null ? unavailable : currencies(data.finance).map(currency => <div key={currency} className="space-y-2"><h3 className="font-medium">{currency}</h3><Cards items={[
         ['Tổng công nợ', money(sum(data.finance!, currency, 'outstanding_amount'), currency)],
         ['Công nợ quá hạn', money(sum(data.finance!, currency, 'overdue_amount'), currency)],

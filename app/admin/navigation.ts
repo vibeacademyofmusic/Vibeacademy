@@ -29,7 +29,7 @@ export const navigationGroups = [
     { name: 'Giáo viên', href: '/admin/teachers' },
     { name: 'Bảng lương', href: '/admin/payroll' },
   ] },
-  { name: 'HỆ THỐNG', items: [{ name: 'Chi nhánh', href: '/admin/branches' }] },
+  { name: 'HỆ THỐNG', items: [{ name: 'Chi nhánh', href: '/admin/branches' }, { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' }] },
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
 // The sole standalone report route lives under HỌC VIÊN; do not duplicate it or invent report routes.
