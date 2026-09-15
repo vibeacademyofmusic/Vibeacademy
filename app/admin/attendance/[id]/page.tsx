@@ -1,3 +1,4 @@
+import SessionTeacher from '@/app/admin/session-teachers/SessionTeacher'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -442,6 +443,7 @@ if (
 
   return (
     <div className="max-w-6xl">
+      <SessionTeacher id={id} />
       <Link
         href="/admin/attendance"
         className="text-sm font-medium text-gray-500 hover:text-gray-900"

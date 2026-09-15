@@ -1,3 +1,4 @@
+import SessionTeacher from '../session-teachers/SessionTeacher'
 import { createClient } from '@/lib/supabase/server'
 import { displayLabel } from '@/lib/display'
 import JournalForm from './JournalForm'
@@ -15,6 +16,7 @@ export default async function SessionJournals({ occurrenceId }: { occurrenceId: 
   return (
     <section id="learning-journals" className="rounded-2xl border border-gray-200 bg-white p-6">
       <h2 className="text-xl font-semibold">Nhật ký học tập</h2>
+      <SessionTeacher id={occurrenceId} readOnly />
       <p className="mt-2 text-sm text-gray-600">Ghi nội dung theo từng học viên sau khi lưu điểm danh. Với học viên vắng, chỉ ghi nhận hướng dẫn hoặc bài tập gửi về, không ghi nhận như đã tham gia học.</p>
       {journalError ? <p role="alert" className="mt-4 text-red-700">Nhật ký chưa khả dụng. Vui lòng liên hệ quản trị viên để kiểm tra hệ thống.</p>
         : !attendance?.length ? <p className="mt-4 text-sm text-gray-500">Hãy lưu điểm danh để bắt đầu ghi nhật ký cho buổi học này.</p>

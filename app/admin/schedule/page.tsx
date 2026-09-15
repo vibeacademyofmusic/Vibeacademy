@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 import {
@@ -122,6 +123,7 @@ export default async function SchedulePage({
 
   return (
     <div>
+      <Link prefetch={false} href="/admin/session-teachers" className="underline">Lịch giáo viên và buổi dạy thay</Link>
       {/* Header */}
       <div className="mb-8">
         <p className="text-sm font-medium text-gray-500">

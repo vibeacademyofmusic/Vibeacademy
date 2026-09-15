@@ -12,6 +12,8 @@ type AttendancePageProps = {
     type?: string
     from?: string
     to?: string
+    branch?: string
+    class?: string
     q?: string
   }>
 }
@@ -70,6 +72,8 @@ export default async function AttendancePage({
     from: requestedFromDate,
     to: requestedToDate,
     q: requestedQuery,
+    branch: branchFilter,
+    class: classFilter,
   } = await searchParams
 
   const statusFilter = SESSION_STATUSES.has(
@@ -84,17 +88,19 @@ export default async function AttendancePage({
     ? requestedType
     : ''
 
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date())
+
   const fromDateFilter = DATE_PATTERN.test(
     requestedFromDate ?? ''
   )
     ? requestedFromDate
-    : ''
+    : today
 
   const toDateFilter = DATE_PATTERN.test(
     requestedToDate ?? ''
   )
     ? requestedToDate
-    : ''
+    : requestedFromDate || today
 
   const searchQuery = (requestedQuery ?? '')
     .trim()
@@ -102,10 +108,6 @@ export default async function AttendancePage({
     .toLocaleLowerCase()
 
   const supabase = await createClient()
-
-  const today = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Ho_Chi_Minh',
-  }).format(new Date())
 
   const defaultToDateValue = new Date(
     `${today}T00:00:00Z`
@@ -126,11 +128,14 @@ export default async function AttendancePage({
     { data: branches, error: branchesError },
     { data: rooms, error: roomsError },
     { data: attendance, error: attendanceError },
+    { data: teachers, error: teachersError },
   ] = await Promise.all([
     supabase
-      .from('session_occurrences')
+      .from('session_actual_teachers')
       .select(`
-        id,
+        id:session_id,
+        teacher_id,
+        assignment_type,
         schedule_id,
         occurrence_date,
         starts_at,
@@ -141,6 +146,9 @@ export default async function AttendancePage({
         occurrence_type,
         source_occurrence_id
       `)
+      .gte('occurrence_date', fromDateFilter!)
+      .lte('occurrence_date', toDateFilter!)
+      .match({...(branchFilter ? {branch_id:branchFilter}:{}), ...(classFilter ? {class_id:classFilter}:{})})
       .order('starts_at', { ascending: true })
       .limit(200),
 
@@ -163,6 +171,7 @@ export default async function AttendancePage({
     supabase
       .from('attendance_records')
       .select('session_occurrence_id, status'),
+    supabase.from('teachers').select('id,full_name,teacher_code'),
   ])
 
   const loadError =
@@ -171,7 +180,7 @@ export default async function AttendancePage({
     classesError ||
     branchesError ||
     roomsError ||
-    attendanceError
+    attendanceError || teachersError
 
   const scheduleMap = new Map(
     (schedules ?? []).map((schedule) => [
@@ -285,6 +294,9 @@ export default async function AttendancePage({
       )
     }
   )
+
+  const referenceTime = new Date().getTime()
+  filteredOccurrences.sort((a,b)=>Math.abs(Date.parse(a.starts_at)-referenceTime)-Math.abs(Date.parse(b.starts_at)-referenceTime))
 
   const statusCounts = filteredOccurrences.reduce(
     (counts, occurrence) => {
@@ -411,6 +423,8 @@ export default async function AttendancePage({
 
       <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5">
         <form className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(5,minmax(0,1fr))_auto] xl:items-end">
+          <label className="text-sm font-medium text-gray-700">Chi nhánh<select name="branch" defaultValue={branchFilter||''} className="mt-2 block w-full rounded border p-2"><option value="">Tất cả</option>{branches?.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}</select></label>
+          <label className="text-sm font-medium text-gray-700">Lớp<select name="class" defaultValue={classFilter||''} className="mt-2 block w-full rounded border p-2"><option value="">Tất cả</option>{classes?.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
           <label className="text-sm font-medium text-gray-700">
             Search
 
@@ -626,6 +640,8 @@ export default async function AttendancePage({
 
                         <p className="mt-1 text-xs text-gray-500">
                           {classItem?.code ?? '—'}
+                          {' • '}{teachers?.find(t=>t.id===occurrence.teacher_id)?.full_name||'Chưa xác định giáo viên'}
+                          {occurrence.assignment_type==='SUBSTITUTE'&&<span className="ml-2 text-amber-800">Dạy thay</span>}
                         </p>
 
                         <span
