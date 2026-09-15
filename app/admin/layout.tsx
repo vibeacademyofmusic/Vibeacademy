@@ -1,27 +1,10 @@
 import Link from 'next/link'
+import AdminNavigation from './AdminNavigation'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 import { logout } from '@/app/login/actions'
 import { createClient } from '@/lib/supabase/server'
-
-const navigation = [
-  { name: "Bảng lương", href: "/admin/payroll" },
-  { name: "Phản hồi buổi học", href: "/admin/feedback" },
-  { name: "Báo cáo học tập", href: "/admin/reports/learning" },
-  { name: "Bảng điều khiển", href: '/admin' },
-  { name: "Chi nhánh", href: '/admin/branches' },
-  { name: "Học viên", href: '/admin/students' },
-  { name: "Giáo viên", href: '/admin/teachers' },
-  { name: "Đào tạo", href: '/admin/academic' },
-  { name: "Khóa học", href: '/admin/courses' },
-  { name: "Lớp học", href: '/admin/classes' },
-  { name: "Phòng học", href: '/admin/rooms' },
-  { name: "Lịch học", href: '/admin/schedule' },
-  { name: "Điểm danh", href: '/admin/attendance' },
-  { name: "Học phí", href: '/admin/tuition' },
-  { name: "Tài chính", href: '/admin/finance' },
-]
 
 export default async function AdminLayout({
   children,
@@ -72,18 +55,7 @@ export default async function AdminLayout({
             </p>
           </div>
 
-          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-            {navigation.map((item) => (
-              <Link
-              key={item.href}
-              href={item.href}
-              prefetch={false}
-              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 hover:text-gray-950"
-            >
-              {item.name}
-            </Link>
-            ))}
-          </nav>
+          <AdminNavigation />
 
           <div className="border-t border-gray-200 p-4">
             <div className="mb-4 px-2">
@@ -140,23 +112,7 @@ export default async function AdminLayout({
           </div>
         </header>
 
-        <nav
-          aria-label="Điều hướng quản trị"
-          className="overflow-x-auto border-b border-gray-200 bg-white px-4 py-3 lg:hidden"
-        >
-          <div className="flex min-w-max gap-2">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={false}
-                className="rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-950"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </nav>
+        <AdminNavigation mobile />
 
         <main className="px-6 py-8 lg:px-8">
           <div className="mx-auto max-w-7xl">{children}</div>
