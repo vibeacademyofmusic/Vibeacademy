@@ -1,0 +1,20 @@
+@media print {
+  body * { visibility: hidden; }
+  .learning-report, .learning-report * { visibility: visible; }
+  .learning-report { position: absolute; left: 0; top: 0; width: 100%; color: #000; }
+  .learning-report .report-controls { display: none; }
+  .learning-report section { break-inside: avoid; }
+  .learning-report table { font-size: 10pt; }
+  .learning-report [class*="overflow-x-auto"] { overflow: visible; }
+}
+/* Screen preview uses the same content and never refreshes an approved snapshot. */
+body:has(.report-print-preview) * { visibility: hidden; }
+.report-print-preview, .report-print-preview * { visibility: visible !important; }
+.report-print-preview { position: absolute; inset: 0 auto auto 0; width: 100%; padding: 24px; color: #000; background: white; }
+.report-print-preview .report-controls { display: none; }
+.report-print-preview table { table-layout: fixed; font-size: 10pt; }
+.report-print-preview th, .report-print-preview td { white-space: normal; overflow-wrap: anywhere; }
+@media print {
+  .learning-report table { table-layout: fixed; }
+  .learning-report th, .learning-report td { white-space: normal; overflow-wrap: anywhere; }
+}
