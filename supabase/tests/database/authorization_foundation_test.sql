@@ -6,7 +6,7 @@ insert into profiles(id) select id from auth.users where id in('ac000000-0000-40
 insert into branches(id,code,name) values('ac100000-0000-4000-8000-000000000001','SEC-A','Security A'),('ac100000-0000-4000-8000-000000000002','SEC-B','Security B');
 insert into user_roles(user_id,role_id) select 'ac000000-0000-4000-8000-000000000001',id from roles where code='SUPER_ADMIN';
 insert into user_roles(user_id,role_id,branch_id) select 'ac000000-0000-4000-8000-000000000002',id,'ac100000-0000-4000-8000-000000000001' from roles where code='BRANCH_ADMIN';
-insert into role_permissions(role_id,permission_id) select r.id,p.id from roles r cross join permissions p where r.code='BRANCH_ADMIN' and p.code='students.view';
+insert into role_permissions(role_id,permission_id) select r.id,p.id from roles r cross join permissions p where r.code='BRANCH_ADMIN' and p.code='students.view' on conflict do nothing;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','',true);
 select is(has_permission('students.view'),false,'no identity denied');
@@ -49,7 +49,7 @@ select set_config('request.jwt.claim.sub','',true);
 insert into students(id,student_code,full_name,user_id,default_branch_id) values('ac200000-0000-4000-8000-000000000001','SEC-ST','Security Student','ac000000-0000-4000-8000-000000000003','ac100000-0000-4000-8000-000000000001');
 insert into students(id,student_code,full_name,default_branch_id) values('ac200000-0000-4000-8000-000000000099','SEC-OTHER','Other student','ac100000-0000-4000-8000-000000000001');
 insert into user_roles(user_id,role_id) select 'ac000000-0000-4000-8000-000000000003',id from roles where code='STUDENT';
-insert into role_permissions(role_id,permission_id) select r.id,p.id from roles r cross join permissions p where r.code='STUDENT' and p.code='students.view_own';
+insert into role_permissions(role_id,permission_id) select r.id,p.id from roles r cross join permissions p where r.code='STUDENT' and p.code='students.view_own' on conflict do nothing;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','ac000000-0000-4000-8000-000000000003',true);
 select is(can_access_student('ac200000-0000-4000-8000-000000000001'),true,'own student relationship');

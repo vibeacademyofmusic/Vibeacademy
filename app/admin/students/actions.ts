@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { requireOperationsStaff } from '../../../lib/authorization'
 
 async function requireSuperAdmin() {
   const supabase = await createClient()
@@ -571,4 +572,21 @@ export async function updateStudentAcademicEnrollmentStartDate(
       "Đã cập nhật ngày bắt đầu chương trình"
     )}`
   )
+}
+
+// Narrow pilot edit: database resolves membership; caller cannot change identity, branch or status.
+export async function updateStudentBasic(formData: FormData) {
+  const db = await requireOperationsStaff()
+  const id = String(formData.get('id') ?? '').trim()
+  const fullName = String(formData.get('full_name') ?? '').trim()
+  const preferredName = String(formData.get('preferred_name') ?? '').trim()
+  if (!/^[0-9a-f-]{36}$/i.test(id) || !fullName || fullName.length > 200 || preferredName.length > 200) {
+    redirect('/operations?error=' + encodeURIComponent('Thông tin học viên không hợp lệ'))
+  }
+  const result = await db.rpc('update_student_basic', { p_student: id, p_full_name: fullName, p_preferred_name: preferredName })
+  if (result.error) redirect('/operations?error=' + encodeURIComponent('Không có quyền hoặc không thể cập nhật học viên'))
+  revalidatePath('/operations')
+  revalidatePath('/admin/students')
+  revalidatePath(`/admin/students/${id}`)
+  redirect('/operations?success=' + encodeURIComponent('Đã cập nhật học viên'))
 }

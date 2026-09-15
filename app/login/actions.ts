@@ -31,6 +31,14 @@ export async function login(formData: FormData) {
     }
   )
 
+  if (!roleError && !isSuperAdmin) {
+    const roles = await Promise.all(['BRANCH_ADMIN', 'TEACHER'].map(role_code => supabase.rpc('has_role', { role_code })))
+    if (roles.some(role => !role.error && role.data === true)) {
+      revalidatePath('/', 'layout')
+      redirect('/operations')
+    }
+  }
+
   if (roleError || !isSuperAdmin) {
     await supabase.auth.signOut()
 
