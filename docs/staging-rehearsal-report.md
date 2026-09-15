@@ -8,7 +8,7 @@ Phase 1 Feedback correction: **PASS**, commit `0afe670`. New migration `20260916
 
 Phase 2 relationship consistency: migration `20260916092000_align_relationship_read_authorization.sql` is applied on local and staging. New narrow related_student_profiles projection prevents raw staff-note exposure to students; expired parent links and cross-role scope borrowing are denied. Local **36 files / 613 tests PASS**; new staging relationship assertions **16/16 PASS**. Existing branch suite replay **39/39 PASS**; isolated commit `88e8c67` reviewed and created. The staging ledger is now **52**; the original 28→49 reconciliation below remains historical evidence.
 
-Owner approved historical learner/parent access and limited former-teacher access in `decisions/HISTORICAL_ACCESS_OWNER_DECISIONS_V1.md`. Full historical portal rollout is still pending; Phase 3 current-role rehearsal is recorded below. Earlier stop descriptions below record the original findings, not the current remediation status. Production remains HOLD; no production data/database/env changes.
+Owner approved historical learner/parent access and limited former-teacher access in `decisions/HISTORICAL_ACCESS_OWNER_DECISIONS_V1.md`. Historical portal UI rollout is still pending; Phase 3 current-role rehearsal is recorded below. Earlier stop descriptions below record the original findings, not the current remediation status. Production remains HOLD; no production data/database/env changes.
 
 ## Phase 3 — real identities and browser replay
 
@@ -19,6 +19,12 @@ Browser replay used an isolated app on port 3001 and staging public credentials.
 Post-rehearsal exact reconciliation: **52 migrations; 5 students; 4 classes; 5 enrollments; 4 sessions; 4 teachers; 1 tuition row / 5,500,000 VND; zero invoices, payments, refunds, payroll periods and teacher payrolls**. Compared with the earlier fixture checkpoint, the increases are exactly two fake students/classes/enrollments/sessions/teachers. No financial generation occurred; difference **0 VND**.
 
 Temporary credentials, fixture scripts/results and isolated app were deleted after testing; no secrets were placed in Git or project env files. Synthetic staging accounts/business fixtures remain for reproducible rehearsal. Historical access decisions are approved but require the next incremental migration/tests before broader portal certification. No full Master Plan completion claim.
+
+## Phase 4 — historical access increments
+
+Teacher history migration `20260916093000` (commit `9091339`) passed **14/14 staging assertions**: previous teachers retain actual taught sessions and authored journals, without current learner profiles or other authors' journals once assignment ends. Student/parent migration `20260916094000` passed **57/57 staging assertions**: historical attendance, approved allowlisted snapshots and issued receivables remain visible to their owner/linked parent after pause/completion; inactive accounts, invalid links, unrelated identities, expired roles and missing permissions are denied. All replay fixtures rolled back; no direct Finance DML opened. Staging ledger **54**.
+
+Local validation: **38 files / 684 pgTAP PASS**, **103 app/bootstrap PASS**, relevant ESLint and diff check PASS. Default build PASS after removing generated Turbopack cache from an earlier sandbox port-binding failure; Webpack build also PASS. Historical portal UI and broader FINANCE/academic staff delegation remain pending. This does not certify the full Phase 4 rollout or production readiness.
 
 ## Historical Payroll remediation checkpoint
 
