@@ -172,6 +172,9 @@ select set_config('request.jwt.claim.sub', 'b1000000-0000-0000-0000-000000000001
 
 
 insert into auth.users(id) values('b1000000-0000-0000-0000-000000000003'),('b1000000-0000-0000-0000-000000000004');
+-- A payroll self-reader must have a live profile and scoped TEACHER role.
+insert into public.profiles(id,status) values('b1000000-0000-0000-0000-000000000004','ACTIVE');
+insert into public.user_roles(user_id,role_id,branch_id) select 'b1000000-0000-0000-0000-000000000004',id,'11000000-0000-0000-0000-000000000001' from public.roles where code='TEACHER';
 update students set user_id='b1000000-0000-0000-0000-000000000002' where id='61000000-0000-0000-0000-000000000001';
 insert into parents(id,user_id,parent_code) values('f1000000-0000-0000-0000-000000000001','b1000000-0000-0000-0000-000000000003','FEEDBACK-PARENT');
 insert into student_parents(student_id,parent_id) values('61000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001');
