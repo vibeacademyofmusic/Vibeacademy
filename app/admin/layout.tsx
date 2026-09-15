@@ -16,6 +16,7 @@ const navigation = [
   { name: "Phòng học", href: '/admin/rooms' },
   { name: "Lịch học", href: '/admin/schedule' },
   { name: "Điểm danh", href: '/admin/attendance' },
+  { name: "Học phí", href: '/admin/tuition' },
   { name: "Tài chính", href: '/admin/finance' },
 ]
 
