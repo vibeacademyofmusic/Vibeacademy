@@ -6,6 +6,7 @@ import { logout } from '@/app/login/actions'
 import { createClient } from '@/lib/supabase/server'
 
 const navigation = [
+  { name: "Bảng lương", href: "/admin/payroll" },
   { name: "Phản hồi buổi học", href: "/admin/feedback" },
   { name: "Báo cáo học tập", href: "/admin/reports/learning" },
   { name: "Bảng điều khiển", href: '/admin' },
