@@ -233,7 +233,7 @@ select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000004'
 select is((select count(*) from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),0::bigint,'teacher cannot see draft review payroll');
 select throws_ok($$select generate_teacher_payroll('00000000-0000-0000-0000-000000000000')$$,'P0001','Unauthorized','nonadmin generation denied');
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
-select lives_ok($$select transition_payroll(id,version,'APPROVED','Reviewed amounts') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'approve');
+select lives_ok($$select transition_payroll_with_override(id,version,'APPROVED','Reviewed amounts','MAKER_CHECKER_EMERGENCY','Test explicit owner-authorized emergency') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'approve');
 select throws_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'P0001','Payroll generation requires DRAFT','approved cannot regenerate');
 select throws_ok($$select add_payroll_adjustment(id,'BONUS',1,'After approval') from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'$$,'P0001','Adjustment requires generated or review payroll','approved cannot adjust');
 select is((select approved_by from payroll_adjustments where reason='Local bonus'),auth.uid(),'adjustment approval actor');
@@ -243,7 +243,7 @@ select is((select count(*) from payroll_earning_lines),2::bigint,'teacher sees o
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000003',true);
 select is((select count(*) from teacher_payrolls),0::bigint,'parent cannot read payroll');
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
-select lives_ok($$select transition_payroll(id,version,'FINALIZED','Final approved snapshot') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'finalize');
+select lives_ok($$select transition_payroll_with_override(id,version,'FINALIZED','Final approved snapshot','MAKER_CHECKER_EMERGENCY','Test explicit owner-authorized emergency') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'finalize');
 select throws_ok($$update teacher_payrolls set gross_amount=0$$,'42501',null,'direct authenticated writes denied');
 reset role;
 select throws_ok($$update teacher_payrolls set gross_amount=0 where teacher_id='f2000000-0000-0000-0000-000000000002'$$,'P0001','Approved payroll is immutable','finalized totals protected by trigger');

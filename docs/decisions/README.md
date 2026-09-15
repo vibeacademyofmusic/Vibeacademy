@@ -4,6 +4,11 @@ This folder contains owner-approved decisions that are binding for implementatio
 
 ## Active Decision Records
 
+### Financial maker-checker
+- `FINANCIAL_MAKER_CHECKER_OWNER_DECISIONS_V1.md`
+- Status: OWNER_APPROVED; implementation pending
+- Scope: sensitive finance approvals, payroll separation and audited emergency override.
+
 ### Music Theory E-learning
 - `MUSIC_THEORY_OWNER_DECISIONS_V1.md`
 - Status: OWNER_APPROVED

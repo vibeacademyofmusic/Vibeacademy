@@ -15,3 +15,26 @@ test('dashboard renders separate branches and currencies',async()=>{const h=harn
 test('teacher detail traces session and separate adjustments',async()=>{const h=harness({payroll_periods:[period],teacher_payrolls:[payroll],payroll_earning_lines:[{id:id(5),payroll_id:id(3),session_id:id(6),earned_on:'2026-08-17',earning_type:'TEACHING',duration_hours:1,rate:200000,amount:200000}],payroll_adjustments:[{id:id(7),payroll_id:id(3),kind:'BONUS',amount:10000,reason:'Local bonus'}]});const html=renderToStaticMarkup(await h.load(base+'[period]/[teacher]/page.tsx').default({params:Promise.resolve({period:id(1),teacher:id(4)}),searchParams:Promise.resolve({})}));for(const text of ['Substitute B','Local bonus','/admin/attendance/'+id(6),'Thêm điều chỉnh'])assert.ok(html.includes(text),text)})
 test('finalized period hides generate and transitions',async()=>{const h=harness({payroll_periods:[{...period,status:'FINALIZED'}],teacher_payrolls:[payroll]});const html=renderToStaticMarkup(await h.load(base+'[period]/page.tsx').default({params:Promise.resolve({period:id(1)}),searchParams:Promise.resolve({})}));assert.match(html,/Đã chốt/);assert.doesNotMatch(html,/Tính bảng lương|Lưu trạng thái kỳ lương/)})
 test('finalized teacher detail hides adjustment form',async()=>{const h=harness({payroll_periods:[{...period,status:'FINALIZED'}],teacher_payrolls:[payroll]});const html=renderToStaticMarkup(await h.load(base+'[period]/[teacher]/page.tsx').default({params:Promise.resolve({period:id(1),teacher:id(4)}),searchParams:Promise.resolve({})}));assert.match(html,/Điều chỉnh đang khóa/);assert.doesNotMatch(html,/name="amount"/)})
+test('emergency approval requires an explicit type and nonblank reason',async()=>{
+ const h=harness(),action=h.load(base+'actions.ts').payrollAction
+ const form={action:'transition',period:id(1),status:'APPROVED',version:'2',note:'Checked',confirm:'yes',override_type:'MAKER_CHECKER_EMERGENCY'}
+ await redirected(action,form)
+ assert.equal(h.calls.filter(c=>c.rpc!=='has_role').length,0)
+ await redirected(action,{...form,override_reason:'Urgent incident reviewed'})
+ assert.equal(h.calls.at(-1).rpc,'transition_payroll_with_override')
+ assert.equal(h.calls.at(-1).args.p_override_reason,'Urgent incident reviewed')
+})
+test('normal approval never silently requests emergency override',async()=>{
+ const h=harness()
+ await redirected(h.load(base+'actions.ts').payrollAction,{action:'transition',period:id(1),status:'APPROVED',version:'2',note:'Checked',confirm:'yes'})
+ assert.equal(h.calls.at(-1).rpc,'transition_payroll')
+ assert.equal(h.calls.at(-1).args.p_override_type,undefined)
+})
+test('emergency form explains separation and displays audited reason',async()=>{
+ const h=harness({payroll_periods:[{...period,status:'REVIEW'}],teacher_payrolls:[payroll],payroll_events:[{period_id:id(1),status:'APPROVED',note:'Checked',actor_id:id(1),event_type:'EMERGENCY_OVERRIDE',override_reason:'Incident reason'}]})
+ const html=renderToStaticMarkup(await h.load(base+'[period]/page.tsx').default({params:Promise.resolve({period:id(1)}),searchParams:Promise.resolve({})}))
+ assert.match(html,/name="override_type"/)
+ assert.match(html,/name="override_reason"/)
+ assert.match(html,/Incident reason/)
+ assert.doesNotMatch(html,/nếu người tạo tự duyệt, hệ thống ghi rõ/)
+})
