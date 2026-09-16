@@ -74,9 +74,28 @@ select public.transition_payroll((select id from period_fixture),(select version
 select throws_ok($$select public.transition_payroll((select id from period_fixture),(select version from public.payroll_periods where id=(select id from period_fixture)),'APPROVED','Self')$$,'P0001','Payroll maker cannot approve or finalize','Employee payroll maker cannot self-approve');
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000001',true);
 select public.transition_payroll((select id from period_fixture),(select version from public.payroll_periods where id=(select id from period_fixture)),'APPROVED','Independent check');
+insert into auth.users(id) values('76a70000-0000-4000-8000-000000000010');
+insert into public.profiles(id,status) values('76a70000-0000-4000-8000-000000000010','ACTIVE');
+insert into public.user_roles(user_id,role_id) select '76a70000-0000-4000-8000-000000000010',id from public.roles where code='STAFF';
+select public.link_employee_identity((select id from f),'76a70000-0000-4000-8000-000000000010',null,'Self-read fixture');
+select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000010',true);
+select ok(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))) is not null,'Employee reads own APPROVED payslip');
+select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000001',true);
 select public.transition_payroll((select id from period_fixture),(select version from public.payroll_periods where id=(select id from period_fixture)),'FINALIZED','Checked final');
 select throws_ok($$update public.payroll_earning_lines set amount=1 where payroll_id in(select id from public.teacher_payrolls where period_id=(select id from period_fixture))$$,'P0001','Approved payroll is immutable','Finalized employee source lines immutable');
 
+
+select ok(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))) is not null,'Finalized payslip readable by admin');
+create temp table stable_payslip as select public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))) doc;
+select lives_ok($$select public.configure_employee_compensation((select id from f),'76a70000-0000-4000-8000-000000000003','MONTHLY',12000000,'VND','2026-10-01','2026-10-31',null,'Approved future rate')$$,'Employee UI creates monthly rule through canonical engine');
+select is((select reason from public.teacher_compensation_rules where employee_id=(select id from f) and effective_from='2026-10-01'),'Approved future rate','Compensation reason retained');
+select throws_ok($$select public.configure_employee_compensation((select id from f),'76a70000-0000-4000-8000-000000000003','MONTHLY',13000000,'VND','2026-10-15','2026-11-01',null,'Overlap')$$,'P0001','Compensation dates overlap','Operational wrapper preserves overlap rejection');
+select is(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))),(select doc from stable_payslip),'Future salary does not change finalized payslip');
+select is(((select doc from stable_payslip)->'lines'->0->>'rate')::numeric,10000000::numeric,'Payslip rate uses historical earning line');
+select is((select doc from stable_payslip)->>'employee_code',(select employee_code from public.employees where id=(select id from f)),'Payslip includes immutable employee code');
+select ok(not ((select doc from stable_payslip)->'lines'->0 ? 'sources'),'Payslip excludes private attendance audit sources');
+select ok(not has_function_privilege('anon','public.payroll_payslip(uuid)','EXECUTE'),'Anonymous payslip denied');
+select ok(not has_function_privilege('anon','public.configure_employee_compensation(uuid,uuid,text,numeric,text,date,date,text,text)','EXECUTE'),'Anonymous compensation denied');
 
 create temp table next_period as select public.create_payroll_period('76a70000-0000-4000-8000-000000000003','2026-09-01') id;
 -- Isolated correction destination fixture; no invented attendance.
@@ -113,11 +132,8 @@ select is((hr_private.monthly_payroll_evidence(id,'2026-09-12','2026-09-13')->>'
 select is((hr_private.monthly_payroll_evidence(id,'2026-09-12','2026-09-13')->>'payable_minutes')::int,600,unit||' Sunday does not reduce payable ratio') from rest_employees;
 select throws_ok($$update public.payroll_trip_cost_breakdowns set allowance=0 where adjustment_id in(select a.id from public.payroll_adjustments a join public.teacher_payrolls t on t.id=a.payroll_id where t.period_id=(select id from period_fixture))$$,'P0001','Employee history is immutable','Trip cost details remain immutable');
 select throws_ok($$insert into public.payroll_trip_cost_breakdowns select adjustment_id,allowance,transport,lodging from public.payroll_trip_cost_breakdowns where adjustment_id in(select a.id from public.payroll_adjustments a join public.teacher_payrolls t on t.id=a.payroll_id where t.period_id=(select id from period_fixture))$$,'P0001','Approved payroll is immutable','Even privileged insert cannot augment finalized trip cost history');
-insert into auth.users(id) values('76a70000-0000-4000-8000-000000000010');
-insert into public.profiles(id,status) values('76a70000-0000-4000-8000-000000000010','ACTIVE');
-insert into public.user_roles(user_id,role_id) select '76a70000-0000-4000-8000-000000000010',id from public.roles where code='STAFF';
-select public.link_employee_identity((select id from f),'76a70000-0000-4000-8000-000000000010',null,'Self-read fixture');
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000010',true);
+select ok(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))) is not null,'Employee reads own finalized payslip');
 select is((select count(*) from public.own_payrolls()),1::bigint,'Employee sees own finalized payroll, not open correction destination');
 set local role authenticated;
 select is((select count(*) from public.payroll_trip_cost_breakdowns),1::bigint,'Employee reads own approved trip breakdown only');
@@ -125,6 +141,7 @@ reset role;
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000002',true);
 select public.set_employee_version((select id from f),1,'2026-09-01','Synthetic minute payroll','HQ','Permanent','TERMINATED','MONTHLY',null,'Ended fixture');
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000010',true);
+select is(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))),null::jsonb,'Inactive employment denied payslip');
 select is((select count(*) from public.own_payrolls()),0::bigint,'Inactive employment cannot read payroll');
 set local role authenticated;
 select is((select count(*) from public.payroll_trip_cost_breakdowns),0::bigint,'Inactive employee cannot read trip costs');
@@ -132,6 +149,7 @@ reset role;
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000002',true);
 update public.profiles set status='INACTIVE' where id='76a70000-0000-4000-8000-000000000010';
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000010',true);
+select throws_ok($$select public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture)))$$,'P0001','Unauthorized','Inactive account denied payslip');
 select throws_ok($$select public.own_payrolls()$$,'P0001','Unauthorized','Inactive account cannot invoke self-read');
 
 
@@ -140,8 +158,14 @@ insert into auth.users(id) values('76a70000-0000-4000-8000-000000000011');
 insert into public.profiles(id,status) values('76a70000-0000-4000-8000-000000000011','ACTIVE');
 insert into public.user_roles(user_id,role_id,branch_id) select '76a70000-0000-4000-8000-000000000011',id,'76a70000-0000-4000-8000-000000000004' from public.roles where code='FINANCE';
 select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000011',true);
+select is(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))),null::jsonb,'Cross-branch Finance denied payslip');
 set local role authenticated;
 select is((select count(*) from public.payroll_trip_cost_breakdowns),0::bigint,'Other branch Finance cannot read trip cost breakdown');
 reset role;
+insert into auth.users(id) values('76a70000-0000-4000-8000-000000000012');
+insert into public.profiles(id,status) values('76a70000-0000-4000-8000-000000000012','ACTIVE');
+insert into public.user_roles(user_id,role_id) select '76a70000-0000-4000-8000-000000000012',id from public.roles where code='STAFF';
+select set_config('request.jwt.claim.sub','76a70000-0000-4000-8000-000000000012',true);
+select is(public.payroll_payslip((select id from public.teacher_payrolls where period_id=(select id from period_fixture))),null::jsonb,'Unrelated staff denied payslip');
 select * from finish();
 rollback;
