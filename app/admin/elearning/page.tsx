@@ -14,7 +14,7 @@ export default async function LearningAdmin({searchParams}:{searchParams:Promise
     db.from('learning_access_grants').select('id,enrollment_id,valid_from,valid_until,revoked_at,reason').order('created_at',{ascending:false}).order('id').range((page-1)*25,page*25),
   ])
   const levelOptions=levels.data?.map(l=><option key={l.id} value={l.id}>{curriculums.data?.find(c=>c.id===l.curriculum_id)?.name} — {l.name}</option>)
-  return <div className="space-y-6 p-4 sm:p-6"><Link prefetch={false} href="/admin/elearning/assessments" className="text-blue-700 underline">Đề đánh giá và chấm bài</Link><Link prefetch={false} href="/admin/elearning/notation" className="text-blue-700 underline">Kiểm tra ký âm</Link><h1 className="text-2xl font-semibold">Nội dung học trực tuyến</h1>
+  return <div className="space-y-6 p-4 sm:p-6"><Link prefetch={false} href="/admin/elearning/assessments" className="text-blue-700 underline">Đề đánh giá và chấm bài</Link><Link prefetch={false} href="/admin/elearning/notation" className="text-blue-700 underline">Kiểm tra ký âm</Link><Link prefetch={false} href="/admin/elearning/reconciliation" className="text-blue-700 underline">Đối chiếu Academic</Link><h1 className="text-2xl font-semibold">Nội dung học trực tuyến</h1>
     <p>Bản xuất bản được giữ nguyên. Người tạo không được tự duyệt. Tiến độ học không tự thay đổi kết quả Academic.</p>
     {p.success&&<p role="status" className="text-green-700">Đã ghi nhận.</p>}
     {p.error&&<p role="alert" className="text-red-700">{p.error==='reviewer'?'Cần một quản trị viên khác duyệt nội dung.':'Không thể thực hiện. Kiểm tra dữ liệu, phiên bản và quyền truy cập.'}</p>}

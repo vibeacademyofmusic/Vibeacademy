@@ -49,7 +49,7 @@ Production HOLD. No staging/production mutation, push or deploy.
 
 Delegated academic reviewer scope,
 canonical multi-module Theory authoring and MT1.01–05 pedagogical/content approval,
-full shadow mapping/reconciliation to the same Grade's Music Theory requirement,
+owner-confirmed real Music Theory requirement mapping (technical shadow flow below),
 legal retention periods and holiday calendar before production readiness.
 
 CRM trial/LOST decisions remain deferred separately; they do not block notation.
@@ -98,3 +98,34 @@ Full application/bootstrap **245 PASS** (18 assessment UI/action tests), Webpack
 build, relevant ESLint and diff check PASS. Database unchanged; latest full pgTAP
 **55 files / 1,440 PASS**, local ledger **90**. Fake author disabled and temporary
 credential/script removed. Production HOLD; no push/deploy/cloud mutation.
+
+## 2026-09-17 — explicit same-Grade Academic shadow mapping
+
+Migration `20260917003000_learning_academic_shadow_mapping.sql` adds an immutable
+version-to-subject mapping with actor/reason/time and an idempotent audited RPC.
+Only SUPER_ADMIN can configure/read it. The selected subject must be ACTIVE,
+DIRECT_ASSESSMENT and in exactly the version's level; curriculum/level must be ACTIVE.
+No subject identity is inferred from its title/family. Admin explicitly confirms
+the Music Theory requirement; real mappings still need verified owner data.
+
+Read-only security-invoker reconciliation uses the latest effective Final result,
+including regrades. Missing mapping, no enrollment, multiple eligible academic
+enrollments, no unique subject progress, inactive/changed requirements and differences
+are distinct review states. A PASS proposal matches PASS/EXEMPT; a corrected failure
+does not roll back official PASS. Original historical evidence is retained.
+There is no Academic writeback RPC, Grade promotion or financial posting.
+
+Browser desktop/mobile: UNMAPPED synthetic Final → explicit synthetic same-Grade
+mapping → NO_ACADEMIC_ENROLLMENT. SQL confirmed zero Academic enrollments and exactly
+one mapping audit. Width 390/390, no console errors. Test admin disabled; credential
+and setup artifacts removed; temporary browser closed. Synthetic requirement/mapping
+remain local audit fixtures, not approval of any real curriculum requirement.
+
+- Full pgTAP **56 files / 1,470 PASS**, including **30 mapping tests**.
+- Application/bootstrap **249 PASS**, including four new mapping UI/action cases.
+- Relevant ESLint, diff check and Webpack build PASS.
+- Local ledger **91**; no staging/production changes, no push/deploy.
+- Scope limitation: only direct-assessment subjects; component-based/manual targets
+  are rejected, not guessed. Listing is bounded (100 published versions / 500 direct
+  subjects / 1,000 mappings), reconciliation paginated 25; larger datasets need a
+  filtered configuration picker. Full Phase 14–15 content/readiness gates remain open.

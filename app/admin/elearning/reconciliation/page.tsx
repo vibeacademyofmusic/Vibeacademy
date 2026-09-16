@@ -1,0 +1,24 @@
+import Link from 'next/link'
+import { adminClient, pageNumber } from '../../finance/operations'
+import { mapAcademicShadow } from './actions'
+const labels:Record<string,string>={UNMAPPED:'Chưa chỉ định môn',INACTIVE_OR_CHANGED_REQUIREMENT:'Yêu cầu đã thay đổi/ngừng hoạt động',NO_ACADEMIC_ENROLLMENT:'Chưa có chương trình Academic',AMBIGUOUS_ACADEMIC_ENROLLMENT:'Nhiều chương trình cần xác minh',NO_UNIQUE_SUBJECT_PROGRESS:'Chưa có tiến độ môn duy nhất',MATCH:'Khớp',DIFFERENCE_REVIEW_REQUIRED:'Khác biệt — cần xem xét'}
+export default async function Reconciliation({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
+  const p=await searchParams,page=pageNumber(p.page),db=await adminClient()
+  const [versions,subjects,mappings,results]=await Promise.all([
+    db.from('learning_versions').select('id,title,version,level_id').eq('state','PUBLISHED').order('created_at',{ascending:false}).limit(100),
+    db.from('curriculum_subjects').select('id,name,code,level_id').eq('status','ACTIVE').eq('completion_rule','DIRECT_ASSESSMENT').order('name').limit(500),
+    db.from('learning_academic_mappings').select('version_id,subject_id,reason').limit(1000),
+    db.from('learning_academic_reconciliation').select('attempt_id,student_id,version_id,score,proposed_outcome,subject_name,actual_status,reconciliation_status').order('attempt_id').range((page-1)*25,page*25),
+  ])
+  const failed=[versions,subjects,mappings,results].some(r=>r.error)
+  return <main className="space-y-5 p-4 sm:p-6"><Link prefetch={false} href="/admin/elearning" className="text-blue-700 underline">Về nội dung học</Link><h1 className="text-2xl font-semibold">Đối chiếu kết quả với Academic</h1>
+    <p>Chỉ đối chiếu Final cùng Grade. Không cập nhật điểm môn, không hoàn thành hoặc nâng Grade. Practice và checkpoint không nằm trong bảng này.</p>
+    <p>Người quản trị phải xác nhận đúng yêu cầu Music Theory của phiên bản. Hệ thống không đoán môn từ tên. Hiện chỉ hỗ trợ môn đánh giá trực tiếp; môn tính theo thành phần cần đối chiếu riêng.</p>
+    {failed&&<p role="alert">Không tải đủ dữ liệu đối chiếu. Không nên cấu hình khi chưa xem được toàn bộ dữ liệu.</p>}{p.error&&<p role="alert">Không lưu được. Kiểm tra môn cùng Grade, quyền và cấu hình đã tồn tại.</p>}{p.success&&<p role="status">Đã lưu cấu hình đối chiếu; Academic không thay đổi.</p>}
+    <section className="space-y-3"><h2 className="text-xl font-semibold">Chỉ định môn cho phiên bản đã xuất bản</h2><p>Tối đa 100 phiên bản mới nhất, 500 môn trực tiếp. Cấu hình đã xác nhận giữ nguyên; thay đổi cần phiên bản nội dung mới.</p>
+      {versions.data?.map(v=>{const mapping=mappings.data?.find(m=>m.version_id===v.id),options=subjects.data?.filter(s=>s.level_id===v.level_id)||[];return <details key={v.id} className="rounded border p-3"><summary className="cursor-pointer break-words">{v.title} · v{v.version}</summary>{mapping?<><p>Môn: {subjects.data?.find(s=>s.id===mapping.subject_id)?.name||mapping.subject_id}</p><p className="whitespace-pre-wrap break-words">Lý do: {mapping.reason}</p></>:options.length?<form action={mapAcademicShadow} className="mt-3 space-y-3"><input type="hidden" name="version" value={v.id}/><label>Môn cùng Grade<select name="subject" required className="block w-full rounded border p-2"><option value="">Chọn yêu cầu đã được xác nhận</option>{options.map(s=><option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}</select></label><label>Lý do và căn cứ đối chiếu<textarea name="reason" required maxLength={2000} className="block w-full rounded border p-2"/></label><label className="flex items-start gap-2"><input type="checkbox" name="confirmed" required/>Tôi xác nhận đây là đúng yêu cầu Music Theory cùng Grade của phiên bản.</label><button disabled={failed} className="rounded border px-3 py-2 disabled:opacity-50">Lưu cấu hình đối chiếu</button></form>:<p>Chưa có môn đánh giá trực tiếp cùng Grade để chọn. Cần xác nhận dữ liệu Academic trước; không tự tạo môn.</p>}</details>})}
+    </section>
+    <section className="space-y-3"><h2 className="text-xl font-semibold">Kết quả Final và trạng thái môn hiện tại</h2>{!results.error&&!results.data?.length&&<p>Chưa có kết quả Final để đối chiếu.</p>}{results.data?.slice(0,25).map(r=><article key={r.attempt_id} className="space-y-1 rounded border p-3"><p className="break-all">Bài làm: {r.attempt_id}</p><p className="break-all">Học viên: {r.student_id}</p><p>Môn: {r.subject_name||'Chưa chỉ định'}</p><p>Điểm hiệu lực: {r.score}% · Đề xuất: {r.proposed_outcome}</p><p>Academic hiện tại: {r.actual_status||'Chưa có'}</p><p className="font-semibold">{labels[r.reconciliation_status]||r.reconciliation_status}</p></article>)}</section>
+    <nav className="flex gap-4">{page>1&&<Link prefetch={false} href={'?page='+(page-1)}>Trang trước</Link>}{(results.data?.length||0)>25&&<Link prefetch={false} href={'?page='+(page+1)}>Trang sau</Link>}</nav>
+  </main>
+}
