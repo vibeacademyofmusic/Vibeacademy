@@ -1,0 +1,4004 @@
+{
+  "state": "DRAFT_REVIEW_ONLY",
+  "grade": 1,
+  "created_on": "2026-09-17",
+  "author": "Codex-assisted VIBE draft",
+  "reviewer": null,
+  "pedagogy_approval": null,
+  "originality_approval": null,
+  "published": false,
+  "source_document": "docs/elearning/VIBE_Academy_Music_Theory_Elearning_Curriculum_Specification_V1.docx",
+  "source_sha256": "474b61c92c47208d944fc23b8137372ef074af6594ebac24b3b4f375269ba4a6",
+  "source_use": "Scope and lesson blueprint only; no textbook page scans, traced artwork or copied exercises.",
+  "notation_provenance": "New structured examples authored for this draft; asset/originality review pending.",
+  "terminology_reference": "https://www.abrsm.org/sites/default/files/2023-09/abrsm-ot-reference-sheet-example-questions_online-music-theory-from-2020.pdf",
+  "scope_crosscheck": "https://www.abrsm.org/sites/default/files/2024-01/music-theory-syllabus-outline-grades-1-5-from-2020.pdf",
+  "integration_state": "NOT_IMPORTED_NO_LEARNER_DELIVERY",
+  "modules": [
+    {
+      "code": "MT1.01",
+      "title": "Time Names and Time Values",
+      "source_pages": "pp. 4-5",
+      "lessons": [
+        {
+          "code": "MT1.01.L01",
+          "title": "Core note values",
+          "objective": "Nhận diện semibreve, minim, crotchet, quaver và quan hệ giá trị.",
+          "explanation": "Hãy nhìn đầu nốt, thân nốt và cờ trước khi đọc tên. Semibreve có đầu rỗng và không có thân; minim có đầu rỗng và thân; crotchet có đầu tô và thân; quaver có thêm một cờ hoặc tham gia một nhóm có một nét nối. Những dấu hiệu này cho biết giá trị tương đối, không cho biết nốt cao hay thấp.\nLấy một semibreve làm toàn bộ: minim bằng một nửa, crotchet bằng một phần tư, quaver bằng một phần tám. Chỉ khi chọn crotchet làm một phách, các giá trị tương ứng mới là 4, 2, 1 và nửa phách. Tốc độ nhanh/chậm làm thay đổi thời gian thực, không đổi tỉ lệ giữa các hình nốt.",
+          "worked_steps": [
+            "Chọn crotchet làm đơn vị so sánh.",
+            "Chia một semibreve thành hai minim.",
+            "Chia mỗi minim thành hai crotchet: tổng cộng bốn crotchet.",
+            "Cả hai cách viết có cùng tổng trường độ, dù số đầu nốt khác nhau."
+          ],
+          "misconception": "Không đếm số nốt để kết luận độ dài. Hai minim dài bằng bốn crotchet, không phải ngắn hơn vì có ít đầu nốt hơn.",
+          "summary": [
+            "Đọc hình nốt trước khi so sánh.",
+            "Giá trị là tỉ lệ, không phải số giây cố định.",
+            "Cao độ và trường độ là hai thuộc tính khác nhau."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": false,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 1,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.01.L01; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu minim?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi minim là 1/2. Tỉ lệ là 2.",
+              "code": "MT1.01.L01.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu crotchet?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi crotchet là 1/4. Tỉ lệ là 4.",
+              "code": "MT1.01.L01.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu quaver?",
+              "options": [
+                "8",
+                "9",
+                "10"
+              ],
+              "key": "8",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi quaver là 1/8. Tỉ lệ là 8.",
+              "code": "MT1.01.L01.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một minim bằng bao nhiêu crotchet?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Giá trị minim là 1/2 semibreve; mỗi crotchet là 1/4. Tỉ lệ là 2.",
+              "code": "MT1.01.L01.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một minim bằng bao nhiêu quaver?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Giá trị minim là 1/2 semibreve; mỗi quaver là 1/8. Tỉ lệ là 4.",
+              "code": "MT1.01.L01.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một crotchet bằng bao nhiêu quaver?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Giá trị crotchet là 1/4 semibreve; mỗi quaver là 1/8. Tỉ lệ là 2.",
+              "code": "MT1.01.L01.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Khi đổi tốc độ nhưng giữ nguyên hình nốt, điều nào giữ nguyên?",
+              "options": [
+                "Tỉ lệ trường độ giữa các hình nốt",
+                "Số giây của mọi nốt",
+                "Tên nhạc cụ"
+              ],
+              "key": "Tỉ lệ trường độ giữa các hình nốt",
+              "feedback": "Hình nốt biểu thị quan hệ giá trị; tempo quyết định thời gian thực.",
+              "code": "MT1.01.L01.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": false,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 1,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.01.L01.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.01.L02",
+          "title": "Compare and complete values",
+          "objective": "So sánh độ dài và hoàn thành phép tương đương nhịp.",
+          "explanation": "Muốn so sánh một nhóm nốt, hãy đổi tất cả về cùng một đơn vị nhỏ. Với các nốt đang học, quaver là đơn vị tiện lợi: một crotchet bằng hai quaver, một minim bằng bốn quaver và một semibreve bằng tám quaver. Cộng các phần sau khi đổi đơn vị, không cộng tên hay số đầu nốt.\nKhi điền một giá trị còn thiếu, tìm tổng cần có, trừ phần đã viết, rồi đổi phần còn lại về hình nốt phù hợp. Có thể có nhiều cách chia cùng một tổng; nếu đề yêu cầu một nốt duy nhất, chỉ chọn một hình nốt có đúng độ dài.",
+          "worked_steps": [
+            "Cần tạo tổng bằng một minim.",
+            "Đã có một crotchet và một quaver: quy về ba quaver.",
+            "Một minim bằng bốn quaver, nên còn thiếu một quaver.",
+            "Kiểm tra lại: hai cộng một cộng một bằng bốn quaver."
+          ],
+          "misconception": "Một crotchet cộng một quaver không bằng một minim: nhóm đó chỉ có ba quaver, còn thiếu một.",
+          "summary": [
+            "Quy về cùng đơn vị trước khi cộng.",
+            "Phần thiếu bằng tổng cần có trừ phần đã có.",
+            "Kiểm tra yêu cầu một nốt hay một nhóm nốt."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": true,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 8,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 8,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.01.L02; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 4 quaver, đã có 3 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "1",
+                "2",
+                "3"
+              ],
+              "key": "1",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 8 quaver, đã có 6 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 4 quaver, đã có 2 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 8 quaver, đã có 3 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "5",
+                "6",
+                "7"
+              ],
+              "key": "5",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 8 quaver, đã có 5 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "3",
+                "4",
+                "5"
+              ],
+              "key": "3",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 4 quaver, đã có 1 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "3",
+                "4",
+                "5"
+              ],
+              "key": "3",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Để đủ 8 quaver, đã có 7 quaver. Còn thiếu bao nhiêu?",
+              "options": [
+                "1",
+                "2",
+                "3"
+              ],
+              "key": "1",
+              "feedback": "Lấy tổng cần có trừ số đã có.",
+              "code": "MT1.01.L02.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": true,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 8,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 8,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.01.L02.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        }
+      ],
+      "checkpoint": {
+        "kind": "CHECKPOINT",
+        "counts_toward_academic_progress": false,
+        "pass_threshold": 70,
+        "threshold_scope": "Explicit draft policy for this Grade 1 checkpoint, subject to review",
+        "questions": [
+          {
+            "type": "SINGLE_CHOICE",
+            "mode": "AUTO",
+            "points": 1,
+            "prompt": "Một semibreve bằng bao nhiêu minim?",
+            "options": [
+              "2",
+              "3",
+              "4"
+            ],
+            "key": "2",
+            "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi minim là 1/2. Tỉ lệ là 2.",
+            "code": "MT1.01.CP01",
+            "source_scope": "Original VIBE draft aligned to MT1.01.L01",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false,
+            "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+          },
+          {
+            "type": "REWRITE",
+            "mode": "MANUAL",
+            "points": 2,
+            "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+            "reference_notation": {
+              "schema": 1,
+              "clef": "treble",
+              "fifths": 0,
+              "time": {
+                "beats": 4,
+                "unit": 4
+              },
+              "measures": [
+                {
+                  "partial": true,
+                  "events": [
+                    {
+                      "id": "n1",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "C",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 4,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n2",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "D",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 8,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n3",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "E",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 8,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    }
+                  ],
+                  "beams": [],
+                  "tuplets": []
+                }
+              ],
+              "relations": []
+            },
+            "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+            "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+            "code": "MT1.01.CP02",
+            "source_scope": "Original VIBE draft aligned to MT1.01.L02",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false
+          }
+        ]
+      }
+    },
+    {
+      "code": "MT1.02",
+      "title": "Bar-lines and Time Signatures",
+      "source_pages": "pp. 6-8",
+      "lessons": [
+        {
+          "code": "MT1.02.L01",
+          "title": "Bars and bar-lines",
+          "objective": "Giải thích bar, bar-line và double bar-line.",
+          "explanation": "Một bar (ô nhịp) gom các phách theo số chỉ nhịp. Bar-line là vạch ngăn giữa các ô, không phải một âm thanh và không thêm thời gian nghỉ. Khi đi qua vạch nhịp, dòng nhạc vẫn tiếp tục theo yêu cầu của bản nhạc.\nHai vạch mảnh có thể đánh dấu ranh giới một đoạn. Vạch kết thường gồm một nét mảnh rồi một nét đậm. Các dấu này giúp đọc cấu trúc; không tự biến nốt trước đó thành dài hơn. Độ dài ô vẫn được kiểm tra bằng số chỉ nhịp và các hình nốt.",
+          "worked_steps": [
+            "Đọc nhịp 2/4: mỗi ô đầy đủ có hai phách crotchet.",
+            "Viết hai crotchet, rồi đặt một bar-line.",
+            "Viết tiếp hai crotchet ở ô sau.",
+            "Không thêm một phách nghỉ tại vạch."
+          ],
+          "misconception": "Vạch nhịp không phải rest. Nếu cần nghỉ, phải có ký hiệu nghỉ hoặc chỉ dẫn phù hợp, không tự nghỉ vì nhìn thấy vạch.",
+          "summary": [
+            "Ô nhịp là đơn vị tổ chức phách.",
+            "Vạch nhịp không có trường độ.",
+            "Phân biệt vạch giữa ô, vạch chia đoạn và vạch kết."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 2,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": false,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.02.L01; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Bar-line có giá trị bao nhiêu phách?",
+              "options": [
+                "0",
+                "1",
+                "2"
+              ],
+              "key": "0",
+              "feedback": "Vạch chỉ chia ô, không tạo trường độ.",
+              "code": "MT1.02.L01.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Trong dãy gồm ba ô, có mấy ranh giới giữa các ô?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Có ranh giới giữa ô 1–2 và ô 2–3.",
+              "code": "MT1.02.L01.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một ô 2/4 dùng toàn crotchet cần mấy nốt?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Hai phách crotchet tạo ô đầy đủ.",
+              "code": "MT1.02.L01.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Hai ô 2/4 dùng toàn crotchet có tổng mấy nốt?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Mỗi ô hai nốt, hai ô bốn nốt.",
+              "code": "MT1.02.L01.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Khi qua vạch nhịp, cần tự thêm mấy phách nghỉ?",
+              "options": [
+                "0",
+                "1",
+                "2"
+              ],
+              "key": "0",
+              "feedback": "Không tự nghỉ nếu không có ký hiệu yêu cầu.",
+              "code": "MT1.02.L01.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Vạch đôi mảnh thường giúp nhận ra điều gì?",
+              "options": [
+                "Ranh giới đoạn",
+                "Cao độ C4",
+                "Tốc độ cố định"
+              ],
+              "key": "Ranh giới đoạn",
+              "feedback": "Đó là dấu chỉ cấu trúc, không phải nốt.",
+              "code": "MT1.02.L01.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Vạch kết thường có dạng nào?",
+              "options": [
+                "Một nét mảnh rồi một nét đậm",
+                "Một dấu chấm",
+                "Một đầu nốt"
+              ],
+              "key": "Một nét mảnh rồi một nét đậm",
+              "feedback": "Phân biệt với vạch giữa ô và hai vạch mảnh.",
+              "code": "MT1.02.L01.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 2,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": false,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.02.L01.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.02.L02",
+          "title": "Simple time signatures",
+          "objective": "Đọc số phách và loại phách trong 2/4, 3/4, 4/4 và common time.",
+          "explanation": "Trong các nhịp đơn 2/4, 3/4 và 4/4, số trên cho biết có bao nhiêu phách trong một ô đầy đủ; số dưới 4 cho biết mỗi phách dùng giá trị crotchet. Vì vậy một ô 3/4 có ba phách crotchet nhưng không nhất thiết có đúng ba nốt: có thể chia một phách thành hai quaver.\nKý hiệu C (common time) biểu thị 4/4. Đừng nhầm với ký hiệu C có gạch dọc. Trong bài này ta chỉ dùng phách crotchet và các ô đầy đủ, chưa suy rộng cách đọc sang nhịp kép.",
+          "worked_steps": [
+            "Đọc 3/4 thành ba phách crotchet.",
+            "Một minim chiếm hai phách.",
+            "Thêm một crotchet chiếm phách thứ ba.",
+            "Tổng hai cộng một đúng ba, nên ô đầy đủ dù chỉ có hai nốt."
+          ],
+          "misconception": "Số trên đếm phách, không đếm đầu nốt. Sáu quaver vẫn có thể tạo một ô 3/4.",
+          "summary": [
+            "Đọc cả hai số cùng nhau.",
+            "Số dưới 4 chọn crotchet làm đơn vị phách.",
+            "C là common time 4/4."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 3,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": false,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 2,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.02.L02; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô đầy đủ 2/4 cần tổng bao nhiêu crotchet?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Số trên cho số phách; số dưới 4 chọn crotchet.",
+              "code": "MT1.02.L02.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô đầy đủ 3/4 cần tổng bao nhiêu crotchet?",
+              "options": [
+                "3",
+                "4",
+                "5"
+              ],
+              "key": "3",
+              "feedback": "Số trên cho số phách; số dưới 4 chọn crotchet.",
+              "code": "MT1.02.L02.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô đầy đủ 4/4 cần tổng bao nhiêu crotchet?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Số trên cho số phách; số dưới 4 chọn crotchet.",
+              "code": "MT1.02.L02.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 2/4 có thể chứa bao nhiêu quaver nếu chỉ dùng quaver?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Mỗi phách crotchet chia thành hai quaver.",
+              "code": "MT1.02.L02.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 3/4 có thể chứa bao nhiêu quaver nếu chỉ dùng quaver?",
+              "options": [
+                "6",
+                "7",
+                "8"
+              ],
+              "key": "6",
+              "feedback": "Mỗi phách crotchet chia thành hai quaver.",
+              "code": "MT1.02.L02.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 4/4 có thể chứa bao nhiêu quaver nếu chỉ dùng quaver?",
+              "options": [
+                "8",
+                "9",
+                "10"
+              ],
+              "key": "8",
+              "feedback": "Mỗi phách crotchet chia thành hai quaver.",
+              "code": "MT1.02.L02.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Bar-line có tự thêm một phách nghỉ không?",
+              "options": [
+                "Không",
+                "Có, luôn một phách",
+                "Có, luôn hai phách"
+              ],
+              "key": "Không",
+              "feedback": "Vạch phân chia ô nhịp không có trường độ.",
+              "code": "MT1.02.L02.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 3,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": false,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 2,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.02.L02.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.02.L03",
+          "title": "Complete bars",
+          "objective": "Thêm bar-line hoặc note để hoàn chỉnh ô nhịp.",
+          "explanation": "Để hoàn chỉnh ô nhịp, đọc số chỉ nhịp trước, rồi cộng giá trị đã có. Phần còn thiếu phải đúng bằng sức chứa ô trừ tổng đã viết. Nếu tổng đã vượt sức chứa thì thêm nốt không thể sửa lỗi; cần kiểm tra và viết lại theo yêu cầu.\nKhi thêm vạch nhịp vào một dãy nốt, đánh dấu sau khi vừa đủ số phách của một ô. Không chẻ một nốt thành hai phần qua vạch nếu đề chưa yêu cầu và chưa học cách nối. Hãy kiểm tra từng ô riêng, rồi kiểm tra cả dãy.",
+          "worked_steps": [
+            "Trong 4/4, ô cần bốn crotchet.",
+            "Một minim và hai quaver có tổng ba crotchet.",
+            "Còn một crotchet để hoàn tất ô.",
+            "Đếm lại hai + nửa + nửa + một = bốn."
+          ],
+          "misconception": "Ô 3/4 chứa hai minim đã dài bốn phách. Không thể sửa bằng cách thêm một quaver.",
+          "summary": [
+            "Tính sức chứa của ô trước.",
+            "Phân biệt còn thiếu và đã thừa.",
+            "Đặt vạch ở ranh giới phách hợp lệ."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": false,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 2,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 8,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 8,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n4",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "F",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.02.L03; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 2/4 đã có tổng 1 crotchet. Cần thêm bao nhiêu crotchet để đủ?",
+              "options": [
+                "1",
+                "2",
+                "3"
+              ],
+              "key": "1",
+              "feedback": "Trừ tổng đã có khỏi số phách của ô.",
+              "code": "MT1.02.L03.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 3/4 đã có tổng 2 crotchet. Cần thêm bao nhiêu crotchet để đủ?",
+              "options": [
+                "1",
+                "2",
+                "3"
+              ],
+              "key": "1",
+              "feedback": "Trừ tổng đã có khỏi số phách của ô.",
+              "code": "MT1.02.L03.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 4/4 đã có tổng 2 crotchet. Cần thêm bao nhiêu crotchet để đủ?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Trừ tổng đã có khỏi số phách của ô.",
+              "code": "MT1.02.L03.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 3/4 đã có tổng 1 crotchet. Cần thêm bao nhiêu crotchet để đủ?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Trừ tổng đã có khỏi số phách của ô.",
+              "code": "MT1.02.L03.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 4/4 đã có tổng 3 crotchet. Cần thêm bao nhiêu crotchet để đủ?",
+              "options": [
+                "1",
+                "2",
+                "3"
+              ],
+              "key": "1",
+              "feedback": "Trừ tổng đã có khỏi số phách của ô.",
+              "code": "MT1.02.L03.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 4/4 đã có tổng 1 crotchet. Cần thêm bao nhiêu crotchet để đủ?",
+              "options": [
+                "3",
+                "4",
+                "5"
+              ],
+              "key": "3",
+              "feedback": "Trừ tổng đã có khỏi số phách của ô.",
+              "code": "MT1.02.L03.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Ô 3/4 có hai minim. Có thể sửa bằng cách thêm nốt không?",
+              "options": [
+                "Không",
+                "Có, thêm quaver",
+                "Có, thêm minim"
+              ],
+              "key": "Không",
+              "feedback": "Hai minim đã dài bốn phách, vượt sức chứa ba phách.",
+              "code": "MT1.02.L03.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": false,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 2,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 8,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 8,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n4",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "F",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.02.L03.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        }
+      ],
+      "checkpoint": {
+        "kind": "CHECKPOINT",
+        "counts_toward_academic_progress": false,
+        "pass_threshold": 70,
+        "threshold_scope": "Explicit draft policy for this Grade 1 checkpoint, subject to review",
+        "questions": [
+          {
+            "type": "SINGLE_CHOICE",
+            "mode": "AUTO",
+            "points": 1,
+            "prompt": "Bar-line có giá trị bao nhiêu phách?",
+            "options": [
+              "0",
+              "1",
+              "2"
+            ],
+            "key": "0",
+            "feedback": "Vạch chỉ chia ô, không tạo trường độ.",
+            "code": "MT1.02.CP01",
+            "source_scope": "Original VIBE draft aligned to MT1.02.L01",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false,
+            "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+          },
+          {
+            "type": "REWRITE",
+            "mode": "MANUAL",
+            "points": 2,
+            "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+            "reference_notation": {
+              "schema": 1,
+              "clef": "treble",
+              "fifths": 0,
+              "time": {
+                "beats": 4,
+                "unit": 4
+              },
+              "measures": [
+                {
+                  "partial": false,
+                  "events": [
+                    {
+                      "id": "n1",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "C",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 2,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n2",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "D",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 8,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n3",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "E",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 8,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n4",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "F",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 4,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    }
+                  ],
+                  "beams": [],
+                  "tuplets": []
+                }
+              ],
+              "relations": []
+            },
+            "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+            "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+            "code": "MT1.02.CP02",
+            "source_scope": "Original VIBE draft aligned to MT1.02.L03",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false
+          }
+        ]
+      }
+    },
+    {
+      "code": "MT1.03",
+      "title": "Writing on a Stave",
+      "source_pages": "pp. 9-9",
+      "lessons": [
+        {
+          "code": "MT1.03.L01",
+          "title": "The five-line stave",
+          "objective": "Xác định line, space và cách đặt notehead.",
+          "explanation": "Stave có năm dòng và bốn khe bên trong. Đếm dòng và khe từ dưới lên. Một đầu nốt nằm trên dòng khi dòng đi qua giữa đầu nốt; đầu nốt nằm trong khe khi ở giữa hai dòng. Đi lên một vị trí liền kề nghĩa là đi từ dòng sang khe hoặc từ khe sang dòng.\nChỉ vị trí trên khuông chưa đủ để gọi tên cao độ: phải đọc khóa nhạc. Bài này tập nhận dòng/khe và đặt đầu nốt rõ ràng; tên cao độ chi tiết sẽ học ở module kế tiếp. Dòng phụ là những nét ngắn dùng khi cần viết nốt ngoài năm dòng chính.",
+          "worked_steps": [
+            "Tìm dòng thấp nhất: đó là dòng 1.",
+            "Khe ngay phía trên dòng 1 là khe 1.",
+            "Vị trí tiếp theo phía trên khe 1 là dòng 2.",
+            "Đặt tâm đầu nốt đúng vị trí, không đặt lưng chừng giữa dòng và khe."
+          ],
+          "misconception": "Không đếm từ trên xuống và không gọi một khe là dòng. Một khuông năm dòng có bốn khe bên trong, không có năm.",
+          "summary": [
+            "Đếm từ dưới lên.",
+            "Dòng đi qua giữa đầu nốt.",
+            "Khóa nhạc quyết định tên cao độ."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": true,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "F",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "G",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.03.L01; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một stave thông thường có mấy dòng?",
+              "options": [
+                "5",
+                "6",
+                "7"
+              ],
+              "key": "5",
+              "feedback": "Khuông chính có năm dòng.",
+              "code": "MT1.03.L01.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Có mấy khe bên trong năm dòng?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Mỗi cặp dòng liền kề tạo một khe.",
+              "code": "MT1.03.L01.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Đếm dòng trên khuông theo hướng nào?",
+              "options": [
+                "Từ dưới lên",
+                "Từ trên xuống",
+                "Từ giữa ra hai bên"
+              ],
+              "key": "Từ dưới lên",
+              "feedback": "Dòng thấp nhất là dòng 1.",
+              "code": "MT1.03.L01.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Đầu nốt trên dòng được đặt thế nào?",
+              "options": [
+                "Dòng đi qua tâm đầu nốt",
+                "Đầu nốt ở giữa hai dòng",
+                "Đầu nốt ở bất kỳ đâu"
+              ],
+              "key": "Dòng đi qua tâm đầu nốt",
+              "feedback": "Tâm đầu nốt phân biệt rõ vị trí dòng và khe.",
+              "code": "MT1.03.L01.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Trước khi gọi tên cao độ, cần đọc gì?",
+              "options": [
+                "Khóa nhạc",
+                "Tên tác giả",
+                "Màu trang giấy"
+              ],
+              "key": "Khóa nhạc",
+              "feedback": "Khóa đặt mốc tên cao độ trên khuông.",
+              "code": "MT1.03.L01.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Chép đúng nốt nhưng đổi số chỉ nhịp có giữ nguyên mẫu không?",
+              "options": [
+                "Không",
+                "Luôn có",
+                "Chỉ cần cùng số nốt"
+              ],
+              "key": "Không",
+              "feedback": "Ngữ cảnh khuông cũng là một phần cần giữ.",
+              "code": "MT1.03.L01.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Khi chép mẫu, dấu hóa được xử lý thế nào?",
+              "options": [
+                "Giữ đúng dấu theo mẫu",
+                "Bỏ tất cả",
+                "Thêm dấu tùy ý"
+              ],
+              "key": "Giữ đúng dấu theo mẫu",
+              "feedback": "Không bỏ hoặc tự thêm ký hiệu của mẫu.",
+              "code": "MT1.03.L01.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": true,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "F",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "G",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.03.L01.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.03.L02",
+          "title": "Clefs and copying",
+          "objective": "Sao chép clef, dấu hóa, số chỉ nhịp và nốt chính xác.",
+          "explanation": "Khi chép một ví dụ, hãy kiểm tra từ trái sang phải: khóa nhạc, hóa biểu nếu có, số chỉ nhịp, rồi từng nốt và dấu kèm theo. Đừng chỉ bắt chước hình dáng chung. Một bản chép đúng giữ cả cao độ, trường độ và ngữ cảnh của khuông.\nỞ bước này, hãy giữ nguyên các ký hiệu của mẫu, không tự đổi khóa hoặc đổi vị trí để khuông trông cân hơn. Khi dùng bộ nhập ký âm, đọc lại phần mô tả văn bản để đối chiếu khóa, nhịp, tên nốt và giá trị. Dấu hóa là một phần của dữ liệu, không phải trang trí.",
+          "worked_steps": [
+            "Mẫu dùng khóa Sol, nhịp 2/4 và hai crotchet C4–D4.",
+            "Chọn đúng khóa và nhịp trước.",
+            "Nhập C4 rồi D4, mỗi nốt có mẫu số trường độ 4.",
+            "Đọc lại mô tả và kiểm tra tổng hai phách."
+          ],
+          "misconception": "Chép đúng hai hình nốt nhưng đổi nhịp 2/4 thành 3/4 vẫn là sai mẫu. Ngữ cảnh cũng phải được giữ.",
+          "summary": [
+            "Đối chiếu ngữ cảnh trước từng nốt.",
+            "Giữ nguyên dấu hóa khi mẫu có dấu.",
+            "Dùng cả hình ảnh và mô tả văn bản để kiểm tra."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 2,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": false,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.03.L02; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một stave thông thường có mấy dòng?",
+              "options": [
+                "5",
+                "6",
+                "7"
+              ],
+              "key": "5",
+              "feedback": "Khuông chính có năm dòng.",
+              "code": "MT1.03.L02.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Có mấy khe bên trong năm dòng?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Mỗi cặp dòng liền kề tạo một khe.",
+              "code": "MT1.03.L02.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Đếm dòng trên khuông theo hướng nào?",
+              "options": [
+                "Từ dưới lên",
+                "Từ trên xuống",
+                "Từ giữa ra hai bên"
+              ],
+              "key": "Từ dưới lên",
+              "feedback": "Dòng thấp nhất là dòng 1.",
+              "code": "MT1.03.L02.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Đầu nốt trên dòng được đặt thế nào?",
+              "options": [
+                "Dòng đi qua tâm đầu nốt",
+                "Đầu nốt ở giữa hai dòng",
+                "Đầu nốt ở bất kỳ đâu"
+              ],
+              "key": "Dòng đi qua tâm đầu nốt",
+              "feedback": "Tâm đầu nốt phân biệt rõ vị trí dòng và khe.",
+              "code": "MT1.03.L02.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Trước khi gọi tên cao độ, cần đọc gì?",
+              "options": [
+                "Khóa nhạc",
+                "Tên tác giả",
+                "Màu trang giấy"
+              ],
+              "key": "Khóa nhạc",
+              "feedback": "Khóa đặt mốc tên cao độ trên khuông.",
+              "code": "MT1.03.L02.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Chép đúng nốt nhưng đổi số chỉ nhịp có giữ nguyên mẫu không?",
+              "options": [
+                "Không",
+                "Luôn có",
+                "Chỉ cần cùng số nốt"
+              ],
+              "key": "Không",
+              "feedback": "Ngữ cảnh khuông cũng là một phần cần giữ.",
+              "code": "MT1.03.L02.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Khi chép mẫu, dấu hóa được xử lý thế nào?",
+              "options": [
+                "Giữ đúng dấu theo mẫu",
+                "Bỏ tất cả",
+                "Thêm dấu tùy ý"
+              ],
+              "key": "Giữ đúng dấu theo mẫu",
+              "feedback": "Không bỏ hoặc tự thêm ký hiệu của mẫu.",
+              "code": "MT1.03.L02.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 2,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": false,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.03.L02.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        }
+      ],
+      "checkpoint": {
+        "kind": "CHECKPOINT",
+        "counts_toward_academic_progress": false,
+        "pass_threshold": 70,
+        "threshold_scope": "Explicit draft policy for this Grade 1 checkpoint, subject to review",
+        "questions": [
+          {
+            "type": "SINGLE_CHOICE",
+            "mode": "AUTO",
+            "points": 1,
+            "prompt": "Một stave thông thường có mấy dòng?",
+            "options": [
+              "5",
+              "6",
+              "7"
+            ],
+            "key": "5",
+            "feedback": "Khuông chính có năm dòng.",
+            "code": "MT1.03.CP01",
+            "source_scope": "Original VIBE draft aligned to MT1.03.L01",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false,
+            "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+          },
+          {
+            "type": "REWRITE",
+            "mode": "MANUAL",
+            "points": 2,
+            "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+            "reference_notation": {
+              "schema": 1,
+              "clef": "treble",
+              "fifths": 0,
+              "time": {
+                "beats": 2,
+                "unit": 4
+              },
+              "measures": [
+                {
+                  "partial": false,
+                  "events": [
+                    {
+                      "id": "n1",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "C",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 4,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n2",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "D",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 4,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    }
+                  ],
+                  "beams": [],
+                  "tuplets": []
+                }
+              ],
+              "relations": []
+            },
+            "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+            "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+            "code": "MT1.03.CP02",
+            "source_scope": "Original VIBE draft aligned to MT1.03.L02",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false
+          }
+        ]
+      }
+    },
+    {
+      "code": "MT1.04",
+      "title": "Letter Names",
+      "source_pages": "pp. 10-15",
+      "lessons": [
+        {
+          "code": "MT1.04.L01",
+          "title": "Treble-clef notes",
+          "objective": "Gọi tên và đặt nốt trong khóa Sol.",
+          "explanation": "Khóa Sol đặt mốc G ở dòng thứ hai từ dưới lên. Từ mốc này, đi lên hoặc xuống từng dòng/khe liền kề và lần lượt theo các tên A–B–C–D–E–F–G. Sau G lại đến A; chữ cái không tiếp tục sang H.\nNăm dòng của khóa Sol từ dưới lên là E–G–B–D–F; bốn khe là F–A–C–E. Các chữ này lặp ở nhiều quãng tám, nên khi nhập dữ liệu cần giữ cả chữ và số quãng tám. C4 (middle C) nằm trên dòng phụ đầu tiên dưới khuông khóa Sol.",
+          "worked_steps": [
+            "Dòng 2 là G4.",
+            "Khe ngay trên dòng 2 là A4.",
+            "Dòng tiếp theo là B4.",
+            "Kiểm tra đầu nốt nằm trên dòng hay trong khe trước khi đọc."
+          ],
+          "misconception": "Từ G4 đi lên một vị trí liền kề đến A4, không nhảy thẳng đến B4. Một dòng và khe kế bên là hai vị trí khác nhau.",
+          "summary": [
+            "Dùng G dòng 2 làm mốc.",
+            "Đọc lần lượt từng vị trí khuông.",
+            "Giữ số quãng tám khi nhập nốt."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": true,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "G",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "A",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "B",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.04.L01; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 1 từ dưới lên trong khóa Sol là nốt nào?",
+              "options": [
+                "E4",
+                "C6",
+                "D1"
+              ],
+              "key": "E4",
+              "feedback": "Dọc các dòng khóa Sol từ dưới lên: E4, G4, B4, D5, F5.",
+              "code": "MT1.04.L01.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 2 từ dưới lên trong khóa Sol là nốt nào?",
+              "options": [
+                "G4",
+                "C6",
+                "D1"
+              ],
+              "key": "G4",
+              "feedback": "Dọc các dòng khóa Sol từ dưới lên: E4, G4, B4, D5, F5.",
+              "code": "MT1.04.L01.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 3 từ dưới lên trong khóa Sol là nốt nào?",
+              "options": [
+                "B4",
+                "C6",
+                "D1"
+              ],
+              "key": "B4",
+              "feedback": "Dọc các dòng khóa Sol từ dưới lên: E4, G4, B4, D5, F5.",
+              "code": "MT1.04.L01.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 4 từ dưới lên trong khóa Sol là nốt nào?",
+              "options": [
+                "D5",
+                "C6",
+                "D1"
+              ],
+              "key": "D5",
+              "feedback": "Dọc các dòng khóa Sol từ dưới lên: E4, G4, B4, D5, F5.",
+              "code": "MT1.04.L01.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 5 từ dưới lên trong khóa Sol là nốt nào?",
+              "options": [
+                "F5",
+                "C6",
+                "D1"
+              ],
+              "key": "F5",
+              "feedback": "Dọc các dòng khóa Sol từ dưới lên: E4, G4, B4, D5, F5.",
+              "code": "MT1.04.L01.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Viết C4 từ khóa Sol sang khóa Fa mà giữ cùng cao độ thì chọn gì?",
+              "options": [
+                "C4",
+                "C3",
+                "C5"
+              ],
+              "key": "C4",
+              "feedback": "Giữ số quãng tám; vị trí trên khuông đổi theo khóa.",
+              "code": "MT1.04.L01.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "C3 và C4 có cùng cao độ không?",
+              "options": [
+                "Không",
+                "Có",
+                "Chỉ khi cùng thân nốt"
+              ],
+              "key": "Không",
+              "feedback": "Cùng tên chữ nhưng khác quãng tám.",
+              "code": "MT1.04.L01.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": true,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "G",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "A",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "B",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.04.L01.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.04.L02",
+          "title": "Bass-clef notes",
+          "objective": "Gọi tên và đặt nốt trong khóa Fa.",
+          "explanation": "Khóa Fa đặt mốc F ở dòng thứ tư từ dưới lên; hai chấm của khóa nằm hai bên dòng này. Từ F, các vị trí liền kề vẫn theo chuỗi chữ A–B–C–D–E–F–G. Quy tắc đi dòng/khe không đổi, nhưng mốc khóa khác khóa Sol.\nNăm dòng khóa Fa từ dưới lên là G–B–D–F–A; bốn khe là A–C–E–G. Middle C, tức C4, nằm trên dòng phụ đầu tiên phía trên khuông khóa Fa. Không dùng các tên dòng của khóa Sol để đọc một khuông khóa Fa.",
+          "worked_steps": [
+            "Dòng 4 là F3.",
+            "Khe dưới dòng 4 là E3.",
+            "Dòng thấp hơn kế tiếp là D3.",
+            "Đối chiếu lại khóa Fa trước khi xác nhận tên."
+          ],
+          "misconception": "Cùng dòng thứ hai nhưng khóa Fa là B2, còn khóa Sol là G4. Vị trí giống nhau không có nghĩa cùng cao độ.",
+          "summary": [
+            "F dòng 4 là mốc.",
+            "Đọc khóa trước tên nốt.",
+            "C4 nằm trên dòng phụ phía trên khuông Fa."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "bass",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": true,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "F",
+                        "octave": 3,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 3,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 3,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.04.L02; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 1 từ dưới lên trong khóa Fa là nốt nào?",
+              "options": [
+                "G2",
+                "C6",
+                "D1"
+              ],
+              "key": "G2",
+              "feedback": "Dọc các dòng khóa Fa từ dưới lên: G2, B2, D3, F3, A3.",
+              "code": "MT1.04.L02.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 2 từ dưới lên trong khóa Fa là nốt nào?",
+              "options": [
+                "B2",
+                "C6",
+                "D1"
+              ],
+              "key": "B2",
+              "feedback": "Dọc các dòng khóa Fa từ dưới lên: G2, B2, D3, F3, A3.",
+              "code": "MT1.04.L02.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 3 từ dưới lên trong khóa Fa là nốt nào?",
+              "options": [
+                "D3",
+                "C6",
+                "D1"
+              ],
+              "key": "D3",
+              "feedback": "Dọc các dòng khóa Fa từ dưới lên: G2, B2, D3, F3, A3.",
+              "code": "MT1.04.L02.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 4 từ dưới lên trong khóa Fa là nốt nào?",
+              "options": [
+                "F3",
+                "C6",
+                "D1"
+              ],
+              "key": "F3",
+              "feedback": "Dọc các dòng khóa Fa từ dưới lên: G2, B2, D3, F3, A3.",
+              "code": "MT1.04.L02.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Dòng 5 từ dưới lên trong khóa Fa là nốt nào?",
+              "options": [
+                "A3",
+                "C6",
+                "D1"
+              ],
+              "key": "A3",
+              "feedback": "Dọc các dòng khóa Fa từ dưới lên: G2, B2, D3, F3, A3.",
+              "code": "MT1.04.L02.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Viết C4 từ khóa Sol sang khóa Fa mà giữ cùng cao độ thì chọn gì?",
+              "options": [
+                "C4",
+                "C3",
+                "C5"
+              ],
+              "key": "C4",
+              "feedback": "Giữ số quãng tám; vị trí trên khuông đổi theo khóa.",
+              "code": "MT1.04.L02.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "C3 và C4 có cùng cao độ không?",
+              "options": [
+                "Không",
+                "Có",
+                "Chỉ khi cùng thân nốt"
+              ],
+              "key": "Không",
+              "feedback": "Cùng tên chữ nhưng khác quãng tám.",
+              "code": "MT1.04.L02.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "bass",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": true,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "F",
+                            "octave": 3,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 3,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 3,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.04.L02.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.04.L03",
+          "title": "Same pitch across clefs",
+          "objective": "Nhận biết cao độ tương ứng giữa hai khóa.",
+          "explanation": "Một cao độ không thay đổi khi viết bằng khóa khác. Vị trí đầu nốt trên khuông có thể thay đổi vì mỗi khóa dùng mốc khác nhau. Ví dụ C4 là cùng một cao độ: dưới khuông khóa Sol nhưng trên khuông khóa Fa.\nKhi viết lại qua khóa khác trong bài này, giữ cả tên chữ, dấu hóa và số quãng tám. Đây không phải yêu cầu dịch lên hoặc xuống một quãng tám. Hãy kiểm tra cao độ đã nhập trước khi so sánh vị trí hình ảnh.",
+          "worked_steps": [
+            "Đọc C4 trên dòng phụ dưới khóa Sol.",
+            "Đổi ngữ cảnh sang khóa Fa.",
+            "Vẫn giữ C4, không đổi thành C3.",
+            "Ở khóa Fa, C4 xuất hiện trên dòng phụ phía trên; âm cao vẫn giữ nguyên."
+          ],
+          "misconception": "C3 và C4 cùng tên chữ C nhưng khác quãng tám. Thay C4 bằng C3 không phải viết lại cùng cao độ.",
+          "summary": [
+            "Khóa đổi không tự đổi âm cao.",
+            "Giữ chữ, dấu hóa và quãng tám.",
+            "Không so sánh bằng vị trí ảnh đơn thuần."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "bass",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": true,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 4,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.04.L03; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Giữ cùng cao độ C4 khi đổi khóa thì tên dữ liệu phải là gì?",
+              "options": [
+                "C4",
+                "C3",
+                "C5"
+              ],
+              "key": "C4",
+              "feedback": "Đổi khóa làm đổi vị trí khuông, không tự đổi cao độ hay quãng tám.",
+              "code": "MT1.04.L03.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Giữ cùng cao độ D4 khi đổi khóa thì tên dữ liệu phải là gì?",
+              "options": [
+                "D4",
+                "D3",
+                "D5"
+              ],
+              "key": "D4",
+              "feedback": "Đổi khóa làm đổi vị trí khuông, không tự đổi cao độ hay quãng tám.",
+              "code": "MT1.04.L03.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Giữ cùng cao độ E4 khi đổi khóa thì tên dữ liệu phải là gì?",
+              "options": [
+                "E4",
+                "E3",
+                "E5"
+              ],
+              "key": "E4",
+              "feedback": "Đổi khóa làm đổi vị trí khuông, không tự đổi cao độ hay quãng tám.",
+              "code": "MT1.04.L03.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Giữ cùng cao độ G3 khi đổi khóa thì tên dữ liệu phải là gì?",
+              "options": [
+                "G3",
+                "G2",
+                "G4"
+              ],
+              "key": "G3",
+              "feedback": "Đổi khóa làm đổi vị trí khuông, không tự đổi cao độ hay quãng tám.",
+              "code": "MT1.04.L03.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Giữ cùng cao độ A3 khi đổi khóa thì tên dữ liệu phải là gì?",
+              "options": [
+                "A3",
+                "A2",
+                "A4"
+              ],
+              "key": "A3",
+              "feedback": "Đổi khóa làm đổi vị trí khuông, không tự đổi cao độ hay quãng tám.",
+              "code": "MT1.04.L03.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Middle C ở khóa Sol nằm đâu?",
+              "options": [
+                "Dòng phụ đầu tiên dưới khuông",
+                "Dòng phụ đầu tiên trên khuông",
+                "Dòng giữa"
+              ],
+              "key": "Dòng phụ đầu tiên dưới khuông",
+              "feedback": "C4 nằm dưới khuông khóa Sol.",
+              "code": "MT1.04.L03.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Middle C ở khóa Fa nằm đâu?",
+              "options": [
+                "Dòng phụ đầu tiên trên khuông",
+                "Dòng phụ đầu tiên dưới khuông",
+                "Dòng thấp nhất"
+              ],
+              "key": "Dòng phụ đầu tiên trên khuông",
+              "feedback": "C4 nằm trên khuông khóa Fa.",
+              "code": "MT1.04.L03.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "bass",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": true,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 4,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.04.L03.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        }
+      ],
+      "checkpoint": {
+        "kind": "CHECKPOINT",
+        "counts_toward_academic_progress": false,
+        "pass_threshold": 70,
+        "threshold_scope": "Explicit draft policy for this Grade 1 checkpoint, subject to review",
+        "questions": [
+          {
+            "type": "SINGLE_CHOICE",
+            "mode": "AUTO",
+            "points": 1,
+            "prompt": "Dòng 1 từ dưới lên trong khóa Sol là nốt nào?",
+            "options": [
+              "E4",
+              "C6",
+              "D1"
+            ],
+            "key": "E4",
+            "feedback": "Dọc các dòng khóa Sol từ dưới lên: E4, G4, B4, D5, F5.",
+            "code": "MT1.04.CP01",
+            "source_scope": "Original VIBE draft aligned to MT1.04.L01",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false,
+            "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+          },
+          {
+            "type": "REWRITE",
+            "mode": "MANUAL",
+            "points": 2,
+            "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+            "reference_notation": {
+              "schema": 1,
+              "clef": "bass",
+              "fifths": 0,
+              "time": {
+                "beats": 4,
+                "unit": 4
+              },
+              "measures": [
+                {
+                  "partial": true,
+                  "events": [
+                    {
+                      "id": "n1",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "C",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 4,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    }
+                  ],
+                  "beams": [],
+                  "tuplets": []
+                }
+              ],
+              "relations": []
+            },
+            "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+            "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+            "code": "MT1.04.CP02",
+            "source_scope": "Original VIBE draft aligned to MT1.04.L03",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false
+          }
+        ]
+      }
+    },
+    {
+      "code": "MT1.05",
+      "title": "Semiquavers",
+      "source_pages": "pp. 16-17",
+      "lessons": [
+        {
+          "code": "MT1.05.L01",
+          "title": "Semiquaver symbol and value",
+          "objective": "Nhận diện semiquaver và quan hệ với quaver/crotchet.",
+          "explanation": "Semiquaver, hay nốt móc kép, có giá trị bằng một nửa quaver và một phần tư crotchet. Khi đứng riêng, nó có hai cờ; khi ghép nhóm, hai nét nối biểu thị giá trị tương ứng. Đầu nốt vẫn được tô.\nHãy so sánh theo tổng trường độ: hai semiquaver bằng một quaver, bốn semiquaver bằng một crotchet. Khi crotchet là đơn vị phách, mỗi semiquaver bằng một phần tư phách. Số cờ không làm thay đổi cao độ của nốt.",
+          "worked_steps": [
+            "Chọn một crotchet làm tổng cần có.",
+            "Đổi crotchet thành hai quaver.",
+            "Đổi mỗi quaver thành hai semiquaver.",
+            "Hai nhóm hai cho tổng bốn semiquaver."
+          ],
+          "misconception": "Hai cờ không có nghĩa hai phách. Semiquaver ngắn hơn quaver, không dài gấp đôi.",
+          "summary": [
+            "Hai semiquaver bằng một quaver.",
+            "Bốn semiquaver bằng một crotchet.",
+            "Hai nét nối thay cho hai cờ trong nhóm."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 4,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": true,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n4",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "F",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [
+                  [
+                    "n1",
+                    "n2",
+                    "n3",
+                    "n4"
+                  ]
+                ],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.05.L01; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu minim?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi minim là 1/2. Tỉ lệ là 2.",
+              "code": "MT1.05.L01.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu crotchet?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi crotchet là 1/4. Tỉ lệ là 4.",
+              "code": "MT1.05.L01.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu quaver?",
+              "options": [
+                "8",
+                "9",
+                "10"
+              ],
+              "key": "8",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi quaver là 1/8. Tỉ lệ là 8.",
+              "code": "MT1.05.L01.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một semibreve bằng bao nhiêu semiquaver?",
+              "options": [
+                "16",
+                "17",
+                "18"
+              ],
+              "key": "16",
+              "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi semiquaver là 1/16. Tỉ lệ là 16.",
+              "code": "MT1.05.L01.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một minim bằng bao nhiêu crotchet?",
+              "options": [
+                "2",
+                "3",
+                "4"
+              ],
+              "key": "2",
+              "feedback": "Giá trị minim là 1/2 semibreve; mỗi crotchet là 1/4. Tỉ lệ là 2.",
+              "code": "MT1.05.L01.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một minim bằng bao nhiêu quaver?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Giá trị minim là 1/2 semibreve; mỗi quaver là 1/8. Tỉ lệ là 4.",
+              "code": "MT1.05.L01.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một minim bằng bao nhiêu semiquaver?",
+              "options": [
+                "8",
+                "9",
+                "10"
+              ],
+              "key": "8",
+              "feedback": "Giá trị minim là 1/2 semibreve; mỗi semiquaver là 1/16. Tỉ lệ là 8.",
+              "code": "MT1.05.L01.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 4,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": true,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n4",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "F",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [
+                      [
+                        "n1",
+                        "n2",
+                        "n3",
+                        "n4"
+                      ]
+                    ],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.05.L01.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        },
+        {
+          "code": "MT1.05.L02",
+          "title": "Semiquaver groups",
+          "objective": "Tính, hoàn thành và nhóm các semiquaver.",
+          "explanation": "Trong nhịp đơn có crotchet làm phách, nhóm bốn semiquaver có tổng một phách. Nối cờ theo từng phách giúp mắt nhìn thấy nhịp điệu, không đổi giá trị của các nốt. Với các ví dụ đều ở đây, chia nhóm tại ranh giới phách trước khi nối hai nét cờ.\nCó thể kết hợp một quaver và hai semiquaver để đủ một crotchet. Hãy cộng giá trị trước rồi kiểm tra cách nhóm. Các cách nhóm phức tạp, lặng trong nhóm hoặc dấu nối qua phách cần được học và duyệt riêng, không suy rộng từ mẫu đều này.",
+          "worked_steps": [
+            "Ô 2/4 cần hai phách crotchet.",
+            "Tám semiquaver có tổng hai crotchet.",
+            "Chia thành hai nhóm bốn nốt theo hai phách.",
+            "Nối hai nét trong từng nhóm, giữ ranh giới giữa hai phách."
+          ],
+          "misconception": "Một nhóm tám nốt có thể đủ tổng ô 2/4 nhưng che ranh giới hai phách. Đủ tổng giá trị chưa đủ để kết luận cách nhóm phù hợp.",
+          "summary": [
+            "Cộng giá trị trước khi nhóm.",
+            "Nhóm đều theo phách giúp dễ đọc.",
+            "Cách nối không tự thay đổi trường độ."
+          ],
+          "notation_example": {
+            "schema": 1,
+            "clef": "treble",
+            "fifths": 0,
+            "time": {
+              "beats": 2,
+              "unit": 4
+            },
+            "measures": [
+              {
+                "partial": false,
+                "events": [
+                  {
+                    "id": "n1",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n2",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "D",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n3",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "E",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n4",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "F",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n5",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "G",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n6",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "A",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n7",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "B",
+                        "octave": 4,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  },
+                  {
+                    "id": "n8",
+                    "kind": "NOTE",
+                    "pitches": [
+                      {
+                        "step": "C",
+                        "octave": 5,
+                        "alter": 0
+                      }
+                    ],
+                    "denominator": 16,
+                    "dots": 0,
+                    "stem": "AUTO"
+                  }
+                ],
+                "beams": [
+                  [
+                    "n1",
+                    "n2",
+                    "n3",
+                    "n4"
+                  ],
+                  [
+                    "n5",
+                    "n6",
+                    "n7",
+                    "n8"
+                  ]
+                ],
+                "tuplets": []
+              }
+            ],
+            "relations": []
+          },
+          "notation_caption": "Ví dụ mới của MT1.05.L02; đọc thêm mô tả do notationText tạo.",
+          "guided_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "1 phách crotchet cần bao nhiêu semiquaver?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Mỗi crotchet bằng bốn semiquaver.",
+              "code": "MT1.05.L02.G01",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "2 phách crotchet cần bao nhiêu semiquaver?",
+              "options": [
+                "8",
+                "9",
+                "10"
+              ],
+              "key": "8",
+              "feedback": "Mỗi crotchet bằng bốn semiquaver.",
+              "code": "MT1.05.L02.G02",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "3 phách crotchet cần bao nhiêu semiquaver?",
+              "options": [
+                "12",
+                "13",
+                "14"
+              ],
+              "key": "12",
+              "feedback": "Mỗi crotchet bằng bốn semiquaver.",
+              "code": "MT1.05.L02.G03",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false,
+              "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+            }
+          ],
+          "independent_practice": [
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "4 phách crotchet cần bao nhiêu semiquaver?",
+              "options": [
+                "16",
+                "17",
+                "18"
+              ],
+              "key": "16",
+              "feedback": "Mỗi crotchet bằng bốn semiquaver.",
+              "code": "MT1.05.L02.I01",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Một quaver và hai semiquaver bằng mấy semiquaver?",
+              "options": [
+                "4",
+                "5",
+                "6"
+              ],
+              "key": "4",
+              "feedback": "Quaver bằng hai semiquaver; cộng thêm hai.",
+              "code": "MT1.05.L02.I02",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Trong ô 2/4 gồm tám semiquaver đều, cách nào hiện rõ từng phách?",
+              "options": [
+                "Hai nhóm bốn",
+                "Một nhóm tám",
+                "Một nhóm ba và một nhóm năm"
+              ],
+              "key": "Hai nhóm bốn",
+              "feedback": "Mỗi nhóm bốn tương ứng một phách crotchet.",
+              "code": "MT1.05.L02.I03",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "SINGLE_CHOICE",
+              "mode": "AUTO",
+              "points": 1,
+              "prompt": "Nối cờ có tự làm nốt dài hơn không?",
+              "options": [
+                "Không",
+                "Luôn gấp đôi",
+                "Luôn gấp bốn"
+              ],
+              "key": "Không",
+              "feedback": "Giá trị do hình nốt và số nét nối xác định, không tăng vì ghép nhóm.",
+              "code": "MT1.05.L02.I04",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            },
+            {
+              "type": "REWRITE",
+              "mode": "MANUAL",
+              "points": 2,
+              "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+              "reference_notation": {
+                "schema": 1,
+                "clef": "treble",
+                "fifths": 0,
+                "time": {
+                  "beats": 2,
+                  "unit": 4
+                },
+                "measures": [
+                  {
+                    "partial": false,
+                    "events": [
+                      {
+                        "id": "n1",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n2",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "D",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n3",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "E",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n4",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "F",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n5",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "G",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n6",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "A",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n7",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "B",
+                            "octave": 4,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      },
+                      {
+                        "id": "n8",
+                        "kind": "NOTE",
+                        "pitches": [
+                          {
+                            "step": "C",
+                            "octave": 5,
+                            "alter": 0
+                          }
+                        ],
+                        "denominator": 16,
+                        "dots": 0,
+                        "stem": "AUTO"
+                      }
+                    ],
+                    "beams": [
+                      [
+                        "n1",
+                        "n2",
+                        "n3",
+                        "n4"
+                      ],
+                      [
+                        "n5",
+                        "n6",
+                        "n7",
+                        "n8"
+                      ]
+                    ],
+                    "tuplets": []
+                  }
+                ],
+                "relations": []
+              },
+              "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+              "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+              "code": "MT1.05.L02.I05",
+              "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+              "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+              "counts_toward_academic_progress": false
+            }
+          ],
+          "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY"
+        }
+      ],
+      "checkpoint": {
+        "kind": "CHECKPOINT",
+        "counts_toward_academic_progress": false,
+        "pass_threshold": 70,
+        "threshold_scope": "Explicit draft policy for this Grade 1 checkpoint, subject to review",
+        "questions": [
+          {
+            "type": "SINGLE_CHOICE",
+            "mode": "AUTO",
+            "points": 1,
+            "prompt": "Một semibreve bằng bao nhiêu minim?",
+            "options": [
+              "2",
+              "3",
+              "4"
+            ],
+            "key": "2",
+            "feedback": "Giá trị semibreve là 1/1 semibreve; mỗi minim là 1/2. Tỉ lệ là 2.",
+            "code": "MT1.05.CP01",
+            "source_scope": "Original VIBE draft aligned to MT1.05.L01",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false,
+            "hint": "Đọc lại quy tắc và ví dụ của bài trước khi chọn; giải thích bằng lời vì sao phương án phù hợp."
+          },
+          {
+            "type": "REWRITE",
+            "mode": "MANUAL",
+            "points": 2,
+            "prompt": "Viết lại đúng ví dụ mới của bài bằng dữ liệu ký âm; giữ khóa, nhịp, cao độ và trường độ.",
+            "reference_notation": {
+              "schema": 1,
+              "clef": "treble",
+              "fifths": 0,
+              "time": {
+                "beats": 2,
+                "unit": 4
+              },
+              "measures": [
+                {
+                  "partial": false,
+                  "events": [
+                    {
+                      "id": "n1",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "C",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n2",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "D",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n3",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "E",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n4",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "F",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n5",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "G",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n6",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "A",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n7",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "B",
+                          "octave": 4,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    },
+                    {
+                      "id": "n8",
+                      "kind": "NOTE",
+                      "pitches": [
+                        {
+                          "step": "C",
+                          "octave": 5,
+                          "alter": 0
+                        }
+                      ],
+                      "denominator": 16,
+                      "dots": 0,
+                      "stem": "AUTO"
+                    }
+                  ],
+                  "beams": [
+                    [
+                      "n1",
+                      "n2",
+                      "n3",
+                      "n4"
+                    ],
+                    [
+                      "n5",
+                      "n6",
+                      "n7",
+                      "n8"
+                    ]
+                  ],
+                  "tuplets": []
+                }
+              ],
+              "relations": []
+            },
+            "rubric": "1 điểm cho ngữ cảnh và cao độ khớp; 1 điểm cho trường độ và nhóm nốt khớp. Không chấm bằng vị trí pixel.",
+            "feedback": "Đợi người chấm kiểm tra theo rubric; chưa tự xác nhận đúng.",
+            "code": "MT1.05.CP02",
+            "source_scope": "Original VIBE draft aligned to MT1.05.L02",
+            "review_state": "PENDING_PEDAGOGY_AND_ORIGINALITY",
+            "counts_toward_academic_progress": false
+          }
+        ]
+      }
+    }
+  ]
+}
