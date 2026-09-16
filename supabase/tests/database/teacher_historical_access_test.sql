@@ -176,6 +176,10 @@ insert into student_parents(parent_id,student_id) values('bc200000-0000-4000-800
 update students set user_id='bc000000-0000-4000-8000-000000000004' where id='61000000-0000-0000-0000-000000000001';
 
 -- Two journals for the same taught class, only one authored by this teacher.
+select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005',true);
+insert into curriculum_subjects(level_id,family_code,code,name,completion_rule)
+values('31000000-0000-0000-0000-000000000001','TEACHER-PORTAL','TP','Teacher portal subject','DIRECT_ASSESSMENT');
+select assign_student_academic_program('61000000-0000-0000-0000-000000000001','21000000-0000-0000-0000-000000000001','31000000-0000-0000-0000-000000000001','2026-08-01');
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000002',true);
 insert into learning_journals(id,attendance_record_id,content)
 values('bd000000-0000-4000-8000-000000000001','a1000000-0000-0000-0000-000000000001','Authored journal');
@@ -191,6 +195,13 @@ update session_occurrences set status='COMPLETED' where id='91000000-0000-0000-0
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000002',true);
 select is(teacher_can_access_student('61000000-0000-0000-0000-000000000001'),true,'current class teacher retains current profile');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),1::bigint,'Current teacher may read authorized student academic journey');
+select is(teacher_can_read_student_academic('61000000-0000-0000-0000-000000000002'),false,'Unrelated student academic access denied');
+select is((select count(*) from teacher_portal_classes()),1::bigint,'Teacher portal lists current assigned class');
+select is((select count(*) from teacher_portal_attendance('91000000-0000-0000-0000-000000000001')),2::bigint,'Current teacher reads own session attendance');
+select is((select count(*) from teacher_portal_session('91000000-0000-0000-0000-000000000099')),0::bigint,'Unrelated session projection denied');
+select is((select count(*) from teacher_portal_sessions(true)),1::bigint,'Teacher portal history lists actual completed session');
+select is((select count(*) from teacher_portal_journals()),2::bigint,'Current teacher portal reads authorized class journals');
 select is((select count(*) from learning_journals where id in ('bd000000-0000-4000-8000-000000000001','bd000000-0000-4000-8000-000000000002')),2::bigint,'current class teacher sees class journals');
 reset role;
 select set_config('request.jwt.claim.sub','',true);
@@ -198,8 +209,15 @@ update class_teachers set is_active=false,ended_at='2026-08-04' where teacher_id
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000002',true);
 select is(teacher_can_access_session('91000000-0000-0000-0000-000000000001'),true,'former teacher keeps actual completed session');
+select is((select count(*) from teacher_portal_classes()),0::bigint,'Former teacher portal has no current assigned classes');
+select is((select count(*) from teacher_portal_attendance('91000000-0000-0000-0000-000000000001') where student_name='Học viên (hồ sơ lịch sử)'),2::bigint,'Former teacher attendance hides current learner names');
+select is((select count(*) from teacher_portal_attendance('91000000-0000-0000-0000-000000000001',2)),0::bigint,'Attendance pagination is bounded');
+select is((select count(*) from teacher_portal_sessions(true)),1::bigint,'Former teacher portal retains actual teaching history');
+select is((select count(*) from teacher_portal_journals()),1::bigint,'Former teacher portal retains only own authored journal');
+select is((select count(*) from teacher_portal_journals(1)),0::bigint,'Teacher journal pagination is bounded');
 select is((select count(*) from session_occurrences where id='91000000-0000-0000-0000-000000000001'),1::bigint,'actual taught session RLS retained');
 select is(teacher_can_access_student('61000000-0000-0000-0000-000000000001'),false,'completed session does not grant current learner profile');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'Former teacher cannot read current academic data through expired assignment');
 select is((select count(*) from scoped_students('61000000-0000-0000-0000-000000000001')),0::bigint,'former teacher current profile projection denied');
 select is((select count(*) from students where id='61000000-0000-0000-0000-000000000001'),0::bigint,'former teacher raw profile denied');
 select is((select count(*) from learning_journals where id='bd000000-0000-4000-8000-000000000001'),1::bigint,'former teacher keeps authored journal');
@@ -210,6 +228,9 @@ update profiles set status='INACTIVE' where id='bc000000-0000-4000-8000-00000000
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000002',true);
 select is(teacher_can_access_session('91000000-0000-0000-0000-000000000001'),false,'inactive former teacher loses session history');
+select is((select count(*) from teacher_portal_sessions(true)),0::bigint,'Inactive teacher portal history denied');
+select is((select count(*) from teacher_portal_attendance('91000000-0000-0000-0000-000000000001')),0::bigint,'Inactive teacher attendance denied');
+select is((select count(*) from teacher_portal_journals()),0::bigint,'Inactive teacher portal journal denied');
 select is((select count(*) from learning_journals where id='bd000000-0000-4000-8000-000000000001'),0::bigint,'inactive author denied');
 reset role;
 select set_config('request.jwt.claim.sub','',true);
@@ -221,5 +242,8 @@ select is((select count(*) from learning_journals where id='bd000000-0000-4000-8
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005',true);
 select is((select count(*) from learning_journals where id in ('bd000000-0000-4000-8000-000000000001','bd000000-0000-4000-8000-000000000002')),2::bigint,'super admin remains compatible');
 select ok(not has_function_privilege('anon','public.can_read_learning_journal(uuid)','EXECUTE'),'anonymous helper execution denied');
+select ok(not has_function_privilege('anon','public.teacher_portal_sessions(boolean,integer)','EXECUTE'),'Anonymous teacher portal denied');
+select ok(not has_function_privilege('anon','public.own_payroll_off_cycle_corrections(integer)','EXECUTE'),'Anonymous correction self-read denied');
+select ok(not has_function_privilege('anon','public.teacher_portal_attendance(uuid,integer)','EXECUTE'),'Anonymous attendance projection denied');
 select * from finish();
 rollback;

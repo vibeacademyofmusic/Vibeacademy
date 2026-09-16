@@ -1,67 +1,72 @@
-# Phase 8 local checkpoint — family read-only portal
+# Phase 8 — Portal local validation
 
-2026-09-16. **Phase 8 remains IN PROGRESS. Production HOLD. No push/deploy.**
+2026-09-16. **PASS for implemented Portal scope. Production HOLD.**
 
-## Implemented and verified
+## Delivered
 
-- `/my-learning`: authenticated student/parent login destination, authorized
-  learner selector, read-only multi-program journey, upcoming sessions,
-  attendance, approved report comments and issued-invoice debt.
-- Database projections use explicit fields, bounded pages and database permission
-  checks. Academic percentages reuse the existing Academic UI helper. Optional
-  and inactive definitions do not dilute completion.
-- Historical parent debt now respects `student_parents.can_view_finance`.
-  The regression failed before migration `20260916190000` and passes after it.
-- Academic has independent `academic.view_own` / `academic.view_related`
-  permissions. Profile or attendance access cannot replace academic permission.
-- No raw private report/academic notes, new financial posting, broad table grant,
-  historical migration rewrite, reset or production access.
+- Student/Parent: authorized learner selector, multi-program academic journey,
+  upcoming schedule, attendance, approved report snapshot, issued-invoice debt,
+  opening receivables and unapplied customer credit. Independent academic and
+  finance permissions; parent finance reads honor `can_view_finance`.
+- Feedback submission delegates eligibility, respondent identity, actual teacher
+  and duplicate prevention to the existing secured feedback engine.
+- Teacher: actual-teaching schedule/history, current assigned classes, current
+  learner academic records, permitted journals, aggregate own feedback and own
+  approved payroll/off-cycle corrections. No raw approval payload exposure.
+- Expired assignment retains actual completed sessions and authored journals,
+  but not current learner profiles/academic data. Historical attendance masks
+  current learner names. Attendance/journals remain read-only under current grants.
+- Approved reports render allowlisted snapshots, never draft or internal notes.
+- Linked employee payroll self-read now requires an effective ACTIVE employment
+  version. Two regression assertions failed before the fix and pass after it.
 
-## Validation
+## Final automated gates
 
 | Gate | Result |
 |---|---|
-| Full local pgTAP | 49 files / **1177 PASS** |
-| Family/history database suite | **89 PASS**, included above |
-| Full application/bootstrap suite | **163 PASS** |
-| New family UI tests | **7 PASS**, included above |
+| Full local pgTAP | 49 files / **1213 PASS** |
+| Application/bootstrap tests | **171 PASS** |
+| Portal UI/action tests (included above) | **15 PASS** |
+| Teacher historical scope suite (included above) | **34 PASS** |
 | Build | PASS |
-| ESLint: new portal, login action, portal tests | PASS |
-| `git diff --check` | PASS |
-| Student login / own identity / journey | PASS in local browser |
-| Parent login / linked child / journey | PASS in local browser |
-| Unrelated student URL for student and parent | Denied, not-found page |
-| Inactive parent after fixture cleanup | Own-child URL denied |
-| Schedule, report, invoice empty states | PASS in local browser |
-| Viewports | 390×844, 768×1024, 1440×900; no horizontal overflow |
-| Browser console | No errors observed |
+| Relevant ESLint | PASS |
+| Diff whitespace check | PASS |
 
-The browser fixture has no invoice, report or upcoming session. Populated history,
-upcoming-session authorization, report allowlisting and debt accuracy are covered
-by database/UI tests; populated end-to-end browser flows remain for phase exit.
-The final independent academic permission migration was verified by full pgTAP
-after the browser run; browser credentials had already been disabled.
+## Browser evidence
 
-## Temporary-account cleanup
+Local synthetic fixtures only. No production/staging mutation.
 
-Owner explicitly approved two synthetic STUDENT/PARENT accounts on localhost.
-Both are now banned, profiles INACTIVE and role assignments inactive. Passwords
-were generated, kept only in a 0600 temporary file, and never printed or committed.
-Credential/setup/cleanup files were deleted, browser signed out, temporary tab
-closed and viewport restored. Synthetic academic records remain for audit; no
-business financial records were created.
+- Student and Parent sign-in show only own/linked student; unrelated UUID denied.
+- Current Teacher opens assigned student Academic; after ending assignment the
+  same URL returns not-found. Other-branch session URL returns not-found.
+- Teacher history includes own completed session and actual substitute session;
+  unrelated future assignment is absent. Substitute historical attendance hides
+  current learner names. Completed history survives assignment termination.
+- Current Teacher sees two permitted journals; former Teacher sees only their own.
+- Payroll shows own 300,000 VND approved fixture, not other teacher's 900,000 VND.
+  These are synthetic read fixtures, not a claim of payroll generation rehearsal.
+- Student feedback submit succeeds through the existing canonical RPC.
+- Student and Parent see the approved report generated/approved through canonical
+  RPCs, including attendance and journal; private admin-note sentinel is absent.
+- Inactive Parent cannot access linked-child report even with its existing session.
+- Desktop/tablet/mobile: 1440×900, 768×1024, 390×844; DOM width has no horizontal
+  overflow. Browser console errors: none observed.
 
-## Remaining Phase 8 work
+Populated invoice/opening-credit and off-cycle correction correctness are covered
+by pgTAP/UI tests; this browser run did not repeat their financial posting flows.
+Duplicate feedback handling is covered by the canonical database tests, not a
+second browser submission. No external delivery or assessment routes are claimed.
+Notification/e-learning entry points arrive with their subsequent phases.
 
-- Teacher portal: schedule/classes, journals, permitted current academic context,
-  historical actual teaching, feedback summary and approved payroll/corrections.
-- Family feedback submission/read UX using the existing secured engine.
-- Opening debt/customer credit visibility; invoice tab explicitly states that it
-  is not the entire customer balance.
-- Complete approved report presentation and populated browser scenarios.
-- Notification, assessment and e-learning entry points depend on later phases;
-  do not advertise unavailable routes.
-- Full phase-exit security and browser matrix before declaring Phase 8 PASS.
+## Cleanup and migration ledger
 
-Local migrations added at this checkpoint: `20260916190000`,
-`20260916191000`, `20260916192000`. Staging/production were not changed.
+One explicitly authorized TEACHER account and the two previously authorized
+STUDENT/PARENT accounts were used. All three are banned, profiles INACTIVE and
+role assignments inactive. Temporary 0600 credential/setup files were removed;
+browser signed out, agent tab closed, viewport reset. Synthetic business fixtures
+remain auditable; no financial history was erased. Developer admin is untouched.
+
+Phase 8 local migrations: 20260916190000, 20260916191000, 20260916192000,
+20260916193000, 20260916194000, 20260916195000, 20260916200000,
+20260916201000. Local expected ledger: **77**. No reset, CLI update, staging
+migration, production connection, push or deploy.
