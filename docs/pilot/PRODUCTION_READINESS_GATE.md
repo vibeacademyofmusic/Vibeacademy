@@ -111,3 +111,39 @@ review/authorization outcome. Supply the approved representative source and nomi
 pilot participants/unit when ready. Production stays HOLD until a later refreshed
 GO/CONDITIONAL GO gate and explicit Owner release authorization; this NO-GO report
 cannot be used as a deployment instruction.
+
+## Closure addendum — monitoring and import controls
+
+The refreshed closure report records another full local run: 59/1,533 pgTAP and
+273 application/bootstrap PASS, ESLint PASS; default Turbopack build FAIL on port
+permission, Webpack PASS. Cloud ledgers remain 94 local / 59 staging / 28 production.
+The exact ordered Production sequence is every PRODUCTION-marked row, top-to-bottom,
+in the [66-gap register](../migration-gap-register-20260917.md). Before release,
+pin those hashes to the approved commit and rehearse the entire sequence. Suggested
+prefix checkpoints: 28→42 Academic/Finance/reports; 42→49 teaching/payroll/security;
+49→59 security/maker-checker; then 62,69,77,81,84,94 per staging dependency batches.
+Verify exact file membership before executing; counts alone do not establish identity.
+
+At each checkpoint compare all existing record counts, ledger versions, FK integrity,
+profile/role states and per-currency financial control totals. Intentionally seeded
+metadata must match the reviewed manifest; existing financial data must not change
+without an approved transformation. Permission seeds require role-boundary retests.
+
+Monitoring owner and on-call contact must be nominated before release. Observe
+application errors and denied/failed actions, login failures, job delivery/retry state,
+request latency and database saturation against an approved measured baseline.
+Review source failures and cross-branch access with redacted references, never tokens
+or student payloads in public logs. No SLA or capacity is asserted from small local
+fixtures. During the first approved unit window, reconcile at start/end of each day
+and after imports/financial batches. SEV-1 stops affected writes immediately; SEV-2
+pauses the blocked workflow; SEV-3 is tracked. Define the next review time and person,
+not an unattended promise to monitor after this task ends.
+
+Legacy dry-run is read-only to business tables: source hash, versioned mappings,
+valid/review/reject/duplicate outcomes and signed per-currency totals. Future import
+waves require separate Production authorization and staged acceptance: first the
+approved single-unit minimal cohort, then a reviewed larger same-unit wave, then
+additional units only after signed reconciliation. Do not copy the synthetic staging
+row count into a Production import instruction. Opening settlement must remain
+historical, not new cash/revenue; no debt loss into negative balances or untracked
+credit. After activity begins, reversal/correction replaces destructive rollback.

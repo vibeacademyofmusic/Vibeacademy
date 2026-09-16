@@ -73,17 +73,15 @@ Issue fields: ID, timestamp, environment, unit, module, pseudonymous reference,
 steps, expected/actual, severity, owner, containment, evidence link, fix commit,
 retest result, reviewer, closed date. Never include tokens/passwords/raw source PII.
 
-- S0: security leak, lost/corrupted data, unexplained financial difference. Stop
-  affected operation immediately; preserve audit, revoke affected test sessions if
-  needed, notify Owner/security/finance lead. Do not continue postings.
-- S1: critical workflow blocked or authorization inconsistency. Pause affected
-  module; independent unaffected read-only work only after pilot lead assessment.
-- S2: incorrect nonfinancial display or recoverable workflow defect. Track, use only
-  documented safe alternative, retest before sign-off.
-- S3: cosmetic/usability defect. Log and prioritize; never relabel integrity issues.
+- SEV-1: data loss/leak, wrong financial posting, critical permission bypass or
+  unrecoverable workflow. Stop affected work immediately, preserve audit and alert
+  Owner/security/finance lead. No unexplained monetary difference may be waived.
+- SEV-2: major workflow blocker. Pause the affected module and independently retest.
+- SEV-3: wording/UX/minor issue. Log and prioritize; do not down-rank integrity issues.
 
-No invented response-time SLA: nominate reachable contacts before day 1. Severity
-can be raised by any tester; only the accountable reviewer closes S0/S1.
+No invented response-time SLA: nominate reachable contacts before day 1. Any tester
+may escalate; accountable independent reviewers close SEV-1/SEV-2. Detailed module
+SOPs, account/login guidance and issue template are in [operator handbook](OPERATOR_SOPS.md).
 
 ## Rollback and escalation
 
@@ -96,7 +94,7 @@ restore/mutation separately. Failed restore or unexplained reconciliation blocks
 
 ## Exit
 
-Zero unresolved S0/S1, all required scenarios evidenced, exact reconciliation,
+Zero unresolved SEV-1/SEV-2, all required scenarios evidenced, exact reconciliation,
 accounts/scopes reviewed, source and learning content approvals recorded, recovery
 limits accepted, issue log reviewed and Owner sign-off. Missing evidence means
 NO-GO or an explicitly narrowed pilot, never implicit approval.

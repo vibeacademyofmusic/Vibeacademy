@@ -11,7 +11,7 @@ source evidence. Owner/source steward must supply the approved de-identified sou
 unit/class/curriculum/Grade mapping and expected totals. No extraction of production
 legacy data is authorized here. Keep source files outside Git with restricted access.
 
-## Three runs
+## Ordered runs
 
 1. Ten synthetic rows for one test unit: valid active student, higher starting Grade,
    fully paid opening, partially paid opening, unpaid opening, missing class,
@@ -23,6 +23,10 @@ legacy data is authorized here. Keep source files outside Git with restricted ac
 3. One-unit batch after mapping/review: dry-run → independent reviews → atomic
    import → retry/resume → reconciliation → sign-off. Chunk size at most 25 READY
    rows; preserve crosswalk, source identity and audit.
+
+4. Larger staging rehearsal only after the prior three waves pass, with supplied
+   approved source, explicit control totals and measured capacity. No invented rows
+   or implicit permission for Production imports.
 
 For each run record batch ID, source hash, total/READY/NEEDS_REVIEW/rejected/imported
 counts, reviewer IDs (no credentials), beginning and ending business counts, currency
@@ -46,3 +50,5 @@ or report old local workflow evidence as this staging pilot.
 | 10 synthetic | Plan only | Pending | Pending | Not measured | Pending | Pending |
 | 20–30 representative | Missing approved source | Pending | Pending | Not measured | Pending | Pending |
 | One unit | Unit/source mapping pending | Pending | Pending | Not measured | Pending | Pending |
+
+Wave 4 larger rehearsal: PENDING prior waves and approved source; no volume claim.
