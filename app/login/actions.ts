@@ -43,6 +43,14 @@ export async function login(formData: FormData) {
     }
   }
 
+  if (!roleError && !isSuperAdmin) {
+    const {data:staff,error:staffError}=await supabase.rpc('has_role',{role_code:'STAFF'})
+    if (!staffError && staff === true) {
+      revalidatePath('/', 'layout')
+      redirect('/my-payroll')
+    }
+  }
+
   if (roleError || !isSuperAdmin) {
     await supabase.auth.signOut()
 

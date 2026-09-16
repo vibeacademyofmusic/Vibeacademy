@@ -1,12 +1,12 @@
 import { rows, type DB } from '../finance/query'
 import { pageNumber, uuidPattern, type Params } from '../finance/operations'
 export const states=['DRAFT','GENERATED','REVIEW','APPROVED','FINALIZED'].map((id,i)=>({id,name:['Bản nháp','Đã tính','Đang kiểm tra','Đã duyệt','Đã chốt'][i]}))
-export const payTypes=[{id:'MONTHLY',name:'Lương tháng'},{id:'HOURLY',name:'Theo giờ'}]
+export const payTypes=[{id:'MONTHLY',name:'Lương tháng'},{id:'HOURLY',name:'Theo giờ'},{id:'PER_SESSION',name:'Theo buổi'}]
 export const money=(value:number|string,currency:string)=>`${Number(value).toLocaleString('vi-VN',{maximumFractionDigits:2})} ${currency}`
 export type Period={id:string;branch_id:string;starts_on:string;ends_on:string;status:string;version:number;generated_by:string|null;approved_by:string|null;finalized_by:string|null}
-export type Payroll={id:string;period_id:string;teacher_id:string;branch_id:string;teacher_name:string;pay_type:string;currency:string;base_salary:number;teaching_hours:number;hourly_earnings:number;adjustment_amount:number;gross_amount:number}
+export type Payroll={id:string;period_id:string;teacher_id:string|null;employee_id:string|null;branch_id:string;teacher_name:string;pay_type:string;currency:string;base_salary:number;teaching_hours:number;hourly_earnings:number;adjustment_amount:number;gross_amount:number}
 export type Summary=Period & {currency:string|null;teacher_count:number;gross_amount:number;monthly_total:number;hourly_total:number;adjustments:number}
-export const payrollFields='id,period_id,teacher_id,branch_id,teacher_name,pay_type,currency,base_salary,teaching_hours,hourly_earnings,adjustment_amount,gross_amount'
+export const payrollFields='id,period_id,teacher_id,employee_id,branch_id,teacher_name,pay_type,currency,base_salary,teaching_hours,hourly_earnings,adjustment_amount,gross_amount'
 export async function periods(db:DB,p:Params) {
  const page=pageNumber(p.page)
  let q=db.from('payroll_period_summary').select('id,branch_id,starts_on,ends_on,status,currency,teacher_count,gross_amount,monthly_total,hourly_total,adjustments')
