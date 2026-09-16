@@ -201,6 +201,23 @@ insert into attendance_records(session_occurrence_id,enrollment_id,status) value
 set local role authenticated;
 select set_session_teacher('91000000-0000-0000-0000-000000000002','f2000000-0000-0000-0000-000000000002','SUBSTITUTE','Second session');
 update session_occurrences set status='COMPLETED' where id='91000000-0000-0000-0000-000000000002';
+-- V1.1 monthly salary is supported by reviewed Employee Master attendance.
+reset role;
+insert into auth.users(id) values('76a71111-0000-4000-8000-000000000001');
+insert into public.profiles(id,status) values('76a71111-0000-4000-8000-000000000001','ACTIVE');
+insert into public.user_roles(user_id,role_id) select '76a71111-0000-4000-8000-000000000001',id from public.roles where code='SUPER_ADMIN';
+select public.configure_employee_unit('HQ','11000000-0000-0000-0000-000000000001','Synthetic monthly mapping');
+do $$declare eid uuid; req uuid; shift record;begin
+ eid:=public.create_employee('HQ','2026-08-01','Synthetic monthly teacher','Permanent','MONTHLY',null,null,'f2000000-0000-0000-0000-000000000001','Monthly source');
+ for shift in select * from public.employee_schedule(eid,'2026-08-01','2026-08-31') loop
+  perform set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
+  req:=public.request_employee_attendance(eid,shift.work_date,shift.shift_code,0,'WORKED',null,null,'Synthetic worked shift',gen_random_uuid());
+  perform set_config('request.jwt.claim.sub','76a71111-0000-4000-8000-000000000001',true);
+  perform public.review_employee_attendance(req,'APPROVED','Checked');
+ end loop;
+ perform set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
+end$$;
+set local role authenticated;
 select create_payroll_period('11000000-0000-0000-0000-000000000001','2026-08-01');
 select lives_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'generate');
 select is((select base_salary from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000001'),1000::numeric,'monthly full salary');
@@ -225,6 +242,14 @@ update teacher_compensation_rules set effective_from='2026-08-01' where teacher_
 set local role authenticated;
 select lives_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'regenerate draft after source change');
 select is((select hourly_earnings from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),350::numeric,'new source rate applied');
+-- Retain hourly assertions above; replay the same actual-teacher sources as per-session.
+select transition_payroll(id,version,'DRAFT','Per-session test') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001';
+reset role;
+update teacher_compensation_rules set pay_type='PER_SESSION',class_type='ONE_ON_ONE' where teacher_id='f2000000-0000-0000-0000-000000000002';
+set local role authenticated;
+select lives_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'Per-session generation uses same actual-teacher engine');
+select is((select hourly_earnings from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),350::numeric,'Per-session effective rates pay substitute only');
+select is((select count(*) from payroll_earning_lines where actual_teacher_id='f2000000-0000-0000-0000-000000000002' and calculation_snapshot->>'pay_type'='PER_SESSION'),2::bigint,'Per-session lines are distinguished in immutable source evidence');
 select add_payroll_adjustment(id,'BONUS',50,'Local bonus') from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002';
 select is((select gross_amount from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),400::numeric,'bonus added');
 select is((select sum(amount) from payroll_earning_lines where actual_teacher_id='f2000000-0000-0000-0000-000000000002'),350::numeric,'earning lines unchanged by adjustment');
