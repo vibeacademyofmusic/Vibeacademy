@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { adminClient, pageNumber } from '../../finance/operations'
 import { questionTypes, type DeliveredQuestion } from '../../../../lib/learning/question-types'
 import { assessmentAdminAction } from './actions'
+import GradingHistory from './GradingHistory'
 import NotationPreview from '../../../learn/components/NotationPreview'
 import { parseNotation } from '../../../../lib/learning/notation'
 function readNotation(value:unknown){try{return parseNotation(value)}catch{return null}}
@@ -9,16 +10,18 @@ type PrivateQuestion=DeliveredQuestion&{key?:unknown;rubric?:string}
 const input='block w-full rounded border p-2',button='rounded border px-3 py-2'
 export default async function Assessments({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}) {
   const p=await searchParams,page=pageNumber(p.page),db=await adminClient()
-  const [versions,policies,pending]=await Promise.all([
+  const [versions,policies,pending,completed]=await Promise.all([
     db.from('learning_versions').select('id,title,version').eq('state','PUBLISHED').order('created_at',{ascending:false}).limit(100),
     db.from('learning_assessments').select('id,title,kind,state,pass_threshold,questions,version_id,attempt_limit,cooldown_seconds').order('created_at',{ascending:false}).range((page-1)*25,page*25),
     db.from('learning_manual_review_queue').select('id,student_id,assessment_id,question_snapshot,answers,evidence,submitted_at,review_due_at,overdue').order('submitted_at').limit(25),
+    db.from('learning_effective_assessment_results').select('id,student_id,assessment_id,state,score,evidence,answers,question_snapshot,revision_id,completed_at').in('state',['PASSED','FAILED']).order('completed_at',{ascending:false}).limit(25),
   ])
-  const rubrics= pending.data?.length ? await db.from('learning_assessments').select('id,questions').in('id',[...new Set(pending.data.map(a=>a.assessment_id))]) : {data:[],error:null}
+  const policyIds=[...new Set([...(pending.data||[]),...(completed.data||[])].map(a=>a.assessment_id))]
+  const rubrics=policyIds.length?await db.from('learning_assessments').select('id,title,questions').in('id',policyIds):{data:[],error:null}
   const rubricFor=(assessment:string,code:string)=>(rubrics.data?.find(a=>a.id===assessment)?.questions as PrivateQuestion[]|undefined)?.find(q=>q.code===code)?.rubric
   return <main className="space-y-6 p-4 sm:p-6"><Link prefetch={false} href="/admin/elearning" className="text-blue-700 underline">Về nội dung học</Link><h1 className="text-2xl font-semibold">Đề đánh giá và chấm bài</h1><p>Đề cần người duyệt khác người soạn. Final tối đa 3 lượt, chờ 24 giờ sau lần chưa đạt. Kết quả Academic đang ở chế độ đối chiếu.</p>
     {p.success&&<p role="status">Đã lưu.</p>}{p.error&&<p role="alert">{p.error==='reviewer'?'Người soạn không được tự duyệt đề.':p.error==='manual'?'Loại câu hỏi này cần chấm tay.':'Không thể lưu. Kiểm tra dữ liệu, trạng thái và quyền thao tác.'}</p>}
-    {[versions,policies,pending,rubrics].some(r=>r.error)&&<p role="alert">Không tải được đầy đủ dữ liệu đánh giá.</p>}
+    {[versions,policies,pending,rubrics,completed].some(r=>r.error)&&<p role="alert">Không tải được đầy đủ dữ liệu đánh giá.</p>}
     <details className="rounded border p-4"><summary className="cursor-pointer font-medium">Soạn đề một câu hỏi</summary><form action={assessmentAdminAction} className="mt-4 grid gap-3 sm:grid-cols-2"><input type="hidden" name="action" value="CREATE"/>
       <label>Phiên bản nội dung<select className={input} name="version" required><option value="">Chọn nội dung đã xuất bản</option>{versions.data?.map(v=><option key={v.id} value={v.id}>{v.title} · v{v.version}</option>)}</select></label><label>Tên đề<input className={input} name="title" required maxLength={200}/></label>
       <label>Mục đích<select className={input} name="kind"><option value="PRACTICE">Luyện tập</option><option value="CHECKPOINT">Kiểm tra module</option><option value="FINAL">Kiểm tra cuối Grade</option></select></label><label>Ngưỡng đạt (%)<input className={input} name="threshold" type="number" min="0" max="100" step="0.01" required/></label>
@@ -31,6 +34,7 @@ export default async function Assessments({searchParams}:{searchParams:Promise<R
       {a.state==='APPROVED'&&<form action={assessmentAdminAction} className="mt-4 grid gap-2 sm:grid-cols-2"><input type="hidden" name="action" value="OVERRIDE"/><input type="hidden" name="id" value={a.id}/><label>Mã hồ sơ học viên<input className={input} name="student" required/></label><label>Số lượt mở thêm<input className={input} type="number" name="attempts" min="1" max="100" required/></label><label>Hiệu lực đến 00:00 ngày (giờ Việt Nam)<input className={input} type="date" name="until" required/></label><label>Lý do mở lại<input className={input} name="reason" required maxLength={2000}/></label><button className={button}>Mở lại có lưu vết</button></form>}
     </details>)}</section>
     <section className="space-y-3"><h2 className="text-xl font-semibold">25 bài chờ chấm lâu nhất</h2><p>Mục tiêu: 2 ngày làm việc, thứ Hai–thứ Sáu theo giờ Việt Nam. Chưa áp dụng lịch ngày lễ.</p>{!pending.data?.length&&!pending.error&&<p>Không có bài chờ chấm.</p>}{pending.data?.map(a=><article key={a.id} className="rounded border p-4"><p className="break-all">Học viên: {a.student_id}</p><p>Nộp lúc: {new Date(a.submitted_at).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh'})}</p><p>Hạn chấm: {new Date(a.review_due_at).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh'})}{a.overdue?' — Quá hạn, cần xử lý':''}</p><form action={assessmentAdminAction} className="space-y-3"><input type="hidden" name="action" value="REVIEW"/><input type="hidden" name="id" value={a.id}/>{(a.question_snapshot as DeliveredQuestion[]).map(q=><div key={q.code}><p className="whitespace-pre-wrap">{q.prompt}</p>{readNotation(a.answers?.[q.code])?<NotationPreview score={readNotation(a.answers?.[q.code])!}/>:<p className="break-words">Trả lời: {JSON.stringify(a.answers?.[q.code]??null)}</p>}{q.mode!=='AUTO'&&<label><span className="block whitespace-pre-wrap">Hướng dẫn: {rubricFor(a.assessment_id,q.code)||'Không tải được hướng dẫn — cần kiểm tra lại đề'}</span>Điểm {q.code} / {q.points}<input className={input} name={'mark.'+q.code} type="number" required min="0" max={q.points} step="0.01"/></label>}</div>)}<label>Nhận xét chấm<input className={input} name="reason" required maxLength={2000}/></label><button className={button}>Xác nhận kết quả</button></form></article>)}</section>
+    <GradingHistory rows={completed.data||[]} policies={rubrics.data||[]}/>
     <nav className="flex gap-4">{page>1&&<Link prefetch={false} href={'?page='+(page-1)}>Trang trước</Link>}{(policies.data?.length||0)>25&&<Link prefetch={false} href={'?page='+(page+1)}>Trang sau</Link>}</nav>
   </main>
 }

@@ -17,13 +17,14 @@ export async function assessmentAdminAction(form:FormData) {
     result=await db.rpc('create_learning_assessment',{p_version:get('version'),p_title:get('title'),p_kind:kind,p_threshold:threshold,p_limit:kind==='FINAL'?3:null,p_cooldown:kind==='FINAL'?86400:0,p_questions:[{code:'Q1',type,mode,prompt:get('prompt'),points,options,...(mode==='AUTO'?{key}:{rubric:get('rubric')})}]})
   } else if(action==='APPROVE'&&uuidPattern.test(id)&&reason) {
     result=await db.rpc('approve_learning_assessment',{p_id:id,p_reason:reason})
-  } else if(action==='REVIEW'&&uuidPattern.test(id)&&reason) {
+  } else if(['REVIEW','REGRADE'].includes(action)&&uuidPattern.test(id)&&reason) {
+    if(action==='REGRADE'&&(!uuidPattern.test(get('request'))||(get('revision')&&!uuidPattern.test(get('revision'))))) redirect('/admin/elearning/assessments?error=invalid')
     const marks:Record<string,number>={}
     for(const [key,value] of form.entries()) if(key.startsWith('mark.')) {
       if(typeof value!=='string'||!value.trim()||!Number.isFinite(Number(value))||Number(value)<0) redirect('/admin/elearning/assessments?error=invalid')
       marks[key.slice(5)]=Number(value)
     }
-    result=await db.rpc('review_learning_assessment',{p_attempt:id,p_marks:marks,p_reason:reason})
+    result=action==='REGRADE'?await db.rpc('regrade_learning_assessment',{p_attempt:id,p_request:get('request'),p_expected_revision:get('revision')||null,p_marks:marks,p_reason:reason}):await db.rpc('review_learning_assessment',{p_attempt:id,p_marks:marks,p_reason:reason})
   } else if(action==='OVERRIDE'&&uuidPattern.test(id)&&uuidPattern.test(get('student'))&&validDate(get('until'))&&reason) {
     const attempts=Number(get('attempts'))
     if(!Number.isSafeInteger(attempts)||attempts<1||attempts>100) redirect('/admin/elearning/assessments?error=invalid')
