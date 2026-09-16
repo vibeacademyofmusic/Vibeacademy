@@ -220,7 +220,17 @@ select throws_ok($$select resolve_tuition_reminder((select id from tuition_remin
 select lives_ok($$select resolve_tuition_reminder((select id from tuition_reminders where enrollment_tuition_id='c8000000-0000-0000-0000-000000000001'),'SKIPPED','Already discussed')$$,'skip pending');
 select ok((select marked_by=auth.uid() and marked_at is not null from tuition_reminders where enrollment_tuition_id='c8000000-0000-0000-0000-000000000001'),'skip audit recorded');
 select throws_ok($$select resolve_tuition_reminder((select id from tuition_reminders where enrollment_tuition_id='c8000000-0000-0000-0000-000000000001'),'CANCELLED','retry')$$,'P0001','Pending reminder not found','terminal history cannot transition again');
+
+reset role;
+insert into auth.users(id) values('cf000000-0000-0000-0000-000000000002');
+insert into profiles(id) values('cf000000-0000-0000-0000-000000000002');
+insert into user_roles(user_id,role_id) select 'cf000000-0000-0000-0000-000000000002',id from roles where code='STUDENT';
+update students set user_id='cf000000-0000-0000-0000-000000000002' where student_code='REM-current12';
+set local role authenticated;
+select is(enqueue_notification_event('TUITION_REMINDER',(select id from tuition_reminders where enrollment_tuition_id=(select term from reminder_cases where label='current12'))),1,'Month 10 notification uses canonical reminder');
+select is(enqueue_notification_event('TUITION_REMINDER',(select id from tuition_reminders where enrollment_tuition_id=(select term from reminder_cases where label='current12'))),0,'Reminder job not duplicated');
 select lives_ok($$update enrollment_tuition set status='CANCELLED' where id=(select term from reminder_cases where label='current12')$$,'cancel source term');
+select throws_ok($$select deliver_in_app_notification(id) from notification_jobs where recipient_id='cf000000-0000-0000-0000-000000000002'$$,'P0001','Notification source no longer eligible','Cancelled term cannot deliver stale notice');
 select is((select status from tuition_reminders where enrollment_tuition_id=(select term from reminder_cases where label='current12')),'CANCELLED','source cancellation invalidates pending');
 select lives_ok($$select generate_tuition_reminders()$$,'generation after resolution');
 select is((select count(*) from tuition_reminders where enrollment_tuition_id in(select term from reminder_cases)),2::bigint,'resolved events not regenerated');

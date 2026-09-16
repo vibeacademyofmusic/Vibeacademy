@@ -49,6 +49,7 @@ export default async function MyLearning({ searchParams }: { searchParams: Promi
   const respondents = feedback.roles
   return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-6 p-4 sm:p-8">
     <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold">Hồ sơ học tập</h1><form action={logout}><button className="rounded border px-4 py-2">Đăng xuất</button></form></header>
+    <Link prefetch={false} href="/notifications">Thông báo của tôi</Link>
     {params.success === 'feedback' && <p role="status">Đã gửi phản hồi buổi học.</p>}
     {params.error && <p role="alert">{params.error === 'feedback_duplicate' ? 'Bạn đã gửi phản hồi cho buổi học này.' : params.error === 'feedback_invalid' ? 'Vui lòng chọn vai trò, điểm từ 1–5 và nhận xét tối đa 4.000 ký tự.' : 'Không thể gửi phản hồi. Hãy kiểm tra quyền tài khoản và điều kiện buổi học.'}</p>}
     {!student ? <section className="space-y-3"><h2 className="text-xl font-semibold">Học viên của bạn</h2>{!students.length && <p>Chưa có hồ sơ được phép xem.</p>}{students.slice(0, 25).map(s => <Link className="block rounded border p-4" key={s.id} prefetch={false} href={`/my-learning?student=${s.id}`}>{s.full_name} — {s.student_code}</Link>)}</section> : <>

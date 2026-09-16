@@ -230,5 +230,33 @@ insert into session_occurrences(schedule_id,occurrence_date,starts_at,ends_at,st
 select is((learning_report_source('71000000-0000-0000-0000-000000000001','2026-08-01','2026-08-31')->'attendance'->>'scheduled'),'1','cancelled sessions excluded');
 select is((select status from student_level_progress where enrollment_id=(select student_curriculum_enrollment_id from enrollments where id='71000000-0000-0000-0000-000000000002')),'IN_PROGRESS','reports do not promote academic grade');
 
+
+-- Notification jobs derive only from approved snapshots and never include notes.
+insert into profiles(id) values('b1000000-0000-0000-0000-000000000002');
+insert into user_roles(user_id,role_id) select 'b1000000-0000-0000-0000-000000000002',id from roles where code='STUDENT';
+update students set user_id='b1000000-0000-0000-0000-000000000002' where id='61000000-0000-0000-0000-000000000001';
+select is(enqueue_notification_event('LEARNING_REPORT',(select id from learning_reports where enrollment_id='71000000-0000-0000-0000-000000000001' and status='APPROVED')),1,'Approved report creates one recipient job');
+select is(enqueue_notification_event('LEARNING_REPORT',(select id from learning_reports where enrollment_id='71000000-0000-0000-0000-000000000001' and status='APPROVED')),0,'Report notification generation idempotent');
+select ok(not exists(select 1 from notification_jobs where recipient_id='b1000000-0000-0000-0000-000000000002' and (payload ? 'admin_note' or payload::text like '%Teacher supplied comment%')),'Notification has no private/report content');
+select throws_ok($$select enqueue_notification_event('LEARNING_REPORT',(select id from learning_reports where enrollment_id='71000000-0000-0000-0000-000000000002' and status='DRAFT'))$$,'P0001','Eligible source not found','Draft report cannot notify');
+
+
+insert into auth.users(id) values('de910000-0000-4000-8000-000000000001');
+insert into profiles(id) values('de910000-0000-4000-8000-000000000001');
+insert into branches(id,code,name) values('de910000-0000-4000-8000-000000000002','NOTIFY-OTHER','Other notification branch');
+insert into parents(id,user_id,parent_code) values('de910000-0000-4000-8000-000000000003','de910000-0000-4000-8000-000000000001','NOTIFY-PARENT');
+insert into student_parents(parent_id,student_id) values('de910000-0000-4000-8000-000000000003','61000000-0000-0000-0000-000000000001'),('de910000-0000-4000-8000-000000000003','61000000-0000-0000-0000-000000000002');
+insert into user_roles(user_id,role_id,branch_id) select 'de910000-0000-4000-8000-000000000001',id,'de910000-0000-4000-8000-000000000002' from roles where code='PARENT';
+select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','MONTHLY_REPORT'),false,'Parent role wrong branch cannot receive report');
+update user_roles set branch_id='11000000-0000-0000-0000-000000000001' where user_id='de910000-0000-4000-8000-000000000001';
+select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','MONTHLY_REPORT'),true,'Active linked parent correct branch eligible');
+update student_parents set can_view_finance=false where parent_id='de910000-0000-4000-8000-000000000003';
+select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','TUITION_REMINDER'),false,'Parent finance flag also gates notifications');
+insert into enrollments(student_id,class_id,started_at) values('61000000-0000-0000-0000-000000000002','51000000-0000-0000-0000-000000000001','2026-08-01');
+select lives_ok($$select enqueue_notification_event('SCHEDULE_CHANGED','91000000-0000-0000-0000-000000000001')$$,'Schedule notice resolves student and parent audience');
+select is((select count(*) from notification_jobs where entity_type='SCHEDULE_CHANGED' and recipient_id='de910000-0000-4000-8000-000000000001'),1::bigint,'Two children in same session create only one parent notice');
+update student_parents set is_active=false where parent_id='de910000-0000-4000-8000-000000000003';
+select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','MONTHLY_REPORT'),false,'Revoked parent relationship cannot receive notice');
+
 select * from finish();
 rollback;

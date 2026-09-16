@@ -27,6 +27,7 @@ export default async function TeacherPortal({ searchParams }: { searchParams: Pr
   const href = (nextPage: number, nextTab = tab) => `/operations/teacher?${new URLSearchParams({ tab: nextTab, page: String(nextPage) })}`
   return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-5 p-4 sm:p-8">
     <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold">Không gian giáo viên</h1><form action={logout}><button className="rounded border px-4 py-2">Đăng xuất</button></form></header>
+    <Link prefetch={false} href="/notifications">Thông báo của tôi</Link>
     <div className="flex flex-wrap gap-4"><Link prefetch={false} href="/operations">Học viên trong phân công hiện tại</Link><Link prefetch={false} href="/my-payroll">Bảng lương của tôi</Link></div>
     <p className="text-sm">Lịch và lịch sử dựa trên giáo viên thực dạy. Khi kết thúc phân công, bạn chỉ giữ quyền xem buổi đã thực dạy và nhật ký mình viết.</p>
     <nav aria-label="Giáo viên" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} href={href(1, key as Tab)} aria-current={tab === key ? 'page' : undefined} className={`rounded border px-3 py-2 ${tab === key ? 'bg-slate-900 text-white' : ''}`}>{title}</Link>)}</nav>
