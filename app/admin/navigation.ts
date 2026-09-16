@@ -26,7 +26,7 @@ export const navigationGroups = [
     { name: 'Số dư khách hàng', href: '/admin/finance/credits' },
     { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },
   ] },
-  { name: 'KHO & CỬA HÀNG', items: [{ name: 'Kho sách và vật tư', href: '/admin/inventory' }] },
+  { name: 'KHO & CỬA HÀNG', items: [{ name: 'Kho sách và vật tư', href: '/admin/inventory' }, { name: 'Nhạc cụ theo serial', href: '/admin/instruments' }] },
   { name: 'NHÂN SỰ', items: [
     { name: 'Nhân viên', href: '/admin/employees' },
     { name: 'Chấm công nhân viên', href: '/admin/employees/attendance' },
