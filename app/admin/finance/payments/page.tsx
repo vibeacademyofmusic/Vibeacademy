@@ -26,7 +26,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
       return [<Link prefetch={false} key={p.id} className="underline" href={'?selected=' + p.id}>{p.payment_number}</Link>, names.get(p.student_id_snapshot), p.branch_name_snapshot, p.currency, money(p.amount, p.currency), p.payment_method, timeText(p.paid_at), p.reference ?? '—', p.status, money(allocated, p.currency), p.status === 'POSTED' ? money(Math.max(0, Number(p.amount) - total(list.allocations.filter(a => a.payment_id === p.id))), p.currency) : '—']
     })} /><Pager path="/admin/finance/payments" params={params} {...list} />
     <p className="text-sm text-gray-600">Chưa phân bổ = tiền thu trừ các phân bổ gốc, theo hợp đồng RPC hiện tại. Hoàn tiền được theo dõi riêng.</p>
-    {payment && detail && <Panel title={'Thanh toán ' + payment.payment_number}><p>{names.get(payment.student_id_snapshot)} • {money(payment.amount, payment.currency)} • {payment.status}</p>
+    {payment && detail && <Panel title={'Thanh toán ' + payment.payment_number}><Link prefetch={false} className="underline" href={'/documents/finance/payments/' + payment.id}>Xem / In chứng từ</Link><p>{names.get(payment.student_id_snapshot)} • {money(payment.amount, payment.currency)} • {payment.status}</p>
       <p>Đã phân bổ: {money(effectiveAllocationTotal(detail.allocations), payment.currency)} • Đã hoàn: {money(total(detail.refunds), payment.currency)}</p>
       {payment.status === 'POSTED' && <>
         <Link prefetch={false} className="underline" href={'/admin/finance/refunds?payment=' + payment.id}>Tạo hoàn tiền cho thanh toán này</Link>

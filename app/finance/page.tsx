@@ -59,6 +59,9 @@ export default async function FinanceWorkspace({searchParams}:{searchParams:Prom
     <Pager path="/finance" params={p} page={page} more={requests.length>25}/>
     {selected&&<Panel title={operationNames[selected.operation]}>
       <p>{selected.reason}</p><p>Trạng thái: {states.find(s=>s.id===selected.status)?.name||selected.status}</p>
+      {selected.status==='POSTED'&&selected.result_id&&['REFUND','REFUND_CUSTOMER_CREDIT'].includes(selected.operation)&&<Link prefetch={false} href={'/documents/finance/refunds/'+selected.result_id}>Xem / In phiếu hoàn</Link>}
+      {['APPLY_CUSTOMER_CREDIT','REFUND_CUSTOMER_CREDIT'].includes(selected.operation)&&<Link prefetch={false} href={'/documents/finance/credits/'+selected.target_id}>Xem sao kê số dư</Link>}
+      {selected.operation==='CANCEL_INVOICE'&&<Link prefetch={false} href={'/documents/finance/invoices/'+selected.target_id}>Xem / In hóa đơn</Link>}
       <p>Chứng từ gốc: {String(source.invoice_number||source.payment_number||source.refund_number||sourcePayroll.teacher_name||selected.target_id)}</p>
       {['APPLY_CUSTOMER_CREDIT','REFUND_CUSTOMER_CREDIT'].includes(selected.operation)?<>
         <p>Credit còn lại khi lập: {money(Number(record(source.credit).remaining_credit),currency)} • Số tiền yêu cầu: {money(Number(source.amount),currency)}</p>
@@ -83,6 +86,7 @@ export default async function FinanceWorkspace({searchParams}:{searchParams:Prom
       </form>}
       <Table headers={['Sự kiện','Lý do','Người thực hiện','Thời gian']} rows={events.map(e=>[e.event,e.reason,e.performed_by,timeText(e.performed_at)])}/>
     </Panel>}
+    <Panel title="Phiếu thu trong phạm vi"><Table headers={['Phiếu thu', 'Chi nhánh', 'Số tiền']} rows={payments.map(pay=>[<Link key={pay.id} prefetch={false} href={'/documents/finance/payments/'+pay.id}>{pay.payment_number}</Link>,pay.branch_name_snapshot,money(pay.amount,pay.currency)])}/></Panel>
     <Panel title="Yêu cầu hoàn tiền / hủy thanh toán">
       <p>25 thanh toán đã ghi nhận gần nhất trong phạm vi của bạn.</p>
       <form action={requestAction} className="grid gap-3 sm:grid-cols-2">

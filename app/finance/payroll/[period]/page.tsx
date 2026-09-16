@@ -32,7 +32,7 @@ export default async function PayrollReview({params,searchParams}:{params:Promis
     <h1 className="text-2xl font-bold">Kiểm tra kỳ lương {head.starts_on}</h1><Notice params={p}/><p>{states.find(s=>s.id===head.status)?.name}</p>
     <Table headers={['Giáo viên','Lương tháng','Theo giờ','Điều chỉnh','Tổng','Chi tiết']} rows={payrolls.slice(0,25).map(t=>[t.teacher_name,money(t.base_salary,t.currency),money(t.hourly_earnings,t.currency),money(t.adjustment_amount,t.currency),money(t.gross_amount,t.currency),<Link key={t.id} prefetch={false} href={'/finance/payroll/'+period+'?payroll='+t.id}>Kiểm tra từng dòng</Link>])}/>
     <Pager path={'/finance/payroll/'+period} params={p} page={page} more={detail?lines.length>25||adjustments.length>25:payrolls.length>25}/>
-    {detail&&<Panel title={'Chi tiết: '+detail.teacher_name}><p>Các dòng thu nhập và điều chỉnh được phân trang, chỉ đọc. Thời lượng theo lịch, chưa có chấm công thực tế.</p>
+    {detail&&<Panel title={'Chi tiết: '+detail.teacher_name}>{['APPROVED','FINALIZED'].includes(head.status)&&<Link prefetch={false} href={'/documents/payslips/'+detail.id}>Xem / In phiếu lương</Link>}<p>Các dòng thu nhập và điều chỉnh được phân trang, chỉ đọc. Thời lượng theo lịch, chưa có chấm công thực tế.</p>
       <Table headers={['Ngày','Loại','Giờ','Mức áp dụng','Thành tiền']} rows={lines.slice(0,25).map(l=>[l.earned_on,l.earning_type,l.duration_hours,money(l.rate,detail.currency),money(l.amount,detail.currency)])}/>
       <Table headers={['Loại điều chỉnh','Số tiền','Lý do','Người lập','Người duyệt']} rows={adjustments.slice(0,25).map(a=>[a.kind,money(a.amount,detail.currency),a.reason,a.created_by,a.approved_by||'Chưa duyệt'])}/>
     </Panel>}

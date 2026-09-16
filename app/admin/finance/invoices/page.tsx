@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { randomUUID } from 'node:crypto'
 import { createClient } from '@/lib/supabase/server'
 import { branches, invoiceList, selectedInvoice } from '../query'
@@ -17,7 +18,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Hóa đơn</h1><Notice params={params} />
     <InvoiceFilters params={params} branches={branchRows} /><InvoiceTable {...list} /><Pager path="/admin/finance/invoices" params={params} {...list} />
     {selected && <Panel title={'Hóa đơn ' + selected.invoice_number}>
-      <p>{selected.invoice_status} • {money(selected.total_amount, selected.currency)} • {selected.branch_name_snapshot}</p>
+      <Link prefetch={false} className="underline" href={'/documents/finance/invoices/' + selected.invoice_id}>Xem / In chứng từ</Link><p>{selected.invoice_status} • {money(selected.total_amount, selected.currency)} • {selected.branch_name_snapshot}</p>
       {selected.invoice_status === 'DRAFT' && <form action={issueInvoice} className="grid gap-3 sm:grid-cols-2">
         <input type="hidden" name="invoice_id" value={selected.invoice_id} /><input type="hidden" name="selected" value={selected.invoice_id} />
         <Field name="issued_on" label="Ngày phát hành" type="date" value={vietnamDateTime().slice(0, 10)} /><Field name="due_on" label="Hạn thanh toán" type="date" />
