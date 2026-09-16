@@ -51,11 +51,12 @@ is rejected at delivery and must be canceled by the operator.
 ## Authorized local rehearsal credential
 
 Owner explicitly authorized reuse of one synthetic localhost SUPER_ADMIN for
-Phase 9–26. Its random credential is in a restricted 0600 file outside the
-repository. No production identity is used. The account/credential remains
-available only for the continuing authorized browser rehearsal and must be
-disabled/deleted when these validations finish or reach an external approval gate.
-No credential is included in code, docs or repository logs.
+Phase 9–26. Its random credential was kept in a restricted 0600 file outside the
+repository. No production identity was used. At the Phase 10 business-decision
+gate, the account was banned, profile/role assignments disabled, and credential
+plus setup artifacts deleted. Browser signed out, agent tab closed and viewport
+restored. No credential is included in code, docs or repository logs. Existing
+owner authorization permits reuse of the same synthetic account when work resumes.
 
 Local migrations: 20260916210000, 20260916211000, 20260916212000,
 20260916213000. Phase 8 was separately committed as `34d003d`.
