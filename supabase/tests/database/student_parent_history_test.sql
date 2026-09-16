@@ -176,6 +176,10 @@ insert into student_parents(parent_id,student_id) values('bc200000-0000-4000-800
 update students set user_id='bc000000-0000-4000-8000-000000000004' where id='61000000-0000-0000-0000-000000000001';
 
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005',true);
+insert into curriculum_subjects(id,level_id,family_code,code,name,completion_rule)
+values('bc300000-0000-4000-8000-000000000001','31000000-0000-0000-0000-000000000001','PORTAL','PORTAL','Portal direct subject','DIRECT_ASSESSMENT');
+select assign_student_academic_program('61000000-0000-0000-0000-000000000001','21000000-0000-0000-0000-000000000001','31000000-0000-0000-0000-000000000001','2026-08-01');
+update student_subject_progress set notes='PRIVATE-ACADEMIC' where subject_id='bc300000-0000-4000-8000-000000000001';
 update classes set class_type='GROUP',capacity=10 where id in ('51000000-0000-0000-0000-000000000001','51000000-0000-0000-0000-000000000002');
 insert into enrollment_tuition(id,enrollment_id,tuition_plan_id,starts_on,amount)
 values('be000000-0000-4000-8000-000000000001','71000000-0000-0000-0000-000000000001','a1000000-0000-0000-0000-000000000003','2026-08-01',3000000),
@@ -203,6 +207,41 @@ select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003'
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),1::bigint,'linked parent ended enrollment: student_attendance_history');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),1::bigint,'linked parent ended enrollment: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),1::bigint,'linked parent ended enrollment: student_debt_history');
+select is((select count(*) from portal_students()),1::bigint,'Parent picker includes only linked child after enrollment ends');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),1::bigint,'Parent can read linked academic journey');
+select ok(not (select levels::text like '%PRIVATE-ACADEMIC%' from portal_academic_journey('61000000-0000-0000-0000-000000000001')),'Portal excludes internal academic notes');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000002')),0::bigint,'Unrelated journey hidden');
+select is((select count(*) from portal_students(null,1)),0::bigint,'Family picker supports bounded pagination');
+select is((select count(*) from portal_upcoming_sessions('61000000-0000-0000-0000-000000000001')),0::bigint,'Ended enrollment has no upcoming classes');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+insert into session_occurrences(id,schedule_id,occurrence_date,starts_at,ends_at,status)
+values('bc400000-0000-4000-8000-000000000001','81000000-0000-0000-0000-000000000001',
+ (now() at time zone 'Asia/Ho_Chi_Minh')::date+7,now()+interval '7 days',now()+interval '7 days 1 hour','SCHEDULED');
+update enrollments set status='ACTIVE',ended_at=null where id='71000000-0000-0000-0000-000000000001';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
+select is((select count(*) from portal_upcoming_sessions('61000000-0000-0000-0000-000000000001')),1::bigint,'Active linked enrollment sees upcoming session only');
+select is((select count(*) from portal_upcoming_sessions('61000000-0000-0000-0000-000000000002')),0::bigint,'Upcoming sessions exclude unrelated student');
+select is((select count(*) from portal_upcoming_sessions('61000000-0000-0000-0000-000000000001',1)),0::bigint,'Upcoming sessions paginate');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+update enrollments set status='COMPLETED',ended_at='2026-08-31' where id='71000000-0000-0000-0000-000000000001';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+update public.student_parents set can_view_finance=false where parent_id='bc200000-0000-4000-8000-000000000001' and student_id='61000000-0000-0000-0000-000000000001';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
+select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'Parent relationship without finance access cannot read debt');
+select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),1::bigint,'Finance restriction does not revoke permitted attendance');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+update public.student_parents set can_view_finance=true where parent_id='bc200000-0000-4000-8000-000000000001' and student_id='61000000-0000-0000-0000-000000000001';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
+
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000002')),0::bigint,'linked parent ended enrollment unrelated denied: student_attendance_history');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000002')),0::bigint,'linked parent ended enrollment unrelated denied: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000002')),0::bigint,'linked parent ended enrollment unrelated denied: student_debt_history');
@@ -211,6 +250,8 @@ select set_config('request.jwt.claim.sub','',true);
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000004',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),1::bigint,'graduated student ended enrollment: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),1::bigint,'graduated student ended enrollment: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),1::bigint,'graduated student ended enrollment: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),1::bigint,'graduated student ended enrollment: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),1::bigint,'graduated student ended enrollment: student_debt_history');
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000002')),0::bigint,'graduated student ended enrollment unrelated denied: student_attendance_history');
@@ -242,6 +283,8 @@ update profiles set status='INACTIVE' where id='bc000000-0000-4000-8000-00000000
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent: student_debt_history');
 reset role;
@@ -251,6 +294,8 @@ update profiles set status='SUSPENDED' where id='bc000000-0000-4000-8000-0000000
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000004',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'suspended student: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'suspended student: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'suspended student: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'suspended student: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'suspended student: student_debt_history');
 reset role;
@@ -260,6 +305,8 @@ update student_parents set valid_until=now()-interval '1 day' where student_id='
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'expired parent link: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'expired parent link: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'expired parent link: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'expired parent link: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'expired parent link: student_debt_history');
 reset role;
@@ -268,6 +315,8 @@ update student_parents set valid_until=null,is_active=false where student_id='61
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent link: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent link: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent link: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent link: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'inactive parent link: student_debt_history');
 reset role;
@@ -277,6 +326,8 @@ update user_roles set branch_id='11000000-0000-0000-0000-000000000002' where use
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000004',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'wrong scoped student role: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'wrong scoped student role: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'wrong scoped student role: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'wrong scoped student role: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'wrong scoped student role: student_debt_history');
 reset role;
@@ -285,6 +336,8 @@ update user_roles set branch_id='11000000-0000-0000-0000-000000000001',valid_unt
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000004',true);
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'expired student role: student_attendance_history');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'expired student role: family portal academic');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'expired student role: family portal identity');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'expired student role: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'expired student role: student_debt_history');
 reset role;
@@ -294,6 +347,8 @@ select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000002'
 select is((select count(*) from student_attendance_history('61000000-0000-0000-0000-000000000001')),0::bigint,'teacher cannot borrow family history: student_attendance_history');
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'teacher cannot borrow family history: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'teacher cannot borrow family history: student_debt_history');
+select is((select count(*) from portal_students('61000000-0000-0000-0000-000000000001')),0::bigint,'Teacher cannot borrow family portal identity');
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'Teacher cannot borrow family academic projection');
 reset role;
 select set_config('request.jwt.claim.sub','',true);
 set local role authenticated;
@@ -319,8 +374,19 @@ select is((select count(*) from student_attendance_history('61000000-0000-0000-0
 select is((select count(*) from student_approved_reports('61000000-0000-0000-0000-000000000001')),0::bigint,'missing permission denied: student_approved_reports');
 select is((select count(*) from student_debt_history('61000000-0000-0000-0000-000000000001')),0::bigint,'missing permission denied: student_debt_history');
 select ok(not has_function_privilege('anon','public.student_debt_history(uuid,integer,integer)','EXECUTE'),'anonymous history denied');
+select ok(not has_function_privilege('anon','public.portal_students(uuid,integer)','EXECUTE'),'Anonymous family picker denied');
+select ok(not has_function_privilege('anon','public.portal_academic_journey(uuid,integer)','EXECUTE'),'Anonymous academic projection denied');
+select ok(not has_function_privilege('anon','public.portal_upcoming_sessions(uuid,integer)','EXECUTE'),'Anonymous upcoming sessions denied');
 select ok(not has_function_privilege('authenticated','public.public_report_snapshot(jsonb)','EXECUTE'),'internal formatter not exposed as RPC');
 select ok(not has_table_privilege('authenticated','public.payments','INSERT'),'history adds no direct payment DML');
 select ok(not has_table_privilege('authenticated','public.invoices','UPDATE'),'history adds no direct invoice DML');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+delete from role_permissions where role_id=(select id from roles where code='PARENT')
+and permission_id=(select id from permissions where code='academic.view_related');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);
+select is((select count(*) from portal_academic_journey('61000000-0000-0000-0000-000000000001')),0::bigint,'Academic permission revocation cannot borrow profile or attendance access');
+select ok(not has_function_privilege('anon','public.can_read_family_academic(uuid)','EXECUTE'),'Anonymous academic authorization helper denied');
 select * from finish();
 rollback;

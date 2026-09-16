@@ -52,6 +52,13 @@ export async function login(formData: FormData) {
   }
 
   if (roleError || !isSuperAdmin) {
+    if (!roleError) {
+      const family = await Promise.all(['STUDENT', 'PARENT'].map(role_code => supabase.rpc('has_role', { role_code })))
+      if (family.some(role => !role.error && role.data === true)) {
+        revalidatePath('/', 'layout')
+        redirect('/my-learning')
+      }
+    }
     await supabase.auth.signOut()
 
     redirect(
