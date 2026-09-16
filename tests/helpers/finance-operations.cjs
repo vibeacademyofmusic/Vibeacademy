@@ -14,6 +14,7 @@ function load(file, mocks, cache = new Map()) {
     if (name in mocks) return mocks[name]
     if (name.startsWith('.')) {
       const target = path.resolve(path.dirname(file), name)
+      if (target.endsWith('.json')) return { default: JSON.parse(fs.readFileSync(target, 'utf8')) }
       return load(fs.existsSync(target + '.ts') ? target + '.ts' : target + '.tsx', mocks, cache)
     }
     return require(name)

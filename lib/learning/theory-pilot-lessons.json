@@ -1,0 +1,74 @@
+[
+  {
+    "code": "MT1.01.L01",
+    "title": "Core note values",
+    "objective": "Nhận diện semibreve, minim, crotchet, quaver và quan hệ giá trị.",
+    "module_code": "MT1.01"
+  },
+  {
+    "code": "MT1.01.L02",
+    "title": "Compare and complete values",
+    "objective": "So sánh độ dài và hoàn thành phép tương đương nhịp.",
+    "module_code": "MT1.01"
+  },
+  {
+    "code": "MT1.02.L01",
+    "title": "Bars and bar-lines",
+    "objective": "Giải thích bar, bar-line và double bar-line.",
+    "module_code": "MT1.02"
+  },
+  {
+    "code": "MT1.02.L02",
+    "title": "Simple time signatures",
+    "objective": "Đọc số phách và loại phách trong 2/4, 3/4, 4/4 và common time.",
+    "module_code": "MT1.02"
+  },
+  {
+    "code": "MT1.02.L01",
+    "title": "AUTO",
+    "objective": "MT1.02.L03",
+    "module_code": "MT1.02"
+  },
+  {
+    "code": "MT1.03.L01",
+    "title": "The five-line stave",
+    "objective": "Xác định line, space và cách đặt notehead.",
+    "module_code": "MT1.03"
+  },
+  {
+    "code": "MT1.03.L02",
+    "title": "Clefs and copying",
+    "objective": "Sao chép clef, dấu hóa, số chỉ nhịp và nốt chính xác.",
+    "module_code": "MT1.03"
+  },
+  {
+    "code": "MT1.04.L01",
+    "title": "Treble-clef notes",
+    "objective": "Gọi tên và đặt nốt trong khóa Sol.",
+    "module_code": "MT1.04"
+  },
+  {
+    "code": "MT1.04.L02",
+    "title": "Bass-clef notes",
+    "objective": "Gọi tên và đặt nốt trong khóa Fa.",
+    "module_code": "MT1.04"
+  },
+  {
+    "code": "MT1.04.L01",
+    "title": "AUTO",
+    "objective": "MT1.04.L03",
+    "module_code": "MT1.04"
+  },
+  {
+    "code": "MT1.05.L01",
+    "title": "Semiquaver symbol and value",
+    "objective": "Nhận diện semiquaver và quan hệ với quaver/crotchet.",
+    "module_code": "MT1.05"
+  },
+  {
+    "code": "MT1.05.L02",
+    "title": "Semiquaver groups",
+    "objective": "Tính, hoàn thành và nhóm các semiquaver.",
+    "module_code": "MT1.05"
+  }
+]

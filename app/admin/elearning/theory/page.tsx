@@ -1,0 +1,15 @@
+import Link from 'next/link'
+import { adminClient } from '../../finance/operations'
+import { theoryContents } from '../../../../lib/learning/theory-authoring'
+import { createTheoryPilot } from './actions'
+import PilotFields from './PilotFields'
+export default async function TheoryAuthoring({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
+  const p=await searchParams,db=await adminClient()
+  const [levels,curriculums]=await Promise.all([db.from('curriculum_levels').select('id,name,curriculum_id').eq('status','ACTIVE').eq('level_type','GRADE').eq('level_number',1).order('name').limit(500),db.from('curriculums').select('id,name').eq('status','ACTIVE').order('name').limit(500)])
+  const choices=levels.data?.filter(l=>curriculums.data?.some(c=>c.id===l.curriculum_id))||[]
+  return <main className="space-y-5 p-4 sm:p-6"><Link prefetch={false} href="/admin/elearning" className="text-blue-700 underline">Về nội dung học</Link><h1 className="text-2xl font-semibold">Biên soạn Theory — pilot Grade 1</h1><p>Giữ đúng Contents và trang tham chiếu. Chỉ soạn MT1.01–MT1.05 trước; chưa mở rộng khi pilot chưa được duyệt. Trang nguồn là phạm vi tham khảo, không phải giấy phép sao chép sách.</p><p>Lưu ở trạng thái nháp. Cần duyệt sư phạm, tính nguyên gốc/quyền sử dụng hình và kiểm thử bài học trước khi xuất bản. Không nhập dữ liệu test làm nội dung học chính thức.</p>
+    {p.error&&<p role="alert">Không lưu được. Kiểm tra đủ các phần bài học, Grade 1 đúng số cấp, phiên bản chưa trùng và quyền thao tác.</p>}{p.success&&<p role="status">Đã lưu bản nháp; chưa duyệt hoặc xuất bản.</p>}{(levels.error||curriculums.error)&&<p role="alert">Không tải đủ Grade/chương trình.</p>}
+    {choices.length?<form action={createTheoryPilot} className="grid gap-3 sm:grid-cols-2"><label>Grade 1 đích<select name="level" required className="block w-full rounded border p-2">{choices.map(l=><option key={l.id} value={l.id}>{curriculums.data?.find(c=>c.id===l.curriculum_id)?.name} — {l.name}</option>)}</select></label><label>Phiên bản<input name="version" type="number" min="1" required className="block w-full rounded border p-2"/></label><label>Tên phiên bản<input name="title" maxLength={200} required className="block w-full rounded border p-2"/></label><label>Tác giả, căn cứ nguyên gốc và quyền sử dụng nội dung<textarea name="source" maxLength={2000} required className="block w-full rounded border p-2"/></label><PilotFields/><button disabled={!!levels.error||!!curriculums.error} className="rounded border px-3 py-2 disabled:opacity-50">Lưu bản nháp pilot</button></form>:<p>Chưa có Grade ACTIVE với level_number = 1. Cần xác minh dữ liệu Academic; không suy ra số Grade từ tên.</p>}
+    <details className="rounded border p-3"><summary className="cursor-pointer">Contents tham chiếu Grades 1–5 (87 module)</summary><p>Danh mục nguồn, chưa phải bài học được xuất bản.</p><ol className="space-y-2">{theoryContents.modules.map(m=><li key={m.code}>{m.code} — {m.title} · {m.source_pages}{m.source_state==='SOURCE_MISSING'?' — Thiếu nguồn, chưa biên soạn':''}</li>)}</ol></details>
+  </main>
+}

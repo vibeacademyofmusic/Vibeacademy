@@ -48,7 +48,8 @@ Production HOLD. No staging/production mutation, push or deploy.
 ## Remaining gates
 
 Delegated academic reviewer scope,
-canonical multi-module Theory authoring and MT1.01–05 pedagogical/content approval,
+MT1.01–05 pedagogical/content approval (canonical authoring contract is now verified
+in PHASE17_AUTHORING_CHECKPOINT.md),
 owner-confirmed real Music Theory requirement mapping (technical shadow flow below),
 legal retention periods and holiday calendar before production readiness.
 
