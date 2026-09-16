@@ -41,10 +41,21 @@ select is((select late_minutes from public.employee_attendance_current where emp
 select pg_temp.request('early','2026-09-09','EARLY_LEAVE','2026-09-09T14:00:00+07','2026-09-09T20:40:00+07');select pg_temp.approve('early');
 select is((select early_minutes from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-09'),20,'Early departure minutes preserved');
 select pg_temp.request('leave','2026-09-14','PAID_LEAVE');
+select is((select count(*) from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-14'),0::bigint,'Pending paid leave creates no attendance evidence');
+select pg_temp.request('rejected_leave','2026-09-15','PAID_LEAVE');
+select set_config('request.jwt.claim.sub','7da32b3f-5801-4f2d-9911-ffdb25bed002',true);
+select public.review_employee_attendance((select id from f where name='rejected_leave'),'REJECTED','Rejected evidence');
+select is((select count(*) from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-15'),0::bigint,'Rejected paid leave creates no payable attendance');
+
 select throws_ok($$select pg_temp.approve('leave')$$,'P0001','Configure approved leave quota before paid leave','No invented HQ leave quota');
 select public.configure_employee_leave('HQ','Permanent',null,'2026-01-01','2026-12-31',210,'Explicit test quota');select pg_temp.approve('leave');
 select is((select paid_leave_minutes from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-14'),210,'Paid leave constrained by explicit quota');
 select is((select unpaid_leave_minutes from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-14'),210,'Excess leave is unpaid evidence');
+reset role;
+select is((hr_private.monthly_payroll_evidence((select id from f where name='HQ'),'2026-09-14','2026-09-14')->>'payable_minutes')::integer,210,'Leave workflow keeps canonical payroll payable minutes');
+select throws_ok($$select hr_private.monthly_payroll_evidence((select id from f where name='HQ'),'2026-09-15','2026-09-15')$$,'P0001','Approved attendance required for every required shift','Rejected leave cannot feed payroll');
+set local role authenticated;
+
 select pg_temp.request('correct','2026-09-14','WORKED',null,null,1);select pg_temp.approve('correct');
 select is((select count(*) from public.employee_attendance_entries where employee_id=(select id from f where name='HQ') and work_date='2026-09-14'),2::bigint,'Correction keeps original evidence');
 select is((select entry_kind from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-14'),'MANUAL_CORRECTION','Current evidence is traced correction');
@@ -67,11 +78,22 @@ select pg_temp.request('historical_leave','2026-09-14','PAID_LEAVE',null,null,2)
 select is((select paid_leave_minutes from public.employee_attendance_current where employee_id=(select id from f where name='HQ') and work_date='2026-09-14'),210,'Historical correction uses original employee group snapshot for quota');
 select set_config('request.jwt.claim.sub','7da32b3f-5801-4f2d-9911-ffdb25bed003',true);
 select is((select count(*) from public.employee_attendance_entries),0::bigint,'Unprivileged account cannot read attendance');
+select is((select count(*) from public.employee_attendance_requests),0::bigint,'Unprivileged account cannot read another employee leave request');
+select is((select count(*) from public.employee_leave_policies),0::bigint,'Unprivileged account cannot read leave entitlement configuration');
 select throws_ok($$select * from public.employee_schedule((select id from f where name='HQ'),'2026-09-07','2026-09-07')$$,'P0001','Employee attendance denied','Unprivileged schedule RPC denied');
 reset role;
 select throws_ok($$update public.employee_attendance_entries set reason='Overwrite' where employee_id=(select id from f where name='HQ')$$,'P0001','Employee history is immutable','Original attendance immutable');
 select ok(not has_table_privilege('service_role','public.employee_attendance_entries','INSERT'),'No service-role financial-source bypass');
 select ok(not has_table_privilege('authenticated','public.employee_time_events','INSERT'),'Device integration not accidentally exposed');
+select ok(not has_table_privilege('anon','public.employee_leave_policies','SELECT'),'Leave policies remain private to authorized HR admin');
+select ok(not has_table_privilege('anon','public.employee_attendance_requests','SELECT'),'Leave requests introduce no anonymous read');
+insert into public.user_roles(user_id,role_id,branch_id) select '7da32b3f-5801-4f2d-9911-ffdb25bed003',id,'7da32b3f-5801-4f2d-9922-ffdb25bed001' from public.roles where code='BRANCH_ADMIN';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','7da32b3f-5801-4f2d-9911-ffdb25bed003',true);
+select is((select count(*) from public.employee_attendance_requests),0::bigint,'Branch admin receives no new HR leave access from separate UI');
+select throws_ok($$select public.configure_employee_leave('HQ',null,null,'2027-01-01','2027-12-31',420,'Unauthorized policy')$$,'P0001','Employee attendance denied','Branch assignment cannot grant global HR policy authority');
+reset role;
+
 select set_config('request.jwt.claim.sub','7da32b3f-5801-4f2d-9911-ffdb25bed002',true);
 update public.profiles set status='INACTIVE' where id='7da32b3f-5801-4f2d-9911-ffdb25bed001';
 set local role authenticated;

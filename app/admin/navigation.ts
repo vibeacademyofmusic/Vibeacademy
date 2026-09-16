@@ -31,6 +31,8 @@ export const navigationGroups = [
   { name: 'NHÂN SỰ', items: [
     { name: 'Nhân viên', href: '/admin/employees' },
     { name: 'Chấm công nhân viên', href: '/admin/employees/attendance' },
+    { name: 'Yêu cầu nghỉ phép', href: '/admin/employees/leave-requests' },
+    { name: 'Chính sách nghỉ phép', href: '/admin/employees/leave-policies' },
     { name: 'Giáo viên', href: '/admin/teachers' },
     { name: 'Bảng lương', href: '/admin/payroll' },
   ] },
