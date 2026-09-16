@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { adminClient, pageNumber } from '../../finance/operations'
-import { questionTypes, type DeliveredQuestion } from '../../../../lib/learning/question-types'
+import { type DeliveredQuestion } from '../../../../lib/learning/question-types'
 import { assessmentAdminAction } from './actions'
 import GradingHistory from './GradingHistory'
+import QuestionFields from './QuestionFields'
 import NotationPreview from '../../../learn/components/NotationPreview'
 import { parseNotation } from '../../../../lib/learning/notation'
 function readNotation(value:unknown){try{return parseNotation(value)}catch{return null}}
@@ -22,12 +23,10 @@ export default async function Assessments({searchParams}:{searchParams:Promise<R
   return <main className="space-y-6 p-4 sm:p-6"><Link prefetch={false} href="/admin/elearning" className="text-blue-700 underline">Về nội dung học</Link><h1 className="text-2xl font-semibold">Đề đánh giá và chấm bài</h1><p>Đề cần người duyệt khác người soạn. Final tối đa 3 lượt, chờ 24 giờ sau lần chưa đạt. Kết quả Academic đang ở chế độ đối chiếu.</p>
     {p.success&&<p role="status">Đã lưu.</p>}{p.error&&<p role="alert">{p.error==='reviewer'?'Người soạn không được tự duyệt đề.':p.error==='manual'?'Loại câu hỏi này cần chấm tay.':'Không thể lưu. Kiểm tra dữ liệu, trạng thái và quyền thao tác.'}</p>}
     {[versions,policies,pending,rubrics,completed].some(r=>r.error)&&<p role="alert">Không tải được đầy đủ dữ liệu đánh giá.</p>}
-    <details className="rounded border p-4"><summary className="cursor-pointer font-medium">Soạn đề một câu hỏi</summary><form action={assessmentAdminAction} className="mt-4 grid gap-3 sm:grid-cols-2"><input type="hidden" name="action" value="CREATE"/>
+    <details className="rounded border p-4"><summary className="cursor-pointer font-medium">Soạn đề đánh giá</summary><form action={assessmentAdminAction} className="mt-4 grid gap-3 sm:grid-cols-2"><input type="hidden" name="action" value="CREATE"/>
       <label>Phiên bản nội dung<select className={input} name="version" required><option value="">Chọn nội dung đã xuất bản</option>{versions.data?.map(v=><option key={v.id} value={v.id}>{v.title} · v{v.version}</option>)}</select></label><label>Tên đề<input className={input} name="title" required maxLength={200}/></label>
       <label>Mục đích<select className={input} name="kind"><option value="PRACTICE">Luyện tập</option><option value="CHECKPOINT">Kiểm tra module</option><option value="FINAL">Kiểm tra cuối Grade</option></select></label><label>Ngưỡng đạt (%)<input className={input} name="threshold" type="number" min="0" max="100" step="0.01" required/></label>
-      <label>Loại câu hỏi<select className={input} name="type">{questionTypes.map(t=><option key={t}>{t}</option>)}</select></label><label>Cách chấm<select className={input} name="mode"><option value="AUTO">Tự động — lựa chọn/đúng sai</option><option value="HYBRID">Kết hợp, cần người duyệt</option><option value="MANUAL">Chấm tay</option></select></label>
-      <label className="sm:col-span-2">Đề bài<textarea className={input} name="prompt" required maxLength={10000}/></label><label>Điểm tối đa<input className={input} name="points" type="number" min="0.01" max="1000" step="0.01" required/></label>
-      <label>Phương án, mỗi dòng một phương án<textarea className={input} name="options" maxLength={10000}/></label><label>Đáp án riêng (đúng/sai: true hoặc false; nhiều lựa chọn: mỗi dòng một đáp án)<textarea className={input} name="key" maxLength={10000}/></label><label>Hướng dẫn chấm tay<textarea className={input} name="rubric" maxLength={10000}/></label><button className={button}>Tạo đề nháp</button>
+      <QuestionFields/><button className={button}>Tạo đề nháp</button>
     </form></details>
     <section className="space-y-3"><h2 className="text-xl font-semibold">Đề đánh giá</h2>{policies.data?.slice(0,25).map(a=><details key={a.id} className="rounded border p-4"><summary className="cursor-pointer break-words">{a.title} · {a.kind} · {a.state} · ngưỡng {a.pass_threshold}%</summary><p className="my-2">Giới hạn: {a.attempt_limit??'không giới hạn'} lượt; chờ {a.cooldown_seconds/3600} giờ sau lần chưa đạt.</p>{(a.questions as PrivateQuestion[]).map(q=><article key={q.code} className="my-3 space-y-1"><h3 className="whitespace-pre-wrap break-words font-medium">{q.prompt}</h3><p>{q.type} · {q.mode} · {q.points} điểm</p>{q.options&&<ul>{q.options.map((o,i)=><li key={i}>{o}</li>)}</ul>}{q.key!==undefined&&<p className="break-words">Đáp án riêng: {JSON.stringify(q.key)}</p>}{q.rubric&&<p className="whitespace-pre-wrap">Hướng dẫn chấm: {q.rubric}</p>}</article>)}
       {a.state==='DRAFT'&&<form action={assessmentAdminAction} className="space-y-2"><input type="hidden" name="action" value="APPROVE"/><input type="hidden" name="id" value={a.id}/><label>Nhận xét duyệt nội dung và đáp án<input className={input} name="reason" required maxLength={2000}/></label><button className={button}>Duyệt đề</button></form>}

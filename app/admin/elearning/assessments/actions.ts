@@ -8,13 +8,22 @@ export async function assessmentAdminAction(form:FormData) {
   const action=get('action'),id=get('id'),reason=get('reason')
   let result
   if(action==='CREATE') {
-    const type=get('type') as QuestionType,mode=get('mode'),kind=get('kind'),threshold=Number(get('threshold')),points=Number(get('points'))
-    if(!uuidPattern.test(get('version'))||!get('title')||!get('prompt')||get('prompt').length>10000||!questionTypes.includes(type)||!['AUTO','HYBRID','MANUAL'].includes(mode)||!['PRACTICE','CHECKPOINT','FINAL'].includes(kind)||!get('threshold')||!Number.isFinite(threshold)||threshold<0||threshold>100||!Number.isFinite(points)||points<=0||points>1000) redirect('/admin/elearning/assessments?error=invalid')
-    if(mode==='AUTO'&&!automaticQuestionTypes.includes(type)) redirect('/admin/elearning/assessments?error=manual')
-    const options=get('options').split('\n').map(s=>s.trim()).filter(Boolean)
-    if(mode==='AUTO'&&type==='TRUE_FALSE'&&!['true','false'].includes(get('key'))) redirect('/admin/elearning/assessments?error=invalid')
-    const key=type==='TRUE_FALSE'?get('key')==='true':type==='MULTIPLE_CHOICE'?get('key').split('\n').map(s=>s.trim()).filter(Boolean):get('key')
-    result=await db.rpc('create_learning_assessment',{p_version:get('version'),p_title:get('title'),p_kind:kind,p_threshold:threshold,p_limit:kind==='FINAL'?3:null,p_cooldown:kind==='FINAL'?86400:0,p_questions:[{code:'Q1',type,mode,prompt:get('prompt'),points,options,...(mode==='AUTO'?{key}:{rubric:get('rubric')})}]})
+    const kind=get('kind'),threshold=Number(get('threshold'))
+    if(!uuidPattern.test(get('version'))||!get('title')||get('title').length>200||!['PRACTICE','CHECKPOINT','FINAL'].includes(kind)||!get('threshold')||!Number.isFinite(threshold)||threshold<0||threshold>100) redirect('/admin/elearning/assessments?error=invalid')
+    const ids=get('question_ids').split(',')
+    if(ids.length<1||ids.length>100||new Set(ids).size!==ids.length||ids.some(id=>!/^\d{1,6}$/.test(id)||Number(id)<1)) redirect('/admin/elearning/assessments?error=invalid')
+    const questions=ids.map(id=>{
+      const read=(key:string)=>get(`q.${id}.${key}`),type=read('type') as QuestionType,mode=read('mode'),points=Number(read('points'))
+      if(!read('prompt')||read('prompt').length>10000||!questionTypes.includes(type)||!['AUTO','HYBRID','MANUAL'].includes(mode)||!Number.isFinite(points)||points<=0||points>1000||['key','options','rubric'].some(k=>read(k).length>10000)) redirect('/admin/elearning/assessments?error=invalid')
+      if(mode==='AUTO'&&!automaticQuestionTypes.includes(type)) redirect('/admin/elearning/assessments?error=manual')
+      if(mode!=='AUTO'&&!read('rubric')) redirect('/admin/elearning/assessments?error=invalid')
+      const options=read('options').split('\n').map(s=>s.trim()).filter(Boolean)
+      if(mode==='AUTO'&&type==='TRUE_FALSE'&&!['true','false'].includes(read('key'))) redirect('/admin/elearning/assessments?error=invalid')
+      const key=type==='TRUE_FALSE'?read('key')==='true':type==='MULTIPLE_CHOICE'?read('key').split('\n').map(s=>s.trim()).filter(Boolean):read('key')
+      return {code:'Q'+id,type,mode,prompt:read('prompt'),points,options,...(mode==='AUTO'?{key}:{rubric:read('rubric')})}
+    })
+    if(Buffer.byteLength(JSON.stringify(questions),'utf8')>500000) redirect('/admin/elearning/assessments?error=invalid')
+    result=await db.rpc('create_learning_assessment',{p_version:get('version'),p_title:get('title'),p_kind:kind,p_threshold:threshold,p_limit:kind==='FINAL'?3:null,p_cooldown:kind==='FINAL'?86400:0,p_questions:questions})
   } else if(action==='APPROVE'&&uuidPattern.test(id)&&reason) {
     result=await db.rpc('approve_learning_assessment',{p_id:id,p_reason:reason})
   } else if(['REVIEW','REGRADE'].includes(action)&&uuidPattern.test(id)&&reason) {

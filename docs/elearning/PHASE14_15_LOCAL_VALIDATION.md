@@ -48,7 +48,6 @@ Production HOLD. No staging/production mutation, push or deploy.
 ## Remaining gates
 
 Delegated academic reviewer scope,
-multi-question UI authoring (database already accepts up to 100 questions),
 canonical multi-module Theory authoring and MT1.01–05 pedagogical/content approval,
 full shadow mapping/reconciliation to the same Grade's Music Theory requirement,
 legal retention periods and holiday calendar before production readiness.
@@ -81,3 +80,21 @@ correction time. No live Academic writeback or financial posting is introduced.
 - Reviewer fake account banned, profile/role inactive; temporary credential and
   setup script removed. No credentials added to the repository.
 - Full Phases 14–15 remain **PARTIAL** for the remaining gates above.
+
+## 2026-09-17 — multi-question authoring
+
+Admin form supports 1–100 independently typed/weighted questions using the existing
+database RPC. Stable question identities retain input when an intermediate question
+is removed. Server validates the declared unique question list, each question's
+type/mode/points/rubric and total bounded payload. Only explicitly listed questions
+are submitted; caller scores/limits/reviewer identity are not accepted.
+
+Browser desktop/mobile: added Q1, Q2, Q3, removed Q2, retained Q1 values and Q3
+manual rubric. Saved synthetic DRAFT has exactly Q1 AUTO weight 1 and Q3 MANUAL
+weight 3. Mobile document width 390 equals viewport; console errors empty.
+No approval or real student outcome is implied by this draft.
+
+Full application/bootstrap **245 PASS** (18 assessment UI/action tests), Webpack
+build, relevant ESLint and diff check PASS. Database unchanged; latest full pgTAP
+**55 files / 1,440 PASS**, local ledger **90**. Fake author disabled and temporary
+credential/script removed. Production HOLD; no push/deploy/cloud mutation.
