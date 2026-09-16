@@ -1,6 +1,20 @@
 # Staging migration rehearsal
 
-Current: 2026-09-16. Status: **V3 PHASE 3 PASS — production HOLD**.
+Current: 2026-09-17. **Current full staging validation PENDING; production HOLD.**
+
+Fresh read-only ledger remains **59**. Local is 94; production read-only is 28.
+Local restoration of the staging business snapshot and upgrade 59→94 passed
+59 pgTAP files / 1,533 tests; application/bootstrap 273 PASS, Webpack build and
+whole-repository ESLint PASS. These are LOCAL results, not new staging passes.
+
+Applying first staging batch `20260916130000`, `20260916140000`,
+`20260916150000` was blocked by automatic approval review pending specific Owner
+confirmation; the command did not execute. No staging migration was applied in
+this checkpoint. See [recovery report](backup-restore-validation-20260917.md),
+[exact gap](migration-gap-register-20260917.md) and
+[current NO-GO gate](pilot/PRODUCTION_READINESS_GATE.md).
+
+The V3 Phase 3 PASS below is historical and limited to its then-implemented scope.
 
 ## Master Plan V3 — Phase 3 completed (2026-09-16)
 

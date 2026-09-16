@@ -93,10 +93,19 @@ schema restored transactionally into the separate LOCAL database
 to preserve ownership and installing required `btree_gist`. The app database was
 not reset. Schema-only attempts before those prerequisites rolled back.
 
-No Auth user rows, passwords, tokens or email identities were exported. A complete
-login recovery is therefore not covered. Business foreign keys reference Auth IDs;
-the proposed LOCAL-only banned placeholder rows would preserve those references
-without copying Auth data or enabling login. Auto-review required a separate
-confirmation for those placeholder inserts; that request is pending. Business-data
-restore and staging migration apply have NOT been performed. The 59→94 upgrade
-remains pending this recovery check. Do not mark rehearsal PASS.
+No Auth user rows, passwords, tokens or email identities were exported. Following
+explicit Owner authorization, 22 LOCAL-only locked placeholder identities were
+created using foreign-key references from the business export. Business restore
+passed: 57 tables / 407 rows matched exactly, with every foreign key checked before
+commit. The isolated clone then upgraded through the normal migration runner from
+59 to 94; full pgTAP passed (59 files / 1,533 tests).
+
+After upgrade, 54 source tables remain identical; the only source-table additions
+are 17 permissions, 9 role-permission mappings and 35 migration ledger rows. No
+source rows were removed. All 22 identities remain banned indefinitely with no
+email, phone or password. This verifies business-data recovery using synthetic
+Auth references, **not real Auth or production recovery**. See
+[local recovery evidence](backup-restore-validation-20260917.md).
+
+Staging apply and full staging validation remain pending. The clone rehearsal does
+not change the staging ledger or grant production deployment approval.
