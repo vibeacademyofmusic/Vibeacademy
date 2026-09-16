@@ -17,7 +17,8 @@ test('active menu chooses the most specific existing URL', () => {
   assert.equal(activeNavigationHref('/admin'), '/admin')
 })
 test('unimplemented domains are omitted and existing finance routes are present', () => {
-  assert.ok(!navigationGroups.some(g => /CRM|E-LEARNING/.test(g.name)))
+  assert.ok(!navigationGroups.some(g => /CRM/.test(g.name)))
+  assert.deepEqual(navigationGroups.find(g => g.name === 'E-LEARNING & KIỂM TRA').items.map(i => i.href), ['/admin/elearning'])
   assert.deepEqual(navigationGroups.find(g => g.name === 'KHO & CỬA HÀNG').items.map(i => i.href), ['/admin/inventory', '/admin/instruments'])
   assert.equal(navigationGroups.find(g => g.name === 'TÀI CHÍNH').items.length, 8)
 })

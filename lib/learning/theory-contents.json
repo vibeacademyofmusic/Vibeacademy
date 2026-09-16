@@ -1,0 +1,703 @@
+{
+  "source_document": "docs/elearning/VIBE_Academy_Music_Theory_Elearning_Curriculum_Specification_V1.docx",
+  "source_sha256": "474b61c92c47208d944fc23b8137372ef074af6594ebac24b3b4f375269ba4a6",
+  "note": "Contents metadata only; not authored instructional content or published lessons.",
+  "modules": [
+    {
+      "code": "MT1.01",
+      "grade": 1,
+      "sequence": 1,
+      "title": "Time Names and Time Values",
+      "source_pages": "pp. 4-5",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.02",
+      "grade": 1,
+      "sequence": 2,
+      "title": "Bar-lines and Time Signatures",
+      "source_pages": "pp. 6-8",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.03",
+      "grade": 1,
+      "sequence": 3,
+      "title": "Writing on a Stave",
+      "source_pages": "pp. 9-9",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.04",
+      "grade": 1,
+      "sequence": 4,
+      "title": "Letter Names",
+      "source_pages": "pp. 10-15",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.05",
+      "grade": 1,
+      "sequence": 5,
+      "title": "Semiquavers",
+      "source_pages": "pp. 16-17",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.06",
+      "grade": 1,
+      "sequence": 6,
+      "title": "Rests",
+      "source_pages": "pp. 18-19",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.07",
+      "grade": 1,
+      "sequence": 7,
+      "title": "Ties and Slurs",
+      "source_pages": "pp. 20-21",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.08",
+      "grade": 1,
+      "sequence": 8,
+      "title": "Dotted Notes",
+      "source_pages": "pp. 22-25",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.09",
+      "grade": 1,
+      "sequence": 9,
+      "title": "Accidentals",
+      "source_pages": "pp. 26-27",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.10",
+      "grade": 1,
+      "sequence": 10,
+      "title": "Semitones and Tones",
+      "source_pages": "pp. 28-29",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.11",
+      "grade": 1,
+      "sequence": 11,
+      "title": "Scales and Key Signatures of C, G, D and F Major",
+      "source_pages": "pp. 30-37",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.12",
+      "grade": 1,
+      "sequence": 12,
+      "title": "Degrees of the Scale",
+      "source_pages": "pp. 38-39",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.13",
+      "grade": 1,
+      "sequence": 13,
+      "title": "Intervals",
+      "source_pages": "pp. 40-41",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.14",
+      "grade": 1,
+      "sequence": 14,
+      "title": "Tonic Triads",
+      "source_pages": "pp. 42-43",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.15",
+      "grade": 1,
+      "sequence": 15,
+      "title": "Cancelling an Accidental",
+      "source_pages": "pp. 44-44",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.16",
+      "grade": 1,
+      "sequence": 16,
+      "title": "Upbeats",
+      "source_pages": "pp. 45-45",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.17",
+      "grade": 1,
+      "sequence": 17,
+      "title": "The Grouping of Notes",
+      "source_pages": "pp. 46-51",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.18",
+      "grade": 1,
+      "sequence": 18,
+      "title": "Composing an Answering Rhythm",
+      "source_pages": "pp. 52-53",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.19",
+      "grade": 1,
+      "sequence": 19,
+      "title": "Performance Directions",
+      "source_pages": "pp. 54-55",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.20",
+      "grade": 1,
+      "sequence": 20,
+      "title": "General Exercises",
+      "source_pages": "pp. 56-58",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.21",
+      "grade": 1,
+      "sequence": 21,
+      "title": "Specimen Test Grade 1",
+      "source_pages": "pp. 59-61",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT1.22",
+      "grade": 1,
+      "sequence": 22,
+      "title": "Revision Notes",
+      "source_pages": "pp. 62-64",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.01",
+      "grade": 2,
+      "sequence": 1,
+      "title": "Ledger Lines",
+      "source_pages": "pp. 4-8",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.02",
+      "grade": 2,
+      "sequence": 2,
+      "title": "Time Names and Time Values",
+      "source_pages": "pp. 9-10",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.03",
+      "grade": 2,
+      "sequence": 3,
+      "title": "Time Signatures",
+      "source_pages": "pp. 11-15",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.04",
+      "grade": 2,
+      "sequence": 4,
+      "title": "Triplets",
+      "source_pages": "pp. 16-18",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.05",
+      "grade": 2,
+      "sequence": 5,
+      "title": "Grouping of Notes",
+      "source_pages": "pp. 19-22",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.06",
+      "grade": 2,
+      "sequence": 6,
+      "title": "Grouping of Rests",
+      "source_pages": "pp. 23-28",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.07",
+      "grade": 2,
+      "sequence": 7,
+      "title": "Scales and Key Signatures of A, B-flat and E-flat Major",
+      "source_pages": "pp. 29-36",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.08",
+      "grade": 2,
+      "sequence": 8,
+      "title": "Scales and Key Signatures of A, E and D Minor",
+      "source_pages": "pp. 37-42",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.09",
+      "grade": 2,
+      "sequence": 9,
+      "title": "Tonic Triads",
+      "source_pages": "pp. 43-45",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.10",
+      "grade": 2,
+      "sequence": 10,
+      "title": "Degrees of the Scale",
+      "source_pages": "pp. 46-47",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.11",
+      "grade": 2,
+      "sequence": 11,
+      "title": "Intervals",
+      "source_pages": "pp. 48-49",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.12",
+      "grade": 2,
+      "sequence": 12,
+      "title": "Composing Four-Bar Rhythms",
+      "source_pages": "pp. 50-52",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.13",
+      "grade": 2,
+      "sequence": 13,
+      "title": "Performance Directions",
+      "source_pages": "pp. 53-55",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.14",
+      "grade": 2,
+      "sequence": 14,
+      "title": "General Exercises",
+      "source_pages": "pp. 56-58",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.15",
+      "grade": 2,
+      "sequence": 15,
+      "title": "Specimen Test Grade 2",
+      "source_pages": "pp. 59-61",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT2.16",
+      "grade": 2,
+      "sequence": 16,
+      "title": "Revision Notes",
+      "source_pages": "pp. 62-64",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.01",
+      "grade": 3,
+      "sequence": 1,
+      "title": "Time Names and Time Values",
+      "source_pages": "pp. 4-11",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.02",
+      "grade": 3,
+      "sequence": 2,
+      "title": "Ledger Lines",
+      "source_pages": "pp. 12-15",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.03",
+      "grade": 3,
+      "sequence": 3,
+      "title": "Transposition",
+      "source_pages": "pp. 16-17",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.04",
+      "grade": 3,
+      "sequence": 4,
+      "title": "Simple and Compound Time",
+      "source_pages": "pp. 18-22",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.05",
+      "grade": 3,
+      "sequence": 5,
+      "title": "Grouping of Notes",
+      "source_pages": "pp. 23-24",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.06",
+      "grade": 3,
+      "sequence": 6,
+      "title": "Grouping of Rests",
+      "source_pages": "pp. 25-27",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.07",
+      "grade": 3,
+      "sequence": 7,
+      "title": "Deliberate Mistakes",
+      "source_pages": "pp. 28-29",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.08",
+      "grade": 3,
+      "sequence": 8,
+      "title": "Scales and Key Signatures of E and A-flat Major",
+      "source_pages": "pp. 30-34",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.09",
+      "grade": 3,
+      "sequence": 9,
+      "title": "Scales and Key Signatures of B, F-sharp, C-sharp, G, C and F Minor",
+      "source_pages": "pp. 35-42",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.10",
+      "grade": 3,
+      "sequence": 10,
+      "title": "Tonic Triads",
+      "source_pages": "pp. 43-45",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.11",
+      "grade": 3,
+      "sequence": 11,
+      "title": "Intervals",
+      "source_pages": "pp. 46-47",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.12",
+      "grade": 3,
+      "sequence": 12,
+      "title": "Four-Bar Rhythms",
+      "source_pages": "pp. 48-50",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.13",
+      "grade": 3,
+      "sequence": 13,
+      "title": "Simple Phrase Structure",
+      "source_pages": "pp. 51-52",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.14",
+      "grade": 3,
+      "sequence": 14,
+      "title": "Performance Directions",
+      "source_pages": "pp. 53-55",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.15",
+      "grade": 3,
+      "sequence": 15,
+      "title": "General Exercises",
+      "source_pages": "pp. 56-58",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.16",
+      "grade": 3,
+      "sequence": 16,
+      "title": "Specimen Test Grade 3",
+      "source_pages": "pp. 59-61",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT3.17",
+      "grade": 3,
+      "sequence": 17,
+      "title": "Revision Notes",
+      "source_pages": "pp. 62-64",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.01",
+      "grade": 4,
+      "sequence": 1,
+      "title": "Alto Clef",
+      "source_pages": "pp. 4-7",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.02",
+      "grade": 4,
+      "sequence": 2,
+      "title": "Breves, Double Dots and Duplets",
+      "source_pages": "pp. 8-10",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.03",
+      "grade": 4,
+      "sequence": 3,
+      "title": "Time Signatures",
+      "source_pages": "pp. 11-19",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.04",
+      "grade": 4,
+      "sequence": 4,
+      "title": "Four-Bar Rhythms",
+      "source_pages": "pp. 20-21",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.05",
+      "grade": 4,
+      "sequence": 5,
+      "title": "Double Sharps, Double Flats and Enharmonic Equivalents",
+      "source_pages": "pp. 22-23",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.06",
+      "grade": 4,
+      "sequence": 6,
+      "title": "Scales with Five Sharps and Five Flats",
+      "source_pages": "pp. 24-31",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.07",
+      "grade": 4,
+      "sequence": 7,
+      "title": "Technical Names of Notes",
+      "source_pages": "pp. 32-33",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.08",
+      "grade": 4,
+      "sequence": 8,
+      "title": "Triads and Chords on I, IV and V",
+      "source_pages": "pp. 34-37",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.09",
+      "grade": 4,
+      "sequence": 9,
+      "title": "Intervals",
+      "source_pages": "pp. 38-41",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.10",
+      "grade": 4,
+      "sequence": 10,
+      "title": "Chromatic Scale",
+      "source_pages": "pp. 42-45",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.11",
+      "grade": 4,
+      "sequence": 11,
+      "title": "Ornaments",
+      "source_pages": "pp. 46-47",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.12",
+      "grade": 4,
+      "sequence": 12,
+      "title": "Writing a Rhythm to Words",
+      "source_pages": "pp. 48-51",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.13",
+      "grade": 4,
+      "sequence": 13,
+      "title": "Instruments",
+      "source_pages": "pp. 52-57",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.14",
+      "grade": 4,
+      "sequence": 14,
+      "title": "Performance Directions",
+      "source_pages": "pp. 58-61",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.15",
+      "grade": 4,
+      "sequence": 15,
+      "title": "General Exercises",
+      "source_pages": "pp. 62-64",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.16",
+      "grade": 4,
+      "sequence": 16,
+      "title": "Specimen Test Grade 4",
+      "source_pages": "pp. 65-69",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT4.17",
+      "grade": 4,
+      "sequence": 17,
+      "title": "Revision Notes",
+      "source_pages": "pp. 70-70",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.01",
+      "grade": 5,
+      "sequence": 1,
+      "title": "Tenor Clef",
+      "source_pages": "pp. 4-8",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.02",
+      "grade": 5,
+      "sequence": 2,
+      "title": "Irregular Time Signatures",
+      "source_pages": "pp. 9-11",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.03",
+      "grade": 5,
+      "sequence": 3,
+      "title": "Scales with Six Sharps and Six Flats",
+      "source_pages": "pp. 12-21",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.04",
+      "grade": 5,
+      "sequence": 4,
+      "title": "Transposition",
+      "source_pages": "pp. 22-31",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.05",
+      "grade": 5,
+      "sequence": 5,
+      "title": "SATB in Short and Open Score",
+      "source_pages": "pp. 32-35",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.06",
+      "grade": 5,
+      "sequence": 6,
+      "title": "Irregular Time Divisions",
+      "source_pages": "pp. 36-38",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.07",
+      "grade": 5,
+      "sequence": 7,
+      "title": "Intervals",
+      "source_pages": "pp. 39-42",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.08",
+      "grade": 5,
+      "sequence": 8,
+      "title": "Identifying Chords",
+      "source_pages": "pp. 43-45",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.09",
+      "grade": 5,
+      "sequence": 9,
+      "title": "Chords at Cadence Points",
+      "source_pages": "pp. 46-48",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.10",
+      "grade": 5,
+      "sequence": 10,
+      "title": "Composing Melodies",
+      "source_pages": "pp. 49-61",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.11",
+      "grade": 5,
+      "sequence": 11,
+      "title": "Ornaments and Repetitions",
+      "source_pages": "pp. 62-65",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.12",
+      "grade": 5,
+      "sequence": 12,
+      "title": "Instruments",
+      "source_pages": "pp. 66-74",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.13",
+      "grade": 5,
+      "sequence": 13,
+      "title": "Performance Directions",
+      "source_pages": "pp. 75-79",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.14",
+      "grade": 5,
+      "sequence": 14,
+      "title": "Grade 5 Specimen Test",
+      "source_pages": "pp. 80-85",
+      "source_state": "SCOPE_REFERENCE_ONLY"
+    },
+    {
+      "code": "MT5.15",
+      "grade": 5,
+      "sequence": 15,
+      "title": "Revision Notes",
+      "source_pages": "p. 86 (SOURCE_MISSING)",
+      "source_state": "SOURCE_MISSING"
+    }
+  ]
+}

@@ -43,11 +43,12 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
         is() { return this }, or() { return this },
         order(key, options) { call.orders.push([key, options]); return this },
         range(a, b) { call.range = [a, b]; return this }, limit(n) { call.limit = n; return this }, returns() { return this },
+        maybeSingle() { call.single = true; return this },
         then(resolve, reject) {
           let data = (fixtures[table] ?? []).filter(r => call.filters.every(f => f(r)))
           if (call.range) data = data.slice(call.range[0], call.range[1] + 1)
           if (call.limit) data = data.slice(0, call.limit)
-          return Promise.resolve({ data, error: null }).then(resolve, reject)
+          return Promise.resolve({ data: call.single ? data[0] ?? null : data, error: null }).then(resolve, reject)
         },
       }
       return query
