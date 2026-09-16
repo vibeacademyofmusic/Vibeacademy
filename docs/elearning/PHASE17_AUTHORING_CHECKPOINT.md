@@ -56,3 +56,14 @@ Grades 2–5 remain gated; the reference catalogue is not evidence they are comp
 No reviewer authorization is inferred from a synthetic test account. Real Academic
 subject mappings need verified owner data. Delegated Academic Admin scope and legal
 retention/holiday calendar remain separate readiness items.
+
+## Source extraction correction
+
+During draft authoring, source cross-check found that two prerequisite references
+had been extracted as lesson rows (duplicating L01 and omitting L03 in MT1.02 and
+MT1.04). Corrected to MT1.02.L03 “Complete bars” and MT1.04.L03 “Same pitch across
+clefs”, with the exact approved objectives. Tests now assert all twelve unique
+lesson codes and those titles, not only aggregate counts. Browser confirmed the
+six distinct lessons of modules 2 and 4; no draft was created or published during
+this correction check. Earlier synthetic saved fixture used modules 1 and 3 and
+was unaffected. Fake author disabled and temporary credential removed afterward.

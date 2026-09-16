@@ -24,9 +24,9 @@
     "module_code": "MT1.02"
   },
   {
-    "code": "MT1.02.L01",
-    "title": "AUTO",
-    "objective": "MT1.02.L03",
+    "code": "MT1.02.L03",
+    "title": "Complete bars",
+    "objective": "Thêm bar-line hoặc note để hoàn chỉnh ô nhịp.",
     "module_code": "MT1.02"
   },
   {
@@ -54,9 +54,9 @@
     "module_code": "MT1.04"
   },
   {
-    "code": "MT1.04.L01",
-    "title": "AUTO",
-    "objective": "MT1.04.L03",
+    "code": "MT1.04.L03",
+    "title": "Same pitch across clefs",
+    "objective": "Nhận biết cao độ tương ứng giữa hai khóa.",
     "module_code": "MT1.04"
   },
   {
