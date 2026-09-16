@@ -47,7 +47,7 @@ Production HOLD. No staging/production mutation, push or deploy.
 
 ## Remaining gates
 
-Full notation assessment browser roundtrip, delegated academic reviewer scope,
+Delegated academic reviewer scope,
 multi-question UI authoring (database already accepts up to 100 questions),
 canonical multi-module Theory authoring and MT1.01–05 pedagogical/content approval,
 full shadow mapping/reconciliation to the same Grade's Music Theory requirement,
