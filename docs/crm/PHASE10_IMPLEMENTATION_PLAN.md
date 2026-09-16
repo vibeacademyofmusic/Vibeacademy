@@ -4,7 +4,12 @@
 No CRM schema or business-state transitions have been applied yet.
 Production HOLD.
 
-## Owner decision pending
+## Owner decision pending — conversion deferred, independent work continues
+
+The subsequent unattended execution authorization permits independent phases to
+continue while this decision is pending. It authorizes local and reviewed,
+non-destructive staging work, but does not select a CRM transition policy.
+Do not mark Phase 10 complete. Phase 11 inventory is independent of lead conversion.
 
 The master lists NEW → CONTACTED → TRIAL_BOOKED → TRIAL_COMPLETED → FOLLOW_UP
 → ENROLLED → LOST, but does not define whether a trial is a prerequisite or LOST
