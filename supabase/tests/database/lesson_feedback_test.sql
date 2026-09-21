@@ -184,7 +184,8 @@ update session_occurrences set status='COMPLETED' where id='91000000-0000-0000-0
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000002',true);
 set local role authenticated;
 select is(has_role('SUPER_ADMIN'),false,'student is not admin');
-select lives_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','STUDENT',2,3,2,4,'Student comment')$$,'valid student submits');
+select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','STUDENT',2,null,null,null,'',array['NOT_A_REASON'])$$,'P0001','Unsupported feedback reason','unsupported reason rejected');
+select lives_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','STUDENT',2,3,2,4,'Student comment',array['CONTENT_UNCLEAR','PACE_INAPPROPRIATE'])$$,'valid student submits');
 select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','STUDENT',4)$$,'23505',null,'duplicate blocked in database');
 select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000002','STUDENT',4)$$,'P0001','Invalid respondent relationship','unrelated student blocked');
 select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000099','61000000-0000-0000-0000-000000000001','STUDENT',4)$$,'P0001','Session is not eligible for feedback','wrong session blocked');
@@ -193,7 +194,8 @@ select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000
 select is((select count(*) from lesson_feedback),0::bigint,'respondent cannot read raw feedback');
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000003',true);
 select is(has_role('SUPER_ADMIN'),false,'parent is not admin');
-select lives_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','PARENT',5)$$,'valid parent submits optional dimensions omitted');
+select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','PARENT',5,null,null,null,'',array['CONTENT_UNCLEAR'])$$,'P0001','Unsupported feedback reason','positive rating rejects improvement reason');
+select lives_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','PARENT',5,null,null,null,'',array['TEACHER_CLEAR_GUIDANCE','CONTENT_APPROPRIATE'])$$,'valid parent submits optional dimensions omitted');
 select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','PARENT',5)$$,'23505',null,'parent duplicate blocked');
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000004',true);
 select throws_ok($$select submit_lesson_feedback('91000000-0000-0000-0000-000000000001','61000000-0000-0000-0000-000000000001','PARENT',4)$$,'P0001','Invalid respondent relationship','unrelated parent blocked');
@@ -214,6 +216,9 @@ select is((select average_overall_rating from lesson_feedback_teacher_monthly wh
 select is((select low_rating_count from lesson_feedback_branch_monthly where branch_id='11000000-0000-0000-0000-000000000001'),1::bigint,'branch low count');
 select throws_ok($$update lesson_feedback set overall_rating=5$$,'42501',null,'raw feedback cannot be edited');
 reset role;
+select is((select count(*) from lesson_feedback_reasons r join lesson_feedback f on f.id=r.feedback_id where f.respondent_type='STUDENT'),2::bigint,'student reasons stored');
+select is((select count(*) from lesson_feedback_reasons r join lesson_feedback f on f.id=r.feedback_id where f.respondent_type='PARENT'),2::bigint,'parent reasons stored');
+select throws_ok($$update lesson_feedback_reasons set reason_label='changed'$$,'P0001','Submitted feedback is immutable','reasons immutable');
 select throws_ok($$delete from lesson_feedback where student_id='61000000-0000-0000-0000-000000000001'$$,'P0001','Feedback history cannot be deleted','feedback history preserved');
 select * from finish();
 rollback;

@@ -103,7 +103,14 @@ test('feedback action delegates identity and eligibility to the canonical RPC', 
   const h = harness(), form = new FormData()
   for (const [key, value] of Object.entries({ student: student.id, session: student.id, respondent: 'PARENT', rating: '4', comment: 'Helpful lesson', teacher_id: 'forged', respondent_user_id: 'forged' })) form.set(key, value)
   await assert.rejects(h.action()(form), /success=feedback/)
-  assert.deepEqual(h.calls, [{ name: 'submit_lesson_feedback', args: { p_student_id: student.id, p_session_id: student.id, p_respondent_type: 'PARENT', p_overall: 4, p_comment: 'Helpful lesson' } }])
+  assert.deepEqual(h.calls, [{ name: 'submit_lesson_feedback', args: { p_student_id: student.id, p_session_id: student.id, p_respondent_type: 'PARENT', p_overall: 4, p_comment: 'Helpful lesson', p_reasons: [] } }])
+})
+test('feedback reasons outside the rating band never reach the database', async () => {
+  const h = harness(), form = new FormData()
+  for (const [key, value] of Object.entries({ student: student.id, session: student.id, respondent: 'PARENT', rating: '4' })) form.set(key, value)
+  form.append('reason', 'CONTENT_UNCLEAR')
+  await assert.rejects(h.action()(form), /feedback_invalid/)
+  assert.equal(h.calls.length, 0)
 })
 test('feedback invalid ratings never reach the database mutation', async () => {
   const h = harness(), form = new FormData()
