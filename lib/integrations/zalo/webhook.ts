@@ -110,6 +110,7 @@ export type WebhookResponse = {
   diagnostic?: ZaloRejectionDiagnostic
   macDiagnostic?: ZaloMacDiagnostic
   probeLog?: ZaloRegistrationProbeLog
+  registrationProbe?: boolean
   body: {
     ok: boolean
     error?: string
@@ -316,18 +317,19 @@ export async function acceptZaloWebhook(input: {
   if (appId !== input.env.appId) {
     return rejectWebhook('APP_ID_MISMATCH', body, input.signature, input.env.oaId)
   }
-  if (!oaIdentityAccepted(body, input.env.oaId)) {
-    if (input.registrationMode === true) {
-      return {
-        status: 200,
-        probeLog: {
-          component: 'zalo_webhook',
-          result: 'registration_probe_acknowledged',
-          event_name: eventName,
-        },
-        body: { ok: true, registration_probe: true, processed: false },
-      }
+  if (input.registrationMode === true) {
+    return {
+      status: 200,
+      registrationProbe: true,
+      probeLog: {
+        component: 'zalo_webhook',
+        result: 'registration_probe_acknowledged',
+        event_name: eventName,
+      },
+      body: { ok: true, registration_probe: true, processed: false },
     }
+  }
+  if (!oaIdentityAccepted(body, input.env.oaId)) {
     return rejectWebhook('OA_ID_MISMATCH', body, input.signature, input.env.oaId)
   }
 

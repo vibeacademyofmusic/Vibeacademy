@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 import {
@@ -25,6 +24,7 @@ async function persistZaloWebhook(event: WebhookRecord): Promise<WebhookRecordRe
     throw new Error('UNCONFIGURED')
   }
 
+  const { createClient } = await import('@supabase/supabase-js')
   const client = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
@@ -59,10 +59,12 @@ export async function POST(request: Request) {
       env: readZaloWebhookEnv(process.env),
       record: persistZaloWebhook,
     })
+    if (result.registrationProbe) {
+      if (result.probeLog && diagnosticsEnabled) logZaloRegistrationProbe(result.probeLog)
+      return new Response(null, { status: 200 })
+    }
     if (result.macDiagnostic && diagnosticsEnabled) {
       console.info(JSON.stringify(result.macDiagnostic))
-    } else if (result.probeLog && diagnosticsEnabled) {
-      logZaloRegistrationProbe(result.probeLog)
     } else if (result.diagnostic && diagnosticsEnabled) {
       logZaloRejection(result.diagnostic)
     }

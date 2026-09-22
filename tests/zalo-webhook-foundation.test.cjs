@@ -371,18 +371,34 @@ test('OA mismatch stays rejected when registration mode is off', async () => {
   assert.equal(store.rows.length, 0)
 })
 
-test('authentic OA mismatch is acknowledged only in registration mode', async () => {
-  const store = memory()
-  const event = probeEvent()
+function refusingRecord() {
+  return async () => {
+    assert.fail('registration probe must not persist')
+  }
+}
+
+test('registration mode acknowledges a matching OA event without persisting', async () => {
+  const event = signed()
   const result = await acceptZaloWebhook({
-    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: store.record,
+    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: refusingRecord(),
   })
   assert.equal(result.status, 200)
+  assert.equal(result.registrationProbe, true)
+  assert.deepEqual(result.body, { ok: true, registration_probe: true, processed: false })
+  assert.equal(result.probeLog.event_name, 'user_send_text')
+})
+
+test('authentic OA mismatch is acknowledged only in registration mode', async () => {
+  const event = probeEvent()
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: refusingRecord(),
+  })
+  assert.equal(result.status, 200)
+  assert.equal(result.registrationProbe, true)
   assert.deepEqual(result.body, { ok: true, registration_probe: true, processed: false })
   assert.deepEqual(result.probeLog, {
     component: 'zalo_webhook', result: 'registration_probe_acknowledged', event_name: 'user_send_text',
   })
-  assert.equal(store.rows.length, 0)
   const encoded = JSON.stringify(result.body) + JSON.stringify(result.probeLog)
   assert.equal(encoded.includes(SECRET), false)
   assert.equal(encoded.includes(event.signature.slice(4)), false)
@@ -413,18 +429,83 @@ test('registration mode does not accept a different app id', async () => {
   assert.equal(store.rows.length, 0)
 })
 
-test('registration mode still processes a normal OA event', async () => {
+test('registration mode off still persists a normal OA event', async () => {
   const store = memory()
   const event = signed()
   const result = await acceptZaloWebhook({
-    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: store.record,
+    rawBody: event.raw, signature: event.signature, registrationMode: false, env: ENV, record: store.record,
   })
   assert.equal(result.status, 200)
+  assert.equal(result.registrationProbe, undefined)
   assert.equal(result.body.ok, true)
   assert.equal(result.body.registration_probe, undefined)
-  assert.equal(result.probeLog, undefined)
   assert.equal(store.rows.length, 1)
   assert.equal(store.rows[0].event.eventType, 'user_send_text')
+})
+
+test('registration probe returns before OA checks and persistence', () => {
+  const accept = source.slice(source.indexOf('export async function acceptZaloWebhook'))
+  const modeAt = accept.indexOf('if (input.registrationMode === true)')
+  const oaAt = accept.indexOf('oaIdentityAccepted(')
+  const recordAt = accept.indexOf('input.record(')
+  assert.ok(modeAt > 0 && modeAt < oaAt && modeAt < recordAt)
+  assert.equal(/^import \{ createClient \} from '@supabase\/supabase-js'/m.test(route), false)
+  const persist = route.slice(route.indexOf('async function persistZaloWebhook'))
+  assert.match(persist, /await import\('@supabase\/supabase-js'\)/)
+  assert.match(route, /new Response\(null, \{ status: 200 \}\)/)
+  assert.ok(route.indexOf('result.registrationProbe') < route.indexOf('NextResponse.json(result.body'))
+})
+
+test('registration probe route does not load Supabase', async () => {
+  const originalInfo = console.info
+  const logs = []
+  console.info = (line) => logs.push(line)
+  try {
+    for (const event of [signed(), probeEvent()]) {
+      let supabaseLoads = 0
+      const routeModule = { exports: {} }
+      const fakeRequire = (name) => {
+        if (name === '@supabase/supabase-js') {
+          supabaseLoads += 1
+          assert.fail('registration probe must not load Supabase')
+        }
+        if (name === 'next/server') return { NextResponse: Response }
+        if (name === '@/lib/integrations/zalo/webhook') return loaded.exports
+        throw Error(`unexpected dependency ${name}`)
+      }
+      const js = ts.transpileModule(route, {
+        compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+      }).outputText
+      assert.equal(js.includes("require(\"@supabase/supabase-js\")") && js.indexOf('persistZaloWebhook') > js.indexOf("require(\"@supabase/supabase-js\")"), false)
+      new Function('module', 'exports', 'require', 'process', 'console', js)(
+        routeModule, routeModule.exports, fakeRequire,
+        {
+          env: {
+            ZALO_APP_ID: APP, ZALO_OA_ID: OA, ZALO_OA_SECRET_KEY: SECRET,
+            ZALO_WEBHOOK_REGISTRATION_MODE: 'true',
+            VERCEL_PROJECT_PRODUCTION_URL: 'vibeacademy-staging.vercel.app',
+          },
+        },
+        { info() { assert.fail('registration probe must not use the route console before returning') } },
+      )
+      const before = logs.length
+      const response = await routeModule.exports.POST(new Request(
+        'https://vibeacademy-staging.vercel.app/api/integrations/zalo/webhook',
+        { method: 'POST', headers: { 'x-zevent-signature': event.signature }, body: event.raw },
+      ))
+      assert.equal(response.status, 200)
+      assert.equal(await response.text(), '')
+      assert.equal(supabaseLoads, 0)
+      assert.equal(logs.length, before + 1)
+      assert.deepEqual(JSON.parse(logs.at(-1)), {
+        component: 'zalo_webhook', result: 'registration_probe_acknowledged', event_name: 'user_send_text',
+      })
+      assert.equal(logs.at(-1).includes(SECRET), false)
+      assert.equal(logs.at(-1).includes(OA), false)
+    }
+  } finally {
+    console.info = originalInfo
+  }
 })
 
 test('registration mode is the exact string true', () => {
