@@ -365,3 +365,78 @@ test('handler source does not hard-code ids, secrets, or a live Zalo call', () =
   assert.match(route, /ZALO_OA_ACCESS_TOKEN/)
   assert.match(route, /ZALO_OA_REFRESH_TOKEN/)
 })
+
+function macFixture() {
+  const body = signed().body
+  const raw = JSON.stringify(body, null, 2)
+  const headerTimestamp = '174390853475'
+  return { body, raw, headerTimestamp }
+}
+
+for (const candidate of ['official', 'header', 'reserialized']) {
+  test(`MAC diagnostics distinguish ${candidate} without accepting alternate MACs`, async () => {
+    const { body, raw, headerTimestamp } = macFixture()
+    const signature = `mac=${zaloEventMac(APP, candidate === 'reserialized' ? JSON.stringify(body) : raw,
+      candidate === 'header' ? headerTimestamp : body.timestamp, SECRET)}`
+    const diagnostic = loaded.exports.diagnoseZaloMac({ appId: APP, rawBody: raw, parsedBody: body,
+      bodyTimestamp: body.timestamp, headerTimestamp, oaSecret: SECRET, signature })
+    assert.deepEqual(diagnostic, {
+      component: 'zalo_webhook', result: 'mac_diagnostic', signature_header_present: true,
+      zevent_timestamp_header_present: true, official_current_match: candidate === 'official',
+      header_timestamp_match: candidate === 'header', reserialized_match: candidate === 'reserialized',
+    })
+    const store = memory()
+    const result = await acceptZaloWebhook({ rawBody: raw, signature, headerTimestamp,
+      macDiagnosticsEnabled: true, env: ENV, record: store.record })
+    assert.equal(result.status, candidate === 'official' ? 200 : 401)
+    assert.equal(store.rows.length, candidate === 'official' ? 1 : 0)
+    assert.deepEqual(result.macDiagnostic, candidate === 'official' ? undefined : diagnostic)
+    if (candidate !== 'official') assert.deepEqual(result.body, { ok: false, error: 'INVALID_SIGNATURE' })
+  })
+}
+
+test('MAC diagnostics are absent for missing/malformed signatures, disabled mode, and valid signatures', async () => {
+  const event = signed()
+  for (const signature of [null, 'bad-format', event.signature]) {
+    const result = await acceptZaloWebhook({ rawBody: event.raw, signature, macDiagnosticsEnabled: true, env: ENV, record: memory().record })
+    assert.equal(result.macDiagnostic, undefined)
+  }
+  const result = await acceptZaloWebhook({ rawBody: event.raw, signature: 'mac=' + '0'.repeat(64), env: ENV, record: memory().record })
+  assert.equal(result.status, 401)
+  assert.equal(result.macDiagnostic, undefined)
+})
+
+test('route logs only the seven approved fields and preserves 401, including when an alternate matches', async () => {
+  const { body, raw, headerTimestamp } = macFixture()
+  const signature = `mac=${zaloEventMac(APP, raw, headerTimestamp, SECRET)}`
+  for (const host of ['vibeacademy-staging.vercel.app', 'vibeacademy.vercel.app']) {
+    for (const timestamp of [null, headerTimestamp]) {
+      const logs = [], routeModule = { exports: {} }
+      const fakeRequire = (name) => {
+        if (name === '@supabase/supabase-js') return { createClient() { assert.fail('rejected request must not write') } }
+        if (name === 'next/server') return { NextResponse: Response }
+        if (name === '@/lib/integrations/zalo/webhook') return loaded.exports
+        throw Error('unexpected dependency')
+      }
+      const js = ts.transpileModule(route, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText
+      new Function('module', 'exports', 'require', 'process', 'console', js)(routeModule, routeModule.exports, fakeRequire,
+        { env: { ZALO_APP_ID: APP, ZALO_OA_ID: OA, ZALO_OA_SECRET_KEY: SECRET, VERCEL_PROJECT_PRODUCTION_URL: host } },
+        { info: line => logs.push(line) })
+      const headers = { 'x-zevent-signature': signature }
+      if (timestamp !== null) headers['x-zevent-timestamp'] = timestamp
+      const response = await routeModule.exports.POST(new Request('https://' + host + '/api/integrations/zalo/webhook', { method: 'POST', headers, body: raw }))
+      assert.equal(response.status, 401)
+      assert.deepEqual(await response.json(), { ok: false, error: 'INVALID_SIGNATURE' })
+      if (host === 'vibeacademy.vercel.app') { assert.deepEqual(logs, []); continue }
+      assert.equal(logs.length, 1)
+      assert.deepEqual(JSON.parse(logs[0]), {
+        component: 'zalo_webhook', result: 'mac_diagnostic', signature_header_present: true,
+        zevent_timestamp_header_present: timestamp !== null, official_current_match: false,
+        header_timestamp_match: timestamp !== null, reserialized_match: false,
+      })
+      for (const forbidden of [SECRET, signature, signature.slice(4), raw, JSON.stringify(body), APP, OA, body.sender.id, body.message.text, headerTimestamp]) {
+        assert.equal(logs[0].includes(forbidden), false)
+      }
+    }
+  }
+})

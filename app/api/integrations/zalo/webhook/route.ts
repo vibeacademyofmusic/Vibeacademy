@@ -47,13 +47,18 @@ async function persistZaloWebhook(event: WebhookRecord): Promise<WebhookRecordRe
 
 export async function POST(request: Request) {
   try {
+    const diagnosticsEnabled = zaloWebhookDiagnosticsEnabled(process.env)
     const result = await acceptZaloWebhook({
       rawBody: await request.text(),
       signature: request.headers.get('x-zevent-signature'),
+      headerTimestamp: request.headers.get('x-zevent-timestamp'),
+      macDiagnosticsEnabled: diagnosticsEnabled,
       env: readZaloWebhookEnv(process.env),
       record: persistZaloWebhook,
     })
-    if (result.diagnostic && zaloWebhookDiagnosticsEnabled(process.env)) {
+    if (result.macDiagnostic && diagnosticsEnabled) {
+      console.info(JSON.stringify(result.macDiagnostic))
+    } else if (result.diagnostic && diagnosticsEnabled) {
       logZaloRejection(result.diagnostic)
     }
     return NextResponse.json(result.body, { status: result.status })

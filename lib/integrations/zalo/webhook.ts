@@ -71,10 +71,44 @@ export type ZaloRejectionDiagnostic = {
   event_name?: string
 }
 
+export type ZaloMacDiagnostic = {
+  component: 'zalo_webhook'
+  result: 'mac_diagnostic'
+  signature_header_present: boolean
+  zevent_timestamp_header_present: boolean
+  official_current_match: boolean
+  header_timestamp_match: boolean
+  reserialized_match: boolean
+}
+
+// Diagnostic output contains booleans only. These candidates never authorize an event.
+export function diagnoseZaloMac(input: {
+  appId: string
+  rawBody: string
+  parsedBody: Record<string, unknown>
+  bodyTimestamp: string
+  headerTimestamp?: string | null
+  oaSecret: string
+  signature: string | null
+}): ZaloMacDiagnostic {
+  const matches = (body: string, timestamp: string) =>
+    zaloSignatureMatches(input.signature, zaloEventMac(input.appId, body, timestamp, input.oaSecret))
+  return {
+    component: 'zalo_webhook',
+    result: 'mac_diagnostic',
+    signature_header_present: input.signature != null,
+    zevent_timestamp_header_present: input.headerTimestamp != null,
+    official_current_match: matches(input.rawBody, input.bodyTimestamp),
+    header_timestamp_match: input.headerTimestamp != null && matches(input.rawBody, input.headerTimestamp),
+    reserialized_match: matches(JSON.stringify(input.parsedBody), input.bodyTimestamp),
+  }
+}
+
 export type WebhookResponse = {
   status: number
   reason?: ZaloRejectionReason
   diagnostic?: ZaloRejectionDiagnostic
+  macDiagnostic?: ZaloMacDiagnostic
   body: {
     ok: boolean
     error?: string
@@ -208,6 +242,8 @@ function externalEventIdFrom(body: Record<string, unknown>) {
 export async function acceptZaloWebhook(input: {
   rawBody: string
   signature: string | null
+  headerTimestamp?: string | null
+  macDiagnosticsEnabled?: boolean
   env: ZaloWebhookEnv | null
   record: (event: WebhookRecord) => Promise<WebhookRecordResult>
 }): Promise<WebhookResponse> {
@@ -249,7 +285,15 @@ export async function acceptZaloWebhook(input: {
   const mac = zaloEventMac(appId, input.rawBody, timestamp, input.env.oaSecret)
   const signatureCheck = classifyZaloSignature(input.signature, mac)
   if (!signatureCheck.ok) {
-    return rejectWebhook(signatureCheck.reason, body, input.signature, input.env.oaId)
+    const rejected = rejectWebhook(signatureCheck.reason, body, input.signature, input.env.oaId)
+    if (signatureCheck.reason === 'MAC_MISMATCH' && input.macDiagnosticsEnabled === true) {
+      rejected.macDiagnostic = diagnoseZaloMac({
+        appId, rawBody: input.rawBody, parsedBody: body, bodyTimestamp: timestamp,
+        headerTimestamp: input.headerTimestamp, oaSecret: input.env.oaSecret,
+        signature: input.signature,
+      })
+    }
+    return rejected
   }
   if (appId !== input.env.appId) {
     return rejectWebhook('APP_ID_MISMATCH', body, input.signature, input.env.oaId)
