@@ -109,11 +109,14 @@ export type WebhookResponse = {
   reason?: ZaloRejectionReason
   diagnostic?: ZaloRejectionDiagnostic
   macDiagnostic?: ZaloMacDiagnostic
+  probeLog?: ZaloRegistrationProbeLog
   body: {
     ok: boolean
     error?: string
     duplicate?: boolean
     status?: string
+    registration_probe?: boolean
+    processed?: boolean
   }
 }
 
@@ -153,6 +156,20 @@ export function zaloSignatureMatches(header: string | null, macHex: string) {
 
 export function zaloWebhookDiagnosticsEnabled(env: Record<string, string | undefined>) {
   return env.VERCEL_PROJECT_PRODUCTION_URL === 'vibeacademy-staging.vercel.app'
+}
+
+export function zaloWebhookRegistrationMode(env: Record<string, string | undefined>) {
+  return env.ZALO_WEBHOOK_REGISTRATION_MODE === 'true'
+}
+
+export type ZaloRegistrationProbeLog = {
+  component: 'zalo_webhook'
+  result: 'registration_probe_acknowledged'
+  event_name: string
+}
+
+export function logZaloRegistrationProbe(entry: ZaloRegistrationProbeLog) {
+  console.info(JSON.stringify(entry))
 }
 
 export function logZaloRejection(diagnostic: ZaloRejectionDiagnostic) {
@@ -244,6 +261,7 @@ export async function acceptZaloWebhook(input: {
   signature: string | null
   headerTimestamp?: string | null
   macDiagnosticsEnabled?: boolean
+  registrationMode?: boolean
   env: ZaloWebhookEnv | null
   record: (event: WebhookRecord) => Promise<WebhookRecordResult>
 }): Promise<WebhookResponse> {
@@ -299,6 +317,17 @@ export async function acceptZaloWebhook(input: {
     return rejectWebhook('APP_ID_MISMATCH', body, input.signature, input.env.oaId)
   }
   if (!oaIdentityAccepted(body, input.env.oaId)) {
+    if (input.registrationMode === true) {
+      return {
+        status: 200,
+        probeLog: {
+          component: 'zalo_webhook',
+          result: 'registration_probe_acknowledged',
+          event_name: eventName,
+        },
+        body: { ok: true, registration_probe: true, processed: false },
+      }
+    }
     return rejectWebhook('OA_ID_MISMATCH', body, input.signature, input.env.oaId)
   }
 

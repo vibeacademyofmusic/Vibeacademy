@@ -3,9 +3,11 @@ import { NextResponse } from 'next/server'
 
 import {
   acceptZaloWebhook,
+  logZaloRegistrationProbe,
   logZaloRejection,
   readZaloWebhookEnv,
   zaloWebhookDiagnosticsEnabled,
+  zaloWebhookRegistrationMode,
   type WebhookRecord,
   type WebhookRecordResult,
 } from '@/lib/integrations/zalo/webhook'
@@ -53,11 +55,14 @@ export async function POST(request: Request) {
       signature: request.headers.get('x-zevent-signature'),
       headerTimestamp: request.headers.get('x-zevent-timestamp'),
       macDiagnosticsEnabled: diagnosticsEnabled,
+      registrationMode: zaloWebhookRegistrationMode(process.env),
       env: readZaloWebhookEnv(process.env),
       record: persistZaloWebhook,
     })
     if (result.macDiagnostic && diagnosticsEnabled) {
       console.info(JSON.stringify(result.macDiagnostic))
+    } else if (result.probeLog && diagnosticsEnabled) {
+      logZaloRegistrationProbe(result.probeLog)
     } else if (result.diagnostic && diagnosticsEnabled) {
       logZaloRejection(result.diagnostic)
     }

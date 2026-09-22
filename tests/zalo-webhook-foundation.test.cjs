@@ -348,6 +348,93 @@ test('staging rejection log contains only the safe diagnostic', async () => {
   assert.equal(logged.reason, 'SIGNATURE_HEADER_MISSING')
 })
 
+function probeEvent() {
+  return envelope({
+    app_id: APP,
+    sender: { id: '246845883529197922' },
+    recipient: { id: '111' },
+    event_name: 'user_send_text',
+    message: { text: 'Local fixture', msg_id: '96d3cdf3af150460909' },
+    timestamp: '154390853474',
+  })
+}
+
+test('OA mismatch stays rejected when registration mode is off', async () => {
+  const store = memory()
+  const event = probeEvent()
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw, signature: event.signature, registrationMode: false, env: ENV, record: store.record,
+  })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'OA_ID_MISMATCH')
+  assert.equal(result.body.error, 'INVALID_SIGNATURE')
+  assert.equal(store.rows.length, 0)
+})
+
+test('authentic OA mismatch is acknowledged only in registration mode', async () => {
+  const store = memory()
+  const event = probeEvent()
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: store.record,
+  })
+  assert.equal(result.status, 200)
+  assert.deepEqual(result.body, { ok: true, registration_probe: true, processed: false })
+  assert.deepEqual(result.probeLog, {
+    component: 'zalo_webhook', result: 'registration_probe_acknowledged', event_name: 'user_send_text',
+  })
+  assert.equal(store.rows.length, 0)
+  const encoded = JSON.stringify(result.body) + JSON.stringify(result.probeLog)
+  assert.equal(encoded.includes(SECRET), false)
+  assert.equal(encoded.includes(event.signature.slice(4)), false)
+  assert.equal(encoded.includes(OA), false)
+  assert.equal(encoded.includes('246845883529197922'), false)
+  assert.equal(encoded.includes('Local fixture'), false)
+})
+
+test('registration mode does not accept a bad MAC', async () => {
+  const store = memory()
+  const event = probeEvent()
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw, signature: `mac=${'b'.repeat(64)}`, registrationMode: true, env: ENV, record: store.record,
+  })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'MAC_MISMATCH')
+  assert.equal(store.rows.length, 0)
+})
+
+test('registration mode does not accept a different app id', async () => {
+  const store = memory()
+  const event = officialOaEvent({ app_id: '999000111222', oa_id: '999000111' })
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: store.record,
+  })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'APP_ID_MISMATCH')
+  assert.equal(store.rows.length, 0)
+})
+
+test('registration mode still processes a normal OA event', async () => {
+  const store = memory()
+  const event = signed()
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw, signature: event.signature, registrationMode: true, env: ENV, record: store.record,
+  })
+  assert.equal(result.status, 200)
+  assert.equal(result.body.ok, true)
+  assert.equal(result.body.registration_probe, undefined)
+  assert.equal(result.probeLog, undefined)
+  assert.equal(store.rows.length, 1)
+  assert.equal(store.rows[0].event.eventType, 'user_send_text')
+})
+
+test('registration mode is the exact string true', () => {
+  const { zaloWebhookRegistrationMode } = loaded.exports
+  assert.equal(zaloWebhookRegistrationMode({}), false)
+  assert.equal(zaloWebhookRegistrationMode({ ZALO_WEBHOOK_REGISTRATION_MODE: 'false' }), false)
+  assert.equal(zaloWebhookRegistrationMode({ ZALO_WEBHOOK_REGISTRATION_MODE: 'TRUE' }), false)
+  assert.equal(zaloWebhookRegistrationMode({ ZALO_WEBHOOK_REGISTRATION_MODE: 'true' }), true)
+})
+
 test('handler source does not hard-code ids, secrets, or a live Zalo call', () => {
   for (const file of [source, route]) {
     assert.equal(file.includes(APP), false)
