@@ -90,11 +90,65 @@ select pg_temp.pass('B',1);
 select isnt((select status from public.student_subject_progress where id=pg_temp.sp('B',1)),'PASS','missing required component progress blocks completion');
 insert into public.curriculum_subjects(id,level_id,family_code,code,name,completion_rule)
 values(pg_temp.aid('missing-subject'),pg_temp.aid('l1'),'DIRECT','MISSING','Required without progress','DIRECT_ASSESSMENT');
-update public.student_subject_progress set status='PASS' where id=pg_temp.sp('B',1);
+insert into public.student_component_progress(subject_progress_id,component_id,status) values(pg_temp.sp('B',1),pg_temp.aid('missing'),'PASS');
 select is((select status from public.student_level_progress where id=pg_temp.lp('B',1)),'IN_PROGRESS','missing required subject progress blocks grade completion');
 update public.curriculum_subject_components set status='INACTIVE' where id=pg_temp.aid('req3');
 select throws_ok($$select public.start_student_academic_level(pg_temp.enr('A'),pg_temp.aid('l3'),current_date-1)$$,'P0001','A required subject has no required active components','starting next grade revalidates required active components');
 select is((select current_level_id from public.student_curriculum_enrollments where id=pg_temp.enr('A')),pg_temp.aid('l2'),'failed grade start preserves current grade');
 select throws_ok($$select public.assign_student_academic_program(pg_temp.aid('D'),pg_temp.aid('c'),pg_temp.aid('l3'),current_date-1)$$,'P0001','A required subject has no required active components','inactive required components do not satisfy assignment');
+-- Required direct assessments are independent of child components.
+insert into public.curriculums(id,code,name) values(pg_temp.aid('direct-c'),'DIRECT-REGRESSION','Direct regression');
+insert into public.students(id,student_code,full_name) values(pg_temp.aid('direct-student'),'DIRECT-REGRESSION','Direct regression');
+insert into public.curriculum_levels(id,curriculum_id,code,name,sequence_no)
+select pg_temp.aid('direct-l'||n),pg_temp.aid('direct-c'),'D'||n,'Direct grade '||n,n from generate_series(1,2) n;
+insert into public.curriculum_subjects(id,level_id,family_code,code,name,completion_rule,is_required) values
+(pg_temp.aid('direct-empty'),pg_temp.aid('direct-l1'),'DIRECT','EMPTY','Required without components','ALL_REQUIRED_COMPONENTS',true),
+(pg_temp.aid('direct-child'),pg_temp.aid('direct-l1'),'DIRECT','CHILD','Direct with components','DIRECT_ASSESSMENT',true),
+(pg_temp.aid('direct-based'),pg_temp.aid('direct-l1'),'SKILL','BASED','Component based','ALL_REQUIRED_COMPONENTS',true),
+(pg_temp.aid('direct-next'),pg_temp.aid('direct-l2'),'DIRECT','NEXT','Direct successor','DIRECT_ASSESSMENT',true);
+insert into public.curriculum_subject_components(id,subject_id,code,name,is_required) values
+(pg_temp.aid('direct-child-component'),pg_temp.aid('direct-child'),'CHILD','Direct child',true),
+(pg_temp.aid('direct-based-component'),pg_temp.aid('direct-based'),'BASED','Required component',true);
+select throws_ok($$select public.assign_student_academic_program(pg_temp.aid('direct-student'),pg_temp.aid('direct-c'),pg_temp.aid('direct-l1'),current_date-1)$$,'P0001','A required subject has no required active components','required component-based subject with zero components rejects assignment');
+update public.curriculum_subjects set completion_rule='DIRECT_ASSESSMENT' where id=pg_temp.aid('direct-empty');
+select lives_ok($$select public.assign_student_academic_program(pg_temp.aid('direct-student'),pg_temp.aid('direct-c'),pg_temp.aid('direct-l1'),current_date-1)$$,'required direct subjects with zero or existing components both allow assignment');
+create function pg_temp.direct_sp(text) returns uuid language sql as $$
+ select sp.id from public.student_subject_progress sp join public.student_level_progress lp on lp.id=sp.level_progress_id
+ join public.student_curriculum_enrollments e on e.id=lp.enrollment_id
+ where e.student_id=pg_temp.aid('direct-student') and sp.subject_id=pg_temp.aid($1)
+$$;
+create function pg_temp.direct_grade() returns text language sql as $$
+ select lp.status from public.student_level_progress lp join public.student_curriculum_enrollments e on e.id=lp.enrollment_id
+ where e.student_id=pg_temp.aid('direct-student') and lp.level_id=pg_temp.aid('direct-l1')
+$$;
+select is((select count(*) from public.student_component_progress where subject_progress_id=pg_temp.direct_sp('direct-empty')),0::bigint,'direct assessment needs no synthetic component progress');
+select throws_ok($$update public.student_subject_progress set status='DISTINCTION' where id=pg_temp.direct_sp('direct-based')$$,'P0001','Component-based subject results must be derived from components','direct writes cannot bypass component assessment');
+update public.student_component_progress set status='MERIT' where subject_progress_id=pg_temp.direct_sp('direct-based');
+select is((select status from public.student_component_progress where subject_progress_id=pg_temp.direct_sp('direct-based')),'MERIT','component award is preserved');
+select is((select status from public.student_subject_progress where id=pg_temp.direct_sp('direct-based')),'PASS','component-based completion still works in mixed grade');
+update public.student_subject_progress set status='IN_PROGRESS',score=42 where id=pg_temp.direct_sp('direct-child');
+update public.student_component_progress set status='PASS',score=99 where subject_progress_id=pg_temp.direct_sp('direct-child');
+select is((select status from public.student_subject_progress where id=pg_temp.direct_sp('direct-child')),'IN_PROGRESS','component update cannot overwrite direct status');
+select is((select score from public.student_subject_progress where id=pg_temp.direct_sp('direct-child')),42::numeric,'component update cannot overwrite direct score');
+delete from public.student_component_progress where subject_progress_id=pg_temp.direct_sp('direct-child');
+select is((select status from public.student_subject_progress where id=pg_temp.direct_sp('direct-child')),'IN_PROGRESS','component deletion cannot overwrite direct status');
+insert into public.student_component_progress(subject_progress_id,component_id,status) values(pg_temp.direct_sp('direct-child'),pg_temp.aid('direct-child-component'),'PASS');
+select is((select score from public.student_subject_progress where id=pg_temp.direct_sp('direct-child')),42::numeric,'component insertion cannot overwrite direct score');
+update public.student_subject_progress set status='MERIT' where id=pg_temp.direct_sp('direct-child');
+select is((select status from public.student_subject_progress where id=pg_temp.direct_sp('direct-child')),'MERIT','direct Merit is preserved');
+select ok((select passed_at is not null from public.student_subject_progress where id=pg_temp.direct_sp('direct-child')),'Merit sets completion timestamp');
+select is(pg_temp.direct_grade(),'IN_PROGRESS','NOT_STARTED required direct subject blocks grade completion');
+update public.student_subject_progress set status='IN_PROGRESS' where id=pg_temp.direct_sp('direct-empty');
+select is(pg_temp.direct_grade(),'IN_PROGRESS','IN_PROGRESS required direct subject blocks grade completion');
+update public.student_subject_progress set status='NOT_PASSED' where id=pg_temp.direct_sp('direct-empty');
+select is(pg_temp.direct_grade(),'IN_PROGRESS','NOT_PASSED required direct subject blocks grade completion');
+select throws_ok($$select public.start_student_academic_level((select id from public.student_curriculum_enrollments where student_id=pg_temp.aid('direct-student')),pg_temp.aid('direct-l2'),current_date-1)$$,'P0001','Academic level is not available to start','cannot advance while required direct assessment is not passed');
+update public.student_subject_progress set status='DISTINCTION' where id=pg_temp.direct_sp('direct-empty');
+select is((select status from public.student_subject_progress where id=pg_temp.direct_sp('direct-empty')),'DISTINCTION','Distinction is preserved');
+select ok((select passed_at is not null from public.student_subject_progress where id=pg_temp.direct_sp('direct-empty')),'Distinction sets completion timestamp');
+select is(pg_temp.direct_grade(),'COMPLETED','passing all required direct and component-based subjects completes grade');
+select lives_ok($$select public.start_student_academic_level((select id from public.student_curriculum_enrollments where student_id=pg_temp.aid('direct-student')),pg_temp.aid('direct-l2'),current_date-1)$$,'can advance to required direct-only grade without components');
+select is((select current_level_id from public.student_curriculum_enrollments where student_id=pg_temp.aid('direct-student')),pg_temp.aid('direct-l2'),'advance updates current level');
+
 select * from finish();
 rollback;

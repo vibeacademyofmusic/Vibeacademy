@@ -5,6 +5,7 @@ const path = require('node:path')
 const ts = require('typescript')
 const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 const base = path.resolve('app/admin/students/[id]')
 // Execute actual server components with a read-only fixture query adapter.
 function load(file, mocks = {}) {
@@ -14,10 +15,8 @@ function load(file, mocks = {}) {
   const loadedModule = { exports: {} }
   const localRequire = name => {
     if (name in mocks) return mocks[name]
-    if (name.startsWith('.')) {
-      const target = path.resolve(path.dirname(file), name)
-      return load(fs.existsSync(target + '.tsx') ? target + '.tsx' : target + '.ts', mocks)
-    }
+    if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
+    if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name), mocks)
     return require(name)
   }
   new Function('require', 'module', 'exports', output)(localRequire, loadedModule, loadedModule.exports)
@@ -127,4 +126,37 @@ test('completed enrollment remains visible; no programs produces a safe empty st
   data.student_curriculum_enrollments[1].status = 'COMPLETED'
   assert.match(await render(data), /Lộ trình học tập — Piano/)
   assert.match(await render(data, 'empty'), /Chưa có chương trình học/)
+})
+
+test('all three awards are equally complete and preserve their display value', () => {
+ const {academicStatusLabel}=load(path.join(base,'academic-progress.ts'))
+ for(const award of ['PASS','MERIT','DISTINCTION']) {
+  assert.equal(subjectProgressValue('DIRECT_ASSESSMENT',award,[]),1)
+  assert.equal(subjectProgressValue('ALL_REQUIRED_COMPONENTS','NOT_STARTED',[{status:award}]),1)
+  assert.equal(gradeProgressPercent('IN_PROGRESS',[subject(award),subject('NOT_STARTED')]),50)
+ }
+ assert.equal(academicStatusLabel('MERIT'),'Merit');assert.equal(academicStatusLabel('DISTINCTION'),'Distinction')
+})
+test('editable direct subjects expose precisely five choices and Save; record preserves Merit',async()=>{
+ const d=fixtures();d.student_level_progress[0].status='IN_PROGRESS';d.student_level_progress[0].started_at='2020-01-01T00:00:00Z'
+ d.curriculum_subjects[0].completion_rule='DIRECT_ASSESSMENT';d.student_subject_progress[0].status='MERIT'
+ const html=await render(d)
+ const choice=html.match(/<select[^>]*name="status"[\s\S]*?<\/select>/)[0]
+ assert.equal((choice.match(/<option/g)||[]).length,5)
+ for(const s of ['NOT_STARTED','IN_PROGRESS','PASS','MERIT','DISTINCTION']) assert.ok(choice.includes(`value="${s}"`))
+ assert.doesNotMatch(choice,/NOT_PASSED|EXEMPT/);assert.match(html,/Lưu/)
+ assert.match(html.split('Hồ sơ học tập')[1],/>Merit</)
+})
+test('component subject exposes only component editor and future grade stays locked',async()=>{
+ const d=fixtures();d.student_level_progress[0].status='IN_PROGRESS';d.student_level_progress[0].started_at='2020-01-01T00:00:00Z'
+ let html=await render(d)
+ assert.match(html,/name="progress_id" value="cp1"/);assert.doesNotMatch(html,/name="progress_id" value="sp1"/)
+ d.student_level_progress[0].started_at='2099-01-01T00:00:00Z';html=await render(d)
+ assert.doesNotMatch(html,/name="progress_id"/);assert.match(html,/Chưa đến ngày bắt đầu grade/)
+})
+test('scheduled edit gate compares timestamps instead of timestamp versus calendar string',()=>{
+ const {isAcademicScheduled}=load(path.join(base,'academic-progress.ts'))
+ const now=Date.parse('2026-09-18T03:00:00Z')
+ assert.equal(isAcademicScheduled('2026-09-18T00:00:00Z',now),false)
+ assert.equal(isAcademicScheduled('2026-09-18T17:00:00Z',now),true)
 })

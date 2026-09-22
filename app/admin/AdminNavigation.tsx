@@ -1,16 +1,16 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { activeNavigationHref, navigationGroups } from './navigation'
+import { activeNavigationHref, navigationForAccess, type ShellMode } from './navigation'
 
-export default function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
+export default function AdminNavigation({ mobile = false, mode = 'full' }: { mobile?: boolean, mode?: ShellMode }) {
   const active = activeNavigationHref(usePathname())
   const groups = <div className={mobile ? 'grid gap-5 pt-4 sm:grid-cols-2' : 'space-y-5'}>
-    {navigationGroups.map(group => <section key={group.name} aria-label={group.name}>
+    {navigationForAccess(mode).map(group => <section key={group.name} aria-label={group.name}>
       <h2 className="mb-1 px-3 text-xs font-semibold tracking-wide text-gray-500">{group.name}</h2>
       <ul className="space-y-1">{group.items.map(item => <li key={item.href}>
         <Link href={item.href} prefetch={false} aria-current={active === item.href ? 'page' : undefined}
-          className={`block rounded-lg px-3 py-2 text-sm font-medium ${active === item.href ? 'bg-blue-50 text-blue-800' : 'text-gray-700 hover:bg-gray-100'}`}>
+          className={`block rounded-lg px-3 py-2 text-sm font-medium ${active === item.href ? 'vibe-nav-active' : 'text-gray-700 hover:bg-gray-100'}`}>
           {item.name}
         </Link>
       </li>)}</ul>

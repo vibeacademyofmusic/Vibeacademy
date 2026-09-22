@@ -3,6 +3,7 @@ const { test } = require('node:test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs'), path = require('node:path'), ts = require('typescript'), React = require('react')
 const { harness, id, redirected, renderToStaticMarkup } = require('./helpers/finance-operations.cjs')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 function setup(fixtures = {}, authorized = true) {
   const h = harness(fixtures, null, authorized)
   const rpc = h.db.rpc
@@ -18,10 +19,8 @@ function setup(fixtures = {}, authorized = true) {
     const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 } }).outputText
     new Function('require', 'module', 'exports', output)(name => {
       if (name in mocks) return mocks[name]
-      if (name.startsWith('.') || name.startsWith('@/')) {
-        const target = name.startsWith('@/') ? path.resolve(name.slice(2)) : path.resolve(path.dirname(file), name)
-        return load(target + (fs.existsSync(target + '.ts') ? '.ts' : '.tsx'))
-      }
+      if (name.endsWith('.css')) return { default: {} }
+      if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name, ['ts', 'tsx']))
       return require(name)
     }, compiled, compiled.exports)
     return compiled.exports

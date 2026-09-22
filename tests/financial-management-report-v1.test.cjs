@@ -1,0 +1,37 @@
+const assert = require('node:assert/strict')
+const fs = require('node:fs')
+
+const migration = [
+  fs.readFileSync('supabase/migrations/20260922013000_financial_management_report_v1.sql', 'utf8'),
+  fs.readFileSync('supabase/migrations/20260922013100_financial_management_report_v1_qualify_month.sql', 'utf8'),
+  fs.readFileSync('supabase/migrations/20260922013200_financial_management_report_v1_validation_gate.sql', 'utf8'),
+].join('\n')
+const model = fs.readFileSync('app/admin/finance/management-report/model.ts', 'utf8')
+const data = fs.readFileSync('app/admin/finance/management-report/data.ts', 'utf8')
+const page = fs.readFileSync('app/admin/finance/page.tsx', 'utf8')
+
+assert.match(migration, /get_financial_management_report/, 'canonical RPC exists')
+assert.match(migration, /search_path = public, pg_temp/, 'trusted search_path')
+assert.match(migration, /enrollment_tuition\.amount/, 'revenue uses term net amount')
+assert.match(migration, /enrollment_pauses/, 'pauses excluded from active days')
+assert.doesNotMatch(migration, /invoices\.total_amount/, 'invoices are not the revenue source')
+assert.match(migration, /v2_net_amount/, 'net pay remains payable/cash identity')
+assert.match(migration, /category = 'EARNING'/, 'personnel uses earning components')
+assert.match(migration, /TRAVEL_EXPENSE/, 'travel is separate')
+assert.match(migration, /status = 'RECORDED'/, 'opex uses recorded actuals')
+assert.match(migration, /NOT_IMPLEMENTED/, 'missing domains stay unimplemented')
+assert.match(migration, /MANAGEMENT_RESULT/, 'management result stays null without financial cost')
+assert.match(migration, /Chưa đủ nguồn dữ liệu để kết luận kết quả quản trị sau chi phí tài chính/, 'locked warning copy')
+assert.match(migration, /Doanh thu xác định được từ các hồ sơ đủ điều kiện/, 'partial revenue wording')
+assert.match(migration, /Kết quả hoạt động xác định được từ các nguồn đủ điều kiện/, 'partial operating-result wording')
+assert.match(migration, /LEGACY_PERSONNEL_EXPENSE = MONTHLY_BASE \+ TEACHING \+ BONUS/, 'legacy personnel formula')
+assert.match(migration, /known_source_count/, 'partial metrics expose known source counts')
+assert.match(migration, /planned_known_amount/, 'opex plan exposes known amount')
+assert.doesNotMatch(migration, /Kết quả quản trị dương/, 'no management profit wording')
+assert.doesNotMatch(migration, /lợi nhuận/, 'no profit wording')
+assert.match(model, /known_source_count/, 'typed metric includes completeness counts')
+assert.match(data, /get_financial_management_report/, 'app loader consumes the RPC')
+assert.doesNotMatch(data, /Number\(/, 'loader does not recalculate money with Number')
+assert.match(model, /FinancialManagementReport/, 'canonical TypeScript type exists')
+assert.match(page, /loadFinanceControlTower/, 'finance overview consumes the canonical control tower loader')
+assert.doesNotMatch(page, /loadFinance\(/, 'overview does not fall back to the old finance dashboard')

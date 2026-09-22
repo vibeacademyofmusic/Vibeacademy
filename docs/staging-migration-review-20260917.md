@@ -1,5 +1,16 @@
 # Pending staging migrations — individual review record
 
+## Current status — supersedes historical preflight below
+
+LOCAL95 / STAGING94 / PRODUCTION28. Authorized batch84→94 PASS:
+59 staging pgTAP files /1533 assertions;295 application/bootstrap PASS;
+Webpack/ESLint/diff check PASS; tuition5,500,000 VND, unexplained difference0.
+Only `20260917100000` remains on staging; see
+[separate approval plan](staging-batch-94-95-approval-20260917.md).
+No Production mutation/push/deploy. Full browser/E2E/pilot remains pending.
+
+## Historical review and complete ordered manifest
+
 2026-09-17. **Apply blocked pending exact batch approval.** All IDs below are
 reviewed repository migrations; the full 35-file prefix upgrade passed against
 the isolated restored staging snapshot, with 1,533 pgTAP assertions. No cloud apply.
@@ -52,6 +63,7 @@ is authorized. Unexplained VND movement or security failure blocks the next batc
 | `20260917010000` | learning theory contents contract | Ordered after ledger 84 and earlier rows in batch | Seed 87 source catalogue rows; no published lessons | Authorized author/reviewer/learner scope; private answers and audit |
 | `20260917013000` | learning progress analytics | Ordered after ledger 84 and earlier rows in batch | DDL/RPC only; no expected monetary posting | Authorized author/reviewer/learner scope; private answers and audit |
 | `20260917020000` | revoke anonymous business grants | Ordered after ledger 84 and earlier rows in batch | Grant/default change only; no business row mutation | Revoke anon/PUBLIC relation/sequence privileges and defaults |
+| `20260917100000` | Operational compensation reason and payslip projection | After 94; employee payroll and effective own-payroll helpers | Non-destructive nullable column/RPC; no financial posting on apply; canonical rate engines retained | ACTIVE account, SUPER_ADMIN compensation management, scoped approved/finalized payslip reads; fixed search_path and anonymous/service revokes |
 
 Exact file hashes: [gap register](migration-gap-register-20260917.md).
 The local post-upgrade evidence records 17 permission and 9 role-permission additions,

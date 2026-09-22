@@ -14,6 +14,8 @@ function load(file, mocks, cache = new Map()) {
     if (name in mocks) return mocks[name]
     if (name.startsWith('.')) {
       const target = path.resolve(path.dirname(file), name)
+      if (target.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
+      if (fs.existsSync(path.join(target, 'index.tsx'))) return load(path.join(target, 'index.tsx'), mocks, cache)
       if (target.endsWith('.json')) return { default: JSON.parse(fs.readFileSync(target, 'utf8')) }
       return load(fs.existsSync(target + '.ts') ? target + '.ts' : target + '.tsx', mocks, cache)
     }
@@ -41,7 +43,7 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
         lte(key, value) { call.filters.push(r => r[key] <= value); return this },
         not(key, op, value) { call.filters.push(r => r[key] !== value); return this },
         in(key, values) { call.filters.push(r => values.includes(r[key])); return this },
-        is() { return this }, or() { return this },
+        is() { return this }, or(expression) { (call.orExpressions ||= []).push(expression); return this },
         order(key, options) { call.orders.push([key, options]); return this },
         range(a, b) { call.range = [a, b]; return this }, limit(n) { call.limit = n; return this }, returns() { return this },
         maybeSingle() { call.single = true; return this },
@@ -49,7 +51,7 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
           let data = (fixtures[table] ?? []).filter(r => call.filters.every(f => f(r)))
           if (call.range) data = data.slice(call.range[0], call.range[1] + 1)
           if (call.limit) data = data.slice(0, call.limit)
-          return Promise.resolve({ data: call.single ? data[0] ?? null : data, error: null }).then(resolve, reject)
+          return Promise.resolve({ data: call.single ? data[0] ?? null : data, count: (fixtures[table] ?? []).filter(r => call.filters.every(f => f(r))).length, error: null }).then(resolve, reject)
         },
       }
       return query
@@ -57,7 +59,7 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
   }
   const mocks = {
     '@/lib/supabase/server': { createClient: async () => db },
-    'next/navigation': { redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
+    'next/navigation': { useRouter: () => ({ refresh() {}, push() {} }), usePathname: () => '/admin/payroll', redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
     'next/cache': { revalidatePath: p => invalidated.push(p) },
     'next/link': { default: ({ children, href }) => React.createElement('a', { href }, children) },
   }

@@ -4,7 +4,7 @@ const assert = require('node:assert/strict')
 const { harness, id, redirected, render } = require('./helpers/finance-operations.cjs')
 test('employee creation delegates generated identity to database without auth provisioning', async () => {
  const h=harness(); await redirected(h.load('../employees/actions.ts').createEmployee,{home_unit:'HQ',hire_date:'2026-01-01',full_name:'Employee',employee_group:'Operations',pay_type:'MONTHLY',reason:'Verified',employee_code:'FORGED',created_by:id(1)})
- assert.equal(h.calls.at(-1).rpc,'create_employee');assert.equal(h.calls.at(-1).args.p_home,'HQ');assert.ok(!('employee_code' in h.calls.at(-1).args));assert.equal(h.calls.length,2)
+ assert.equal(h.calls.at(-1).rpc,'create_employee_with_private_profile');assert.equal(h.calls.at(-1).args.p_home,'HQ');assert.ok(!('employee_code' in h.calls.at(-1).args));assert.equal(h.calls.length,2)
 })
 test('employment update sends expected version and effective date for database concurrency guard',async()=>{
  const h=harness();await redirected(h.load('../employees/actions.ts').updateEmployment,{employee_id:id(1),expected_version:3,effective_on:'2027-01-01',unit_code:'ST',reason:'Transfer'})

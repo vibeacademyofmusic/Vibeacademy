@@ -1,3 +1,4 @@
+import { SectionCard, DataTable } from '../../_components/vibe'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import type { Params } from '../operations'
@@ -15,10 +16,8 @@ export function Notice({ params }: { params: Params }) {
   return <>{params.error && <p role="alert" className="rounded bg-amber-50 p-4 text-amber-900">{params.error}</p>}{params.success && <p role="status" className="rounded bg-green-50 p-4 text-green-900">{params.success}</p>}</>
 }
 export function LoadError() { return <p role="alert" className="rounded bg-amber-50 p-4">Không tải được dữ liệu. Vui lòng thử lại.</p> }
-export function Panel({ title, children }: { title: string; children: ReactNode }) { return <section className="space-y-4 rounded-lg border border-gray-200 bg-white p-4"><h2 className="text-lg font-semibold">{title}</h2>{children}</section> }
-export function Table({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) {
-  return <div className="max-w-full overflow-x-auto rounded border border-gray-200"><table className="w-full text-left text-sm"><thead className="bg-gray-50"><tr>{headers.map(h => <th className="whitespace-nowrap p-3" scope="col" key={h}>{h}</th>)}</tr></thead><tbody className="divide-y">{rows.length ? rows.map((r, i) => <tr key={i}>{r.map((cell, j) => <td className="max-w-xs whitespace-normal break-words p-3" key={j}>{cell}</td>)}</tr>) : <tr><td className="p-4" colSpan={headers.length}>Chưa có dữ liệu</td></tr>}</tbody></table></div>
-}
+export function Panel({ title, children }: { title: string; children: ReactNode }) { return <SectionCard title={title}>{children}</SectionCard> }
+export function Table({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) { return <DataTable headers={headers} rows={rows}/> }
 export function Pager({ path, params, page, more, keyName = 'page' }: { path: string; params: Params; page: number; more: boolean; keyName?: string }) {
   const href = (n: number) => {
     const q = new URLSearchParams()

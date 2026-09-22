@@ -34,3 +34,30 @@ test('invoice rendering includes derived debt, refund and overdue values with ba
   assert.equal(h.calls.filter(c => c.table === 'students').length, 1)
   assert.ok(h.calls.filter(c => c.table).every(c => !c.fields.includes('*')))
 })
+
+const { paymentStatus } = harness().load('invoices/payment-status.ts')
+test('payment status uses canonical net balance independently of overdue and lifecycle',()=>{
+ for(const [paid,balance,status] of [[0,5500000,'UNPAID'],[2000000,3500000,'PARTIALLY_PAID'],[5500000,0,'PAID'],[0,0,'PAID']])
+  assert.equal(paymentStatus({invoice_status:'ISSUED',allocated_amount:paid,outstanding_balance:balance}),status)
+ assert.equal(paymentStatus({invoice_status:'CANCELLED',allocated_amount:0,outstanding_balance:100}),'—')
+ assert.equal(paymentStatus({invoice_status:'DRAFT',allocated_amount:0,outstanding_balance:100}),'—')
+})
+test('invoice detail separates derived payment status and links payment history and receipt',async()=>{
+ const data=fixture();data.payment_allocations[0].invoice_id=id(2);data.payment_allocations[0].payments=data.payments[0]
+ const html=await render(harness(data),'invoices',{selected:id(2)})
+ for(const text of ['Invoice Status: ISSUED','Payment Status: OVERDUE','OVERDUE','Ghi nhận / phân bổ tiền','PAYMENT HISTORY','REF-TEST','VIEW RECEIPT','/documents/finance/payments/'+id(4)]) assert.ok(html.includes(text),text)
+ assert.doesNotMatch(html,/<select[^>]*name="(?:payment_status|invoice_status)"/)
+})
+test('cancelled invoice offers history but no issue payment or cancellation mutations',async()=>{
+ const data=fixture();data.invoice_receivables[0].invoice_status='CANCELLED'
+ const html=await render(harness(data),'invoices',{selected:id(2)})
+ assert.doesNotMatch(html,/Ghi nhận \/ phân bổ tiền|Gửi yêu cầu hủy hóa đơn|Phát hành hóa đơn/)
+ assert.match(html,/PAYMENT HISTORY/)
+})
+
+test('paid invoice retains issued lifecycle and offers no payment action',async()=>{
+ const data=structuredClone(fixture());Object.assign(data.invoice_receivables[0],{invoice_status:'ISSUED',receivable_status:'PAID',allocated_amount:1000000,outstanding_balance:0})
+ const html=await render(harness(data),'invoices',{selected:id(2)})
+ assert.match(html,/Invoice Status: ISSUED/);assert.match(html,/Payment Status: PAID/)
+ assert.match(html,/No outstanding balance/);assert.doesNotMatch(html,/Ghi nhận \/ phân bổ tiền/)
+})

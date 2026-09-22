@@ -1,18 +1,170 @@
 # Staging migration rehearsal
 
-Current: 2026-09-17. **Current full staging validation PENDING; production HOLD.**
+## Current verified checkpoint — staging 94
 
-Fresh read-only ledger remains **59**. Local is 94; production read-only is 28.
-Local restoration of the staging business snapshot and upgrade 59→94 passed
-59 pgTAP files / 1,533 tests; application/bootstrap 273 PASS, Webpack build and
-whole-repository ESLint PASS. These are LOCAL results, not new staging passes.
+Owner explicitly authorized the ten IDs in the 84→94 batch. Applied only to
+`owpfqwdrmyzcmjahehek` with the normal CLI runner capped at94; exact live ledger
+94, latest `20260917020000`. No skipped or extra migration. Production HOLD.
+Actual ledgers: **LOCAL95 / STAGING94 / PRODUCTION28**; missing1 on staging and67
+on Production, with no remote-only versions. The only staging gap is
+`20260917100000`, expressly excluded from this authorization.
 
-Applying first staging batch `20260916130000`, `20260916140000`,
-`20260916150000` was blocked by automatic approval review pending specific Owner
-confirmation; the command did not execute. No staging migration was applied in
-this checkpoint. See [recovery report](backup-restore-validation-20260917.md),
-[exact gap](migration-gap-register-20260917.md) and
-[current NO-GO gate](pilot/PRODUCTION_READINESS_GATE.md).
+Immediate and final reconciliation: tuition **5,500,000 VND**, five students/five
+enrollments, one tuition row, zero invoices/payments/refunds/payrolls/payroll
+corrections/customer credits. All91 pre-existing non-ledger table fingerprints
+match the pre-apply baseline; after tests all92 baseline tables including ledger
+remain unchanged. **Unexplained VND difference0**. Expected new metadata:87
+Theory references, MT5.15 SOURCE_MISSING. Learning versions0: no published content.
+
+**Full schema94-compatible pgTAP:59 files /1,533 assertions PASS**, exact repository
+revision `f5a20f7` (94 migrations). Temporary fixture setup uses postgres and
+public/extensions search path, while preserving authenticated/anon/JWT switches
+and every original assertion. All tests rollback. No failures or retries this run.
+Focused learning foundation, assessment, regrade, shadow mapping, Theory,
+analytics and security catalogue: **7 files /224 assertions**, included in1533.
+Live catalogue:15 learning tables all RLS, no anon SELECT;24 learning/assessment
+SECURITY DEFINER functions have no anon execution. Historical non-definer trigger
+`stamp_learning_journal` retains EXECUTE but is a trigger-only routine, not a
+callable business RPC; no grants weakened. Full catalogue regression PASS.
+
+Current application/bootstrap **295 PASS**; Webpack build, whole-repo ESLint and
+`git diff --check` PASS. Local pgTAP59/1563 is the previously verified schema95
+result, not rerun here. The30-assertion difference is schema/revision-specific;
+no assertions were removed to manufacture a pass. Default Turbopack not rerun.
+Fresh schema plus92-table/461-row business backup captured before apply, Auth data
+excluded; fresh COPY export structurally checked, not independently restored this
+run. Previous checkpoint84 restore verification remains historical evidence.
+Temporary backup/harness material removed after reconciliation; no new credential,
+Auth login or external notification delivery. No product code or migration edited.
+
+**Batch84→94 PASS. FULL STAGING NOT READY. PILOT NOT READY. Production NO-GO.**
+Full current-schema browser/role/E2E and Migration Pilot are not claimed complete.
+Next action: separately authorize20260917100000 using the linked94→95 plan.
+No push/deploy/Production mutation. No commit created in this continuation.
+
+## Historical checkpoints through staging84
+
+## Earlier continuation checkpoint
+
+Owner authorized the first three IDs and safe continuation. The normal capped
+runner applied the reviewed dependency batches below only to `owpfqwdrmyzcmjahehek`:
+
+| Ledger | Scope | Focused staging regression |
+|---|---|---|
+| 59→62 | Legacy review, opening collections, customer credit | 3 files / 158 assertions PASS; included in full62 below |
+| 62→69 | Employee/attendance/payroll | 8 files / 307 assertions PASS |
+| 69→77 | Family/teacher portal boundaries | 8 files / 356 assertions PASS |
+| 77→81 | Notifications, source/idempotency guards | 4 files / 151 assertions PASS |
+| 81→84 | Inventory and serialized instruments | 3 files / 85 assertions PASS |
+
+All before/after batch checks retained tuition **5,500,000 VND**, one tuition row,
+zero invoices/payments/refunds/payrolls/corrections/customer credits/opening postings,
+and zero employees. Exactly three organization units were seeded. Notification
+jobs/events/inbox and stock/instrument rows remain zero after rolled-back tests.
+Unexplained VND difference **0**. Each ledger is the exact corresponding local
+prefix; no repair, timestamp change or CLI upgrade. The 77 and 81 test runs each
+had one DNS failure before a test connected; isolated retries passed, with no
+assertion changes. Totals exclude duplicate runs.
+
+Before further batches, restricted business/schema checkpoints were captured with
+Auth excluded at62,69,77,81,84. Local restoration independently verified the62
+snapshot: **68 tables / 426 exact rows**, all FKs checked, 22 banned synthetic
+Auth identifiers without email/phone/password. The original 59 snapshot also passed
+as detailed below. Later captured snapshots are not labelled independently restored.
+
+Automatic approval review rejected the **84→94** command before execution,
+requiring exact per-ID approval. None of those ten migrations applied; no alternate
+execution was attempted. Exact IDs, hashes, dependencies, risk classification and
+approval wording: [84→94 approval plan](staging-batch-84-94-approval-20260917.md).
+`20260917100000` is a separate later migration, not included in that approval.
+
+Fresh local gates already PASS: 59 pgTAP files /1,563 assertions; application/
+bootstrap 295; Webpack build; whole-repository ESLint. Full schema 84-compatible
+staging regression is **PASS: 52 files / 1,309 assertions**, using exact checkpoint
+`c82bb1c`. One file failed DNS before executing; its automatic retry passed.
+This is separate from the current local schema 95 suite and not a claim of
+current-schema 95 browser/E2E certification. No staging application-login
+credential or usable Auth account has been created/reactivated in this continuation;
+no email/Zalo send, production mutation, push or deployment occurred.
+
+## Final reconciliation and cleanup at the approval hold
+
+Fresh read-only ledgers: **LOCAL 95 / STAGING 84 / PRODUCTION 28**; missing 11 staging
+and 67 production, no remote-only versions. The gap register verifies every missing
+file hash. After the full 52-file staging regression, all 54 original non-metadata
+tables still match the original 59 backup directly on staging. Expected changes:
+permissions 38→55, role permissions 40→49, ledger 59→84. Tuition remains 5,500,000 VND;
+financial, opening, employee, notification and stock/instrument counts remain zero.
+Unexplained VND difference 0. No new Auth login credential was extracted or issued.
+
+Three disposable local restore databases were removed after locked-identity checks.
+All task-owned restricted backup/export/test artifacts and the unused isolated app
+copy were deleted. No browser server was started. Recreate and verify a fresh
+recovery point before resuming the blocked batch. The existing application database
+and its accounts were untouched. No code/migration source was edited; Git changes
+are documentation only, with credential-pattern and diff checks PASS.
+
+## Authorized batch 59→62
+
+Owner explicitly authorized `20260916130000`, `20260916140000`,
+`20260916150000` on `owpfqwdrmyzcmjahehek`. The normal migration runner applied
+exactly those files from an isolated 62-file prefix. Ledger is **62**, latest
+`20260916150000`; no repair, timestamp change, CLI update, production mutation,
+push or deployment. This resolves the earlier approval block for these three IDs.
+
+A fresh business/ledger backup excluded all Auth data. It restored to an isolated
+localhost database: **57 tables / 407 rows exact**, every FK checked, 22 synthetic
+identities banned indefinitely with no email/phone/password. This is business
+recovery evidence, not production Auth recovery.
+
+### Reconciliation and focused security
+
+Tuition remains **5,500,000 VND**. Invoice, payment, refund, payroll period,
+teacher payroll, payroll correction and customer-credit counts are zero after
+apply. Unexplained VND difference: **0**. After rollback-only regression, all
+**54 non-metadata source tables match the fresh backup exactly**, including
+original user-role/relationship and financial rows. Expected metadata changes:
+permissions 38→50, role permissions 40→44, migration ledger 59→62.
+
+Catalogue inspection: all **11 new public tables** have RLS and policies, no
+anonymous SELECT and no direct authenticated INSERT/UPDATE/DELETE; all **15
+created/replaced views** use `security_invoker=true`. All affected SECURITY
+DEFINER routines pin `search_path=public, pg_temp`, deny anonymous execution;
+private finance routines deny authenticated execution. The pre-existing
+non-definer trigger function `prepare_enrollment_tuition()` still has anonymous
+EXECUTE metadata; trigger functions cannot be called as ordinary RPCs, and the
+later reviewed anonymous-grant cleanup remains pending. No bypass was added.
+
+Focused workflow tests cover reviewed atomic import, missing-class NEEDS_REVIEW,
+no premature enrollment/finance posting, idempotency, opening collections,
+correction below collected cash, traceable customer credit, maker-checker,
+refund/reversal, branch denial, exact reconciliation and immutable originals.
+Five extra rollback-only assertions verify INACTIVE SUPER_ADMIN cannot stage or
+read migration/credit data. Existing role/relationship regressions remain intact.
+
+### Validation evidence
+
+- Staging checkpoint `f288ead` (exact 62 migrations): **46 files / 1,016 assertions
+  PASS**, plus **1 temporary ACTIVE-account test / 5 assertions PASS**; total
+  **47 files / 1,021 assertions PASS**. Focused 3-file / 158 assertions are included,
+  not added again to that total.
+- Current local schema 95: **59 pgTAP files / 1,563 assertions PASS**.
+- Current application/bootstrap: **295 PASS**, no failures/skips.
+- Webpack build: **PASS**; whole-repository ESLint: **PASS**.
+- The existing transaction-local staging harness was used; no assertion, JWT role
+  switch, RLS or grant was weakened. Helpers were expanded only in temporary files.
+  One DNS connection failure occurred before a test ran; its retry passed. One
+  harness search_path insertion landed in a historical comment; only the temporary
+  runner setup was corrected, and the previously unexecuted test passed. Neither
+  failed attempt is counted as passing evidence.
+- Current-schema full browser/role/E2E certification is still pending schema
+  alignment; historical browser results below do not certify the new batch.
+
+Fresh ledger comparison: **LOCAL 95 / STAGING 84 / PRODUCTION 28**; gaps **11 / 67**,
+with no remote-only versions. Production inspection was ledger SELECT in a
+read-only transaction only. Next batch: [84→94 plan](staging-batch-84-94-approval-20260917.md).
+See [gap register](migration-gap-register-20260917.md) and
+[NO-GO gate](pilot/PRODUCTION_READINESS_GATE.md).
 
 The V3 Phase 3 PASS below is historical and limited to its then-implemented scope.
 

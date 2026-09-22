@@ -35,7 +35,9 @@ export async function paymentDetail(db: DB, id?: string) {
 }
 export async function allocationInvoices(db: DB, payment: Payment, params: Params) {
   const page = pageNumber(params.invoice_page)
-  const result = await rows(db.from('invoice_receivables').select(invoiceFields).eq('student_id_snapshot', payment.student_id_snapshot).eq('currency', payment.currency).eq('invoice_status', 'ISSUED').gt('outstanding_balance', 0).order('due_on').order('invoice_id').range((page - 1) * pageSize, page * pageSize).returns<Invoice[]>())
+  let query = db.from('invoice_receivables').select(invoiceFields).eq('student_id_snapshot', payment.student_id_snapshot).eq('currency', payment.currency).eq('invoice_status', 'ISSUED').gt('outstanding_balance', 0)
+  if (uuidPattern.test(params.invoice ?? '')) query = query.eq('invoice_id', params.invoice!)
+  const result = await rows(query.order('due_on').order('invoice_id').range((page - 1) * pageSize, page * pageSize).returns<Invoice[]>())
   return { data: result.slice(0, pageSize), page, more: result.length > pageSize }
 }
 
@@ -46,3 +48,10 @@ export async function allocationOpenings(db: DB, payment: Payment, params: Param
   return { data: result.slice(0, pageSize), page, more: result.length > pageSize }
 }
 export const effectiveAllocationTotal = (allocations: Allocation[]) => total(allocations.map(a => ({ amount: Number(a.amount) - Number(a.released_to_credit ?? 0) })))
+
+// Candidate receipts, not inferred duplicates: staff chooses an existing receipt explicitly.
+export async function invoicePaymentCandidates(db: DB, invoice: Invoice) {
+ const payments = await rows(db.from('payments').select(paymentFields).eq('student_id_snapshot', invoice.student_id_snapshot).eq('currency', invoice.currency).eq('status', 'POSTED').order('paid_at', { ascending: false }).order('id').limit(25).returns<Payment[]>())
+ const totals = await paymentTotals(db, payments.map(p => p.id), false)
+ return payments.map(p => ({ ...p, unallocated: Math.max(0, Number(p.amount) - total(totals.allocations.filter(a => a.payment_id === p.id))) })).filter(p => p.unallocated > 0 && !totals.allocations.some(a => a.payment_id === p.id && a.invoice_id === invoice.invoice_id))
+}

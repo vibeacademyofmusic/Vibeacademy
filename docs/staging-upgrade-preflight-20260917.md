@@ -1,5 +1,16 @@
 # Phase 23 — current staging upgrade preflight
 
+## Current status — supersedes historical preflight below
+
+LOCAL95 / STAGING94 / PRODUCTION28. Authorized batch84→94 PASS:
+59 staging pgTAP files /1533 assertions;295 application/bootstrap PASS;
+Webpack/ESLint/diff check PASS; tuition5,500,000 VND, unexplained difference0.
+Only `20260917100000` remains on staging; see
+[separate approval plan](staging-batch-94-95-approval-20260917.md).
+No Production mutation/push/deploy. Full browser/E2E/pilot remains pending.
+
+## Historical review and complete ordered manifest
+
 2026-09-17. **Preflight only; full staging validation is not PASS.**
 
 Target explicitly verified: `owpfqwdrmyzcmjahehek`. Production
@@ -20,6 +31,7 @@ corrections all zero. This is a baseline, not a claim that every workflow passed
 | 4 | Notifications and source/idempotency guards | 81 |
 | 5 | Inventory and serialized instruments | 84 |
 | 6 | Learning/assessment, Theory contract, analytics, anonymous privilege removal | 94 |
+| 7 | Audited compensation and scoped payslip projection | 95 |
 
 These migrations add schemas/tables/indexes, replace routines/views and constraints,
 and seed permission/catalogue metadata. Scope review found no top-level generation
@@ -83,6 +95,7 @@ SHA-256 pins the reviewed local files; re-review if any hash changes.
 | `20260917010000_learning_theory_contents_contract.sql` | `83b0352ad11213c3eaffc2f763021a54f6db358f295ffebf4fed637c5a47c824` |
 | `20260917013000_learning_progress_analytics.sql` | `713de1c6699c446439bca6224389122c5c50f15616c24b18986701f51ee16823` |
 | `20260917020000_revoke_anonymous_business_grants.sql` | `b0d864b9e28766b12f2238216203e3d887490974b32f020afc437b36ab86cf5c` |
+| `20260917100000_operational_payroll_documents.sql` | `75c52f95444e5b9fc23de784ad326c1b053c1d8836aa45c6551de484456d19cb` |
 
 ## Recovery rehearsal checkpoint
 

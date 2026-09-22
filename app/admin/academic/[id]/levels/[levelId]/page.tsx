@@ -248,27 +248,30 @@ export default async function LevelDetailPage({
                 htmlFor="completion_rule"
                 className="mb-2 block text-sm font-medium text-gray-700"
               >
-                Completion Rule
+                Completion Method — Phương thức đánh giá
               </label>
 
               <select
                 id="completion_rule"
                 name="completion_rule"
+                required
+                aria-describedby="completion-method-help"
                 defaultValue="ALL_REQUIRED_COMPONENTS"
                 className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
               >
                 <option value="ALL_REQUIRED_COMPONENTS">
-                  All Required Components
+                  Đánh giá theo thành phần
                 </option>
 
                 <option value="DIRECT_ASSESSMENT">
-                  Direct Assessment
-                </option>
-
-                <option value="MANUAL">
-                  Manual
+                  Đánh giá trực tiếp
                 </option>
               </select>
+              <p id="completion-method-help" className="mt-2 text-sm text-gray-500">
+                Đánh giá theo thành phần: môn bắt buộc cần ít nhất một thành phần bắt buộc đang hoạt động trước khi gán chương trình.
+                Đánh giá trực tiếp: đánh giá ở cấp môn, không bắt buộc có thành phần con và không tự tính kết quả từ thành phần.
+                Môn bắt buộc vẫn cần đạt để hoàn thành bậc học.
+              </p>
             </div>
 
             <label className="flex items-center gap-3">

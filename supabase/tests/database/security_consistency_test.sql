@@ -58,6 +58,6 @@ select ok(not has_table_privilege('authenticated','public.payroll_off_cycle_corr
 select ok(not has_table_privilege('service_role','public.payroll_off_cycle_correction_runs','INSERT,UPDATE,DELETE'),'off-cycle view not writable via service credential');
 select ok(not exists(select 1 from unnest(array['financial_approval_requests','financial_approval_events','payroll_corrections'])t where has_table_privilege('service_role','public.'||t,'INSERT,UPDATE,DELETE,TRUNCATE')),'service clients cannot forge approval history');
 select ok(not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='finance_private' and (has_function_privilege('authenticated',p.oid,'EXECUTE') or has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('service_role',p.oid,'EXECUTE'))),'private ledger functions inaccessible to clients');
-select ok(not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','finance_private') and p.prosecdef and not coalesce(p.proconfig @> array['search_path=public, pg_temp'],false)),'all security definers retain explicit trusted search path');
+select ok(not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','finance_private') and p.prosecdef and not (coalesce(p.proconfig @> array['search_path=public, pg_temp'],false) or coalesce(p.proconfig @> array['search_path=pg_catalog, pg_temp'],false))),'all security definers retain explicit trusted search path');
 select * from finish();
 rollback;

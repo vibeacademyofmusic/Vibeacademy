@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { businessDate } from '../../_lib/business-date'
+import { planClassTeacherAssignment, type StoredClassTeacher } from '../teacher-assignment'
 
 async function requireSuperAdmin() {
   const supabase = await createClient()
@@ -76,45 +78,99 @@ export async function assignTeacher(
     )
   }
 
-  const today = new Date()
-    .toISOString()
-    .slice(0, 10)
-
-  const { error } = await supabase
+  const { data: existing, error: existingError } = await supabase
     .from('class_teachers')
-    .upsert(
-      {
-        class_id: classId,
-        teacher_id: teacherId,
-        teacher_role: teacherRole,
-        is_active: true,
-        assigned_at: today,
-        ended_at: null,
-      },
-      {
-        onConflict: 'class_id,teacher_id',
-      }
-    )
+    .select('id, teacher_id, teacher_role, is_active, assigned_at, ended_at')
+    .eq('class_id', classId)
+    .returns<StoredClassTeacher[]>()
 
-  if (error) {
-    console.error(
-      'Assign teacher error:',
-      error
-    )
-
-    if (error.code === '23505') {
-      redirect(
-        `/admin/classes/${classId}?error=This%20class%20already%20has%20an%20active%20primary%20teacher`
-      )
-    }
-
+  if (existingError || !existing) {
     redirect(
       `/admin/classes/${classId}?error=Could%20not%20assign%20teacher`
     )
   }
 
+  const plan = planClassTeacherAssignment(existing, {
+    teacherId,
+    role: teacherRole as 'PRIMARY' | 'ASSISTANT',
+    assignedAt: businessDate(),
+  })
+
+  if (plan.kind === 'refused') {
+    redirect(
+      `/admin/classes/${classId}?error=${encodeURIComponent(
+        plan.reason === 'history_gap'
+          ? 'This teacher already has an assignment history on the class. A second period cannot be stored yet.'
+          : 'The current primary teacher started today, so yesterday cannot be used as the handoff date.'
+      )}`
+    )
+  }
+
+  if (plan.kind === 'assign') {
+    const closing = plan.closeId
+      ? existing.find((row) => row.id === plan.closeId)
+      : undefined
+
+    if (plan.closeId && plan.closeOn && closing) {
+      const { error: closeError } = await supabase
+        .from('class_teachers')
+        .update({
+          is_active: false,
+          ended_at: plan.closeOn,
+        })
+        .eq('id', plan.closeId)
+        .eq('class_id', classId)
+
+      if (closeError) {
+        redirect(
+          `/admin/classes/${classId}?error=Could%20not%20assign%20teacher`
+        )
+      }
+    }
+
+    const { error } = await supabase
+      .from('class_teachers')
+      .insert({
+        class_id: classId,
+        teacher_id: teacherId,
+        teacher_role: teacherRole,
+        is_active: true,
+        assigned_at: plan.assignedAt,
+        ended_at: null,
+      })
+
+    if (error) {
+      if (closing && plan.closeId) {
+        await supabase
+          .from('class_teachers')
+          .update({
+            is_active: closing.is_active,
+            ended_at: closing.ended_at,
+          })
+          .eq('id', plan.closeId)
+          .eq('class_id', classId)
+      }
+
+      console.error(
+        'Assign teacher error:',
+        error
+      )
+
+      if (error.code === '23505') {
+        redirect(
+          `/admin/classes/${classId}?error=This%20class%20already%20has%20an%20active%20primary%20teacher`
+        )
+      }
+
+      redirect(
+        `/admin/classes/${classId}?error=Could%20not%20assign%20teacher`
+      )
+    }
+  }
+
   revalidatePath('/admin/classes')
   revalidatePath(`/admin/classes/${classId}`)
+  revalidatePath('/admin/session-teachers')
 
   redirect(
     `/admin/classes/${classId}?success=Teacher%20assigned%20successfully`
@@ -140,15 +196,11 @@ export async function removeTeacher(
     )
   }
 
-  const today = new Date()
-    .toISOString()
-    .slice(0, 10)
-
   const { error } = await supabase
     .from('class_teachers')
     .update({
       is_active: false,
-      ended_at: today,
+      ended_at: businessDate(),
     })
     .eq('id', assignmentId)
     .eq('class_id', classId)
@@ -166,6 +218,7 @@ export async function removeTeacher(
 
   revalidatePath('/admin/classes')
   revalidatePath(`/admin/classes/${classId}`)
+  revalidatePath('/admin/session-teachers')
 
   redirect(
     `/admin/classes/${classId}?success=Teacher%20removed%20successfully`

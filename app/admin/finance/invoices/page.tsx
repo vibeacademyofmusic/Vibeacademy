@@ -3,10 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { createClient } from '@/lib/supabase/server'
 import { branches, invoiceList, selectedInvoice } from '../query'
 import { type Params, vietnamDateTime } from '../operations'
-import { tuitionCandidates } from './data'
+import { tuitionCandidates, invoicePaymentHistory } from './data'
 import { createInvoice, issueInvoice, cancelInvoice } from './actions'
 import { InvoiceFilters, InvoiceTable } from '../_components/InvoiceList'
-import { Confirm, Field, LoadError, Notice, Pager, Panel, Table, dateText } from '../_components/ui'
+import { Confirm, Field, LoadError, Notice, Pager, Panel, Table, dateText, timeText } from '../_components/ui'
 import SubmitButton from '../_components/SubmitButton'
 import { money } from '../data'
 export default async function InvoicesPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -15,11 +15,21 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   let loaded
   try { loaded = await Promise.all([invoiceList(db, params), branches(db), tuitionCandidates(db, params), selectedInvoice(db, params.selected)]) } catch { return <LoadError /> }
   const [list, branchRows, terms, selected] = loaded
+  let history = [] as Awaited<ReturnType<typeof invoicePaymentHistory>>
+  try { if (selected) history = await invoicePaymentHistory(db, selected.invoice_id) } catch { return <LoadError /> }
   return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Hóa đơn</h1><Notice params={params} />
     <InvoiceFilters params={params} branches={branchRows} /><InvoiceTable {...list} /><Pager path="/admin/finance/invoices" params={params} {...list} />
     {selected && <Panel title={'Hóa đơn ' + selected.invoice_number}>
       <Link prefetch={false} className="underline" href={'/documents/finance/invoices/' + selected.invoice_id}>Xem / In chứng từ</Link><p>{selected.invoice_status} • {money(selected.total_amount, selected.currency)} • {selected.branch_name_snapshot}</p>
-      {selected.invoice_status === 'DRAFT' && <form action={issueInvoice} className="grid gap-3 sm:grid-cols-2">
+      <p>Invoice Status: {selected.invoice_status} • Payment Status: {selected.receivable_status}</p>
+      <p>Amount Paid: {money(selected.allocated_amount, selected.currency)} • Balance Due: {money(selected.outstanding_balance, selected.currency)}{selected.receivable_status === 'OVERDUE' ? ' • OVERDUE' : ''}</p>
+      {selected.invoice_status === 'ISSUED' && <div className="flex gap-4">{Number(selected.outstanding_balance) > 0 && <Link className="underline" href={'/admin/finance/payments?invoice=' + selected.invoice_id}>Ghi nhận / phân bổ tiền</Link>}<a className="underline" href="#payment-history">View Payments</a></div>}
+      {selected.invoice_status === 'ISSUED' && Number(selected.outstanding_balance) === 0 && <p>Paid — No outstanding balance.</p>}
+      <section id="payment-history" className="space-y-3"><h3 className="font-semibold">PAYMENT HISTORY</h3>
+        <Table headers={['Date', 'Method', 'Reference', 'Amount', 'Allocated Amount', 'Status', 'Receipt']} rows={history.map(a => [a.payments ? timeText(a.payments.paid_at) : '—', a.payments?.payment_method ?? '—', a.payments?.reference ?? '—', a.payments ? money(a.payments.amount, a.payments.currency) : '—', money(a.amount, selected.currency), a.payments?.status ?? '—', a.payments ? <Link key={a.id} className="underline" href={'/documents/finance/payments/' + a.payments.id}>VIEW RECEIPT</Link> : '—'])} />
+        <p className="text-sm text-gray-500">Phân bổ trong lịch sử là số tiền gốc. Số đã thu ròng và còn nợ phía trên đã tính hoàn tiền và trạng thái thanh toán theo sổ công nợ.</p>
+      </section>
+      {selected.invoice_status === 'DRAFT'  && <form action={issueInvoice} className="grid gap-3 sm:grid-cols-2">
         <input type="hidden" name="invoice_id" value={selected.invoice_id} /><input type="hidden" name="selected" value={selected.invoice_id} />
         <Field name="issued_on" label="Ngày phát hành" type="date" value={vietnamDateTime().slice(0, 10)} /><Field name="due_on" label="Hạn thanh toán" type="date" />
         <Confirm text="Xác nhận phát hành hóa đơn và ghi nhận công nợ." /><SubmitButton>Phát hành hóa đơn</SubmitButton>

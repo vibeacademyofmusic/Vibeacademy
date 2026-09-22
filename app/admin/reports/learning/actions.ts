@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient, uuidPattern, validDate } from '../../finance/operations'
 import { summaryFields, types } from './data'
+import { generationErrors } from './periods'
 const path = '/admin/reports/learning'
 export async function generateReport(form: FormData) {
   const db = await adminClient()
@@ -13,7 +14,19 @@ export async function generateReport(form: FormData) {
   else {
     try {
       const result = await db.rpc('generate_learning_report', { p_enrollment_id: enrollment, p_type: type, p_start: start, p_end: end })
-      if (result.error || typeof result.data !== 'string' || !uuidPattern.test(result.data)) error = 'Không tạo được báo cáo. Kỳ báo cáo phải đã kết thúc và trùng thời gian ghi danh; báo cáo tháng cần đủ tháng.'
+      if (result.error) {
+        console.error('generate_learning_report RPC error:', {
+          message: result.error.message,
+          code: result.error.code,
+          details: result.error.details,
+          hint: result.error.hint,
+        })
+
+        error = generationErrors[result.error.message] ?? 'Không tạo được báo cáo. Hãy tải lại và kiểm tra ghi danh, kỳ báo cáo.'
+      } else if (typeof result.data !== 'string' || !uuidPattern.test(result.data)) {
+        console.error('generate_learning_report returned invalid result:', result.data)
+        error = 'Chưa xác nhận được báo cáo đã tạo. Hãy tải lại danh sách trước khi thử lại.'
+      }
       else id = result.data
     } catch { error = 'Chưa xác nhận được kết quả. Hãy tải lại danh sách trước khi thử lại.' }
   }
@@ -26,7 +39,7 @@ export async function updateReport(form: FormData) {
   let error = ''
   const summary = Object.fromEntries(summaryFields.map(f => [f.id, String(form.get(f.id) ?? '').trim()]))
   const note = String(form.get('admin_note') ?? '').trim()
-  if (!uuidPattern.test(id) || !Number.isSafeInteger(version) || version < 1 || !['SAVE', 'REGENERATE', 'READY', 'APPROVE', 'RETURN', 'CANCEL'].includes(action) || Object.values(summary).some(v => v.length > 4000) || note.length > 4000 || (['APPROVE', 'CANCEL'].includes(action) && form.get('confirm') !== 'yes')) error = 'Vui lòng kiểm tra nội dung và xác nhận thao tác.'
+  if (!uuidPattern.test(id) || !Number.isSafeInteger(version) || version < 1 || !['SAVE', 'REGENERATE', 'READY', 'APPROVE', 'PUBLISH', 'RETURN', 'CANCEL'].includes(action) || Object.values(summary).some(v => v.length > 4000) || note.length > 4000 || (['APPROVE', 'PUBLISH', 'CANCEL'].includes(action) && form.get('confirm') !== 'yes')) error = 'Vui lòng kiểm tra nội dung và xác nhận thao tác.'
   else {
     try {
       const result = await db.rpc('update_learning_report', { p_id: id, p_version: version, p_action: action, p_summary: summary, p_note: note })

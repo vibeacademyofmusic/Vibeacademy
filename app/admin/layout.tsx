@@ -1,10 +1,13 @@
 import Link from 'next/link'
 import AdminNavigation from './AdminNavigation'
+import HRContext from './_components/vibe/Context'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
 
 import { logout } from '@/app/login/actions'
 import { createClient } from '@/lib/supabase/server'
+import { isBusinessShellPath, isStudentOpsPath, type ShellMode } from './navigation'
 
 export default async function AdminLayout({
   children,
@@ -27,8 +30,21 @@ export default async function AdminLayout({
     }
   )
 
+  const pathname = (await headers()).get('x-vibe-pathname')
+  let mode: ShellMode = 'full'
+
   if (roleError || !isSuperAdmin) {
-    redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
+    const [{ data: mayEnter, error: shellError }, { data: mayStudents, error: studentError }] = await Promise.all([
+      supabase.rpc('crm_shell_may_enter'),
+      supabase.rpc('student_ops_may_enter'),
+    ])
+    const business = !shellError && mayEnter === true
+    const students = !studentError && mayStudents === true
+    const allowed = (business && isBusinessShellPath(pathname)) || (students && isStudentOpsPath(pathname))
+    if (!allowed) {
+      redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
+    }
+    mode = business && students ? 'business-students' : business ? 'business' : 'students'
   }
 
   const userId = claimsData.claims.sub
@@ -40,14 +56,12 @@ export default async function AdminLayout({
     .single()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="vibe-admin min-h-screen bg-gray-50">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-gray-200 bg-white lg:block">
         <div className="flex h-full flex-col">
           <div className="border-b border-gray-200 px-6 py-6">
-          <Link href="/admin" prefetch={false}>
-              <h1 className="text-xl font-bold text-gray-900">
-                Vibe Academy
-              </h1>
+          <Link href={mode === 'students' ? '/admin/students' : mode === 'full' ? '/admin' : '/admin/business'} prefetch={false}>
+              <img src="/vibe-logo.png" alt="VIBE Academy" width={120} height={64} className="h-16 w-32 object-contain"/>
             </Link>
 
             <p className="mt-1 text-xs text-gray-500">
@@ -55,7 +69,7 @@ export default async function AdminLayout({
             </p>
           </div>
 
-          <AdminNavigation />
+          <AdminNavigation mode={mode} />
 
           <div className="border-t border-gray-200 p-4">
             <div className="mb-4 px-2">
@@ -66,7 +80,7 @@ export default async function AdminLayout({
               </p>
 
               <p className="mt-1 text-xs font-medium text-gray-400">
-                Quản trị viên cấp cao
+                {mode === 'full' ? 'Quản trị viên cấp cao' : mode === 'students' ? 'Học viên' : 'Kinh doanh'}
               </p>
             </div>
 
@@ -112,10 +126,10 @@ export default async function AdminLayout({
           </div>
         </header>
 
-        <AdminNavigation mobile />
+        <AdminNavigation mobile mode={mode} />
 
         <main className="px-6 py-8 lg:px-8">
-          <div className="mx-auto max-w-7xl">{children}</div>
+          <div className="mx-auto max-w-7xl"><HRContext />{children}</div>
         </main>
       </div>
     </div>

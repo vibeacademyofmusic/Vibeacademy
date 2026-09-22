@@ -1,3 +1,4 @@
+import InvoiceTemplate from '../../../_components/InvoiceTemplate'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { financeContext } from '@/app/finance/authorization'
@@ -13,7 +14,7 @@ export default async function FinanceDocument({ params }: { params: Promise<{ ki
   if (!kinds.includes(kind) || !uuidPattern.test(id)) notFound()
   const table = kind === 'credits' ? 'customer_credit_balances' : kind
   const fields: Record<string, string> = {
-    invoices: 'id,invoice_number,enrollment_tuition_id,student_id_snapshot,branch_name_snapshot,currency,subtotal,total_amount,status,issued_on,due_on,notes,created_by',
+    invoices: 'id,invoice_number,enrollment_tuition_id,student_id_snapshot,branch_id_snapshot,branch_name_snapshot,currency,subtotal,total_amount,status,issued_on,due_on,notes,created_by',
     payments: 'id,payment_number,student_id_snapshot,branch_name_snapshot,currency,amount,status,paid_at,payment_method,reference,created_by,voided_at,void_reason',
     refunds: 'id,refund_number,payment_id,student_id_snapshot,branch_name_snapshot,currency,amount,status,refunded_at,reason,created_by,created_at',
     credits: 'id,student_id,branch_id,payment_id,opening_receivable_id,correction_id,currency,amount,applied_amount,refunded_amount,remaining_credit,voided_amount,created_at',
@@ -27,13 +28,18 @@ export default async function FinanceDocument({ params }: { params: Promise<{ ki
   let body
     const student = (await studentNames(db, [text(kind === 'credits' ? 'student_id' : 'student_id_snapshot')])).values().next().value
     if (kind === 'invoices') {
-      const [balance, items, tuition] = await Promise.all([
+      const [balance, items, tuition, contact] = await Promise.all([
         selectedInvoice(db, id),
         all((a, b) => db.from('invoice_items').select('id,description,quantity,unit_amount,line_total').eq('invoice_id', id).order('line_no').order('id').range(a, b)),
         rows(db.from('enrollment_tuition').select('starts_on,effective_ends_on,plan_name_snapshot,list_price,discount_amount').eq('id', text('enrollment_tuition_id'))),
+        uuidPattern.test(text('branch_id_snapshot')) ? rows(db.from('branches').select('address,phone').eq('id', text('branch_id_snapshot'))) : Promise.resolve([]),
       ])
       if (!balance) return <LoadError/>
-      body = <><p>Ngày phát hành: {dateText(text('issued_on'))} • Hạn trả: {dateText(text('due_on'))}</p><Table headers={['Nội dung', 'Số lượng', 'Đơn giá sau giảm', 'Thành tiền']} rows={items.map(i => [i.description, i.quantity, money(i.unit_amount, text('currency')), money(i.line_total, text('currency'))])}/>{tuition[0] ? <p>Gói {tuition[0].plan_name_snapshot} • {dateText(tuition[0].starts_on)} → {dateText(tuition[0].effective_ends_on)}. Giá trước giảm: {money(tuition[0].list_price, text('currency'))}; giảm: {money(tuition[0].discount_amount, text('currency'))} (đã khóa theo kỳ học phí).</p> : <p>Chi tiết giảm giá không có trong phạm vi truy cập. Số hóa đơn đã bao gồm giảm giá.</p>}<p>Cộng sau giảm: {amount('subtotal')}</p><p>Tổng hóa đơn: {amount('total_amount')}</p><p>Đã thanh toán ròng: {money(balance.allocated_amount, text('currency'))} • Còn phải thu hiện tại: {money(balance.outstanding_balance, text('currency'))}</p><p>{text('notes')}</p><p>Người lập hóa đơn: {text('created_by') || 'Không có dữ liệu'}</p></>
+      return <InvoiceTemplate
+        invoice={{ number: text('invoice_number'), status: text('status'), issuedOn: text('issued_on'), dueOn: text('due_on'), branch: text('branch_name_snapshot'), student: student || text('student_id_snapshot'), currency: text('currency'), subtotal: Number(d.subtotal), total: Number(d.total_amount), notes: text('notes') }}
+        balance={balance} items={items} tuition={tuition[0]} contact={contact[0]} logoSrc="/vibe-logo.png"
+        actions={isSuperAdmin ? <><Link href={'/admin/finance/invoices?selected=' + id}>Invoice workflow</Link>{text('status') === 'ISSUED' && Number(balance.outstanding_balance) > 0 && <Link href={'/admin/finance/payments?invoice=' + id}>Record payment</Link>}</> : <Link href="/finance">Finance approvals</Link>}
+      />
     } else if (kind === 'payments') {
       const detail = await paymentDetail(db, id)
       if (!detail) return <LoadError/>

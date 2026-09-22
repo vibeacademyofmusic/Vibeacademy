@@ -65,10 +65,10 @@ export default async function SubjectDetailPage({
     data: components,
     error: componentsError,
   } = await supabase
-    .from('curriculum_subject_components')
-    .select(
-      'id, subject_id, code, name, is_required, sort_order, status'
-    )
+  .from('curriculum_subject_components')
+  .select(
+    'id, subject_id, code, name, is_required, sort_order, status, completion_rule'
+  )
     .eq('subject_id', subject.id)
     .order('sort_order', { ascending: true })
 
@@ -283,10 +283,11 @@ export default async function SubjectDetailPage({
           ) : (
             <div className="divide-y divide-gray-100">
               {components.map((component) => (
+
   <div
-    key={component.id}
-    className="flex items-center justify-between gap-6 px-6 py-5"
-  >
+  key={component.id}
+  className="px-6 py-5"
+>
     <div>
       <div className="flex flex-wrap items-center gap-3">
         <p className="font-semibold text-gray-950">

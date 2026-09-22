@@ -43,7 +43,7 @@ test('attendance and leave submission boundaries reject the other workflow statu
 test('loaders isolate leave requests before limiting and never load policy for attendance',async()=>{
  const fixtures={employee_attendance_requests:[{id:id(2),employee_id:id(1),work_date:'2026-09-14',proposed_status:'PAID_LEAVE'},{id:id(3),employee_id:id(1),work_date:'2026-09-14',proposed_status:'WORKED'}]}
  for(const mode of ['attendance','leave']){
- const h=harness(fixtures),original=h.db.rpc;h.db.rpc=(name,args)=>name==='employee_schedule'?Promise.resolve({data:[],error:null}):original(name,args)
+ const h=harness(fixtures),original=h.db.rpc;h.db.rpc=(name,args)=>name==='employee_schedule'||name==='get_employee_attendance_qr_verified_entries'?Promise.resolve({data:[],error:null}):original(name,args)
  const data=await h.load('../employees/attendance/data.ts').attendanceData(h.db,{employee:id(1),month:'2026-09'},mode)
  assert.deepEqual(data.requests.map(r=>r.proposed_status),[mode==='leave'?'PAID_LEAVE':'WORKED']);assert.ok(!h.calls.some(c=>c.table==='employee_leave_policies'))
  }
@@ -61,7 +61,7 @@ test('leave page explains pending approval and existing full-shift/past-date lim
 })
 test('approved leave renders without policy editor, unpaid request controls or invented actual times',async()=>{
  const h=harness({employee_attendance_current:[{employee_id:id(1),work_date:'2026-09-14',shift_code:'PM',status:'PAID_LEAVE',revision:1,checker:id(2),paid_leave_minutes:210,unpaid_leave_minutes:210,late_minutes:0,early_minutes:0,leave_policy_id:id(3),arrived_at:null,departed_at:null}]})
- const rpc=h.db.rpc;h.db.rpc=(name,args)=>name==='employee_schedule'?Promise.resolve({data:[{work_date:'2026-09-14',shift_code:'PM',unit_code:'HQ',starts_at:'2026-09-14T07:00:00Z',ends_at:'2026-09-14T14:00:00Z',scheduled_minutes:420,schedule_state:'SCHEDULED'}],error:null}):rpc(name,args)
+ const rpc=h.db.rpc;h.db.rpc=(name,args)=>name==='get_employee_attendance_qr_verified_entries'?Promise.resolve({data:[],error:null}):name==='employee_schedule'?Promise.resolve({data:[{work_date:'2026-09-14',shift_code:'PM',unit_code:'HQ',starts_at:'2026-09-14T07:00:00Z',ends_at:'2026-09-14T14:00:00Z',scheduled_minutes:420,schedule_state:'SCHEDULED'}],error:null}):rpc(name,args)
  const html=await render(h,'../employees/attendance',{employee:id(1),month:'2026-09',day:'2026-09-14',shift:'PM'})
  assert.match(html,/210 phút có lương/);assert.match(html,/Chưa có giờ đến/);assert.doesNotMatch(html,/1970|Lưu chính sách phép|value="PAID_LEAVE"|value="UNPAID_LEAVE"/)
 })

@@ -4,6 +4,7 @@ const assert = require('node:assert/strict')
 const fs = require('node:fs'), path = require('node:path'), ts = require('typescript'), React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const { harness, id, fixture, redirected } = require('./helpers/finance-operations.cjs')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 function modules(h) {
   const cache = new Map()
   const mocks = {
@@ -18,10 +19,8 @@ function modules(h) {
     const m = { exports: {} }
     const req = name => {
       if (name in mocks) return mocks[name]
-      if (name.startsWith('.') || name.startsWith('@/')) {
-        const target = name.startsWith('@/') ? path.resolve(name.slice(2)) : path.resolve(path.dirname(file), name)
-        return load(fs.existsSync(target + '.ts') ? target + '.ts' : target + '.tsx')
-      }
+      if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
+      if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name, ['ts', 'tsx']))
       return require(name)
     }
     new Function('require', 'module', 'exports', ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText)(req, m, m.exports)
@@ -40,7 +39,7 @@ test('Payslip totals preserve signed adjustments and reconcile net', () => {
 test('Approved snapshot renders rate, ratio, identity and totals without reading live compensation', async () => {
   const h = harness(); h.db.rpc = async (name) => { assert.equal(name, 'payroll_payslip'); return { data: slip, error: null } }
   const html = renderToStaticMarkup(await modules(h)('app/documents/payslips/[id]/page.tsx').default({ params: Promise.resolve({ id: id(20) }) }))
-  for (const expected of ['VIBE-HQ-TEST', '50.00%', '2.000 VND', '900 VND', 'DEDUCTION']) assert.ok(html.includes(expected))
+  for (const expected of ['VIBE-HQ-TEST', '2.000 VND', '1.000 VND', '900 VND', 'DEDUCTION', 'MONTHLY_BASE']) assert.ok(html.includes(expected), expected)
   assert.equal(h.calls.length, 0)
 })
 test('Denied payslip projection does not render salary', async () => {
@@ -97,4 +96,43 @@ test('Invalid compensation form never calls mutating RPC', async () => {
 test('Print routes have standalone shell, A4 CSS and hidden actions', () => {
   const css = fs.readFileSync('app/documents/print.css', 'utf8'), layout = fs.readFileSync('app/documents/layout.tsx', 'utf8')
   assert.match(css, /size: A4/); assert.match(css, /document-actions.*nextjs-portal/); assert.ok(!layout.includes('Sidebar'))
+})
+
+function invoiceFixture() {
+ const data=fixture()
+ data.invoices=[{id:id(2),invoice_number:'INV-DYNAMIC-42',enrollment_tuition_id:id(9),student_id_snapshot:id(1),branch_id_snapshot:id(3),branch_name_snapshot:'Real branch fixture',currency:'VND',subtotal:1000000,total_amount:1000000,status:'ISSUED',issued_on:'2026-09-01',due_on:'2026-09-30',notes:'Supplied invoice note'}]
+ data.invoice_items=[{id:id(30),invoice_id:id(2),description:'Dynamic tuition line',quantity:1,unit_amount:1000000,line_total:1000000}]
+ data.enrollment_tuition=[{id:id(9),list_price:1200000,discount_amount:200000,plan_name_snapshot:'Dynamic program',starts_on:'2026-09-01',effective_ends_on:'2026-09-30'}]
+ Object.assign(data.branches[0],{address:'Supplied branch address',phone:'Provided branch phone'})
+ return data
+}
+test('official invoice uses English headings and dynamic document data',async()=>{
+ const html=await document(harness(invoiceFixture()),'invoices',id(2))
+ for(const text of ['VIBE ACADEMY OF MUSIC &amp; CINEMA','>INVOICE<','INVOICE NO.','ISSUE DATE','DUE DATE','BRANCH','STUDENT','PROGRAM','BILLING PERIOD','STATUS','PAYMENT STATUS','AMOUNT PAID','BALANCE DUE','DESCRIPTION','QUANTITY','UNIT PRICE','AMOUNT','SUBTOTAL','DISCOUNT','TOTAL','NOTES','AUTHORIZED SIGNATURE','INV-DYNAMIC-42','Dynamic tuition line','Dynamic program','Supplied branch address','Provided branch phone']) assert.ok(html.includes(text),text)
+ assert.doesNotMatch(html,/>Hóa đơn học phí<|Ngày phát hành:|Hạn trả:/)
+ assert.match(html,/PARTIALLY_PAID/)
+})
+test('missing contact and discount data are not invented',async()=>{
+ const data=invoiceFixture();data.branches=[];data.enrollment_tuition=[]
+ const html=await document(harness(data),'invoices',id(2))
+ assert.match(html,/Discount breakdown is unavailable/);assert.doesNotMatch(html,/Provided branch phone|Supplied branch address|vibeacademy\./)
+ assert.match(html,/1.000.000 VND/)
+})
+test('invoice template supports supplied asset URL and never invents a logo',()=>{
+ const Template=modules(harness())('app/documents/_components/InvoiceTemplate.tsx').default
+ const props={invoice:{number:'Fixture',status:'ISSUED',issuedOn:'',dueOn:'',branch:'',student:'',currency:'VND',subtotal:10,total:10,notes:''},balance:{invoice_status:'ISSUED',allocated_amount:0,outstanding_balance:10},items:[]}
+ const withLogo=renderToStaticMarkup(React.createElement(Template,{...props,logoSrc:'/fixture-approved-logo.svg'}))
+ assert.match(withLogo,/src="\/fixture-approved-logo.svg"/);assert.match(withLogo,/alt="VIBE logo"/)
+ const withoutLogo=renderToStaticMarkup(React.createElement(Template,props))
+ assert.doesNotMatch(withoutLogo,/<img/);assert.match(withoutLogo,/Chưa có logo VIBE chính thức/)
+})
+
+
+test('official invoice renders the supplied real public logo', async () => {
+  const asset = fs.readFileSync('public/vibe-logo.png')
+  assert.equal(asset.subarray(0, 8).toString('hex'), '89504e470d0a1a0a')
+  const html = await document(harness(invoiceFixture()), 'invoices', id(2))
+  assert.match(html, /src="\/vibe-logo.png"/)
+  assert.match(html, /alt="VIBE logo"/)
+  assert.doesNotMatch(html, /Chưa có logo VIBE chính thức/)
 })

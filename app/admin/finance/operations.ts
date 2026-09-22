@@ -62,6 +62,10 @@ export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: s
   const db = await adminClient()
   const selected = String(form.get('selected') ?? '')
   const query = new URLSearchParams(uuidPattern.test(selected) ? { selected } : {})
+  const entryKey = String(form.get('idempotency_key') ?? '')
+  if (module === 'payments' && uuidPattern.test(entryKey)) query.set('entry', entryKey)
+  const allocationInvoice = rpc === 'allocate_payment_to_invoice' ? String(form.get('invoice_id') ?? '') : ''
+  if (uuidPattern.test(allocationInvoice)) query.set('invoice', allocationInvoice)
   const payment = String(form.get('payment_id') ?? '')
   if (module === 'refunds' && uuidPattern.test(payment)) query.set('payment', payment)
   let args: Record<string, string | null>
@@ -82,8 +86,18 @@ export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: s
     query.set('error', safeErrors[result.error.message] ?? 'Không thể thực hiện thao tác. Dữ liệu có thể đã thay đổi hoặc không thỏa điều kiện. Hãy tải lại và kiểm tra trạng thái.')
     redirect(`/admin/finance/${module}?${query}`)
   }
+  if (rpc === 'allocate_payment_to_invoice' && (typeof result.data !== 'string' || !uuidPattern.test(result.data))) {
+    query.set('error', 'Chưa xác nhận được kết quả phân bổ. Hãy kiểm tra hóa đơn và lịch sử phân bổ trước khi thử lại.')
+    redirect(`/admin/finance/payments?${query}`)
+  }
   for (const route of ['', '/invoices', '/payments', '/receivables', '/refunds']) revalidatePath('/admin/finance' + route)
+  if (uuidPattern.test(allocationInvoice)) {
+    const invoiceQuery = new URLSearchParams({ selected: allocationInvoice, success: 'Đã lưu phân bổ tiền. Trạng thái thanh toán và công nợ bên dưới được cập nhật từ sổ công nợ.' })
+    redirect(`/admin/finance/invoices?${invoiceQuery}`)
+  }
+
   if (options.selectResult && typeof result.data === 'string' && uuidPattern.test(result.data)) query.set('selected', result.data)
+  query.delete('entry')
   query.set('success', 'Thao tác thành công.')
   redirect(`/admin/finance/${module}?${query}`)
 }

@@ -37,6 +37,19 @@ export async function login(formData: FormData) {
       revalidatePath('/', 'layout')
       redirect('/finance')
     }
+    const branchAdmin = !roles[1].error && roles[1].data === true
+    if (branchAdmin) {
+      const shell = await supabase.rpc('crm_shell_may_enter')
+      if (!shell.error && shell.data === true) {
+        revalidatePath('/', 'layout')
+        redirect('/admin/business')
+      }
+      const students = await supabase.rpc('student_ops_may_enter')
+      if (!students.error && students.data === true) {
+        revalidatePath('/', 'layout')
+        redirect('/admin/students')
+      }
+    }
     if (roles.slice(1).some(role => !role.error && role.data === true)) {
       revalidatePath('/', 'layout')
       redirect('/operations')

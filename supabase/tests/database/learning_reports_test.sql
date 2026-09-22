@@ -180,7 +180,7 @@ select is((select draft_data->'attendance'->>'scheduled' from learning_reports w
 select is((select draft_data->'journals'->>'count' from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002')),'0','empty journals explicit');
 select is((select draft_data->'attendance'->>'rate' from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002')),'100.0','attendance rate');
 select ok((select snapshot_data is null from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002')),'not finalized at generation');
-select throws_ok($$select generate_learning_report('71000000-0000-0000-0000-000000000001','MONTHLY','2026-08-02','2026-08-31')$$,'P0001','Monthly report requires a full calendar month','partial month rejected');
+select throws_ok($$select generate_learning_report('71000000-0000-0000-0000-000000000001','MONTHLY','2026-08-02','2026-08-31')$$,'P0001','Monthly report must cover a full calendar month','partial month rejected');
 select throws_ok($$select generate_learning_report('71000000-0000-0000-0000-000000000001','MONTHLY','2099-08-01','2099-08-31')$$,'P0001','Invalid closed report period','future period rejected');
 select throws_ok($$select generate_learning_report('71000000-0000-0000-0000-000000000001','MONTHLY','2026-09-01','2026-08-31')$$,'P0001','Invalid closed report period','reversed dates rejected');
 select throws_ok($$select update_learning_report(id,version,'APPROVE') from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002')$$,'P0001','Invalid report transition','cannot approve draft');
@@ -257,6 +257,68 @@ select lives_ok($$select enqueue_notification_event('SCHEDULE_CHANGED','91000000
 select is((select count(*) from notification_jobs where entity_type='SCHEDULE_CHANGED' and recipient_id='de910000-0000-4000-8000-000000000001'),1::bigint,'Two children in same session create only one parent notice');
 update student_parents set is_active=false where parent_id='de910000-0000-4000-8000-000000000003';
 select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','MONTHLY_REPORT'),false,'Revoked parent relationship cannot receive notice');
+
+-- Closed historical equivalents of the September/October 2026 examples.
+-- Use 2025 (and leap year 2024) instead of changing the production clock guard.
+create function pg_temp.monthly_id(text) returns uuid language sql immutable as $$select md5('monthly-first-'||$1)::uuid$$;
+insert into students(id,student_code,full_name)
+select pg_temp.monthly_id('s-'||code),'MONTHLY-'||code,'Monthly fixture '||code
+from unnest(array['day1','mid','early','cancel','dec','leap','future','legacy']) code;
+insert into enrollments(id,student_id,class_id,started_at,ended_at)
+select pg_temp.monthly_id(code),pg_temp.monthly_id('s-'||code),'51000000-0000-0000-0000-000000000001',started,ended
+from (values
+ ('day1','2025-09-01'::date,null::date),('mid','2025-09-20'::date,null::date),
+ ('early','2025-09-20'::date,'2025-10-15'::date),('cancel','2025-09-20'::date,null::date),
+ ('dec','2025-12-31'::date,null::date),('leap','2024-01-31'::date,null::date),
+ ('future','2099-09-20'::date,null::date),('legacy','2025-09-20'::date,null::date)
+) fixture(code,started,ended);
+set local role authenticated;
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('day1'),'MONTHLY','2025-09-01','2025-10-31')$$,'P0001','First monthly report must cover the enrollment start calendar month','day-one first period cannot extend into next month');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('day1'),'MONTHLY','2025-09-01','2025-09-30')$$,'day-one enrollment uses same full calendar month');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-09-20','2025-09-30')$$,'P0001','First monthly report must start on the enrollment start date and end on the last day of the following month','partial first month alone rejected');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-09-20','2025-10-20')$$,'P0001','First monthly report must start on the enrollment start date and end on the last day of the following month','rolling month rejected');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-09-21','2025-10-31')$$,'P0001','First monthly report must start on the enrollment start date and end on the last day of the following month','first report must start on enrollment start');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-09-01','2025-10-31')$$,'P0001','Monthly report must stay within enrollment dates; use END_OF_COURSE for a shortened final period','first report cannot precede enrollment');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-11-01','2025-11-30')$$,'P0001','First monthly report must start on the enrollment start date and end on the last day of the following month','dates alone cannot pretend first report already exists');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'END_OF_COURSE','2025-09-20','2025-09-30')$$,'end of course still supports a closed partial range');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-09-20','2025-10-31')$$,'mid-month start extends through next month despite other report type');
+select is((select draft_data->>'period_start' from learning_reports where enrollment_id=pg_temp.monthly_id('mid') and report_type='MONTHLY'),'2025-09-20','source snapshot uses actual first-period start');
+select is((select draft_data->>'period_end' from learning_reports where enrollment_id=pg_temp.monthly_id('mid') and report_type='MONTHLY'),'2025-10-31','source snapshot uses actual first-period end');
+select is(generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-09-20','2025-10-31'),(select id from learning_reports where enrollment_id=pg_temp.monthly_id('mid') and report_type='MONTHLY'),'first-period retry returns same ID after history exists');
+select is((select count(*) from learning_report_events where report_id in (select id from learning_reports where enrollment_id=pg_temp.monthly_id('mid') and report_type='MONTHLY')),1::bigint,'retry does not add duplicate generation event');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-10-01','2025-10-31')$$,'P0001','Monthly report overlaps an existing report','regular month cannot overlap extended first period');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-11-01','2025-11-30')$$,'subsequent full month succeeds');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-11-01','2025-12-31')$$,'P0001','Monthly report must cover a full calendar month','subsequent two-month range rejected');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-08-01','2025-08-31')$$,'P0001','Enrollment does not overlap period','period entirely before enrollment rejected');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('future'),'MONTHLY','2099-09-20','2099-10-31')$$,'P0001','Invalid closed report period','valid future first-period shape is still rejected');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY',(now() at time zone 'Asia/Ho_Chi_Minh')::date,(now() at time zone 'Asia/Ho_Chi_Minh')::date)$$,'P0001','Invalid closed report period','today is not a closed period');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('mid'),'MONTHLY','2025-11-30','2025-11-01')$$,'P0001','Invalid closed report period','reversed monthly dates rejected');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('early'),'MONTHLY','2025-09-20','2025-10-31')$$,'P0001','Monthly report must stay within enrollment dates; use END_OF_COURSE for a shortened final period','early enrollment end blocks extended monthly report');
+select throws_ok($$select generate_learning_report(pg_temp.monthly_id('early'),'MONTHLY','2025-09-20','2025-10-15')$$,'P0001','First monthly report must start on the enrollment start date and end on the last day of the following month','monthly report is not truncated at course end');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('early'),'END_OF_COURSE','2025-09-20','2025-10-15')$$,'short course can use end-of-course report');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('dec'),'MONTHLY','2025-12-31','2026-01-31')$$,'first period crosses year boundary');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('leap'),'MONTHLY','2024-01-31','2024-02-29')$$,'first period ends on leap day');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('cancel'),'MONTHLY','2025-09-20','2025-10-31')$$,'cancellation fixture first report');
+select update_learning_report(id,version,'CANCEL') from learning_reports where enrollment_id=pg_temp.monthly_id('cancel');
+select is(generate_learning_report(pg_temp.monthly_id('cancel'),'MONTHLY','2025-09-20','2025-10-31'),(select id from learning_reports where enrollment_id=pg_temp.monthly_id('cancel')),'cancelled first period retry returns reserved report');
+select is((select status from learning_reports where enrollment_id=pg_temp.monthly_id('cancel')),'CANCELLED','cancelled report is not revived');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('cancel'),'MONTHLY','2025-11-01','2025-11-30')$$,'cancelled report still counts as existing history');
+-- Exercise review, approval, publication and the frozen snapshot after generation change.
+select update_learning_report(id,version,'READY') from learning_reports where enrollment_id=pg_temp.monthly_id('day1');
+select is(generate_learning_report(pg_temp.monthly_id('day1'),'MONTHLY','2025-09-01','2025-09-30'),(select id from learning_reports where enrollment_id=pg_temp.monthly_id('day1')),'reviewed report retry remains idempotent');
+select update_learning_report(id,version,'APPROVE') from learning_reports where enrollment_id=pg_temp.monthly_id('day1');
+select update_learning_report(id,version,'PUBLISH') from learning_reports where enrollment_id=pg_temp.monthly_id('day1');
+select is((select status from learning_reports where enrollment_id=pg_temp.monthly_id('day1')),'PUBLISHED','publish workflow preserved');
+select is(generate_learning_report(pg_temp.monthly_id('day1'),'MONTHLY','2025-09-01','2025-09-30'),(select id from learning_reports where enrollment_id=pg_temp.monthly_id('day1')),'published retry returns existing report');
+select throws_ok($$select update_learning_report(id,version,'REGENERATE') from learning_reports where enrollment_id=pg_temp.monthly_id('day1')$$,'P0001','Report is immutable','published snapshot remains immutable');
+reset role;
+-- Simulate a pre-migration report which the old full-month rule allowed.
+insert into learning_reports(student_id,enrollment_id,branch_id,report_type,period_start,period_end,draft_data,generated_by)
+values(pg_temp.monthly_id('s-legacy'),pg_temp.monthly_id('legacy'),'11000000-0000-0000-0000-000000000001','MONTHLY','2025-09-01','2025-09-30','{}','b1000000-0000-0000-0000-000000000001');
+set local role authenticated;
+select is(generate_learning_report(pg_temp.monthly_id('legacy'),'MONTHLY','2025-09-01','2025-09-30'),(select id from learning_reports where enrollment_id=pg_temp.monthly_id('legacy')),'legacy identity preserved without rewriting old snapshot');
+select lives_ok($$select generate_learning_report(pg_temp.monthly_id('legacy'),'MONTHLY','2025-10-01','2025-10-31')$$,'legacy history continues with regular calendar month');
+reset role;
 
 select * from finish();
 rollback;

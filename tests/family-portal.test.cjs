@@ -6,6 +6,7 @@ const path = require('node:path')
 const ts = require('typescript')
 const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 const student = { id: '81000000-0000-4000-8000-000000000001', full_name: 'Learner One', student_code: 'L1' }
 function harness(fixtures = {}, signedIn = true, error = null, route = 'app/my-learning/page.tsx') {
   const calls = []
@@ -23,10 +24,8 @@ function harness(fixtures = {}, signedIn = true, error = null, route = 'app/my-l
     const mod = { exports: {} }
     const req = name => {
       if (name in mocks) return mocks[name]
-      if (name.startsWith('.') || name.startsWith('@/')) {
-        const target = name.startsWith('@/') ? path.resolve(name.slice(2)) : path.resolve(path.dirname(file), name)
-        return load(target + (fs.existsSync(target + '.tsx') ? '.tsx' : '.ts'))
-      }
+      if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
+      if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name))
       return require(name)
     }
     new Function('require', 'module', 'exports', source)(req, mod, mod.exports)

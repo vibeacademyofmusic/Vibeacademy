@@ -1,7 +1,7 @@
 # Exact migration gap and risk register — 2026-09-17
 
-Fresh read-only cloud ledger audit revalidated during final closure: LOCAL 94, STAGING 59, PRODUCTION 28.
-STAGING is missing 35; PRODUCTION is missing 66. No remote-only versions.
+Fresh read-only cloud ledger audit revalidated during final closure: LOCAL 95, STAGING 94, PRODUCTION 28.
+STAGING is missing 1; PRODUCTION is missing 67. No remote-only versions.
 Production HOLD: this is a planning inventory, not authorization to apply.
 
 The 35 staging upgrades passed on the restored local business snapshot. Earlier
@@ -48,44 +48,45 @@ posting, but callable workflows may post. All require forward recovery planning.
 | `20260916110000_financial_approval_workflows.sql` | PRODUCTION | security/RLS, finance | metadata; review | `355d7c4ee1799de566143cd94d4e522deaf5126969cb560ac62e0ea48f2bcf33` |
 | `20260916111000_invoice_cancellation_approval.sql` | PRODUCTION | security/RLS, finance | metadata; review | `b1b24514f80420c16011c1c69a3974e03884be3dbc7ce2c2eec9e748af0b4c41` |
 | `20260916120000_security_consistency_hardening.sql` | PRODUCTION | security/RLS | DDL/RPC; review | `3e6207096fb2f4dd599caaa2ff5aa74a94a277c1f44649a6397585d92fa204a8` |
-| `20260916130000_legacy_migration_review.sql` | STAGING/PRODUCTION | finance | metadata; review | `d9304c9ad3a0ed3ff581aa0361c12ed269cfc8b5b696cc9372132517556ce9b2` |
-| `20260916140000_opening_balance_collections.sql` | STAGING/PRODUCTION | finance | metadata; review | `08b77a26d256fadb18ac921e508db9b0dc5b9a9f54b3ee258d60fc2a61b0ba9c` |
-| `20260916150000_customer_credit_ledger.sql` | STAGING/PRODUCTION | finance | metadata; review | `de52724a3eaa7a55c4d4660aefb95de450edb49ce5cc8e607eb2ef2e273e4069` |
-| `20260916160000_employee_master.sql` | STAGING/PRODUCTION | HR | metadata; review | `015739a4eb41090ffcf781c1cd18296c0b1be33d4c0b3b2175e6847f7963de2f` |
-| `20260916170000_employee_attendance.sql` | STAGING/PRODUCTION | HR | DDL/RPC; review | `06301e54b704ef30acc0afab531f249f258c5800c08e4a04512f4083145d6bd3` |
-| `20260916180000_payroll_scheduled_minutes.sql` | STAGING/PRODUCTION | payroll | DDL/RPC; review | `f1d9e9d7450ac18ee2478793ba3c3100591f40a71cdd6ce238589640a87a8f66` |
-| `20260916181000_payroll_employee_recipients.sql` | STAGING/PRODUCTION | payroll, HR | DDL/RPC; review | `b080efdc47da6312c41d563aab88ff605e803da6e8bfc8c642353eacf53b63a0` |
-| `20260916182000_payroll_evidence_adjustments.sql` | STAGING/PRODUCTION | payroll | metadata; review | `e895af3768f62ffc9a0e14525916c6af14b65eb5ce67345747aafe23b8a51e08` |
-| `20260916183000_payroll_employee_self_read.sql` | STAGING/PRODUCTION | security/RLS, payroll, HR | DDL/RPC; review | `c284e5ef9ea7f6321095cb1db71994e5d1f4f7dcb0ae6e3dbd0ec95163d4ed68` |
-| `20260916184000_payroll_trip_cost_breakdown.sql` | STAGING/PRODUCTION | payroll, HR | DDL/RPC; review | `f3e883eac6a08af00786a3c3f499a8a6b084e5c0352b39c0e4f5eb1325a438e0` |
-| `20260916190000_parent_finance_visibility.sql` | STAGING/PRODUCTION | security/RLS, finance | DDL/RPC; review | `795a67c565e5b2f6ee95ba2662608c9de4033c71937887192455bfe6ea5ea4fa` |
-| `20260916191000_family_portal_projections.sql` | STAGING/PRODUCTION | security/RLS | DDL/RPC; review | `34ea6daa863b159cc7b7e7739601d9de243ed8a3f0a49385f0007d4705d111e3` |
-| `20260916192000_family_academic_permission.sql` | STAGING/PRODUCTION | security/RLS | metadata; review | `3df6589024e7af344fa9cec9f8dc735836a6839ac508f3f84081cd10a978cda7` |
-| `20260916193000_teacher_portal_reads.sql` | STAGING/PRODUCTION | security/RLS | metadata; review | `ccc068e45224db4b6533b7fc4eb2ddb1e5a0a539119b6abb56b8559060a16d95` |
-| `20260916194000_family_opening_credit_reads.sql` | STAGING/PRODUCTION | finance | DDL/RPC; review | `e508ce5ec977d410fb788e50e0c4938609faa2eef085876e835f5a75fb945046` |
-| `20260916195000_teacher_current_academic_reads.sql` | STAGING/PRODUCTION | security/RLS | metadata; review | `2a9d08ea41a39b4a16eb257adcaad70fa1491222ea661370f32a45d41bc9ed73` |
-| `20260916200000_payroll_effective_employee_self_read.sql` | STAGING/PRODUCTION | security/RLS, payroll, HR | DDL/RPC; review | `bb131c3f055f8132581a1917c2105e996eea002346f2e278147ab9c764022c0f` |
-| `20260916201000_teacher_attendance_projection.sql` | STAGING/PRODUCTION | security/RLS | DDL/RPC; review | `e35b520d13e9c7c91adba23fc34261c0556ed7f5127f8f775738932ec2cb67c0` |
-| `20260916210000_notification_infrastructure.sql` | STAGING/PRODUCTION | notifications/security | DDL/RPC; review | `919196b008f60c7b5f7a58a119c76b5ecfcb113f58b35d51d6cd9f1964c8edd6` |
-| `20260916211000_notification_delivery_revalidation.sql` | STAGING/PRODUCTION | notifications/security | DDL/RPC; review | `263741bbfad509081a1e4af46ad35e03a606a2019f1abdcab7b133cb67a260fa` |
-| `20260916212000_notification_source_contracts.sql` | STAGING/PRODUCTION | notifications/security | DDL/RPC; review | `6cc01b6156a6efd3c835454996238242de0b333a77ccd096046ed4a194357a0a` |
-| `20260916213000_notification_recipient_idempotency.sql` | STAGING/PRODUCTION | notifications/security | DDL/RPC; review | `b30f55c68dd75ff1f3453603aa08e453b7a76fad38ffc6f8eb6fbb1fe9719984` |
-| `20260916220000_inventory_ledger.sql` | STAGING/PRODUCTION | inventory | metadata; review | `c592253bd8c5f36ad0215bfebbbb391c518a1bb3133961faca39ffc2b0af4262` |
-| `20260916221000_inventory_catalogue_scope.sql` | STAGING/PRODUCTION | security/RLS, inventory | DDL/RPC; review | `2dde43b0476f49016f95128a0c40ce76c664b2fa68029401043dc8f9056d0742` |
-| `20260916223000_serialized_instruments.sql` | STAGING/PRODUCTION | inventory | DDL/RPC; review | `67aef1f2f66627d9e34274a51b3830d8df860a32e6909d1fa54e72ee7030b02f` |
-| `20260916230000_elearning_foundation.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `1310225505b82955bd59a073c32a76a2847a039bc9c96fdb732e61de6574e57e` |
-| `20260916231000_learning_course_delivery_window.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `d51c720d5d7c699ddc5a402c23be918a217f67c5a35dd3f4a7e2eba136397333` |
-| `20260916233000_learning_assessment_policies.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `aa83d94c50e768cd35cdb05c37c23f04f3f3083a73b798e815dcef443512434e` |
-| `20260916234000_learning_assessment_policy_guards.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `f8da0e34f443cef63803b1c087862b742601f2b7c4b69d8ee7f15b78d8cc69fd` |
-| `20260916235000_learning_manual_review_queue.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `7dc763f6a180e37fb9ef96131393371baffe6637b5316ecde3017250c127f4bb` |
-| `20260917000000_learning_assessment_regrades.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `4cad6540d0cc7d4498877db9bad99c4cb164ced11e8063ce7cec7463e0f5a00a` |
-| `20260917003000_learning_academic_shadow_mapping.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `9b0ab083aee3edd273c6384247ee46fe458d1074a0d6188c8780eab199fa59e6` |
-| `20260917010000_learning_theory_contents_contract.sql` | STAGING/PRODUCTION | e-learning | metadata; review | `83b0352ad11213c3eaffc2f763021a54f6db358f295ffebf4fed637c5a47c824` |
-| `20260917013000_learning_progress_analytics.sql` | STAGING/PRODUCTION | e-learning | DDL/RPC; review | `713de1c6699c446439bca6224389122c5c50f15616c24b18986701f51ee16823` |
-| `20260917020000_revoke_anonymous_business_grants.sql` | STAGING/PRODUCTION | security/RLS | DDL/RPC; review | `b0d864b9e28766b12f2238216203e3d887490974b32f020afc437b36ab86cf5c` |
+| `20260916130000_legacy_migration_review.sql` | PRODUCTION | finance | metadata; review | `d9304c9ad3a0ed3ff581aa0361c12ed269cfc8b5b696cc9372132517556ce9b2` |
+| `20260916140000_opening_balance_collections.sql` | PRODUCTION | finance | metadata; review | `08b77a26d256fadb18ac921e508db9b0dc5b9a9f54b3ee258d60fc2a61b0ba9c` |
+| `20260916150000_customer_credit_ledger.sql` | PRODUCTION | finance | metadata; review | `de52724a3eaa7a55c4d4660aefb95de450edb49ce5cc8e607eb2ef2e273e4069` |
+| `20260916160000_employee_master.sql` | PRODUCTION | HR | metadata; review | `015739a4eb41090ffcf781c1cd18296c0b1be33d4c0b3b2175e6847f7963de2f` |
+| `20260916170000_employee_attendance.sql` | PRODUCTION | HR | DDL/RPC; review | `06301e54b704ef30acc0afab531f249f258c5800c08e4a04512f4083145d6bd3` |
+| `20260916180000_payroll_scheduled_minutes.sql` | PRODUCTION | payroll | DDL/RPC; review | `f1d9e9d7450ac18ee2478793ba3c3100591f40a71cdd6ce238589640a87a8f66` |
+| `20260916181000_payroll_employee_recipients.sql` | PRODUCTION | payroll, HR | DDL/RPC; review | `b080efdc47da6312c41d563aab88ff605e803da6e8bfc8c642353eacf53b63a0` |
+| `20260916182000_payroll_evidence_adjustments.sql` | PRODUCTION | payroll | metadata; review | `e895af3768f62ffc9a0e14525916c6af14b65eb5ce67345747aafe23b8a51e08` |
+| `20260916183000_payroll_employee_self_read.sql` | PRODUCTION | security/RLS, payroll, HR | DDL/RPC; review | `c284e5ef9ea7f6321095cb1db71994e5d1f4f7dcb0ae6e3dbd0ec95163d4ed68` |
+| `20260916184000_payroll_trip_cost_breakdown.sql` | PRODUCTION | payroll, HR | DDL/RPC; review | `f3e883eac6a08af00786a3c3f499a8a6b084e5c0352b39c0e4f5eb1325a438e0` |
+| `20260916190000_parent_finance_visibility.sql` | PRODUCTION | security/RLS, finance | DDL/RPC; review | `795a67c565e5b2f6ee95ba2662608c9de4033c71937887192455bfe6ea5ea4fa` |
+| `20260916191000_family_portal_projections.sql` | PRODUCTION | security/RLS | DDL/RPC; review | `34ea6daa863b159cc7b7e7739601d9de243ed8a3f0a49385f0007d4705d111e3` |
+| `20260916192000_family_academic_permission.sql` | PRODUCTION | security/RLS | metadata; review | `3df6589024e7af344fa9cec9f8dc735836a6839ac508f3f84081cd10a978cda7` |
+| `20260916193000_teacher_portal_reads.sql` | PRODUCTION | security/RLS | metadata; review | `ccc068e45224db4b6533b7fc4eb2ddb1e5a0a539119b6abb56b8559060a16d95` |
+| `20260916194000_family_opening_credit_reads.sql` | PRODUCTION | finance | DDL/RPC; review | `e508ce5ec977d410fb788e50e0c4938609faa2eef085876e835f5a75fb945046` |
+| `20260916195000_teacher_current_academic_reads.sql` | PRODUCTION | security/RLS | metadata; review | `2a9d08ea41a39b4a16eb257adcaad70fa1491222ea661370f32a45d41bc9ed73` |
+| `20260916200000_payroll_effective_employee_self_read.sql` | PRODUCTION | security/RLS, payroll, HR | DDL/RPC; review | `bb131c3f055f8132581a1917c2105e996eea002346f2e278147ab9c764022c0f` |
+| `20260916201000_teacher_attendance_projection.sql` | PRODUCTION | security/RLS | DDL/RPC; review | `e35b520d13e9c7c91adba23fc34261c0556ed7f5127f8f775738932ec2cb67c0` |
+| `20260916210000_notification_infrastructure.sql` | PRODUCTION | notifications/security | DDL/RPC; review | `919196b008f60c7b5f7a58a119c76b5ecfcb113f58b35d51d6cd9f1964c8edd6` |
+| `20260916211000_notification_delivery_revalidation.sql` | PRODUCTION | notifications/security | DDL/RPC; review | `263741bbfad509081a1e4af46ad35e03a606a2019f1abdcab7b133cb67a260fa` |
+| `20260916212000_notification_source_contracts.sql` | PRODUCTION | notifications/security | DDL/RPC; review | `6cc01b6156a6efd3c835454996238242de0b333a77ccd096046ed4a194357a0a` |
+| `20260916213000_notification_recipient_idempotency.sql` | PRODUCTION | notifications/security | DDL/RPC; review | `b30f55c68dd75ff1f3453603aa08e453b7a76fad38ffc6f8eb6fbb1fe9719984` |
+| `20260916220000_inventory_ledger.sql` | PRODUCTION | inventory | metadata; review | `c592253bd8c5f36ad0215bfebbbb391c518a1bb3133961faca39ffc2b0af4262` |
+| `20260916221000_inventory_catalogue_scope.sql` | PRODUCTION | security/RLS, inventory | DDL/RPC; review | `2dde43b0476f49016f95128a0c40ce76c664b2fa68029401043dc8f9056d0742` |
+| `20260916223000_serialized_instruments.sql` | PRODUCTION | inventory | DDL/RPC; review | `67aef1f2f66627d9e34274a51b3830d8df860a32e6909d1fa54e72ee7030b02f` |
+| `20260916230000_elearning_foundation.sql` | PRODUCTION | e-learning | DDL/RPC; review | `1310225505b82955bd59a073c32a76a2847a039bc9c96fdb732e61de6574e57e` |
+| `20260916231000_learning_course_delivery_window.sql` | PRODUCTION | e-learning | DDL/RPC; review | `d51c720d5d7c699ddc5a402c23be918a217f67c5a35dd3f4a7e2eba136397333` |
+| `20260916233000_learning_assessment_policies.sql` | PRODUCTION | e-learning | DDL/RPC; review | `aa83d94c50e768cd35cdb05c37c23f04f3f3083a73b798e815dcef443512434e` |
+| `20260916234000_learning_assessment_policy_guards.sql` | PRODUCTION | e-learning | DDL/RPC; review | `f8da0e34f443cef63803b1c087862b742601f2b7c4b69d8ee7f15b78d8cc69fd` |
+| `20260916235000_learning_manual_review_queue.sql` | PRODUCTION | e-learning | DDL/RPC; review | `7dc763f6a180e37fb9ef96131393371baffe6637b5316ecde3017250c127f4bb` |
+| `20260917000000_learning_assessment_regrades.sql` | PRODUCTION | e-learning | DDL/RPC; review | `4cad6540d0cc7d4498877db9bad99c4cb164ced11e8063ce7cec7463e0f5a00a` |
+| `20260917003000_learning_academic_shadow_mapping.sql` | PRODUCTION | e-learning | DDL/RPC; review | `9b0ab083aee3edd273c6384247ee46fe458d1074a0d6188c8780eab199fa59e6` |
+| `20260917010000_learning_theory_contents_contract.sql` | PRODUCTION | e-learning | metadata; review | `83b0352ad11213c3eaffc2f763021a54f6db358f295ffebf4fed637c5a47c824` |
+| `20260917013000_learning_progress_analytics.sql` | PRODUCTION | e-learning | DDL/RPC; review | `713de1c6699c446439bca6224389122c5c50f15616c24b18986701f51ee16823` |
+| `20260917020000_revoke_anonymous_business_grants.sql` | PRODUCTION | security/RLS | DDL/RPC; review | `b0d864b9e28766b12f2238216203e3d887490974b32f020afc437b36ab86cf5c` |
+| `20260917100000_operational_payroll_documents.sql` | STAGING/PRODUCTION | payroll, security/HR | Non-destructive nullable reason and scoped audited RPCs; no monetary posting | `75c52f95444e5b9fc23de784ad326c1b053c1d8836aa45c6551de484456d19cb` |
 
-Staging dependency batches: 59→62 legacy/credit; 62→69 HR/payroll;
-69→77 portals; 77→81 notifications; 81→84 inventory; 84→94 learning/security.
+Staging dependency batches: 59→62 legacy/credit (applied and database-validated); 62→69 HR/payroll;
+69→77 portals; 77→81 notifications; 81→84 inventory; 84→94 learning/security; 94→95 payroll documents.
 Exact batch manifest and recovery conditions: [preflight](staging-upgrade-preflight-20260917.md).
 
 The zero-byte `20260910201008` remains untouched. Cần Thơ seed `20260909100000`

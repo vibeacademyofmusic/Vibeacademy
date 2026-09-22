@@ -1,3 +1,8 @@
+export const academicStatuses = ['NOT_STARTED', 'IN_PROGRESS', 'PASS', 'MERIT', 'DISTINCTION'] as const
+export const academicStatusLabel = (status: string) => ({ NOT_STARTED: 'Not Started', IN_PROGRESS: 'In Progress', PASS: 'Pass', MERIT: 'Merit', DISTINCTION: 'Distinction', NOT_PASSED: 'Not Passed', EXEMPT: 'Exempt' } as Record<string, string>)[status] ?? status
+export const successfulAcademicStatus = (status: string) => ['PASS', 'MERIT', 'DISTINCTION', 'EXEMPT'].includes(status)
+export const isAcademicScheduled = (start?: string | null, now = Date.now()) => Boolean(start && Date.parse(start) > now)
+
 // Callers pass only ACTIVE required components; missing progress is NOT_STARTED.
 export function subjectProgressValue(
   completionRule: string,
@@ -6,10 +11,10 @@ export function subjectProgressValue(
 ): number {
   if (completionRule === 'ALL_REQUIRED_COMPONENTS') {
     return components.length
-      ? components.filter(item => item.status === 'PASS' || item.status === 'EXEMPT').length / components.length
+      ? components.filter(item => successfulAcademicStatus(item.status)).length / components.length
       : 0
   }
-  if (status === 'PASS' || status === 'EXEMPT') return 1
+  if (successfulAcademicStatus(status)) return 1
   return status === 'IN_PROGRESS' ? 0.5 : 0
 }
 

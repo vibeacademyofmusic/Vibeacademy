@@ -250,8 +250,7 @@ export async function createCurriculumLevel(formData: FormData) {
     )
   
     const completionRule = String(
-      formData.get('completion_rule') ??
-        'ALL_REQUIRED_COMPONENTS'
+      formData.get('completion_rule') ?? ''
     )
   
     const isRequired =
@@ -303,7 +302,6 @@ export async function createCurriculumLevel(formData: FormData) {
       ![
         'ALL_REQUIRED_COMPONENTS',
         'DIRECT_ASSESSMENT',
-        'MANUAL',
       ].includes(completionRule)
     ) {
       redirect(
@@ -860,8 +858,7 @@ export async function createCurriculumLevel(formData: FormData) {
     )
   
     const completionRule = String(
-      formData.get('completion_rule') ??
-        'ALL_REQUIRED_COMPONENTS'
+      formData.get('completion_rule') ?? ''
     )
   
     const isRequired =
@@ -906,7 +903,6 @@ export async function createCurriculumLevel(formData: FormData) {
       ![
         'ALL_REQUIRED_COMPONENTS',
         'DIRECT_ASSESSMENT',
-        'MANUAL',
       ].includes(completionRule)
     ) {
       redirect(`${editPath}?error=Invalid%20completion%20rule`)

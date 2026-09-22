@@ -1,0 +1,45 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const test = require('node:test')
+const assert = require('node:assert/strict')
+const fs = require('node:fs')
+
+const navigation = fs.readFileSync('app/admin/navigation.ts', 'utf8')
+const students = fs.readFileSync('app/admin/students/page.tsx', 'utf8')
+const detail = fs.readFileSync('app/admin/business/registrations/[id]/page.tsx', 'utf8')
+const crm = fs.readFileSync('app/admin/business/crm/[id]/page.tsx', 'utf8')
+const migration = fs.readFileSync('supabase/migrations/20260922260000_registration_placement_v1.sql', 'utf8')
+
+test('registration is a business route and students stay one menu item', () => {
+  assert.match(navigation, /Hồ sơ đăng ký/)
+  assert.match(navigation, /\/admin\/business\/registrations/)
+  assert.equal(navigation.includes('waiting_students'), false)
+  assert.equal((navigation.match(/name: 'Học viên'/g) || []).length, 1)
+  assert.ok(fs.existsSync('app/admin/business/registrations/page.tsx'))
+  assert.ok(fs.existsSync('app/admin/business/registrations/[id]/page.tsx'))
+})
+
+test('students page derives current and waiting without a second student table', () => {
+  assert.match(students, /Học viên hiện tại/)
+  assert.match(students, /Chờ sắp lớp/)
+  assert.match(students, /list_current_student_enrollments/)
+  assert.match(students, /list_waiting_placements/)
+  assert.match(students, /waiting_placement_summary/)
+  assert.match(students, /Đã xếp lớp – chờ bắt đầu/)
+  assert.match(students, /Xếp lớp/)
+  assert.match(students, /Đổi lớp/)
+  assert.match(students, /Hủy xếp lớp/)
+  assert.match(students, /Đã bắt đầu học — cần quy trình chuyển lớp/)
+  assert.match(students, /Chưa xếp lớp/)
+  assert.match(students, /Đang tìm lịch phù hợp/)
+  assert.equal(students.includes('placement_status}'), false)
+  assert.equal(students.includes('waiting_students'), false)
+})
+
+test('won lead can open a prefilled registration and completion stays reviewed', () => {
+  assert.match(crm, /Tạo hồ sơ đăng ký/)
+  assert.match(crm, /registrations\/new\?lead=/)
+  assert.match(detail, /Hoàn tất đăng ký/)
+  assert.match(migration, /REGISTRATION_REVIEW_REQUIRED/)
+  assert.match(migration, /registration_invoice_settled/)
+  assert.equal(migration.includes('waiting_students'), false)
+})

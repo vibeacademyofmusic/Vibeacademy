@@ -1,60 +1,90 @@
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/server'
-
 import { generateSessions } from './actions'
-import { attendanceLoadMessage, loadVisibleAttendance } from './attendance-loader'
+import {
+  attendanceLoadMessage,
+  loadVisibleAttendance,
+} from './attendance-loader'
 
 type AttendancePageProps = {
   searchParams: Promise<{
     error?: string
     success?: string
-    status?: string
-    type?: string
-    from?: string
-    to?: string
+    date?: string
     branch?: string
     class?: string
+    teacher?: string
+    status?: string
+    type?: string
+    view?: string
     q?: string
   }>
 }
 
-const SESSION_STATUSES = new Set([
-  'SCHEDULED',
-  'COMPLETED',
-  'CANCELLED',
-])
+type AttendanceStatus =
+  | 'PRESENT'
+  | 'ABSENT'
+  | 'LATE'
+  | 'EXCUSED'
 
-const SESSION_TYPES = new Set(['REGULAR', 'MAKEUP'])
+type AttendanceRecord = {
+  session_occurrence_id: string
+  enrollment_id: string
+  status: AttendanceStatus
+}
+
+type EnrollmentRow = {
+  id: string
+  class_id: string
+  student_id: string
+  started_at: string | null
+  ended_at: string | null
+}
+
+type StudentRow = {
+  id: string
+  student_code: string
+  full_name: string | null
+  preferred_name: string | null
+}
+
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
-const SESSION_STATUS_STYLES: Record<
-  string,
-  string
-> = {
+const sessionStatusLabel: Record<string, string> = {
+  SCHEDULED: 'Đang chờ',
+  COMPLETED: 'Hoàn tất',
+  CANCELLED: 'Đã hủy',
+}
+
+const sessionStatusClass: Record<string, string> = {
   SCHEDULED: 'bg-blue-50 text-blue-700',
   COMPLETED: 'bg-green-50 text-green-700',
-  CANCELLED: 'bg-red-50 text-red-700',
+  CANCELLED: 'bg-gray-100 text-gray-600',
 }
 
-function formatSessionDate(
-  value: string,
-  timezone: string
-) {
-  return new Intl.DateTimeFormat('en-GB', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: timezone,
-  }).format(new Date(value))
+const attendanceLabel: Record<string, string> = {
+  PRESENT: 'Có mặt',
+  ABSENT: 'Vắng',
+  LATE: 'Đi muộn',
+  EXCUSED: 'Vắng có phép',
 }
 
-function formatSessionTime(
-  value: string,
-  timezone: string
-) {
-  return new Intl.DateTimeFormat('en-GB', {
+const attendanceClass: Record<string, string> = {
+  PRESENT: 'bg-green-50 text-green-700',
+  ABSENT: 'bg-red-50 text-red-700',
+  LATE: 'bg-amber-50 text-amber-700',
+  EXCUSED: 'bg-sky-50 text-sky-700',
+}
+
+function vietnamToday() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(new Date())
+}
+
+function formatTime(value: string, timezone = 'Asia/Ho_Chi_Minh') {
+  return new Intl.DateTimeFormat('vi-VN', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -62,65 +92,64 @@ function formatSessionTime(
   }).format(new Date(value))
 }
 
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat('vi-VN', {
+    weekday: 'long',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(new Date(`${value}T00:00:00+07:00`))
+}
+
+function studentName(student: StudentRow | undefined) {
+  return (
+    student?.preferred_name ||
+    student?.full_name ||
+    student?.student_code ||
+    'Học viên'
+  )
+}
+
 export default async function AttendancePage({
   searchParams,
 }: AttendancePageProps) {
-  const {
-    error,
-    success,
-    status: requestedStatus,
-    type: requestedType,
-    from: requestedFromDate,
-    to: requestedToDate,
-    q: requestedQuery,
-    branch: branchFilter,
-    class: classFilter,
-  } = await searchParams
+  const params = await searchParams
+  const today = vietnamToday()
 
-  const statusFilter = SESSION_STATUSES.has(
-    requestedStatus ?? ''
-  )
-    ? requestedStatus
-    : ''
-
-  const typeFilter = SESSION_TYPES.has(
-    requestedType ?? ''
-  )
-    ? requestedType
-    : ''
-
-  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date())
-
-  const fromDateFilter = DATE_PATTERN.test(
-    requestedFromDate ?? ''
-  )
-    ? requestedFromDate
+  const selectedDate = DATE_PATTERN.test(params.date ?? '')
+    ? params.date!
     : today
 
-  const toDateFilter = DATE_PATTERN.test(
-    requestedToDate ?? ''
-  )
-    ? requestedToDate
-    : fromDateFilter
+  const selectedView = [
+    'ALL',
+    'UNMARKED',
+    'ABSENT',
+    'MAKEUP',
+  ].includes(params.view ?? '')
+    ? params.view!
+    : 'ALL'
 
-  const searchQuery = (requestedQuery ?? '')
+  const selectedStatus = [
+    'SCHEDULED',
+    'COMPLETED',
+    'CANCELLED',
+  ].includes(params.status ?? '')
+    ? params.status!
+    : ''
+
+  const selectedType = ['REGULAR', 'MAKEUP'].includes(
+    params.type ?? ''
+  )
+    ? params.type!
+    : ''
+
+  const queryText = (params.q ?? '')
     .trim()
     .slice(0, 100)
-    .toLocaleLowerCase()
+    .toLocaleLowerCase('vi')
 
-  const supabase = await createClient()
-
-  const defaultToDateValue = new Date(
-    `${today}T00:00:00Z`
-  )
-
-  defaultToDateValue.setUTCDate(
-    defaultToDateValue.getUTCDate() + 90
-  )
-
-  const defaultToDate = defaultToDateValue
-    .toISOString()
-    .slice(0, 10)
+  const db = await createClient()
 
   const [
     { data: occurrences, error: occurrencesError },
@@ -130,13 +159,15 @@ export default async function AttendancePage({
     { data: rooms, error: roomsError },
     { data: teachers, error: teachersError },
   ] = await Promise.all([
-    supabase
+    db
       .from('session_actual_teachers')
       .select(`
         id:session_id,
         teacher_id,
         assignment_type,
         schedule_id,
+        class_id,
+        branch_id,
         occurrence_date,
         starts_at,
         ends_at,
@@ -146,129 +177,287 @@ export default async function AttendancePage({
         occurrence_type,
         source_occurrence_id
       `)
-      .gte('occurrence_date', fromDateFilter!)
-      .lte('occurrence_date', toDateFilter!)
-      .match({...(branchFilter ? {branch_id:branchFilter}:{}), ...(classFilter ? {class_id:classFilter}:{})})
+      .eq('occurrence_date', selectedDate)
+      .match({
+        ...(params.branch ? { branch_id: params.branch } : {}),
+        ...(params.class ? { class_id: params.class } : {}),
+        ...(params.teacher
+          ? { teacher_id: params.teacher }
+          : {}),
+      })
       .order('starts_at', { ascending: true })
-      .limit(200),
+      .limit(300),
 
-    supabase
-      .from('schedules')
-      .select('id, class_id, timezone'),
+    db.from('schedules').select('id,class_id,timezone'),
 
-    supabase
+    db
       .from('classes')
-      .select('id, branch_id, code, name'),
+      .select('id,branch_id,code,name,class_type')
+      .order('name'),
 
-    supabase
+    db
       .from('branches')
-      .select('id, code, name'),
+      .select('id,code,name,status')
+      .eq('status', 'ACTIVE')
+      .order('name'),
 
-    supabase
+    db
       .from('rooms')
-      .select('id, code, name'),
+      .select('id,branch_id,code,name,status')
+      .eq('status', 'ACTIVE')
+      .order('name'),
 
-    supabase.from('teachers').select('id,full_name,teacher_code'),
+    db
+      .from('teachers')
+      .select('id,full_name,teacher_code,status')
+      .eq('status', 'ACTIVE')
+      .order('full_name'),
   ])
 
-  const { data: attendance, error: attendanceError } = await loadVisibleAttendance(
-    supabase, occurrencesError ? [] : (occurrences ?? []).map(item => item.id)
+  const visibleOccurrences = occurrencesError
+    ? []
+    : occurrences ?? []
+
+  const occurrenceIds = visibleOccurrences.map(
+    (item) => item.id
   )
+
+  const classIds = Array.from(
+    new Set(
+      visibleOccurrences
+        .map((item) => item.class_id)
+        .filter(Boolean)
+    )
+  )
+
+  const [
+    { data: attendance, error: attendanceError },
+    { data: enrollments, error: enrollmentsError },
+    { data: pauses, error: pausesError },
+    { data: makeupParticipants, error: participantsError },
+  ] = await Promise.all([
+    loadVisibleAttendance(db, occurrenceIds),
+
+    classIds.length
+      ? db
+          .from('enrollments')
+          .select(
+            'id,class_id,student_id,started_at,ended_at'
+          )
+          .in('class_id', classIds)
+      : Promise.resolve({ data: [], error: null }),
+
+    classIds.length
+      ? db
+          .from('enrollment_pauses')
+          .select('enrollment_id')
+          .eq('status', 'ACTIVE')
+          .lte('starts_on', selectedDate)
+          .gte('ends_on', selectedDate)
+      : Promise.resolve({ data: [], error: null }),
+
+    occurrenceIds.length
+      ? db
+          .from('session_occurrence_participants')
+          .select('session_occurrence_id,enrollment_id')
+          .in('session_occurrence_id', occurrenceIds)
+      : Promise.resolve({ data: [], error: null }),
+  ])
+
+  const enrollmentRows =
+    (enrollments ?? []) as EnrollmentRow[]
+
+  const studentIds = Array.from(
+    new Set(enrollmentRows.map((row) => row.student_id))
+  )
+
+  const { data: students, error: studentsError } =
+    studentIds.length
+      ? await db
+          .from('students')
+          .select(
+            'id,student_code,full_name,preferred_name'
+          )
+          .in('id', studentIds)
+      : { data: [], error: null }
+
   const sourceErrors = {
-    session_actual_teachers: occurrencesError, schedules: schedulesError,
-    classes: classesError, branches: branchesError, rooms: roomsError,
-    attendance_records: attendanceError, teachers: teachersError,
+    session_actual_teachers: occurrencesError,
+    schedules: schedulesError,
+    classes: classesError,
+    branches: branchesError,
+    rooms: roomsError,
+    teachers: teachersError,
+    attendance_records: attendanceError,
+    enrollments: enrollmentsError,
+    enrollment_pauses: pausesError,
+    session_occurrence_participants: participantsError,
+    students: studentsError,
   }
+
   const loadError = attendanceLoadMessage(sourceErrors)
-  for (const [source, failure] of Object.entries(sourceErrors)) {
-    if (failure) console.error('Attendance source failed', { source, code: failure.code })
+
+  for (const [source, failure] of Object.entries(
+    sourceErrors
+  )) {
+    if (failure) {
+      console.error('Attendance source failed', {
+        source,
+        code: failure.code,
+      })
+    }
   }
 
   const scheduleMap = new Map(
-    (schedules ?? []).map((schedule) => [
-      schedule.id,
-      schedule,
-    ])
+    (schedules ?? []).map((item) => [item.id, item])
   )
-
   const classMap = new Map(
-    (classes ?? []).map((classItem) => [
-      classItem.id,
-      classItem,
-    ])
+    (classes ?? []).map((item) => [item.id, item])
   )
-
   const branchMap = new Map(
-    (branches ?? []).map((branch) => [
-      branch.id,
-      branch,
-    ])
+    (branches ?? []).map((item) => [item.id, item])
   )
-
   const roomMap = new Map(
-    (rooms ?? []).map((room) => [
-      room.id,
-      room,
+    (rooms ?? []).map((item) => [item.id, item])
+  )
+  const teacherMap = new Map(
+    (teachers ?? []).map((item) => [item.id, item])
+  )
+  const studentMap = new Map(
+    ((students ?? []) as StudentRow[]).map((item) => [
+      item.id,
+      item,
     ])
   )
 
-  const attendanceSummary = new Map<
+  const pausedEnrollmentIds = new Set(
+    (pauses ?? []).map((item) => item.enrollment_id)
+  )
+
+  const makeupEnrollmentsByOccurrence = new Map<
     string,
-    {
-      total: number
-      present: number
-      absent: number
-      late: number
-      excused: number
-    }
+    Set<string>
   >()
 
-  for (const record of attendance ?? []) {
-    const summary = attendanceSummary.get(
-      record.session_occurrence_id
-    ) ?? {
-      total: 0,
-      present: 0,
-      absent: 0,
-      late: 0,
-      excused: 0,
-    }
+  for (const item of makeupParticipants ?? []) {
+    const set =
+      makeupEnrollmentsByOccurrence.get(
+        item.session_occurrence_id
+      ) ?? new Set<string>()
 
-    summary.total += 1
-
-    if (record.status === 'PRESENT') {
-      summary.present += 1
-    } else if (record.status === 'ABSENT') {
-      summary.absent += 1
-    } else if (record.status === 'LATE') {
-      summary.late += 1
-    } else if (record.status === 'EXCUSED') {
-      summary.excused += 1
-    }
-
-    attendanceSummary.set(
-      record.session_occurrence_id,
-      summary
+    set.add(item.enrollment_id)
+    makeupEnrollmentsByOccurrence.set(
+      item.session_occurrence_id,
+      set
     )
   }
 
-  const filteredOccurrences = (occurrences ?? []).filter(
-    (occurrence) => {
+  const attendanceByOccurrence = new Map<
+    string,
+    Map<string, AttendanceRecord>
+  >()
+
+  for (const item of (attendance ?? []) as AttendanceRecord[]) {
+    const map =
+      attendanceByOccurrence.get(
+        item.session_occurrence_id
+      ) ?? new Map<string, AttendanceRecord>()
+
+    map.set(item.enrollment_id, item)
+    attendanceByOccurrence.set(
+      item.session_occurrence_id,
+      map
+    )
+  }
+
+  function rosterForOccurrence(
+    occurrence: (typeof visibleOccurrences)[number]
+  ) {
+    if (occurrence.occurrence_type === 'MAKEUP') {
+      const participantIds =
+        makeupEnrollmentsByOccurrence.get(
+          occurrence.id
+        ) ?? new Set<string>()
+
+      return enrollmentRows.filter((enrollment) =>
+        participantIds.has(enrollment.id)
+      )
+    }
+
+    return enrollmentRows.filter((enrollment) => {
+      if (enrollment.class_id !== occurrence.class_id) {
+        return false
+      }
+
+      if (!enrollment.started_at) {
+        return false
+      }
+
+      return (
+        enrollment.started_at <= selectedDate &&
+        (!enrollment.ended_at ||
+          enrollment.ended_at >= selectedDate) &&
+        !pausedEnrollmentIds.has(enrollment.id)
+      )
+    })
+  }
+
+  const cards = visibleOccurrences
+    .map((occurrence) => {
       const schedule = scheduleMap.get(
         occurrence.schedule_id
       )
-
-      const classItem = schedule
-        ? classMap.get(schedule.class_id)
-        : null
-
-      const branch = classItem
-        ? branchMap.get(classItem.branch_id)
-        : null
-
+      const classItem =
+        classMap.get(occurrence.class_id) ??
+        (schedule
+          ? classMap.get(schedule.class_id)
+          : undefined)
+      const branch = branchMap.get(
+        occurrence.branch_id ??
+          classItem?.branch_id
+      )
       const room = occurrence.room_id
         ? roomMap.get(occurrence.room_id)
-        : null
+        : undefined
+      const teacher = teacherMap.get(
+        occurrence.teacher_id
+      )
+
+      const roster = rosterForOccurrence(occurrence)
+      const attendanceMap =
+        attendanceByOccurrence.get(occurrence.id) ??
+        new Map<string, AttendanceRecord>()
+
+      const studentRows = roster.map((enrollment) => ({
+        enrollment,
+        student: studentMap.get(
+          enrollment.student_id
+        ),
+        attendance: attendanceMap.get(enrollment.id),
+      }))
+
+      const marked = studentRows.filter(
+        (item) => item.attendance
+      ).length
+      const present = studentRows.filter(
+        (item) =>
+          item.attendance?.status === 'PRESENT'
+      ).length
+      const late = studentRows.filter(
+        (item) => item.attendance?.status === 'LATE'
+      ).length
+      const absent = studentRows.filter(
+        (item) =>
+          item.attendance?.status === 'ABSENT'
+      ).length
+      const excused = studentRows.filter(
+        (item) =>
+          item.attendance?.status === 'EXCUSED'
+      ).length
+      const unmarked = Math.max(
+        0,
+        studentRows.length - marked
+      )
 
       const searchableText = [
         classItem?.name,
@@ -277,473 +466,534 @@ export default async function AttendancePage({
         branch?.code,
         room?.name,
         room?.code,
+        teacher?.full_name,
+        teacher?.teacher_code,
+        ...studentRows.map((item) =>
+          studentName(item.student)
+        ),
       ]
         .filter(Boolean)
         .join(' ')
-        .toLocaleLowerCase()
+        .toLocaleLowerCase('vi')
 
-      return (
-        (!statusFilter ||
-          occurrence.status === statusFilter) &&
-        (!typeFilter ||
-          occurrence.occurrence_type === typeFilter) &&
-        (!fromDateFilter ||
-          occurrence.occurrence_date >= fromDateFilter) &&
-        (!toDateFilter ||
-          occurrence.occurrence_date <= toDateFilter) &&
-        (!searchQuery ||
-          searchableText.includes(searchQuery))
-      )
-    }
-  )
-
-  const referenceTime = new Date().getTime()
-  filteredOccurrences.sort((a,b)=>Math.abs(Date.parse(a.starts_at)-referenceTime)-Math.abs(Date.parse(b.starts_at)-referenceTime))
-
-  const statusCounts = filteredOccurrences.reduce(
-    (counts, occurrence) => {
-      if (occurrence.status === 'SCHEDULED') {
-        counts.scheduled += 1
-      } else if (
-        occurrence.status === 'COMPLETED'
+      return {
+        occurrence,
+        schedule,
+        classItem,
+        branch,
+        room,
+        teacher,
+        studentRows,
+        marked,
+        present,
+        late,
+        absent,
+        excused,
+        unmarked,
+        searchableText,
+      }
+    })
+    .filter((card) => {
+      if (
+        selectedStatus &&
+        card.occurrence.status !== selectedStatus
       ) {
-        counts.completed += 1
-      } else if (
-        occurrence.status === 'CANCELLED'
-      ) {
-        counts.cancelled += 1
+        return false
       }
 
-      return counts
+      if (
+        selectedType &&
+        card.occurrence.occurrence_type !== selectedType
+      ) {
+        return false
+      }
+
+      if (
+        selectedView === 'UNMARKED' &&
+        card.unmarked === 0
+      ) {
+        return false
+      }
+
+      if (
+        selectedView === 'ABSENT' &&
+        card.absent + card.excused === 0
+      ) {
+        return false
+      }
+
+      if (
+        selectedView === 'MAKEUP' &&
+        card.occurrence.occurrence_type !== 'MAKEUP'
+      ) {
+        return false
+      }
+
+      if (
+        queryText &&
+        !card.searchableText.includes(queryText)
+      ) {
+        return false
+      }
+
+      return true
+    })
+
+  const totals = cards.reduce(
+    (summary, card) => {
+      summary.sessions += 1
+      summary.students += card.studentRows.length
+      summary.marked += card.marked
+      summary.present += card.present
+      summary.late += card.late
+      summary.absent += card.absent
+      summary.excused += card.excused
+      summary.unmarked += card.unmarked
+
+      if (
+        card.occurrence.occurrence_type === 'MAKEUP'
+      ) {
+        summary.makeupSessions += 1
+      }
+
+      return summary
     },
     {
-      scheduled: 0,
-      completed: 0,
-      cancelled: 0,
+      sessions: 0,
+      students: 0,
+      marked: 0,
+      present: 0,
+      late: 0,
+      absent: 0,
+      excused: 0,
+      unmarked: 0,
+      makeupSessions: 0,
     }
   )
 
+  const queryFor = (
+    next: Record<string, string | undefined>
+  ) => {
+    const query = new URLSearchParams()
+
+    const values = {
+      date: selectedDate,
+      branch: params.branch,
+      class: params.class,
+      teacher: params.teacher,
+      status: selectedStatus || undefined,
+      type: selectedType || undefined,
+      view: selectedView,
+      q: params.q,
+      ...next,
+    }
+
+    for (const [key, value] of Object.entries(values)) {
+      if (value) query.set(key, value)
+    }
+
+    return `/admin/attendance?${query.toString()}`
+  }
+
   return (
-    <div>
-      <div className="mb-8">
+    <div className="min-w-0 space-y-6">
+      <div>
         <p className="text-sm font-medium text-gray-500">
-          Session Engine
+          Vận hành trong ngày
         </p>
-
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
-          Sessions & Attendance
+          Điểm danh hôm nay
         </h1>
-
-        <p className="mt-2 max-w-3xl text-sm text-gray-500">
-          Review dated class sessions generated from the
-          recurring master schedule. Attendance belongs to
-          each concrete session shown here.
+        <p className="mt-2 text-sm text-gray-600">
+          {formatDate(selectedDate)} · Giờ Việt Nam
         </p>
       </div>
 
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
+      {params.error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {params.error}
         </div>
       )}
 
-      {success && (
-        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-          {success}
+      {params.success && (
+        <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+          {params.success}
         </div>
       )}
 
       {loadError && (
-        <div role="alert" className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           {loadError}
         </div>
       )}
 
-      <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-6">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-950">
-              Generate Dated Sessions
-            </h2>
-
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
-              Create concrete session occurrences from all
-              active recurring schedules in this date range.
-              Existing sessions will not be duplicated.
-            </p>
-          </div>
-
-          <form
-            action={generateSessions}
-            className="grid gap-4 sm:grid-cols-[180px_180px_auto] sm:items-end"
-          >
-            <div>
-              <label
-                htmlFor="from_date"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                From
-              </label>
-
-              <input
-                id="from_date"
-                name="from_date"
-                type="date"
-                required
-                defaultValue={today}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="to_date"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                To
-              </label>
-
-              <input
-                id="to_date"
-                name="to_date"
-                type="date"
-                required
-                defaultValue={defaultToDate}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
-            >
-              Generate Sessions
-            </button>
-          </form>
-        </div>
-      </section>
-
-      <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5">
-        <form className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(5,minmax(0,1fr))_auto] xl:items-end">
-          <label className="text-sm font-medium text-gray-700">Chi nhánh<select name="branch" defaultValue={branchFilter||''} className="mt-2 block w-full rounded border p-2"><option value="">Tất cả</option>{branches?.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}</select></label>
-          <label className="text-sm font-medium text-gray-700">Lớp<select name="class" defaultValue={classFilter||''} className="mt-2 block w-full rounded border p-2"><option value="">Tất cả</option>{classes?.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
+      <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
           <label className="text-sm font-medium text-gray-700">
-            Search
+            Ngày
+            <input
+              type="date"
+              name="date"
+              defaultValue={selectedDate}
+              className="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2"
+            />
+          </label>
 
+          <label className="text-sm font-medium text-gray-700">
+            Chi nhánh
+            <select
+              name="branch"
+              defaultValue={params.branch ?? ''}
+              className="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2"
+            >
+              <option value="">Tất cả</option>
+              {(branches ?? []).map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            Lớp
+            <select
+              name="class"
+              defaultValue={params.class ?? ''}
+              className="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2"
+            >
+              <option value="">Tất cả</option>
+              {(classes ?? [])
+                .filter(
+                  (item) =>
+                    !params.branch ||
+                    item.branch_id === params.branch
+                )
+                .map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+            </select>
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            Giáo viên
+            <select
+              name="teacher"
+              defaultValue={params.teacher ?? ''}
+              className="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2"
+            >
+              <option value="">Tất cả</option>
+              {(teachers ?? []).map((teacher) => (
+                <option key={teacher.id} value={teacher.id}>
+                  {teacher.full_name ||
+                    teacher.teacher_code}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            Loại buổi
+            <select
+              name="type"
+              defaultValue={selectedType}
+              className="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2"
+            >
+              <option value="">Tất cả</option>
+              <option value="REGULAR">Lịch thường</option>
+              <option value="MAKEUP">Học bù</option>
+            </select>
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            Tìm nhanh
             <input
               type="search"
               name="q"
-              defaultValue={requestedQuery?.slice(0, 100) ?? ''}
-              maxLength={100}
-              placeholder="Class, branch, or room"
-              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              defaultValue={params.q ?? ''}
+              placeholder="Học viên, lớp, phòng..."
+              className="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2"
             />
           </label>
 
-          <label className="text-sm font-medium text-gray-700">
-            Session status
+          <input
+            type="hidden"
+            name="view"
+            value={selectedView}
+          />
 
-            <select
-              name="status"
-              defaultValue={statusFilter}
-              className="mt-2 block w-full min-w-44 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-            >
-              <option value="">All statuses</option>
-              <option value="SCHEDULED">Scheduled</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
-          </label>
-
-          <label className="text-sm font-medium text-gray-700">
-            Session type
-
-            <select
-              name="type"
-              defaultValue={typeFilter}
-              className="mt-2 block w-full min-w-44 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-            >
-              <option value="">All types</option>
-              <option value="REGULAR">Regular</option>
-              <option value="MAKEUP">Makeup</option>
-            </select>
-          </label>
-
-          <label className="text-sm font-medium text-gray-700">
-            From date
-
-            <input
-              type="date"
-              name="from"
-              defaultValue={fromDateFilter}
-              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-            />
-          </label>
-
-          <label className="text-sm font-medium text-gray-700">
-            To date
-
-            <input
-              type="date"
-              name="to"
-              defaultValue={toDateFilter}
-              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-            />
-          </label>
-
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              className="rounded-lg bg-gray-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
-            >
-              Apply Filters
+          <div className="md:col-span-2 xl:col-span-6 flex flex-wrap gap-2">
+            <button className="rounded-lg bg-gray-950 px-4 py-2 text-sm font-semibold text-white">
+              Lọc điểm danh
             </button>
-
-            {(statusFilter ||
-              typeFilter ||
-              fromDateFilter ||
-              toDateFilter ||
-              searchQuery) && (
-              <Link
-                href="/admin/attendance"
-                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-              >
-                Clear
-              </Link>
-            )}
+            <Link
+              href={`/admin/attendance?date=${today}`}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium"
+            >
+              Hôm nay
+            </Link>
           </div>
         </form>
       </section>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Total Sessions
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-gray-950">
-            {filteredOccurrences.length}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Scheduled
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-blue-700">
-            {statusCounts.scheduled}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Completed
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-green-700">
-            {statusCounts.completed}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Cancelled
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-red-700">
-            {statusCounts.cancelled}
-          </p>
-        </div>
-      </div>
-
-      {filteredOccurrences.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
-          <p className="text-sm font-semibold text-gray-800">
-            No dated sessions yet
-          </p>
-
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500">
-            {statusFilter ||
-            typeFilter ||
-            fromDateFilter ||
-            toDateFilter ||
-            searchQuery
-              ? 'No sessions match the selected filters.'
-              : 'Master schedules do not appear here until session occurrences are generated for a date range.'}
-          </p>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
-                <tr>
-                  <th className="px-5 py-3 font-medium">
-                    Class
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Date & Time
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Branch / Room
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Attendance
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Session Status
-                  </th>
-
-                  <th className="px-5 py-3 text-right font-medium">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-gray-100">
-                {filteredOccurrences.map((occurrence) => {
-                  const schedule = scheduleMap.get(
-                    occurrence.schedule_id
-                  )
-
-                  const classItem = schedule
-                    ? classMap.get(schedule.class_id)
-                    : null
-
-                  const branch = classItem
-                    ? branchMap.get(classItem.branch_id)
-                    : null
-
-                  const room = occurrence.room_id
-                    ? roomMap.get(occurrence.room_id)
-                    : null
-
-                  const timezone =
-                    schedule?.timezone ??
-                    'Asia/Ho_Chi_Minh'
-
-                  const summary =
-                    attendanceSummary.get(
-                      occurrence.id
-                    )
-
-                  return (
-                    <tr key={occurrence.id}>
-                      <td className="px-5 py-4">
-                        <p className="font-semibold text-gray-950">
-                          {classItem?.name ??
-                            'Unknown Class'}
-                        </p>
-
-                        <p className="mt-1 text-xs text-gray-500">
-                          {classItem?.code ?? '—'}
-                          {' • '}{teachers?.find(t=>t.id===occurrence.teacher_id)?.full_name||'Chưa xác định giáo viên'}
-                          {occurrence.assignment_type==='SUBSTITUTE'&&<span className="ml-2 text-amber-800">Dạy thay</span>}
-                        </p>
-
-                        <span
-                          className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                            occurrence.occurrence_type ===
-                            'MAKEUP'
-                              ? 'bg-purple-50 text-purple-700'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          {occurrence.occurrence_type}
-                        </span>
-
-                        {occurrence.occurrence_type ===
-                          'MAKEUP' &&
-                          occurrence.source_occurrence_id && (
-                            <Link
-                              href={`/admin/attendance/${occurrence.source_occurrence_id}`}
-                              className="ml-2 inline-flex text-xs font-medium text-purple-700 underline decoration-purple-300 underline-offset-2 hover:text-purple-900"
-                            >
-                              View source
-                            </Link>
-                          )}
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <p className="font-medium text-gray-900">
-                          {formatSessionDate(
-                            occurrence.starts_at,
-                            timezone
-                          )}
-                        </p>
-
-                        <p className="mt-1 text-xs text-gray-500">
-                          {formatSessionTime(
-                            occurrence.starts_at,
-                            timezone
-                          )}{' '}
-                          –{' '}
-                          {formatSessionTime(
-                            occurrence.ends_at,
-                            timezone
-                          )}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <p className="font-medium text-gray-800">
-                          {branch?.name ??
-                            'Unknown branch'}
-                        </p>
-
-                        <p className="mt-1 text-xs text-gray-500">
-                          {room
-                            ? `${room.name} (${room.code})`
-                            : 'No room'}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <p className="font-medium text-gray-900">
-                          {summary?.total ?? 0} marked
-                        </p>
-
-                        <p className="mt-1 text-xs text-gray-500">
-                          {summary
-                            ? `${summary.present} present · ${summary.late} late · ${summary.absent} absent · ${summary.excused} excused`
-                            : 'No attendance recorded'}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            SESSION_STATUS_STYLES[
-                              occurrence.status
-                            ] ??
-                            'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          {occurrence.status}
-                        </span>
-                      </td>
-
-                      <td className="px-5 py-4 text-right">
-                        <Link
-                          href={`/admin/attendance/${occurrence.id}`}
-                          className="inline-flex rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
-                        >
-                          Open Session
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+        {[
+          ['Buổi hôm nay', totals.sessions],
+          ['Học viên dự kiến', totals.students],
+          ['Đã điểm danh', totals.marked],
+          ['Chưa điểm danh', totals.unmarked],
+          ['Vắng', totals.absent + totals.excused],
+          ['Buổi học bù', totals.makeupSessions],
+        ].map(([label, value]) => (
+          <div
+            key={String(label)}
+            className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
+          >
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              {label}
+            </p>
+            <p className="mt-2 text-2xl font-bold text-gray-950">
+              {value}
+            </p>
           </div>
-        </div>
-      )}
+        ))}
+      </section>
+
+      <nav className="flex flex-wrap gap-2">
+        {[
+          ['ALL', 'Tất cả'],
+          ['UNMARKED', 'Chưa điểm danh'],
+          ['ABSENT', 'Vắng'],
+          ['MAKEUP', 'Học bù'],
+        ].map(([id, label]) => (
+          <Link
+            key={id}
+            href={queryFor({ view: id })}
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              selectedView === id
+                ? 'bg-gray-950 text-white'
+                : 'border border-gray-300 bg-white text-gray-700'
+            }`}
+          >
+            {label}
+          </Link>
+        ))}
+      </nav>
+
+      <section className="space-y-4">
+        {cards.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
+            Không có buổi học phù hợp với bộ lọc.
+          </div>
+        ) : (
+          cards.map((card) => {
+            const timezone =
+              card.schedule?.timezone ||
+              'Asia/Ho_Chi_Minh'
+
+            return (
+              <article
+                key={card.occurrence.id}
+                className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+              >
+                <div className="flex flex-col gap-4 border-b border-gray-100 p-5 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex gap-4">
+                    <div className="min-w-20 rounded-xl bg-gray-950 px-3 py-3 text-center text-white">
+                      <div className="text-xl font-bold">
+                        {formatTime(
+                          card.occurrence.starts_at,
+                          timezone
+                        )}
+                      </div>
+                      <div className="mt-1 text-xs text-gray-300">
+                        {formatTime(
+                          card.occurrence.ends_at,
+                          timezone
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-lg font-bold text-gray-950">
+                          {card.classItem?.name ||
+                            card.classItem?.code ||
+                            'Lớp học'}
+                        </h2>
+
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            sessionStatusClass[
+                              card.occurrence.status
+                            ] ||
+                            'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {sessionStatusLabel[
+                            card.occurrence.status
+                          ] ||
+                            card.occurrence.status}
+                        </span>
+
+                        {card.occurrence.occurrence_type ===
+                          'MAKEUP' && (
+                          <span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700">
+                            Học bù
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-2 text-sm text-gray-600">
+                        {card.branch?.name || '—'}
+                        {' • '}
+                        {card.room?.name ||
+                          card.room?.code ||
+                          'Chưa xếp phòng'}
+                        {' • GV: '}
+                        {card.teacher?.full_name ||
+                          card.teacher?.teacher_code ||
+                          'Chưa xác định'}
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full bg-green-50 px-2.5 py-1 font-semibold text-green-700">
+                          Có mặt {card.present}
+                        </span>
+                        <span className="rounded-full bg-amber-50 px-2.5 py-1 font-semibold text-amber-700">
+                          Đi muộn {card.late}
+                        </span>
+                        <span className="rounded-full bg-red-50 px-2.5 py-1 font-semibold text-red-700">
+                          Vắng {card.absent}
+                        </span>
+                        <span className="rounded-full bg-sky-50 px-2.5 py-1 font-semibold text-sky-700">
+                          Có phép {card.excused}
+                        </span>
+                        <span className="rounded-full bg-gray-100 px-2.5 py-1 font-semibold text-gray-700">
+                          Chờ {card.unmarked}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    prefetch={false}
+                    href={`/admin/attendance/${card.occurrence.id}`}
+                    className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gray-950 px-4 py-2.5 text-sm font-semibold text-white"
+                  >
+                    {card.occurrence.status ===
+                    'SCHEDULED'
+                      ? card.marked
+                        ? 'Tiếp tục điểm danh'
+                        : 'Điểm danh'
+                      : 'Xem chi tiết'}
+                  </Link>
+                </div>
+
+                <div className="divide-y divide-gray-100">
+                  {card.studentRows.length === 0 ? (
+                    <p className="p-5 text-sm text-gray-500">
+                      Chưa có học viên trong roster của buổi
+                      này.
+                    </p>
+                  ) : (
+                    card.studentRows.map((item) => {
+                      const status =
+                        item.attendance?.status
+
+                      return (
+                        <div
+                          key={item.enrollment.id}
+                          className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-semibold text-gray-950">
+                              {studentName(item.student)}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500">
+                              {item.student?.student_code ||
+                                'Chưa có mã học viên'}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {status ? (
+                              <span
+                                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
+                                  attendanceClass[status] ||
+                                  'bg-gray-100 text-gray-700'
+                                }`}
+                              >
+                                {attendanceLabel[status] ||
+                                  status}
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600">
+                                Chưa điểm danh
+                              </span>
+                            )}
+
+                            <Link
+                              prefetch={false}
+                              href={`/admin/attendance/${card.occurrence.id}`}
+                              className="text-sm font-medium text-blue-700 underline"
+                            >
+                              Chi tiết
+                            </Link>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </article>
+            )
+          })
+        )}
+      </section>
+
+      <details className="rounded-2xl border border-gray-200 bg-white p-5">
+        <summary className="cursor-pointer font-semibold text-gray-950">
+          Công cụ quản trị — tạo buổi học
+        </summary>
+
+        <p className="mt-3 text-sm text-gray-600">
+          Công cụ này giữ nguyên engine hiện tại. Không dùng
+          để thay đổi lịch sử điểm danh.
+        </p>
+
+        <form
+          action={generateSessions}
+          className="mt-4 grid gap-3 sm:grid-cols-3"
+        >
+          <label className="text-sm font-medium text-gray-700">
+            Từ ngày
+            <input
+              type="date"
+              name="from_date"
+              defaultValue={selectedDate}
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
+              required
+            />
+          </label>
+
+          <label className="text-sm font-medium text-gray-700">
+            Đến ngày
+            <input
+              type="date"
+              name="to_date"
+              defaultValue={selectedDate}
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
+              required
+            />
+          </label>
+
+          <button className="self-end rounded-lg border border-gray-300 px-4 py-2 font-medium">
+            Tạo buổi học
+          </button>
+        </form>
+      </details>
     </div>
   )
 }

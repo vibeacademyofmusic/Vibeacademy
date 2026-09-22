@@ -12,7 +12,7 @@ export function InvoiceFilters({ params, branches, debt = false }: { params: Par
   </form>
 }
 export function InvoiceTable({ data, names, debt = false }: { data: Invoice[]; names: Map<string, string>; debt?: boolean }) {
-  return <Table headers={['Hóa đơn', 'Học viên', 'Chi nhánh', 'Tiền tệ', 'Tổng tiền', ...(!debt ? ['Trạng thái hóa đơn', 'Ngày phát hành'] : []), 'Trạng thái công nợ', 'Hạn thanh toán', 'Đã phân bổ (ròng)', 'Đã hoàn', 'Còn nợ', 'Ngày quá hạn']} rows={data.map(i => [
+  return <Table headers={['Hóa đơn', 'Học viên', 'Chi nhánh', 'Tiền tệ', 'Tổng tiền', ...(!debt ? ['Trạng thái hóa đơn', 'Ngày phát hành'] : []), 'Trạng thái thanh toán / công nợ', 'Hạn thanh toán', 'Đã phân bổ (ròng)', 'Đã hoàn', 'Còn nợ', 'Ngày quá hạn']} rows={data.map(i => [
     <Link prefetch={false} key={i.invoice_id} className="underline" href={'/admin/finance/invoices?selected=' + i.invoice_id}>{i.invoice_number}</Link>, names.get(i.student_id_snapshot) ?? 'Không tìm thấy học viên', i.branch_name_snapshot, i.currency, money(i.total_amount, i.currency),
     ...(!debt ? [i.invoice_status, dateText(i.issued_on)] : []), i.receivable_status, dateText(i.due_on), money(i.allocated_amount, i.currency), money(i.refunded_amount, i.currency), money(i.outstanding_balance, i.currency), i.days_overdue,
   ])} />

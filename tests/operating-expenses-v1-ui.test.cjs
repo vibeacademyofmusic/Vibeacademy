@@ -1,0 +1,43 @@
+const assert = require('node:assert/strict')
+const fs = require('node:fs')
+
+const page = fs.readFileSync('app/admin/finance/operating-expenses/page.tsx', 'utf8')
+const actions = fs.readFileSync('app/admin/finance/operating-expenses/actions.ts', 'utf8')
+const data = fs.readFileSync('app/admin/finance/operating-expenses/data.ts', 'utf8')
+const model = fs.readFileSync('app/admin/finance/operating-expenses/model.ts', 'utf8')
+const css = fs.readFileSync('app/admin/finance/operating-expenses/operating-expenses.module.css', 'utf8')
+const navigation = fs.readFileSync('app/admin/navigation.ts', 'utf8')
+
+assert.match(page, /Chi phí cố định/, 'required title')
+assert.match(page, /Theo dõi các khoản chi vận hành định kỳ theo từng chi nhánh và ghi nhận chi phí thực tế từng tháng/, 'required description')
+for (const label of ['Tháng', 'Chi nhánh', 'Danh mục', 'Trạng thái', 'Search', 'Lọc', 'Bỏ lọc']) {
+  assert.ok(page.includes(label), `filter exists: ${label}`)
+}
+for (const column of ['Khoản chi', 'Chi nhánh', 'Tháng', 'Danh mục', 'Dự kiến', 'Thực tế', 'Trạng thái', 'Action']) {
+  assert.ok(page.includes(column), `list column exists: ${column}`)
+}
+assert.match(page, /value == null \? <span>—<\/span>/, 'missing actual amount renders an em dash, not zero')
+assert.match(page, /Ghi nhận chi phí/, 'draft recording action exists')
+assert.match(page, /Chưa tích hợp chi trả/, 'payment step is explicitly not integrated')
+assert.match(model, /Đã ghi nhận chi phí/, 'recorded wording is recognition, not payment')
+assert.ok(!page.includes('Đã thanh toán'), 'must not claim paid')
+assert.ok(!page.includes('Đã chi'), 'must not reuse payroll paid wording')
+assert.ok(!/type="file"|Chứng từ/.test(page), 'no upload field')
+assert.match(model, /RENT|ELECTRICITY|WATER|INTERNET|FIXED_PHONE|SECURITY|CLEANING|SOFTWARE|MAINTENANCE|OTHER/, 'stable category catalog')
+assert.match(model, /Thuê nhà \/ mặt bằng/, 'Vietnamese category labels')
+assert.match(data, /list_operating_expenses/, 'list uses bounded database RPC')
+assert.match(data, /get_operating_expense/, 'detail uses database RPC')
+assert.match(data, /p_month: month/, 'month is filtered in the database')
+assert.match(data, /p_branch: branch/, 'branch is filtered in the database')
+assert.match(actions, /create_operating_expense_template/, 'template writes go through RPC')
+assert.match(actions, /prepare_operating_expense_month/, 'monthly drafts go through RPC')
+assert.match(actions, /record_operating_expense/, 'recording goes through RPC')
+assert.match(actions, /cancel_operating_expense/, 'cancel goes through RPC')
+assert.match(actions, /Không xác nhận được trạng thái ghi dữ liệu/, 'uncertain writes require reconciliation')
+assert.ok(!/from\(['"]payments['"]\)|record_payment|record_payroll_disbursement/.test(actions), 'does not reuse tuition or payroll payment engines')
+assert.ok(!/mock|demo|placeholder|localStorage/i.test(page), 'production page contains no demo state')
+assert.ok(css.includes('var(--vibe-navy)') && css.includes('var(--vibe-line)'), 'Expense Claim visual tokens are reused')
+assert.match(navigation, /\/admin\/finance\/operating-expenses/, 'admin navigation includes the module')
+assert.match(page, /Chênh lệch/, 'summary includes unlabeled variance')
+
+console.log('Operating expense V1 UI/action source contract: PASS')

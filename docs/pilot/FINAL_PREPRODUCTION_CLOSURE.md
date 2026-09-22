@@ -1,9 +1,50 @@
 # Final pre-production closure — 2026-09-17
 
-**PILOT NOT READY. Production decision: NO-GO.** Production HOLD; no push/deploy,
-production migration, auth mutation or legacy import. No new product feature built.
-This is a truthful closure checkpoint at a staging-authorization block, not an
-assertion that all requested rehearsal phases completed.
+## Current verified checkpoint — staging 94
+
+Owner explicitly authorized the ten IDs in the 84→94 batch. Applied only to
+`owpfqwdrmyzcmjahehek` with the normal CLI runner capped at94; exact live ledger
+94, latest `20260917020000`. No skipped or extra migration. Production HOLD.
+Actual ledgers: **LOCAL95 / STAGING94 / PRODUCTION28**; missing1 on staging and67
+on Production, with no remote-only versions. The only staging gap is
+`20260917100000`, expressly excluded from this authorization.
+
+Immediate and final reconciliation: tuition **5,500,000 VND**, five students/five
+enrollments, one tuition row, zero invoices/payments/refunds/payrolls/payroll
+corrections/customer credits. All91 pre-existing non-ledger table fingerprints
+match the pre-apply baseline; after tests all92 baseline tables including ledger
+remain unchanged. **Unexplained VND difference0**. Expected new metadata:87
+Theory references, MT5.15 SOURCE_MISSING. Learning versions0: no published content.
+
+**Full schema94-compatible pgTAP:59 files /1,533 assertions PASS**, exact repository
+revision `f5a20f7` (94 migrations). Temporary fixture setup uses postgres and
+public/extensions search path, while preserving authenticated/anon/JWT switches
+and every original assertion. All tests rollback. No failures or retries this run.
+Focused learning foundation, assessment, regrade, shadow mapping, Theory,
+analytics and security catalogue: **7 files /224 assertions**, included in1533.
+Live catalogue:15 learning tables all RLS, no anon SELECT;24 learning/assessment
+SECURITY DEFINER functions have no anon execution. Historical non-definer trigger
+`stamp_learning_journal` retains EXECUTE but is a trigger-only routine, not a
+callable business RPC; no grants weakened. Full catalogue regression PASS.
+
+Current application/bootstrap **295 PASS**; Webpack build, whole-repo ESLint and
+`git diff --check` PASS. Local pgTAP59/1563 is the previously verified schema95
+result, not rerun here. The30-assertion difference is schema/revision-specific;
+no assertions were removed to manufacture a pass. Default Turbopack not rerun.
+Fresh schema plus92-table/461-row business backup captured before apply, Auth data
+excluded; fresh COPY export structurally checked, not independently restored this
+run. Previous checkpoint84 restore verification remains historical evidence.
+Temporary backup/harness material removed after reconciliation; no new credential,
+Auth login or external notification delivery. No product code or migration edited.
+
+**Batch84→94 PASS. FULL STAGING NOT READY. PILOT NOT READY. Production NO-GO.**
+Full current-schema browser/role/E2E and Migration Pilot are not claimed complete.
+Next action: separately authorize20260917100000 using the linked94→95 plan.
+No push/deploy/Production mutation. No commit created in this continuation.
+
+[Final migration approval plan](../staging-batch-94-95-approval-20260917.md).
+
+## Historical closure checkpoint (before the current authorized batch)
 
 ## Actual repository and fresh gates
 

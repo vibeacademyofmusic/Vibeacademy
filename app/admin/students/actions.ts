@@ -251,8 +251,13 @@ const ACADEMIC_PROGRESS_STATUSES = [
     'NOT_STARTED',
     'IN_PROGRESS',
     'PASS',
-    'NOT_PASSED',
-    'EXEMPT',
+    'MERIT',
+    'DISTINCTION',
+  ] as const
+
+  const COMPONENT_PROGRESS_STATUSES = [
+    'IN_PROGRESS',
+    'PASS',
   ] as const
 
   export async function updateComponentProgressStatus(
@@ -277,8 +282,8 @@ const ACADEMIC_PROGRESS_STATUSES = [
     if (
       !progressId ||
       !studentId ||
-      !ACADEMIC_PROGRESS_STATUSES.includes(
-        status as (typeof ACADEMIC_PROGRESS_STATUSES)[number]
+      !COMPONENT_PROGRESS_STATUSES.includes(
+        status as (typeof COMPONENT_PROGRESS_STATUSES)[number]
       )
     ) {
       throw new Error("Thông tin cập nhật tiến độ môn học không hợp lệ")
