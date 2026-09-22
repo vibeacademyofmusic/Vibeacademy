@@ -230,6 +230,124 @@ test('top-level msg_id is stored when message.msg_id is absent', async () => {
   assert.equal(store.rows[0].event.payloadDigest, require('node:crypto').createHash('sha256').update(event.raw, 'utf8').digest('hex'))
 })
 
+function assertPrivate(result, event) {
+  const encoded = JSON.stringify(result.body) + JSON.stringify(result.diagnostic ?? {})
+  assert.equal(encoded.includes(SECRET), false)
+  assert.equal(encoded.includes(event.signature.slice(4)), false)
+  assert.equal(encoded.includes(OA), false)
+  assert.equal(encoded.includes(APP), false)
+  assert.equal(encoded.includes('Local fixture'), false)
+  assert.equal(result.body.error, 'INVALID_SIGNATURE')
+  assert.equal(Object.prototype.hasOwnProperty.call(result.body, 'reason'), false)
+}
+
+test('missing signature is distinguished and stays rejected', async () => {
+  const store = memory()
+  const event = officialOaEvent()
+  const result = await acceptZaloWebhook({ rawBody: event.raw, signature: null, env: ENV, record: store.record })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'SIGNATURE_HEADER_MISSING')
+  assert.equal(result.diagnostic.signature_present, false)
+  assert.equal(result.diagnostic.oa_identity_source, 'oa_id')
+  assertPrivate(result, event)
+  assert.equal(store.rows.length, 0)
+})
+
+test('bad signature header format is distinguished and stays rejected', async () => {
+  const store = memory()
+  const event = officialOaEvent()
+  const result = await acceptZaloWebhook({ rawBody: event.raw, signature: 'sha256=abc', env: ENV, record: store.record })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'SIGNATURE_FORMAT_INVALID')
+  assert.equal(result.diagnostic.signature_present, true)
+  assertPrivate(result, event)
+  assert.equal(store.rows.length, 0)
+})
+
+test('valid signature format with the wrong mac is distinguished', async () => {
+  const store = memory()
+  const event = officialOaEvent()
+  const result = await acceptZaloWebhook({
+    rawBody: event.raw,
+    signature: `mac=${'b'.repeat(64)}`,
+    env: ENV,
+    record: store.record,
+  })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'MAC_MISMATCH')
+  assertPrivate(result, event)
+  assert.equal(store.rows.length, 0)
+})
+
+test('valid mac for a different app id is distinguished', async () => {
+  const store = memory()
+  const event = officialOaEvent({ app_id: '999000111222' })
+  const result = await acceptZaloWebhook({ rawBody: event.raw, signature: event.signature, env: ENV, record: store.record })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'APP_ID_MISMATCH')
+  assert.equal(result.diagnostic.app_id_present, true)
+  assertPrivate(result, event)
+  assert.equal(store.rows.length, 0)
+})
+
+test('valid mac and app with the wrong OA is distinguished', async () => {
+  const store = memory()
+  const event = officialOaEvent({ oa_id: '999000111' })
+  const result = await acceptZaloWebhook({ rawBody: event.raw, signature: event.signature, env: ENV, record: store.record })
+  assert.equal(result.status, 401)
+  assert.equal(result.reason, 'OA_ID_MISMATCH')
+  assert.equal(result.diagnostic.oa_identity_source, 'oa_id')
+  assert.equal(result.diagnostic.event_name, 'user_withdraw')
+  assertPrivate(result, event)
+  assert.equal(store.rows.length, 0)
+})
+
+test('valid event is accepted and writes no rejection diagnostic', async () => {
+  const store = memory()
+  const event = officialOaEvent()
+  const logs = []
+  const original = console.info
+  console.info = (line) => logs.push(String(line))
+  try {
+    const result = await acceptZaloWebhook({ rawBody: event.raw, signature: event.signature, env: ENV, record: store.record })
+    assert.equal(result.status, 200)
+    assert.equal(result.reason, undefined)
+    assert.equal(result.diagnostic, undefined)
+    assert.equal(logs.length, 0)
+    assert.equal(JSON.stringify(result.body).includes(SECRET), false)
+  } finally {
+    console.info = original
+  }
+})
+
+test('staging rejection log contains only the safe diagnostic', async () => {
+  const { logZaloRejection, zaloWebhookDiagnosticsEnabled } = loaded.exports
+  const store = memory()
+  const event = signed()
+  const result = await acceptZaloWebhook({ rawBody: event.raw, signature: null, env: ENV, record: store.record })
+  const logs = []
+  const original = console.info
+  console.info = (line) => logs.push(String(line))
+  try {
+    assert.equal(zaloWebhookDiagnosticsEnabled({}), false)
+    assert.equal(zaloWebhookDiagnosticsEnabled({ VERCEL_PROJECT_PRODUCTION_URL: 'vibeacademy.vercel.app' }), false)
+    assert.equal(zaloWebhookDiagnosticsEnabled({ VERCEL_PROJECT_PRODUCTION_URL: 'vibeacademy-staging.vercel.app' }), true)
+    logZaloRejection(result.diagnostic)
+  } finally {
+    console.info = original
+  }
+  assert.equal(logs.length, 1)
+  const logged = JSON.parse(logs[0])
+  assert.deepEqual(logged, result.diagnostic)
+  assert.equal(logs[0].includes(SECRET), false)
+  assert.equal(logs[0].includes(OA), false)
+  assert.equal(logs[0].includes(APP), false)
+  assert.equal(logs[0].includes('Local fixture'), false)
+  assert.equal(logged.component, 'zalo_webhook')
+  assert.equal(logged.result, 'rejected')
+  assert.equal(logged.reason, 'SIGNATURE_HEADER_MISSING')
+})
+
 test('handler source does not hard-code ids, secrets, or a live Zalo call', () => {
   for (const file of [source, route]) {
     assert.equal(file.includes(APP), false)
@@ -239,6 +357,9 @@ test('handler source does not hard-code ids, secrets, or a live Zalo call', () =
     assert.equal(file.includes('fetch('), false)
   }
   assert.match(route, /X-ZEvent-Signature|x-zevent-signature/)
+  assert.match(route, /logZaloRejection\(result\.diagnostic\)/)
+  assert.match(route, /zaloWebhookDiagnosticsEnabled\(process\.env\)/)
+  assert.match(route, /NextResponse\.json\(result\.body/)
   assert.match(route, /SUPABASE_SERVICE_ROLE_KEY/)
   assert.match(route, /ZALO_APP_SECRET/)
   assert.match(route, /ZALO_OA_ACCESS_TOKEN/)

@@ -52,8 +52,29 @@ export type WebhookRecordResult = {
   duplicate: boolean
 }
 
+export type ZaloRejectionReason =
+  | 'SIGNATURE_HEADER_MISSING'
+  | 'SIGNATURE_FORMAT_INVALID'
+  | 'MAC_MISMATCH'
+  | 'APP_ID_MISMATCH'
+  | 'OA_ID_MISMATCH'
+
+export type OaIdentitySource = 'oa_id' | 'sender' | 'recipient' | 'none'
+
+export type ZaloRejectionDiagnostic = {
+  component: 'zalo_webhook'
+  result: 'rejected'
+  reason: ZaloRejectionReason
+  signature_present: boolean
+  app_id_present: boolean
+  oa_identity_source: OaIdentitySource
+  event_name?: string
+}
+
 export type WebhookResponse = {
   status: number
+  reason?: ZaloRejectionReason
+  diagnostic?: ZaloRejectionDiagnostic
   body: {
     ok: boolean
     error?: string
@@ -73,14 +94,35 @@ export function zaloEventMac(
     .digest('hex')
 }
 
-export function zaloSignatureMatches(header: string | null, macHex: string) {
-  if (!header) return false
-  const match = header.trim().match(/^mac\s*=\s*([0-9a-f]{64})$/i)
-  if (!match) return false
+const SIGNATURE_MAC = /^mac\s*=\s*([0-9a-f]{64})$/i
+
+export function classifyZaloSignature(
+  header: string | null,
+  macHex: string,
+): { ok: true } | { ok: false; reason: 'SIGNATURE_HEADER_MISSING' | 'SIGNATURE_FORMAT_INVALID' | 'MAC_MISMATCH' } {
+  if (header == null || header.trim() === '') {
+    return { ok: false, reason: 'SIGNATURE_HEADER_MISSING' }
+  }
+  const match = header.trim().match(SIGNATURE_MAC)
+  if (!match) return { ok: false, reason: 'SIGNATURE_FORMAT_INVALID' }
   const provided = Buffer.from(match[1].toLowerCase(), 'utf8')
   const expected = Buffer.from(macHex.toLowerCase(), 'utf8')
-  if (provided.length !== expected.length) return false
-  return timingSafeEqual(provided, expected)
+  if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
+    return { ok: false, reason: 'MAC_MISMATCH' }
+  }
+  return { ok: true }
+}
+
+export function zaloSignatureMatches(header: string | null, macHex: string) {
+  return classifyZaloSignature(header, macHex).ok
+}
+
+export function zaloWebhookDiagnosticsEnabled(env: Record<string, string | undefined>) {
+  return env.VERCEL_PROJECT_PRODUCTION_URL === 'vibeacademy-staging.vercel.app'
+}
+
+export function logZaloRejection(diagnostic: ZaloRejectionDiagnostic) {
+  console.info(JSON.stringify(diagnostic))
 }
 
 export function readZaloWebhookEnv(
@@ -105,14 +147,53 @@ function boundedEventId(value: unknown) {
 
 // Official OA events identify the account with top-level oa_id.
 // Message events omit it and use sender.id or recipient.id instead.
+function oaIdentitySource(body: Record<string, unknown>, oaId: string): OaIdentitySource {
+  if (Object.prototype.hasOwnProperty.call(body, 'oa_id')) return 'oa_id'
+  if (partyId(body.sender) === oaId) return 'sender'
+  if (partyId(body.recipient) === oaId) return 'recipient'
+  return 'none'
+}
+
 function oaIdentityAccepted(body: Record<string, unknown>, oaId: string) {
   if (Object.prototype.hasOwnProperty.call(body, 'oa_id')) {
     const declared = body.oa_id
     return typeof declared === 'string' && declared.length > 0 && declared === oaId
   }
-  const senderId = partyId(body.sender)
-  const recipientId = partyId(body.recipient)
-  return senderId === oaId || recipientId === oaId
+  return oaIdentitySource(body, oaId) !== 'none'
+}
+
+function rejectionDiagnostic(
+  reason: ZaloRejectionReason,
+  body: Record<string, unknown>,
+  signature: string | null,
+  oaId: string,
+): ZaloRejectionDiagnostic {
+  const eventName = body.event_name
+  return {
+    component: 'zalo_webhook',
+    result: 'rejected',
+    reason,
+    signature_present: typeof signature === 'string' && signature.trim().length > 0,
+    app_id_present: typeof body.app_id === 'string' && body.app_id.length > 0,
+    oa_identity_source: oaIdentitySource(body, oaId),
+    ...(typeof eventName === 'string' && /^[A-Za-z0-9_]{1,80}$/.test(eventName)
+      ? { event_name: eventName }
+      : {}),
+  }
+}
+
+function rejectWebhook(
+  reason: ZaloRejectionReason,
+  body: Record<string, unknown>,
+  signature: string | null,
+  oaId: string,
+): WebhookResponse {
+  return {
+    status: 401,
+    reason,
+    diagnostic: rejectionDiagnostic(reason, body, signature, oaId),
+    body: { ok: false, error: 'INVALID_SIGNATURE' },
+  }
 }
 
 function externalEventIdFrom(body: Record<string, unknown>) {
@@ -166,11 +247,15 @@ export async function acceptZaloWebhook(input: {
   }
 
   const mac = zaloEventMac(appId, input.rawBody, timestamp, input.env.oaSecret)
-  if (!zaloSignatureMatches(input.signature, mac) || appId !== input.env.appId) {
-    return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
+  const signatureCheck = classifyZaloSignature(input.signature, mac)
+  if (!signatureCheck.ok) {
+    return rejectWebhook(signatureCheck.reason, body, input.signature, input.env.oaId)
+  }
+  if (appId !== input.env.appId) {
+    return rejectWebhook('APP_ID_MISMATCH', body, input.signature, input.env.oaId)
   }
   if (!oaIdentityAccepted(body, input.env.oaId)) {
-    return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
+    return rejectWebhook('OA_ID_MISMATCH', body, input.signature, input.env.oaId)
   }
 
   const externalEventId = externalEventIdFrom(body)

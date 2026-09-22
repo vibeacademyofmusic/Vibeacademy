@@ -3,7 +3,9 @@ import { NextResponse } from 'next/server'
 
 import {
   acceptZaloWebhook,
+  logZaloRejection,
   readZaloWebhookEnv,
+  zaloWebhookDiagnosticsEnabled,
   type WebhookRecord,
   type WebhookRecordResult,
 } from '@/lib/integrations/zalo/webhook'
@@ -51,6 +53,9 @@ export async function POST(request: Request) {
       env: readZaloWebhookEnv(process.env),
       record: persistZaloWebhook,
     })
+    if (result.diagnostic && zaloWebhookDiagnosticsEnabled(process.env)) {
+      logZaloRejection(result.diagnostic)
+    }
     return NextResponse.json(result.body, { status: result.status })
   } catch (error) {
     const unconfigured = error instanceof Error && error.message === 'UNCONFIGURED'
