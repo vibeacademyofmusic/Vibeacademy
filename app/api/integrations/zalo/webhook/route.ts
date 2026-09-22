@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import {
   acceptZaloWebhook,
   readZaloWebhookEnv,
+  zaloBootstrapEnabled,
   type WebhookRecord,
   type WebhookRecordResult,
 } from '@/lib/integrations/zalo/webhook'
@@ -45,12 +46,22 @@ async function persistZaloWebhook(event: WebhookRecord): Promise<WebhookRecordRe
 
 export async function POST(request: Request) {
   try {
+    const signature = request.headers.get('x-zevent-signature')
     const result = await acceptZaloWebhook({
       rawBody: await request.text(),
-      signature: request.headers.get('x-zevent-signature'),
+      signature,
+      bootstrapMode: zaloBootstrapEnabled(process.env),
       env: readZaloWebhookEnv(process.env),
       record: persistZaloWebhook,
     })
+    if (result.body.bootstrap === true) {
+      console.info({
+        event: 'zalo_bootstrap_probe_received',
+        timestamp: new Date().toISOString(),
+        signaturePresent: signature !== null,
+        httpResult: result.status,
+      })
+    }
     return NextResponse.json(result.body, { status: result.status })
   } catch (error) {
     const unconfigured = error instanceof Error && error.message === 'UNCONFIGURED'

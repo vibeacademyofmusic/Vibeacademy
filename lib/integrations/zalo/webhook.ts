@@ -57,6 +57,8 @@ export type WebhookResponse = {
   body: {
     ok: boolean
     error?: string
+    bootstrap?: boolean
+    processed?: boolean
     duplicate?: boolean
     status?: string
   }
@@ -99,12 +101,37 @@ function partyId(value: unknown) {
   return typeof id === 'string' && id.length > 0 ? id : null
 }
 
+// Fail closed outside this project's staging deployment, even if the flag is copied.
+export function zaloBootstrapEnabled(env: Record<string, string | undefined>) {
+  return env.ZALO_WEBHOOK_BOOTSTRAP_MODE === 'true' &&
+    env.VERCEL_PROJECT_PRODUCTION_URL === 'vibeacademy-staging.vercel.app'
+}
+
+function hasValidSignature(rawBody: string, signature: string | null, env: ZaloWebhookEnv | null) {
+  if (!signature || !env || rawBody.length > MAX_BODY_CHARS) return false
+  try {
+    const body: unknown = JSON.parse(rawBody)
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return false
+    const { app_id: appId, timestamp } = body as Record<string, unknown>
+    if (typeof appId !== 'string' || typeof timestamp !== 'string') return false
+    return zaloSignatureMatches(signature, zaloEventMac(appId, rawBody, timestamp, env.oaSecret))
+  } catch {
+    return false
+  }
+}
+
 export async function acceptZaloWebhook(input: {
   rawBody: string
   signature: string | null
   env: ZaloWebhookEnv | null
+  bootstrapMode?: boolean
   record: (event: WebhookRecord) => Promise<WebhookRecordResult>
 }): Promise<WebhookResponse> {
+  // Never pass an unverified setup probe to persistence or business processing.
+  // Valid signatures continue through every existing validation below.
+  if (input.bootstrapMode === true && !hasValidSignature(input.rawBody, input.signature, input.env)) {
+    return { status: 200, body: { ok: true, bootstrap: true, processed: false } }
+  }
   if (!input.env) {
     return { status: 503, body: { ok: false, error: 'ZALO_WEBHOOK_NOT_CONFIGURED' } }
   }
