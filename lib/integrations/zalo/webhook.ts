@@ -99,6 +99,31 @@ function partyId(value: unknown) {
   return typeof id === 'string' && id.length > 0 ? id : null
 }
 
+function boundedEventId(value: unknown) {
+  return typeof value === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(value) ? value : null
+}
+
+// Official OA events identify the account with top-level oa_id.
+// Message events omit it and use sender.id or recipient.id instead.
+function oaIdentityAccepted(body: Record<string, unknown>, oaId: string) {
+  if (Object.prototype.hasOwnProperty.call(body, 'oa_id')) {
+    const declared = body.oa_id
+    return typeof declared === 'string' && declared.length > 0 && declared === oaId
+  }
+  const senderId = partyId(body.sender)
+  const recipientId = partyId(body.recipient)
+  return senderId === oaId || recipientId === oaId
+}
+
+function externalEventIdFrom(body: Record<string, unknown>) {
+  const message = body.message
+  if (message && typeof message === 'object' && !Array.isArray(message)) {
+    const nested = boundedEventId((message as { msg_id?: unknown }).msg_id)
+    if (nested) return nested
+  }
+  return boundedEventId(body.msg_id)
+}
+
 export async function acceptZaloWebhook(input: {
   rawBody: string
   signature: string | null
@@ -141,24 +166,14 @@ export async function acceptZaloWebhook(input: {
   }
 
   const mac = zaloEventMac(appId, input.rawBody, timestamp, input.env.oaSecret)
-  const senderId = partyId(body.sender)
-  const recipientId = partyId(body.recipient)
-  if (
-    !zaloSignatureMatches(input.signature, mac) ||
-    appId !== input.env.appId ||
-    (senderId !== input.env.oaId && recipientId !== input.env.oaId)
-  ) {
+  if (!zaloSignatureMatches(input.signature, mac) || appId !== input.env.appId) {
+    return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
+  }
+  if (!oaIdentityAccepted(body, input.env.oaId)) {
     return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
   }
 
-  const message = body.message
-  let externalEventId: string | null = null
-  if (message && typeof message === 'object' && !Array.isArray(message)) {
-    const msgId = (message as { msg_id?: unknown }).msg_id
-    if (typeof msgId === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(msgId)) {
-      externalEventId = msgId
-    }
-  }
+  const externalEventId = externalEventIdFrom(body)
 
   const recorded = await input.record({
     provider: 'ZALO',
