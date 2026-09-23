@@ -12,6 +12,13 @@ function load(file, mocks, cache = new Map()) {
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 } }).outputText
   const localRequire = name => {
     if (name in mocks) return mocks[name]
+    if (name.startsWith('@/')) {
+      const target = path.resolve(name.slice(2))
+      if (fs.existsSync(target + '.ts')) return load(target + '.ts', mocks, cache)
+      if (fs.existsSync(target + '.tsx')) return load(target + '.tsx', mocks, cache)
+      if (fs.existsSync(path.join(target, 'index.ts'))) return load(path.join(target, 'index.ts'), mocks, cache)
+      if (fs.existsSync(path.join(target, 'index.tsx'))) return load(path.join(target, 'index.tsx'), mocks, cache)
+    }
     if (name.startsWith('.')) {
       const target = path.resolve(path.dirname(file), name)
       if (target.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }

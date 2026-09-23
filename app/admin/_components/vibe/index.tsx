@@ -5,6 +5,16 @@ import {
     type Amount,
   } from '../../_lib/money'
 export { Modal, Drawer, Tabs } from './interactive'
+export {
+  OperationsFilterBar,
+  OpsTabs,
+  OpsMetricLink,
+  OpsStatusBadge,
+  opsStatusTone,
+  buildQuery,
+  type OpsOption,
+  type OpsFilterField,
+} from './operations'
 type Children = { children: ReactNode }
 export function AppPage({ children }: Children) { return <div className="vibe-page">{children}</div> }
 export function Eyebrow({ children }: Children) { return <p className="vibe-eyebrow">{children}</p> }
