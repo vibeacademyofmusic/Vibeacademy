@@ -15,6 +15,10 @@ export function mockProvider(fail = false): Provider {
 export async function dispatch(queue: Queue, id: string, providers: Partial<Record<Job['channel'], Provider>>) {
   const job = await queue.claim(id)
   if (!job) return 'NOT_CLAIMED'
+  if (job.channel === 'ZALO') {
+    await queue.complete(job.id, job.lease_token, null, 'PROVIDER_NOT_CONFIGURED')
+    return 'FAILED'
+  }
   const provider = providers[job.channel]
   if (!provider) { await queue.complete(job.id, job.lease_token, null, 'PROVIDER_NOT_CONFIGURED'); return 'FAILED' }
   let receipt: Receipt

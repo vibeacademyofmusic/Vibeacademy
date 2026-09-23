@@ -52,7 +52,7 @@ export const navigationGroups = [
     { name: 'Khách hàng cũ', href: '/admin/business/reactivation' },
     { name: 'Khách mua đàn', href: '/admin/business/instrument-customers' },
   ] },
-  { name: 'HỆ THỐNG', items: [{ name: 'Chi nhánh', href: '/admin/branches' }, { name: 'Thông báo', href: '/admin/notifications' }, { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' }] },
+  { name: 'HỆ THỐNG', items: [{ name: 'Chi nhánh', href: '/admin/branches' }, { name: 'Thông báo', href: '/admin/notifications' }, { name: 'Tích hợp', href: '/admin/system/integrations' }, { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' }] },
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
 // The sole standalone report route lives under HỌC VIÊN; do not duplicate it or invent report routes.
