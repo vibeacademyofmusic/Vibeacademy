@@ -9,11 +9,22 @@ Portal links always point at the signed-in family portal `/my-learning`. The mes
 - Purpose: tell the family that registration is complete.
 - Trigger: `registration_applications.status` becomes `COMPLETED`.
 - Recipient: active Zalo link on that registration, its parent, or its student.
-- Parameters: `student_display_name`, `program_name`, `branch_name`, `portal_url`.
-- Example: "VIBE Academy đã hoàn tất đăng ký của {student_display_name} cho {program_name} tại {branch_name}. Xem chi tiết trên cổng thông tin."
-- CTA: Mở cổng thông tin.
-- Sensitivity: display name and program only.
-- Expected ZBS class: transaction confirmation. Not submitted.
+- Parameters: `student_name`, `program_name`, `branch_name`, `portal_url`.
+- Title: Xác nhận đăng ký tại VIBE Academy
+- Content:
+
+```
+VIBE Academy xác nhận hồ sơ đăng ký của học viên {{student_name}} đã được hoàn tất.
+
+Chương trình: {{program_name}}
+Chi nhánh: {{branch_name}}
+
+VIBE sẽ tiếp tục cập nhật lịch học và các thông tin cần thiết trên hệ thống.
+```
+
+- CTA: Xem hồ sơ → secure VIBE portal URL (`portal_url`, authenticated family portal).
+- Sensitivity: student display name, program, and branch only. No phone, payment, or report body.
+- Expected ZBS class: transaction confirmation. Not submitted to Zalo yet.
 
 ## ZALO_PAYMENT_CONFIRMED
 

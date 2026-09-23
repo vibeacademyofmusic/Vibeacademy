@@ -78,7 +78,7 @@ create table public.notification_templates (
 
 insert into public.notification_templates(template_key, provider, status, description, parameter_schema)
 values
-  ('ZALO_REGISTRATION_CONFIRMED', 'ZALO', 'DRAFT', 'Xác nhận đăng ký', '["student_display_name","program_name","branch_name","portal_url"]'::jsonb),
+  ('ZALO_REGISTRATION_CONFIRMED', 'ZALO', 'DRAFT', 'Xác nhận đăng ký tại VIBE Academy', '["student_name","program_name","branch_name","portal_url"]'::jsonb),
   ('ZALO_PAYMENT_CONFIRMED', 'ZALO', 'DRAFT', 'Xác nhận thanh toán', '["student_display_name","amount_display","payment_reference","portal_url"]'::jsonb),
   ('ZALO_CLASS_ASSIGNED', 'ZALO', 'DRAFT', 'Xác nhận xếp lớp', '["student_display_name","class_name","teacher_display_name","start_date","schedule_display","portal_url"]'::jsonb),
   ('ZALO_LEARNING_REPORT_PUBLISHED', 'ZALO', 'DRAFT', 'Báo cáo học tập', '["student_display_name","report_period","secure_report_url"]'::jsonb),
@@ -191,10 +191,10 @@ begin
       app.id,
       app.branch_id,
       'ZALO_REGISTRATION_CONFIRMED'::text,
-      'Đăng ký đã hoàn tất'::text,
+      'Xác nhận đăng ký tại VIBE Academy'::text,
       '/my-learning'::text,
       jsonb_build_object(
-        'student_display_name', left(coalesce(app.student_name, 'Học viên'), 80),
+        'student_name', left(coalesce(app.student_name, 'Học viên'), 80),
         'program_name', left(coalesce(course.name, 'Chương trình đã đăng ký'), 80),
         'branch_name', left(branch.name, 80),
         'portal_url', '/my-learning'

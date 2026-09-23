@@ -3,7 +3,7 @@
 export const ZALO_OUTBOUND_STATE = 'ZALO_OUTBOUND_NOT_CONFIGURED' as const
 
 export const ZALO_TEMPLATE_LABELS: Record<string, string> = {
-  ZALO_REGISTRATION_CONFIRMED: 'Xác nhận đăng ký',
+  ZALO_REGISTRATION_CONFIRMED: 'Xác nhận đăng ký tại VIBE Academy',
   ZALO_PAYMENT_CONFIRMED: 'Xác nhận thanh toán',
   ZALO_CLASS_ASSIGNED: 'Xác nhận xếp lớp',
   ZALO_LEARNING_REPORT_PUBLISHED: 'Báo cáo học tập',
