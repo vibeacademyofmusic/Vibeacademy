@@ -11,6 +11,13 @@ type TemplateRow = {
   enabled: boolean
 }
 
+function approvalLabel(status: string) {
+  if (status === 'APPROVED') return 'Đã duyệt'
+  if (status === 'PENDING') return 'Chờ duyệt'
+  if (status === 'DISABLED') return 'Tắt'
+  return 'Nháp'
+}
+
 export default async function ZaloIntegrationPage() {
   const db = await requireIntegrationAdmin()
   const templates = await db.from('notification_templates').select('template_key,provider_template_id,status,enabled').eq('provider', 'ZALO').order('template_key')
@@ -33,8 +40,8 @@ export default async function ZaloIntegrationPage() {
             <tr className="border-b text-left">
               <th className="py-2 pr-3">Template</th>
               <th className="py-2 pr-3">Internal key</th>
-              <th className="py-2 pr-3">Zalo template ID</th>
-              <th className="py-2 pr-3">Approval status</th>
+              <th className="py-2 pr-3">Template ID</th>
+              <th className="py-2 pr-3">Trạng thái duyệt</th>
               <th className="py-2">Enabled</th>
             </tr>
           </thead>
@@ -44,8 +51,8 @@ export default async function ZaloIntegrationPage() {
                 <td className="py-2 pr-3">{ZALO_TEMPLATE_LABELS[row.template_key] || row.template_key}</td>
                 <td className="py-2 pr-3">{row.template_key}</td>
                 <td className="py-2 pr-3">{row.provider_template_id || 'Chưa có'}</td>
-                <td className="py-2 pr-3">{row.status === 'APPROVED' ? 'Đã duyệt' : 'Chưa duyệt'}</td>
-                <td className="py-2">{row.enabled ? 'Bật' : 'Tắt'}</td>
+                <td className="py-2 pr-3">{approvalLabel(row.status)}</td>
+                <td className="py-2">{row.enabled ? 'Yes' : 'No'}</td>
               </tr>
             ))}
           </tbody>

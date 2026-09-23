@@ -69,6 +69,24 @@ select ok(not has_function_privilege('authenticated', 'public.enqueue_domain_not
 select ok(not has_function_privilege('authenticated', 'public.settle_outbound_notification(uuid,text)', 'EXECUTE'), 'Browser role cannot settle a Zalo send');
 select ok(has_function_privilege('service_role', 'public.settle_outbound_notification(uuid,text)', 'EXECUTE'), 'Worker role can record an outbound result');
 select is((select provider_template_id is null and enabled = false from notification_templates where template_key = 'ZALO_PAYMENT_CONFIRMED'), true, 'Zalo template id stays empty and disabled');
+select is((select status from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), 'PENDING', 'Registration template mapping starts pending');
+select is((select enabled from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), false, 'Registration template stays disabled');
+select is((select provider_template_id from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), null, 'Registration template id is not hard-coded');
+select ok(not has_function_privilege('anon', 'public.set_notification_template_mapping(text,text,text)', 'EXECUTE'), 'Anonymous cannot set a template mapping');
+select ok(has_function_privilege('authenticated', 'public.set_notification_template_mapping(text,text,text)', 'EXECUTE'), 'Signed-in admin can call the template mapping RPC');
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'de990000-0000-4000-8000-000000000002', true);
+select throws_ok($$select public.set_notification_template_mapping('ZALO_REGISTRATION_CONFIRMED', 'zbs-reg-staging-001', 'PENDING')$$, 'P0001', 'Unauthorized', 'branch staff cannot set a Zalo template mapping');
+reset role;
+select set_config('request.jwt.claim.sub', 'de990000-0000-4000-8000-000000000001', true);
+select lives_ok($$select public.set_notification_template_mapping('ZALO_REGISTRATION_CONFIRMED', 'zbs-reg-staging-001', 'PENDING')$$, 'super admin can store a pending template id');
+select is((select provider_template_id from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), 'zbs-reg-staging-001', 'Pending template id is stored in the catalogue');
+select is((select enabled from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), false, 'Storing a template id does not enable sending');
+select lives_ok($$select public.set_notification_template_mapping('ZALO_REGISTRATION_CONFIRMED', 'zbs-reg-staging-001', 'APPROVED')$$, 'super admin can mark the template approved');
+select is((select status from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), 'APPROVED', 'Approved mapping remains catalogue-only');
+select is((select enabled from notification_templates where template_key = 'ZALO_REGISTRATION_CONFIRMED'), false, 'Approved mapping stays disabled until send is unlocked');
+select throws_ok($$select public.set_notification_template_mapping('ZALO_PAYMENT_CONFIRMED', 'zbs-pay-001', 'PENDING')$$, 'P0001', 'Unsupported notification template', 'only the first registration template can be mapped yet');
 
 select set_config('request.jwt.claim.sub', 'de990000-0000-4000-8000-000000000001', true);
 

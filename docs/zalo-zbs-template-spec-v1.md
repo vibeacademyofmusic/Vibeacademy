@@ -10,6 +10,7 @@ Portal links always point at the signed-in family portal `/my-learning`. The mes
 - Trigger: `registration_applications.status` becomes `COMPLETED`.
 - Recipient: active Zalo link on that registration, its parent, or its student.
 - Parameters: `student_name`, `program_name`, `branch_name`, `portal_url`.
+- Catalogue: `provider = ZALO`, `status = PENDING` until Owner stores the Zalo Template ID through `set_notification_template_mapping`, then `APPROVED` when Zalo has approved it. `enabled` stays `false` in this foundation.
 - Title: Xác nhận đăng ký tại VIBE Academy
 - Content:
 
@@ -24,7 +25,7 @@ VIBE sẽ tiếp tục cập nhật lịch học và các thông tin cần thi�
 
 - CTA: Xem hồ sơ → secure VIBE portal URL (`portal_url`, authenticated family portal).
 - Sensitivity: student display name, program, and branch only. No phone, payment, or report body.
-- Expected ZBS class: transaction confirmation. Not submitted to Zalo yet.
+- Expected ZBS class: transaction confirmation. Template ID is not hard-coded in application source.
 
 ## ZALO_PAYMENT_CONFIRMED
 

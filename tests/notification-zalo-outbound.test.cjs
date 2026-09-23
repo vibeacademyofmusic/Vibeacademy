@@ -40,13 +40,28 @@ test('Zalo admin shows the disabled outbound catalogue and no secrets', () => {
   assert.match(zaloPage, /Chưa kích hoạt/)
   assert.match(zaloPage, /OA package Cơ bản/)
   assert.match(zaloPage, /ZALO_TEMPLATE_LABELS/)
+  assert.match(zaloPage, /Template ID/)
+  assert.match(zaloPage, /Trạng thái duyệt/)
+  assert.match(zaloPage, /Enabled/)
+  assert.match(zaloPage, /approvalLabel/)
   for (const key of ['ZALO_REGISTRATION_CONFIRMED', 'ZALO_PAYMENT_CONFIRMED', 'ZALO_CLASS_ASSIGNED', 'ZALO_LEARNING_REPORT_PUBLISHED', 'ZALO_TUITION_REMINDER', 'ZALO_COURSE_EXPIRING']) {
     assert.match(outboundSource, new RegExp(key))
   }
+  assert.equal(outboundSource.includes('provider_template_id'), false)
   assert.equal(zaloPage.includes('ZALO_OA_ACCESS_TOKEN'), false)
   assert.equal(zaloPage.includes('ZALO_OA_REFRESH_TOKEN'), false)
   assert.equal(zaloPage.includes('ZALO_APP_SECRET'), false)
   assert.equal(zaloPage.includes('provider_user_id'), false)
+})
+
+test('registration template mapping stays database-configured and disabled', () => {
+  const mapping = fs.readFileSync('supabase/migrations/20260923052000_zalo_registration_template_mapping_v1.sql', 'utf8')
+  assert.match(mapping, /ZALO_REGISTRATION_CONFIRMED/)
+  assert.match(mapping, /status = 'PENDING'/)
+  assert.match(mapping, /enabled = false/)
+  assert.match(mapping, /set_notification_template_mapping/)
+  assert.equal(mapping.includes('ZALO_OA_ACCESS_TOKEN'), false)
+  assert.equal(/provider_template_id\s*=\s*'[^']+'/.test(mapping), false)
 })
 
 test('operations queue can filter the outbound states without exposing a payload', () => {
