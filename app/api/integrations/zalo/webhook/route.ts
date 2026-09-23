@@ -40,6 +40,22 @@ async function persistZaloWebhook(event: WebhookRecord): Promise<WebhookRecordRe
   if (error || !row?.event_id || !row.event_status) {
     throw new Error('RECORD_FAILED')
   }
+  if (
+    event.eventType === 'widget_interaction_accepted' ||
+    event.eventType === 'widget_failed_to_sync_user_external_id'
+  ) {
+    const applied = await client.rpc('apply_zalo_interaction_event', { p_payload: event.payload })
+    const linkResult = typeof applied.data === 'string' ? applied.data : 'unreadable'
+    if (applied.error || !['activated', 'idempotent', 'review', 'ignored', 'missing'].includes(linkResult)) {
+      throw new Error('APPLY_FAILED')
+    }
+    console.info(JSON.stringify({
+      component: 'zalo_webhook',
+      result: 'interaction_link',
+      event_name: event.eventType,
+      link_result: linkResult,
+    }))
+  }
   return {
     id: row.event_id,
     status: row.event_status,

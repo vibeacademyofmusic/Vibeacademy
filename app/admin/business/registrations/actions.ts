@@ -55,6 +55,20 @@ export async function transitionRegistration(formData: FormData) {
   fail(`/admin/business/registrations/${id}`, error)
 }
 
+export async function requestRegistrationZaloLink(formData: FormData) {
+  const client = await db()
+  const id = String(formData.get('application_id') ?? '')
+  const { error } = await client.rpc('request_registration_zalo_link', { p_application: id })
+  fail(`/admin/business/registrations/${id}`, error)
+}
+
+export async function refreshRegistrationZaloLink(formData: FormData) {
+  await db()
+  const id = String(formData.get('application_id') ?? '')
+  revalidatePath(`/admin/business/registrations/${id}`)
+  redirect(`/admin/business/registrations/${id}`)
+}
+
 export async function completeRegistration(formData: FormData) {
   const client = await db()
   const id = String(formData.get('application_id') ?? '')

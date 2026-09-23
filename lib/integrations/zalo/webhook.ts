@@ -19,6 +19,8 @@ export const SUPPORTED_ZALO_EVENTS = new Set([
   'oa_send_anonymous_image',
   'oa_send_anonymous_file',
   'oa_send_anonymous_sticker',
+  'widget_interaction_accepted',
+  'widget_failed_to_sync_user_external_id',
 ])
 
 const SECRET_KEYS = new Set([
