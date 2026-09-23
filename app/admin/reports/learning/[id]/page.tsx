@@ -58,16 +58,68 @@ export default async function LearningReportDetail({ params, searchParams }: { p
       </div>
     </div>
   }
-  return <article className={`learning-report min-w-0 space-y-6${query.print === '1' ? ' report-print-preview' : ''}`}><Link className="report-controls" prefetch={false} href="/admin/reports/learning">← Danh sách báo cáo</Link><h1 className="text-3xl font-bold">{types.find(t => t.id === r.report_type)?.name}</h1><div className="report-controls"><Notice params={query} /></div>
-    <p>{statuses.find(t => t.id === r.status)?.name} • Phiên bản {r.version}</p>
+  return <article className={`learning-report min-w-0 space-y-6${query.print === '1' ? ' report-print-preview' : ''}`}>
+    <div className="report-controls"><Link prefetch={false} href="/admin/reports/learning">← Danh sách báo cáo</Link></div>
+    <h1 className="text-3xl font-bold">{types.find(t => t.id === r.report_type)?.name}</h1>
+    <div className="report-controls"><Notice params={query} /></div>
+    <p>{statuses.find(t => t.id === r.status)?.name} • Phiên bản {r.version}{r.report_type === 'END_OF_COURSE' ? ' • END_OF_COURSE' : ' • MONTHLY'}</p>
     {r.status === 'APPROVED' && <p>Đã khóa nội dung và lưu lịch sử. Không thể chỉnh sửa trực tiếp.</p>}
-    <Panel title="Học viên và kỳ học"><p>{s.student.name} ({s.student.code})</p><p>{s.branch.name} • {s.class_name}</p><p>{dateText(s.period_start)} → {dateText(s.period_end)}</p><p>Giáo viên: {s.teachers.map(t => t.name || t.code).join(", ") || "Chưa có phân công"}</p><p>Tổng hợp lúc {timeText(s.as_of)}</p></Panel>
-    <Panel title="Điểm danh"><p>Dự kiến: {s.attendance.scheduled} • Có mặt / đi muộn: {s.attendance.attended} • Vắng: {s.attendance.absent} • Có phép: {s.attendance.excused} • Chưa điểm danh: {s.attendance.unmarked} • Buổi bù dự kiến: {s.attendance.makeup}</p><p>Tỷ lệ có mặt trên số buổi đã điểm danh: {s.attendance.rate === null ? 'Chưa có dữ liệu' : s.attendance.rate + '%'}. Không tính buổi đã hủy; buổi thường trong bảo lưu được loại trừ nếu chưa có điểm danh.</p></Panel>
-    <Panel title="Tiến độ Academic"><p>{s.academic.curriculum ?? 'Chưa liên kết chương trình'} • Grade hiện tại: {s.academic.current_grade ?? 'Chưa có'}</p><p>Tiến độ tại thời điểm tổng hợp, không phải bản dựng lại cuối tháng. Trạng thái do Academic Engine quyết định; môn / thành phần tùy chọn không chặn hoàn thành.</p>
-      <Table headers={['Grade', 'Môn học', 'Yêu cầu', 'Trạng thái / điểm', 'Thành phần ACTIVE']} rows={s.academic.subjects.map(subject => [subject.grade + ' • ' + subject.grade_status, subject.name, subject.is_required ? 'Bắt buộc' : 'Tùy chọn', subject.status + (subject.score === null ? '' : ' / ' + subject.score), <ul key={subject.name}>{subject.components.map((c, index) => <li key={index}>{c.name} ({c.required ? 'bắt buộc' : 'tùy chọn'}): {c.status}{c.score === null ? '' : ' / ' + c.score}</li>)}</ul>])} />
+
+    <Panel title="1. Student Overview">
+      <p>{s.student.name} ({s.student.code})</p>
+      <p>Curriculum: {s.academic.curriculum ?? 'Chưa liên kết'} • Grade: {s.academic.current_grade ?? 'Chưa có'}</p>
+      <p>{s.branch.name} • {s.class_name}</p>
+      <p>Giáo viên: {s.teachers.map(t => t.name || t.code).join(', ') || 'Chưa có phân công'}</p>
+      <p>Kỳ báo cáo: {dateText(s.period_start)} → {dateText(s.period_end)}</p>
+      <p>Tổng hợp lúc {timeText(s.as_of)}. Identity data is system-generated and not manually editable here.</p>
     </Panel>
-    <Panel title="Nhật ký học tập"><p>{s.journals.count} buổi có nhật ký. Hiển thị tối đa 30 nhật ký cập nhật gần nhất trong kỳ; đây là ghi chép quan sát, không phải kết quả đánh giá tự động.</p>{!s.journals.count && <p>Chưa có nhật ký học tập.</p>}{s.journals.excerpts.map((j, i) => <section className="space-y-1 border-t pt-3 whitespace-pre-wrap" key={i}><p>{j.content}</p>{j.repertoire && <p>Tác phẩm: {j.repertoire}</p>}{j.skills && <p>Kỹ năng: {j.skills}</p>}{j.homework && <p>Luyện tập: {j.homework}</p>}</section>)}</Panel>
-    <Panel title="Nhận xét và định hướng"><p>Nội dung chuyên môn do giáo viên cung cấp; Academic/Admin kiểm tra và duyệt. Nội dung trống cần bổ sung, không được tự suy diễn.</p>{summaryFields.map(f => <section key={f.id}><h3 className="font-medium">{f.name}</h3><p className="whitespace-pre-wrap">{summaryValue(f.id) || 'Chưa nhập'}</p></section>)}<h3 className="font-medium">Ghi chú quản trị</h3><p className="whitespace-pre-wrap">{(s.admin_note ?? r.admin_note) || 'Chưa nhập'}</p></Panel>
+
+    <Panel title="2. Learning Progress">
+      <p>Tiến độ Academic tại thời điểm tổng hợp. Không suy diễn phần trăm nếu engine không cung cấp.</p>
+      <Table headers={['Môn / module', 'Grade', 'Trạng thái', 'Điểm', 'Thành phần']} rows={s.academic.subjects.map(subject => [
+        subject.name,
+        subject.grade + ' • ' + subject.grade_status,
+        subject.status + (subject.score === null ? '' : ''),
+        subject.score === null ? '—' : subject.score,
+        <ul key={subject.name}>{subject.components.map((c, i) => <li key={i}>{c.name}: {c.status}{c.score === null ? '' : ' / ' + c.score}</li>)}</ul>,
+      ])} />
+      {!s.academic.subjects.length && <p>Chưa có tiến độ Academic trong kỳ này.</p>}
+    </Panel>
+
+    <Panel title="3. Assessment">
+      <p>Assessment results are taken from Academic progress components when present. Original history remains in the Academic engine; this report shows the snapshot at generation time.</p>
+      <Table headers={['Assessment / thành phần', 'Môn', 'Trạng thái', 'Điểm']} rows={s.academic.subjects.flatMap(subject =>
+        subject.components.length
+          ? subject.components.map(c => [c.name, subject.name, c.status, c.score === null ? '—' : c.score])
+          : [[subject.name, subject.name, subject.status, subject.score === null ? '—' : subject.score]]
+      )} />
+      {!s.academic.subjects.length && <p>Chưa có assessment trong snapshot.</p>}
+    </Panel>
+
+    <Panel title="4. Attendance">
+      <p>Dự kiến: {s.attendance.scheduled} • Có mặt / đi muộn: {s.attendance.attended} • Vắng: {s.attendance.absent} • Có phép: {s.attendance.excused} • Chưa điểm danh: {s.attendance.unmarked} • Buổi bù dự kiến: {s.attendance.makeup}</p>
+      <p>Tỷ lệ có mặt trên số buổi đã điểm danh: {s.attendance.rate === null ? 'Chưa có dữ liệu' : s.attendance.rate + '%'}.</p>
+    </Panel>
+
+    <Panel title="5. Teacher Evaluation">
+      <p>Nội dung chuyên môn do giáo viên cung cấp; Academic/Admin kiểm tra và duyệt.</p>
+      {summaryFields.filter(f => !['next_month_plan'].includes(f.id)).map(f => <section key={f.id}><h3 className="font-medium">{f.name}</h3><p className="whitespace-pre-wrap">{summaryValue(f.id) || 'Chưa nhập'}</p></section>)}
+    </Panel>
+
+    <Panel title="6. Development Plan">
+      {summaryFields.filter(f => f.id === 'next_month_plan').map(f => <section key={f.id}><h3 className="font-medium">{f.name}</h3><p className="whitespace-pre-wrap">{summaryValue(f.id) || 'Chưa nhập'}</p></section>)}
+      <p>Nhật ký học tập trong kỳ: {s.journals.count} (tối đa 30 excerpt gần nhất).</p>
+      {!s.journals.count && <p>Chưa có nhật ký học tập.</p>}
+      {s.journals.excerpts.map((j, i) => <section className="space-y-1 border-t pt-3 whitespace-pre-wrap" key={i}><p>{j.content}</p>{j.repertoire && <p>Tác phẩm: {j.repertoire}</p>}{j.skills && <p>Kỹ năng: {j.skills}</p>}{j.homework && <p>Luyện tập: {j.homework}</p>}</section>)}
+    </Panel>
+
+    <Panel title="7. Academic Status">
+      <p>Trạng thái Academic trong snapshot: {s.academic.status ?? 'Chưa xác nhận'}</p>
+      <p>Grade hiện tại: {s.academic.current_grade ?? 'Chưa có'}</p>
+      <h3 className="font-medium">Ghi chú quản trị</h3>
+      <p className="whitespace-pre-wrap">{(s.admin_note ?? r.admin_note) || 'Chưa nhập'}</p>
+    </Panel>
+
     <div className="report-controls space-y-4">{r.status === 'DRAFT' && <Panel title="Nhập nhận xét"><form action={updateReport} className="space-y-3"><input type="hidden" name="id" value={r.id} /><input type="hidden" name="version" value={r.version} /><input type="hidden" name="action" value="SAVE" />{[...summaryFields, { id: 'admin_note', name: 'Ghi chú quản trị' }].map(f => <label className="block space-y-1" key={f.id}><span>{f.name}</span><textarea className={inputClass} name={f.id} maxLength={4000} defaultValue={f.id === 'admin_note' ? r.admin_note : summaryValue(f.id)} /></label>)}<SubmitButton>Lưu nhận xét</SubmitButton></form></Panel>}
       {r.status === 'DRAFT' && <div className="flex flex-wrap gap-4">{action('REGENERATE', 'Tổng hợp lại bản nháp')}{action('READY', 'Chuyển chờ duyệt')}</div>}
       {r.status === 'READY_FOR_REVIEW' && <div className="flex flex-wrap gap-4">{action('APPROVE', 'Duyệt và khóa báo cáo', true)}{action('RETURN', 'Trả về bản nháp')}</div>}

@@ -14,7 +14,18 @@ test('report list filters branch status type month and bounded pagination',async
 test('report list renders multiple branches and empty state',async()=>{
  const h=harness({learning_report_list:[{...report,student_name:'Student A',student_code:'A',branch_name:'Cần Thơ'},{...report,id:id(2),student_name:'Student B',student_code:'B',branch_name:'Hà Nội'}]})
  const html=renderToStaticMarkup(await h.load(base+'page.tsx').default({searchParams:Promise.resolve({})}));assert.match(html,/Cần Thơ/);assert.match(html,/Hà Nội/)
- const empty=harness();assert.match(renderToStaticMarkup(await empty.load(base+'page.tsx').default({searchParams:Promise.resolve({})})),/Chưa có dữ liệu/)
+ const empty=harness();assert.match(renderToStaticMarkup(await empty.load(base+'page.tsx').default({searchParams:Promise.resolve({})})),/Không có báo cáo cần xử lý/)
+})
+test('report ops dashboard exposes KPI tabs and needs view by default',async()=>{
+ const h=harness({learning_report_list:[{...report,student_name:'Student A',student_code:'A',branch_name:'Cần Thơ'}]})
+ const html=renderToStaticMarkup(await h.load(base+'page.tsx').default({searchParams:Promise.resolve({})}))
+ for (const text of ['Cần xử lý','Bản nháp','Chờ duyệt','Đã duyệt','Quá hạn','Chi nhánh','Lớp']) assert.ok(html.includes(text), text)
+})
+test('report metrics use head counts without loading full payloads',async()=>{
+ const h=harness()
+ await h.load(base+'data.ts').reportMetrics(h.db,{branch:id(2)})
+ assert.ok(h.calls.some(c=>c.table==='learning_report_list'&&String(c.fields).includes('id')))
+ assert.ok(h.calls.every(c=>c.table!=='learning_report_list'||!String(c.fields||'').includes('draft_data')))
 })
 test('generate sends only validated report context to RPC',async()=>{
  const h=harness();await redirected(h.load(base+'actions.ts').generateReport,{enrollment_id:id(1),type:'MONTHLY',start:'2026-08-01',end:'2026-08-31',snapshot_data:'fake'})
@@ -40,7 +51,9 @@ test('draft detail shows missing input attendance and editable summary',async()=
     assert.match(html,/Kết quả \/ tiến bộ nổi bật/);
     assert.match(html,/Kế hoạch tháng tiếp theo/);
     assert.match(html,/Lưu nhận xét/);
-    assert.match(html,/Chuyển chờ duyệt/)
+    assert.match(html,/Chuyển chờ duyệt/);
+    assert.match(html,/1\. Student Overview/);
+    assert.match(html,/7\. Academic Status/)
    })
 
    test('approved detail reads snapshot and hides editing actions',async()=>{
