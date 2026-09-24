@@ -171,6 +171,9 @@ begin
      or nullif(btrim(coalesce(app.parent_name, '')), '') is null then
     return 'REVIEW_INCOMPLETE_IDENTITY';
   end if;
+  -- Serialize the duplicate check across distinct applications for the same identity.
+  perform pg_advisory_xact_lock(hashtextextended(
+    lower(btrim(app.student_name)) || ':' || app.student_date_of_birth::text, 0));
   if exists(select 1 from public.students s where s.date_of_birth = app.student_date_of_birth
      and lower(btrim(coalesce(s.full_name, ''))) = lower(btrim(app.student_name))) then
     return 'REVIEW_POSSIBLE_DUPLICATE';
