@@ -56,6 +56,13 @@ select is((select public.record_verified_momo_ipn(
   'PARTIAL_DEPOSIT', '49 percent does not complete registration');
 select is((select count(*) from public.students where full_name = 'MoMo Student'),
   0::bigint, 'no student before deposit threshold');
+select set_config('request.jwt.claim.role', 'authenticated', true);
+select throws_ok($$select public.transition_registration_application(
+  'e9200000-0000-4000-8000-000000000008',
+  'e9200000-0000-4000-8000-000000000003', 4, 'CANCEL')$$,
+  'P0001', 'REGISTRATION_PAID_DEPOSIT_REQUIRES_REFUND_REVIEW',
+  'received partial deposit cannot be cancelled without refund review');
+select set_config('request.jwt.claim.role', 'service_role', true);
 select is((select public.record_verified_momo_ipn(
   'VIBEE9200000000040008000000000000006', 'TEST', '100', 490000, 0)),
   'ALREADY_PAID', 'same IPN is idempotent');
