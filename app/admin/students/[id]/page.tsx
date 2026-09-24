@@ -138,15 +138,10 @@ export default async function EditStudentPage({
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Mã học viên *
+              Mã học viên
             </label>
 
-            <input
-              name="student_code"
-              required
-              defaultValue={student.student_code}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5"
-            />
+            <p className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-gray-700">{student.student_code}</p>
           </div>
 
           <div>
