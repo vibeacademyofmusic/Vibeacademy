@@ -26,7 +26,7 @@ function back(lead: string, error?: string) {
 export async function createCrmLead(formData: FormData) {
   const client = await db()
   const birth = String(formData.get('student_date_of_birth') ?? '').trim()
-  const { error } = await client.rpc('create_crm_lead', {
+  const { error } = await client.rpc('create_crm_lead_with_interest', {
     p_request: crypto.randomUUID(),
     p_branch: String(formData.get('branch_id') ?? ''),
     p_full_name: String(formData.get('full_name') ?? ''),
@@ -39,10 +39,23 @@ export async function createCrmLead(formData: FormData) {
     p_instrument_interest: String(formData.get('instrument_interest') ?? ''),
     p_source_type: 'MANUAL',
     p_owner: null,
+    p_interest_level: String(formData.get('interest_level') ?? 'REFERENCE'),
   })
   if (error) redirect('/admin/business/crm?error=' + encodeURIComponent(crmError(error.message)))
   revalidatePath('/admin/business/crm')
   redirect('/admin/business/crm?success=' + encodeURIComponent('Đã tạo khách hàng mới'))
+}
+
+export async function setCrmLeadInterest(formData: FormData) {
+  const client = await db()
+  const { lead, version, request } = ids(formData)
+  const { error } = await client.rpc('set_crm_lead_interest', {
+    p_request: request,
+    p_lead: lead,
+    p_version: version,
+    p_interest_level: String(formData.get('interest_level') ?? ''),
+  })
+  back(lead, error ? crmError(error.message) : undefined)
 }
 
 function ids(formData: FormData) {
