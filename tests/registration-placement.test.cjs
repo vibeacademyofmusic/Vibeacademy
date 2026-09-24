@@ -20,7 +20,8 @@ test('registration is a business route and students stay one menu item', () => {
 
 test('students page derives current and waiting without a second student table', () => {
   assert.match(students, /Học viên hiện tại/)
-  assert.match(students, /Chờ sắp lớp/)
+  assert.equal(students.includes('Chờ sắp lớp'), false)
+  assert.match(fs.readFileSync('app/admin/students/ops-shell.tsx', 'utf8'), /Ca dạy/)
   assert.match(students, /list_current_student_enrollments/)
   assert.match(students, /list_waiting_placements/)
   assert.match(students, /waiting_placement_summary/)
@@ -28,7 +29,7 @@ test('students page derives current and waiting without a second student table',
   assert.match(students, /Xếp lớp/)
   assert.match(students, /Đổi lớp/)
   assert.match(students, /Hủy xếp lớp/)
-  assert.match(students, /Đã bắt đầu học — cần quy trình chuyển lớp/)
+  assert.match(students, /Đang học trong ca/)
   assert.match(students, /Chưa xếp lớp/)
   assert.match(students, /Đang tìm lịch phù hợp/)
   assert.equal(students.includes('placement_status}'), false)
@@ -36,7 +37,7 @@ test('students page derives current and waiting without a second student table',
 })
 
 test('won lead can open a prefilled registration and completion stays reviewed', () => {
-  assert.match(crm, /Tạo hồ sơ đăng ký/)
+  assert.match(crm, /Bắt đầu đăng ký/)
   assert.match(crm, /registrations\/new\?lead=/)
   assert.match(detail, /Hoàn tất đăng ký/)
   assert.match(migration, /REGISTRATION_REVIEW_REQUIRED/)

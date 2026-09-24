@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { completeRegistration, transitionRegistration } from '../actions'
+import { ZaloConnectionCard } from './ZaloConnection'
 
 export default async function RegistrationDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> }) {
   const { id } = await params
@@ -9,11 +10,13 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   const db = await createClient()
   const { data: app } = await db.from('registration_applications').select('id, application_code, branch_id, student_name, student_date_of_birth, parent_name, parent_phone, program_interest, instrument_interest, desired_start_date, preferred_schedule, status, invoice_id, payment_confirmed_at, completed_at, linked_student_id, linked_parent_id, linked_enrollment_id, version, branches(name)').eq('id', id).maybeSingle()
   if (!app) notFound()
-  const [{ data: events }, { data: placement }, { data: invoice }] = await Promise.all([
+  const [{ data: events }, { data: placement }, { data: invoice }, { data: zalo }] = await Promise.all([
     db.from('registration_application_events').select('id, event_type, from_status, to_status, created_at').eq('application_id', id).order('created_at'),
     db.from('student_placement_cases').select('id, status, scheduled_start_date, assigned_class_id').eq('registration_application_id', id).maybeSingle(),
     app.invoice_id ? db.from('invoice_receivables').select('invoice_status, outstanding_balance').eq('invoice_id', app.invoice_id).maybeSingle() : Promise.resolve({ data: null }),
+    db.rpc('registration_zalo_connection', { p_registration: id }),
   ])
+  const zaloConnection = Array.isArray(zalo) ? zalo[0] ?? null : zalo
   const branch = Array.isArray(app.branches) ? app.branches[0] : app.branches
   const hidden = { application_id: app.id, version: String(app.version) }
   const field = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm'
@@ -32,7 +35,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             <div><dt className="text-gray-500">Bộ môn</dt><dd>{app.program_interest || '—'} · {app.instrument_interest || '—'}</dd></div>
             <div><dt className="text-gray-500">Ngày muốn học</dt><dd>{app.desired_start_date || '—'} · {app.preferred_schedule || 'Chưa có lịch mong muốn'}</dd></div>
             <div><dt className="text-gray-500">Thanh toán</dt><dd>{app.invoice_id ? (invoice?.outstanding_balance === 0 ? 'Đã đủ theo công nợ hóa đơn' : 'Hóa đơn chưa thanh toán đủ') : 'Chưa gắn hóa đơn'}</dd></div>
-            <div><dt className="text-gray-500">Kết quả</dt><dd>{app.linked_student_id ? <Link href={`/admin/students/${app.linked_student_id}`}>Học viên đã liên kết</Link> : 'Chưa hoàn tất'}{placement ? ` · Xếp lớp ${placement.status}` : ''}</dd></div>
+            <div><dt className="text-gray-500">Kết quả</dt><dd>{app.linked_student_id ? <Link href={`/admin/students/${app.linked_student_id}`}>Học viên đã liên kết</Link> : 'Chưa hoàn tất'}{placement ? ` · Ca dạy ${placement.status}` : ''}</dd></div>
           </dl>
         </section>
         <section className="rounded-2xl border border-gray-200 bg-white p-5">
@@ -43,6 +46,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
           <ol className="mt-4 space-y-2 text-sm text-gray-600">{(events ?? []).map(event => <li key={event.id}>{event.event_type}{event.to_status ? ` → ${event.to_status}` : ''}</li>)}</ol>
         </section>
       </div>
+      <ZaloConnectionCard connection={zaloConnection} />
     </div>
   )
 }

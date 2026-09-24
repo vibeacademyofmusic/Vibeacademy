@@ -1,20 +1,13 @@
 export const navigationGroups = [
   { name: 'TỔNG QUAN', items: [{ name: 'Bảng điều khiển', href: '/admin' }] },
   { name: 'ĐÀO TẠO', items: [
-    { name: 'Chương trình học', href: '/admin/academic' },
-    { name: 'Khóa học', href: '/admin/courses' },
+    { name: 'Chương trình học', href: '/admin/programs' },
   ] },
   { name: 'VẬN HÀNH', items: [
-    { name: 'Lớp học', href: '/admin/classes' },
     { name: 'Phòng học', href: '/admin/rooms' },
-    { name: 'Lịch học', href: '/admin/schedule' },
-    { name: 'Điểm danh', href: '/admin/attendance' },
-    { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },
   ] },
   { name: 'HỌC VIÊN', items: [
     { name: 'Học viên', href: '/admin/students' },
-    { name: 'Báo cáo học tập', href: '/admin/reports/learning' },
-    { name: 'Phản hồi buổi học', href: '/admin/feedback' },
   ] },
   { name: 'TÀI CHÍNH', items: [
     { name: 'Tổng quan tài chính', href: '/admin/finance' },
@@ -45,14 +38,14 @@ export const navigationGroups = [
   ] },
   { name: 'KINH DOANH', items: [
     { name: 'Điều hành kinh doanh', href: '/admin/business' },
-    { name: 'Khách hàng mới', href: '/admin/business/crm' },
+    { name: 'CRM & Tuyển sinh', href: '/admin/business/crm' },
     { name: 'Hồ sơ đăng ký', href: '/admin/business/registrations' },
     { name: 'Chiến dịch', href: '/admin/business/campaigns' },
     { name: 'Báo cáo kinh doanh', href: '/admin/business/reports' },
     { name: 'Khách hàng cũ', href: '/admin/business/reactivation' },
     { name: 'Khách mua đàn', href: '/admin/business/instrument-customers' },
   ] },
-  { name: 'HỆ THỐNG', items: [{ name: 'Chi nhánh', href: '/admin/branches' }, { name: 'Thông báo', href: '/admin/notifications' }, { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' }] },
+  { name: 'HỆ THỐNG', items: [{ name: 'Chi nhánh', href: '/admin/branches' }, { name: 'Thông báo', href: '/admin/notifications' }, { name: 'Tích hợp', href: '/admin/system/integrations' }, { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' }] },
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
 // The sole standalone report route lives under HỌC VIÊN; do not duplicate it or invent report routes.
@@ -84,6 +77,19 @@ export function navigationForAccess(mode: ShellMode) {
 export function activeNavigationHref(pathname: string) {
   if (pathname === '/admin/employees/attendance' || pathname.startsWith('/admin/employees/attendance/')) {
     return '/admin/hr/attendance'
+  }
+  if (pathname === '/admin/academic' || pathname.startsWith('/admin/academic/') || pathname === '/admin/courses' || pathname.startsWith('/admin/courses/')) {
+    return '/admin/programs'
+  }
+  if (pathname === '/admin/rooms' || pathname.startsWith('/admin/rooms/')) return '/admin/rooms'
+  if (
+    pathname === '/admin/classes' || pathname.startsWith('/admin/classes/')
+    || pathname === '/admin/schedule' || pathname.startsWith('/admin/schedule/')
+    || pathname === '/admin/attendance' || pathname.startsWith('/admin/attendance/')
+    || pathname === '/admin/reports/learning' || pathname.startsWith('/admin/reports/learning/')
+    || pathname === '/admin/feedback' || pathname.startsWith('/admin/feedback/')
+  ) {
+    return '/admin/students'
   }
   return navigationGroups.flatMap(group => group.items)
     .filter(item => pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href + '/')))

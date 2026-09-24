@@ -67,7 +67,7 @@ export default async function ClassEnrollments({
                       href={`/admin/classes/${row.class_id}`}
                       className="font-medium text-blue-700 underline"
                     >
-                      {item?.name ?? item?.code ?? 'Lớp học'}
+                      {item?.name ?? item?.code ?? 'Ca dạy'}
                     </Link>
 
                     <p className="mt-1 text-sm text-gray-500">

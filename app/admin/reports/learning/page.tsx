@@ -97,7 +97,7 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
         resetHref={href({ view: view === 'needs' ? undefined : view })}
         fields={[
           { name: 'branch', label: 'Chi nhánh', type: 'select', value: params.branch, options: branchRows },
-          { name: 'class', label: 'Lớp', type: 'select', value: params.class, options: options.classes },
+          { name: 'class', label: 'Ca dạy', type: 'select', value: params.class, options: options.classes },
           { name: 'teacher_q', label: 'Giáo viên', type: 'text', value: params.teacher_q, placeholder: 'Tên giáo viên' },
           { name: 'grade', label: 'Grade', type: 'text', value: params.grade, placeholder: 'Grade' },
           { name: 'curriculum', label: 'Nhạc cụ / Curriculum', type: 'text', value: params.curriculum },
@@ -110,7 +110,7 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
 
       {!list.data.length ? <EmptyState>{emptyMessage}</EmptyState> : (
         <DataTable
-          headers={['Học viên', 'Lớp', 'Grade', 'Giáo viên', 'Chi nhánh', 'Loại', 'Kỳ báo cáo', 'Trạng thái', 'Academic Status', 'Hành động']}
+          headers={['Học viên', 'Ca dạy', 'Grade', 'Giáo viên', 'Chi nhánh', 'Loại', 'Kỳ báo cáo', 'Trạng thái', 'Academic Status', 'Hành động']}
           rows={list.data.map(r => {
             const overdue = ['DRAFT', 'READY_FOR_REVIEW'].includes(r.status) && r.period_end < today
             const actions: ReactNode[] = [

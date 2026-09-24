@@ -16,6 +16,12 @@ const devOrigin = localDevOrigin()
 
 const nextConfig: NextConfig = {
   ...(devOrigin ? { allowedDevOrigins: [devOrigin] } : {}),
+  async redirects() {
+    return [
+      { source: '/admin/reports/learning', destination: '/admin/students?tab=reports', permanent: false },
+      { source: '/admin/feedback', destination: '/admin/students?tab=feedback', permanent: false },
+    ]
+  },
 };
 
 export default nextConfig;

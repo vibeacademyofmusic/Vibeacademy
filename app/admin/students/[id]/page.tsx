@@ -91,7 +91,17 @@ export default async function EditStudentPage({
               </div>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <nav className="mt-6 flex gap-2 overflow-x-auto text-sm" aria-label="Hồ sơ học viên">
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#overview">Tổng quan</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#learning">Học tập</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#shifts">Ca dạy và lịch học</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href={`/admin/students?tab=attendance`}>Điểm danh</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href={`/admin/students?tab=reports&search=${encodeURIComponent(student.student_code)}`}>Báo cáo học tập</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href={`/admin/students?tab=feedback&q=${encodeURIComponent(student.student_code)}`}>Phản hồi</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="/admin/tuition">Học phí</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#history">Lịch sử</a>
+            </nav>
+            <div id="overview" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl border border-gray-200 bg-white p-4">
   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
     Ngày đăng ký tại Vibe
@@ -108,11 +118,11 @@ export default async function EditStudentPage({
 
             </div>
             <StudentPlacement studentId={student.id} />
-            <AcademicPrograms studentId={student.id} />
+            <div id="learning"><AcademicPrograms studentId={student.id} /></div>
             </div>
-            <ClassEnrollments studentId={student.id} />
+            <div id="shifts"><ClassEnrollments studentId={student.id} /></div>
 
-            <StudentJournals studentId={student.id} />
+            <div id="history"><StudentJournals studentId={student.id} /></div>
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-950">
                 Chỉnh sửa hồ sơ

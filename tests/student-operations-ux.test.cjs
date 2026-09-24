@@ -24,7 +24,7 @@ test('students reports and feedback share vibe ops chrome', () => {
   assert.match(students, /Không tìm thấy học viên phù hợp với bộ lọc/)
   assert.match(reports, /Không có báo cáo cần xử lý/)
   assert.match(feedback, /Không có phản hồi cần xử lý/)
-  assert.match(feedback, /name: 'class'|label: 'Lớp'/)
+  assert.match(feedback, /label: 'Ca dạy'/)
 })
 
 test('learning report list migration enriches ops columns', () => {

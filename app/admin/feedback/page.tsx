@@ -84,7 +84,7 @@ export default async function FeedbackPage({ searchParams }: { searchParams: Pro
         resetHref={href({ view: view === 'attention' ? undefined : view, from: scoped.from, to: scoped.to })}
         fields={[
           { name: 'branch', label: 'Chi nhánh', type: 'select', value: scoped.branch, options: branchRows },
-          { name: 'class', label: 'Lớp', type: 'select', value: scoped.class, options: classRows.map(c => ({ id: c.id, name: c.name })) },
+          { name: 'class', label: 'Ca dạy', type: 'select', value: scoped.class, options: classRows.map(c => ({ id: c.id, name: c.name })) },
           { name: 'teacher', label: 'Giáo viên', type: 'select', value: scoped.teacher, options: teacherRows.map(t => ({ id: t.id, name: t.full_name || t.teacher_code })) },
           { name: 'rating', label: 'Đánh giá', type: 'select', value: params.rating, options: [1, 2, 3, 4, 5].map(n => ({ id: String(n), name: String(n) })) },
           ...(view === 'all' ? [{ name: 'status', label: 'Trạng thái', type: 'select' as const, value: params.status, options: states }] : []),

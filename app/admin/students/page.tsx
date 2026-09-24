@@ -20,6 +20,8 @@ import {
 import { businessDate, shiftBusinessDate } from '@/app/admin/_lib/business-date'
 import { createClient } from '@/lib/supabase/server'
 import { assignPlacement, cancelPlacement, changePlacement, matchPlacement } from './placement-actions'
+import { StudentOpsHub } from './hub'
+import { StudentOpsShell, type StudentOpsTab } from './ops-shell'
 import { pageNumber, pageSize, uuidPattern } from '@/app/admin/finance/operations'
 
 type StudentsPageProps = {
@@ -34,13 +36,20 @@ type StudentsPageProps = {
       view?: string
       filter?: string
       page?: string
+      tab?: string
     }>
   }
+
+  const opsTabs = ['overview', 'students', 'teaching-shifts', 'schedule', 'attendance', 'reports', 'feedback'] as const
   
   export default async function StudentsPage({
     searchParams,
   }: StudentsPageProps) {
     const params = await searchParams
+    const tab = opsTabs.includes(params.tab as StudentOpsTab) ? params.tab as StudentOpsTab : 'overview'
+    if (tab !== 'students') {
+      return <StudentOpsHub tab={tab} searchParams={searchParams} />
+    }
     const q = (params.q ?? '').trim()
     const branch = (params.branch ?? '').trim()
     const classId = uuidPattern.test(params.class ?? '') ? params.class! : ''
@@ -53,7 +62,7 @@ type StudentsPageProps = {
     const supabase = await createClient()
     const { data: isSuperAdmin } = await supabase.rpc('has_role', { role_code: 'SUPER_ADMIN' })
     const showRecords = params.view === 'records' && isSuperAdmin === true
-    const opsView = params.view === 'waiting' ? 'waiting' : 'current'
+    const opsView = 'current' as const
 
     const branchesQuery = showRecords ? supabase
   .from('branches')
@@ -115,6 +124,7 @@ let studentsQuery = showRecords ? supabase
 
   const studentsHref = (patch: Record<string, string | undefined> = {}) => {
     const query = buildQuery({
+      tab: 'students',
       view: opsView === 'current' ? undefined : opsView,
       branch: branch || undefined,
       class: classId || undefined,
@@ -128,21 +138,15 @@ let studentsQuery = showRecords ? supabase
 
   return (
     <AppPage>
+    <StudentOpsShell tab="students">
       <PageHeader
-        title="Học viên"
-        description="Tổng quan vận hành học viên đang hoạt động và hồ sơ chờ sắp lớp. Học viên hiện tại là ghi danh đã bắt đầu theo ngày Việt Nam."
-        actions={isSuperAdmin === true ? <Link prefetch={false} href="/admin/students?view=records" className="vibe-button">Tạo hồ sơ thủ công</Link> : undefined}
+        title="Hồ sơ học viên"
+        description="Học viên hiện tại là ghi danh đã bắt đầu theo ngày Việt Nam. Đổi ca dạy nằm trong hồ sơ học viên."
+        actions={isSuperAdmin === true ? <Link prefetch={false} href="/admin/students?tab=students&view=records" className="vibe-button">Tạo hồ sơ thủ công</Link> : undefined}
       />
       {params.error && <InlineNotice tone="error">{params.error}</InlineNotice>}
       {!showRecords && (
         <>
-          <OpsTabs
-            ariaLabel="Chế độ xem học viên"
-            tabs={[
-              { href: studentsHref({ view: undefined }), label: 'Học viên hiện tại', active: opsView === 'current' },
-              { href: studentsHref({ view: 'waiting' }), label: 'Chờ sắp lớp', active: opsView === 'waiting' },
-            ]}
-          />
           <StudentPlacementBoard
             view={opsView}
             branch={branch}
@@ -460,6 +464,7 @@ let studentsQuery = showRecords ? supabase
           )}
         </section>
       </div>}
+    </StudentOpsShell>
     </AppPage>
   )
 }
@@ -697,7 +702,7 @@ async function StudentPlacementBoard({
     )
   }
 
-  const [{ data: rows }, { data: activeCount }, { data: pausedCount }] = await Promise.all([
+  const [{ data: rows }, { data: activeCount }] = await Promise.all([
     db.rpc('list_current_student_enrollments', {
       p_branch: branch || null,
       p_search: q,
@@ -712,26 +717,25 @@ async function StudentPlacementBoard({
       p_class: classId || null,
       p_teacher: teacherId || null,
     }),
-    db.rpc('waiting_placement_summary', { p_branch: branch || null }),
   ])
   const current = ((rows ?? []) as CurrentRow[]).slice(0, pageSize)
   const more = ((rows ?? []) as CurrentRow[]).length > pageSize
-  const waitingKpi = Array.isArray(pausedCount) ? pausedCount[0] : pausedCount
 
   return (
     <section className="space-y-4">
       <div className="vibe-metrics">
         <OpsMetricLink href={hrefBuilder({})} title="Học viên đang hoạt động" value={activeCount ?? 0} />
-        <OpsMetricLink href={hrefBuilder({ view: 'waiting' })} title="Needs Attention" value={waitingKpi?.waiting_count ?? 0} note="Chờ sắp lớp" />
+        <OpsMetricLink href={hrefBuilder({})} title="Đang học trong ca" value={activeCount ?? 0} note="Ghi danh đã bắt đầu" />
         <section className="vibe-card vibe-metric"><p>Học viên mới</p><strong>—</strong><small>Chưa có KPI canonical riêng</small></section>
         <section className="vibe-card vibe-metric"><p>Đang bảo lưu</p><strong>—</strong><small>Chưa có KPI canonical trên list hiện tại</small></section>
       </div>
       <OperationsFilterBar
         action="/admin/students"
-        resetHref="/admin/students"
+        hidden={{ tab: 'students' }}
+        resetHref="/admin/students?tab=students"
         fields={[
           { name: 'branch', label: 'Chi nhánh', type: 'select', value: branch, options: branchSelect },
-          { name: 'class', label: 'Lớp', type: 'select', value: classId, options: classSelect },
+          { name: 'class', label: 'Ca dạy', type: 'select', value: classId, options: classSelect },
           { name: 'teacher', label: 'Giáo viên', type: 'select', value: teacherId, options: teacherSelect },
           { name: 'q', label: 'Tìm học viên', type: 'search', value: q, placeholder: 'Tên / mã học viên' },
         ]}

@@ -19,7 +19,7 @@ test('report list renders multiple branches and empty state',async()=>{
 test('report ops dashboard exposes KPI tabs and needs view by default',async()=>{
  const h=harness({learning_report_list:[{...report,student_name:'Student A',student_code:'A',branch_name:'Cần Thơ'}]})
  const html=renderToStaticMarkup(await h.load(base+'page.tsx').default({searchParams:Promise.resolve({})}))
- for (const text of ['Cần xử lý','Bản nháp','Chờ duyệt','Đã duyệt','Quá hạn','Chi nhánh','Lớp']) assert.ok(html.includes(text), text)
+ for (const text of ['Cần xử lý','Bản nháp','Chờ duyệt','Đã duyệt','Quá hạn','Chi nhánh','Ca dạy']) assert.ok(html.includes(text), text)
 })
 test('report metrics use head counts without loading full payloads',async()=>{
  const h=harness()
