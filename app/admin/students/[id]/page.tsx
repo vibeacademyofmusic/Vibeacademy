@@ -326,17 +326,19 @@ export default async function EditStudentPage({
 async function StudentPlacement({ studentId }: { studentId: string }) {
   const db = await createClient()
   const [{ data: applications }, { data: placements }] = await Promise.all([
-    db.from('registration_applications').select('id, application_code, status').eq('linked_student_id', studentId).order('completed_at', { ascending: false }).limit(5),
-    db.from('student_placement_cases').select('id, status, scheduled_start_date, assigned_class_id').eq('student_id', studentId).order('opened_at', { ascending: false }).limit(5),
+    db.from('registration_applications').select('id, application_code, status, program_interest, instrument_interest').eq('linked_student_id', studentId).order('completed_at', { ascending: false }).limit(5),
+    db.from('student_placement_cases').select('id, status, scheduled_start_date, assigned_class_id, curriculum_id, level_id, subject_id').eq('student_id', studentId).order('opened_at', { ascending: false }).limit(5),
   ])
   if (!applications?.length && !placements?.length) return null
   const labels: Record<string, string> = { UNASSIGNED: 'Chưa xếp lớp', MATCHING: 'Đang tìm lịch', SCHEDULED: 'Đã xếp lớp' }
+  const levelIds = (placements ?? []).map(p => p.level_id).filter((value): value is string => Boolean(value))
+  const { data: levels } = levelIds.length ? await db.from('curriculum_levels').select('id, name').in('id', levelIds) : { data: [] }
   return (
     <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4 text-sm">
       <h2 className="font-semibold text-gray-950">Đăng ký và xếp lớp</h2>
       <ul className="mt-3 space-y-2">
-        {(applications ?? []).map(application => <li key={application.id}>Hồ sơ {application.application_code} · {application.status}</li>)}
-        {(placements ?? []).map(placement => <li key={placement.id}>{labels[placement.status] || placement.status}{placement.scheduled_start_date ? ` · bắt đầu ${placement.scheduled_start_date}` : ''}</li>)}
+        {(applications ?? []).map(application => <li key={application.id}>Hồ sơ <Link className="underline" href={`/admin/business/registrations/${application.id}`}>{application.application_code}</Link> · {application.program_interest} · {application.instrument_interest}</li>)}
+        {(placements ?? []).map(placement => <li key={placement.id}>{labels[placement.status] || placement.status}{levels?.find(level => level.id === placement.level_id)?.name ? ` · ${levels?.find(level => level.id === placement.level_id)?.name}` : ''}{placement.scheduled_start_date ? ` · bắt đầu ${placement.scheduled_start_date}` : ''}</li>)}
       </ul>
     </section>
   )
