@@ -62,6 +62,11 @@ for select to authenticated using (exists (
   where app.id = application_id and public.registration_can('registration.view', app.branch_id)
 ));
 
+create function public.momo_service_request() returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select coalesce(auth.jwt()->>'role', nullif(current_setting('request.jwt.claim.role', true), '')) = 'service_role'
+$$;
+
 create function public.set_registration_deposit_quote(p_application uuid, p_version integer, p_plan uuid)
 returns uuid language plpgsql security definer set search_path = public, pg_temp as $$
 declare app public.registration_applications%rowtype;
@@ -129,7 +134,7 @@ create function public.activate_registration_momo_order(
 declare ord public.registration_momo_orders%rowtype;
   app public.registration_applications%rowtype;
 begin
-  if current_setting('request.jwt.claim.role', true) is distinct from 'service_role' then
+  if not coalesce(public.momo_service_request(), false) then
     raise exception 'MOMO_SERVER_ONLY';
   end if;
   select * into ord from public.registration_momo_orders where order_id = p_order_id;
@@ -159,7 +164,7 @@ declare app public.registration_applications%rowtype;
   student_id uuid; parent_id uuid; placement_id uuid; finance_id uuid;
   ord public.registration_momo_orders%rowtype; branch public.branches%rowtype;
 begin
-  if current_setting('request.jwt.claim.role', true) is distinct from 'service_role' then
+  if not coalesce(public.momo_service_request(), false) then
     raise exception 'MOMO_SERVER_ONLY';
   end if;
   select * into app from public.registration_applications where id = p_application for update;
@@ -262,7 +267,7 @@ declare ord public.registration_momo_orders%rowtype;
   terms public.registration_deposit_terms%rowtype;
   paid_total bigint;
 begin
-  if current_setting('request.jwt.claim.role', true) is distinct from 'service_role' then
+  if not coalesce(public.momo_service_request(), false) then
     raise exception 'MOMO_SERVER_ONLY';
   end if;
   select * into ord from public.registration_momo_orders where order_id = p_order_id;
@@ -329,3 +334,66 @@ grant execute on function public.activate_registration_momo_order(text,text,bigi
   public.complete_momo_deposit_registration(uuid),
   public.record_verified_momo_ipn(text,text,text,bigint,integer) to service_role;
 revoke all on function public.post_reviewed_momo_deposit_receipts() from public, anon, authenticated;
+revoke all on function public.momo_service_request() from public, anon, authenticated;
+
+-- Waiting list displays the selected level before a class is assigned.
+create or replace function public.list_waiting_placements(
+  p_branch uuid,
+  p_filter text,
+  p_search text,
+  p_limit integer default null,
+  p_offset integer default 0
+)
+returns table (
+  placement_id uuid, placement_version integer, student_id uuid, student_name text, parent_name text,
+  branch_id uuid, branch_name text, program_name text, level_name text, desired_start date,
+  preferred_schedule text, placement_status text, class_name text, teacher_name text,
+  scheduled_start date, owner_name text, completed_on date, days_waiting integer, opened_on date,
+  enrollment_id uuid, class_id uuid
+)
+language sql stable security definer set search_path = public, pg_temp as $$
+  select placement.id, placement.version, student.id, student.full_name, app.parent_name,
+    placement.branch_id, branch.name,
+    coalesce(course.name, app.program_interest),
+    (select level.name from public.curriculum_levels level where level.id = coalesce(course.level_id, placement.level_id)),
+    placement.desired_start_date, placement.preferred_schedule,
+    case
+      when placement.status = 'SCHEDULED' then 'SCHEDULED_FUTURE'
+      else placement.status
+    end,
+    class_row.name,
+    (select teacher.full_name from public.teachers teacher where teacher.id = placement.assigned_teacher_id),
+    placement.scheduled_start_date,
+    (select profile.full_name from public.profiles profile where profile.id = placement.owner_user_id),
+    coalesce(app.deposit_confirmed_at, app.payment_confirmed_at, app.completed_at)::date,
+    public.registration_vietnam_today() - placement.opened_at::date,
+    placement.opened_at::date,
+    placement.enrollment_id,
+    placement.assigned_class_id
+  from public.student_placement_cases placement
+  join public.students student on student.id = placement.student_id
+  join public.registration_applications app on app.id = placement.registration_application_id
+  join public.branches branch on branch.id = placement.branch_id
+  left join public.classes class_row on class_row.id = placement.assigned_class_id
+  left join public.courses course on course.id = class_row.course_id
+  where public.registration_can('student_placement.view', placement.branch_id)
+    and (p_branch is null or placement.branch_id = p_branch)
+    and (
+      placement.status in ('UNASSIGNED', 'MATCHING')
+      or (placement.status = 'SCHEDULED' and placement.scheduled_start_date > public.registration_vietnam_today())
+    )
+    and (
+      coalesce(p_filter, 'ALL') = 'ALL'
+      or (p_filter = 'UNASSIGNED' and placement.status = 'UNASSIGNED')
+      or (p_filter = 'MATCHING' and placement.status = 'MATCHING')
+      or (p_filter = 'SCHEDULED_FUTURE' and placement.status = 'SCHEDULED' and placement.scheduled_start_date > public.registration_vietnam_today())
+    )
+    and (
+      nullif(btrim(coalesce(p_search, '')), '') is null
+      or student.full_name ilike '%' || replace(btrim(p_search), '%', '') || '%'
+      or student.student_code ilike '%' || replace(btrim(p_search), '%', '') || '%'
+    )
+  order by placement.opened_at, student.full_name
+  limit case when p_limit is null then null else least(greatest(p_limit, 0), 100) end
+  offset greatest(coalesce(p_offset, 0), 0)
+$$;
