@@ -11,7 +11,8 @@ new Function('require', 'module', 'exports', code)(require, compiled, compiled.e
 const model = compiled.exports
 
 test('crm tabs cover the pipeline without exposing raw groups', () => {
-  assert.deepEqual(model.tabs.map(tab => tab.label), ['Tất cả', 'Khách hàng mới', 'Tiềm năng', 'Cơ hội', 'Đã chốt', 'Đã mất'])
+  assert.deepEqual(model.tabs.map(tab => tab.label), ['Tất cả', 'Khách hàng mới', 'Học thử', 'Cơ hội', 'Đã chốt', 'Đã mất'])
+  assert.deepEqual(Object.values(model.interestLevelLabel), ['Tham khảo', 'Quan tâm', 'Tiềm năng'])
   assert.deepEqual(model.tabStatuses('new'), ['NEW', 'CONTACTED'])
   assert.deepEqual(model.tabStatuses('potential'), ['QUALIFIED', 'TRIAL_BOOKED', 'TRIAL_COMPLETED'])
   assert.deepEqual(model.tabStatuses('opportunity'), ['PROPOSAL_SENT', 'NEGOTIATING'])

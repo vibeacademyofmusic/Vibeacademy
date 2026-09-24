@@ -20,7 +20,8 @@ export async function CrmLeadContent({ searchParams }: { searchParams: Promise<L
 
   return (
     <div>
-      <h2 className="mb-6 text-xl font-semibold tracking-tight text-gray-950">Khách hàng và cơ hội</h2>
+      <h2 className="text-xl font-semibold tracking-tight text-gray-950">Khách hàng và cơ hội</h2>
+      <p className="mb-6 mt-1 text-sm text-gray-600">Mức độ quan tâm đi theo thứ tự Tham khảo, Quan tâm, Tiềm năng. Trạng thái bên cạnh là giai đoạn bán hàng, không phải mức độ.</p>
       {filters.error && <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{filters.error}</div>}
       {filters.success && <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">{filters.success}</div>}
       <section className="mb-6">

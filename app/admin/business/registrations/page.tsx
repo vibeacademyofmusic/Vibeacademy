@@ -8,9 +8,10 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
     return <div>
       <p className="text-sm font-medium text-gray-500">Kinh doanh</p>
       <h1 className="mt-1 text-3xl font-bold text-gray-950">CRM & Tuyển sinh</h1>
-      <div className="mt-5 mb-6 flex gap-2 border-b border-gray-200 pb-3 text-sm">
-        <Link href="/admin/business/registrations" className="rounded-lg px-4 py-2 text-gray-700">Đăng ký mới</Link>
+      <div className="mt-5 mb-6 flex flex-wrap gap-2 border-b border-gray-200 pb-3 text-sm">
+        <Link href="/admin/business/registrations/new" className="rounded-lg px-4 py-2 text-gray-700">Đăng ký tại quầy</Link>
         <span className="rounded-lg bg-gray-950 px-4 py-2 text-white">CRM</span>
+        <Link href="/admin/business/registrations" className="rounded-lg px-4 py-2 text-gray-700">Danh sách đăng ký</Link>
       </div>
       <CrmLeadContent searchParams={Promise.resolve(params)} />
     </div>
@@ -24,9 +25,10 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
     <div>
       <p className="text-sm font-medium text-gray-500">Kinh doanh</p>
       <h1 className="mt-1 text-3xl font-bold text-gray-950">CRM & Tuyển sinh</h1>
-      <div className="mt-5 flex gap-2 border-b border-gray-200 pb-3 text-sm">
-        <span className="rounded-lg bg-gray-950 px-4 py-2 text-white">Đăng ký mới</span>
+      <div className="mt-5 flex flex-wrap gap-2 border-b border-gray-200 pb-3 text-sm">
+        <Link href="/admin/business/registrations/new" className="rounded-lg px-4 py-2 text-gray-700">Đăng ký tại quầy</Link>
         <Link href="/admin/business/registrations?tab=crm" className="rounded-lg px-4 py-2 text-gray-700">CRM</Link>
+        <span className="rounded-lg bg-gray-950 px-4 py-2 text-white">Danh sách đăng ký</span>
       </div>
       <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-5">
         <h2 className="text-lg font-semibold text-gray-950">Tiếp nhận và đăng ký tại quầy</h2>
