@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/server'
-import { assignCrmLead, attributeCrmLead, followUpCrmLead, noteCrmLead, reviewCrmLead, transitionCrmLead } from '../actions'
-import { eventLabel, nextSteps, sourceLabel, statusLabel } from '../model'
+import { assignCrmLead, attributeCrmLead, followUpCrmLead, noteCrmLead, reviewCrmLead, setCrmLeadInterest, transitionCrmLead } from '../actions'
+import { eventLabel, interestLevelLabel, nextSteps, sourceLabel, statusLabel } from '../model'
 
 const field = 'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2'
 
@@ -17,7 +17,7 @@ export default async function CrmLeadDetailPage({
   const { error } = await searchParams
   const db = await createClient()
   const [{ data: lead }, { data: events }, { data: reviews }, { data: candidates }, { data: owners }] = await Promise.all([
-    db.from('crm_leads').select('id, branch_id, status, full_name, phone, email, parent_name, student_name, student_date_of_birth, program_interest, instrument_interest, source_type, campaign_id, owner_user_id, first_contact_at, last_contact_at, next_follow_up_on, lost_reason, converted_at, converted_student_id, converted_parent_id, version').eq('id', id).maybeSingle(),
+    db.from('crm_leads').select('id, branch_id, status, interest_level, full_name, phone, email, parent_name, student_name, student_date_of_birth, program_interest, instrument_interest, source_type, campaign_id, owner_user_id, first_contact_at, last_contact_at, next_follow_up_on, lost_reason, converted_at, converted_student_id, converted_parent_id, version').eq('id', id).maybeSingle(),
     db.from('crm_lead_events').select('id, event_type, from_status, to_status, channel, note, created_at').eq('lead_id', id).order('created_at', { ascending: false }).limit(50),
     db.from('crm_lead_conversion_reviews').select('id, decision, note, created_at').eq('lead_id', id).order('created_at', { ascending: false }).limit(20),
     db.rpc('crm_lead_match_candidates', { p_lead: id }),
@@ -37,7 +37,7 @@ export default async function CrmLeadDetailPage({
     <div>
       <Link href="/admin/business/crm" className="text-sm text-gray-500">Khách hàng mới</Link>
       <h1 className="mt-2 text-3xl font-bold text-gray-950">{lead.full_name || lead.student_name || 'Chưa có tên'}</h1>
-      <p className="mt-1 text-sm text-gray-500">{statusLabel[lead.status] || lead.status} · {branch?.name || 'Chi nhánh'}</p>
+      <p className="mt-1 text-sm text-gray-500">{interestLevelLabel[lead.interest_level]} · {statusLabel[lead.status] || lead.status} · {branch?.name || 'Chi nhánh'}</p>
       {error && <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
       <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_320px]">
         <div className="space-y-6">
@@ -52,6 +52,11 @@ export default async function CrmLeadDetailPage({
           </section>
           <section className="rounded-2xl border border-gray-200 bg-white p-5">
             <h2 className="font-semibold">Nhu cầu và nguồn</h2>
+            <form action={setCrmLeadInterest} className="mt-3 flex flex-wrap items-end gap-2">
+              {Object.entries({ ...hidden, request: crypto.randomUUID() }).map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
+              <label className="text-sm">Mức độ quan tâm<select name="interest_level" defaultValue={lead.interest_level} className={field}>{Object.entries(interestLevelLabel).map(([level, label]) => <option key={level} value={level}>{label}</option>)}</select></label>
+              <button className="rounded-lg border border-gray-300 px-3 py-2 text-sm">Lưu mức độ</button>
+            </form>
             <p className="mt-3 text-sm">{[lead.program_interest, lead.instrument_interest].filter(Boolean).join(' / ') || 'Chưa ghi nhu cầu'}</p>
             <p className="mt-1 text-sm text-gray-500">{sourceLabel[lead.source_type] || lead.source_type}</p>
             <form action={attributeCrmLead} className="mt-4 space-y-2">
