@@ -6,6 +6,8 @@ The tuition quote uses the active tuition plan price for the application branch,
 
 `registration_momo_orders` is the pre-admission receipt source. On completion each paid order is mirrored once to `payments` with `finance_payment_id` and the MoMo transaction reference. Do not create a second manual payment for the same transaction. The remaining tuition is `tuition_amount - sum(paid MoMo orders)`. Once a class and enrollment exist, finance must reconcile these receipts against the issued tuition invoice; this allocation workflow is **not yet automated** and must be verified before financial rollout.
 
+After any successful partial deposit, cancellation/rejection/expiry is blocked at the database boundary. Finance must first establish and implement a documented refund or credit procedure; this change does not perform refunds. A failed or ambiguous MoMo create response can leave a reserved order, so staff must inspect the provider order before retrying. No browser redirect counts as proof of payment.
+
 ## Required staging configuration
 
 - `MOMO_ENV=test` — the create action intentionally rejects any other value.
