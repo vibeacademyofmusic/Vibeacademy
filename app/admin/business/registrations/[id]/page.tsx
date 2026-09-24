@@ -8,13 +8,14 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   const { id } = await params
   const query = await searchParams
   const db = await createClient()
-  const { data: app } = await db.from('registration_applications').select('id, application_code, branch_id, student_name, student_date_of_birth, parent_name, parent_phone, program_interest, instrument_interest, desired_start_date, preferred_schedule, status, invoice_id, payment_confirmed_at, completed_at, linked_student_id, linked_parent_id, linked_enrollment_id, version, branches(name)').eq('id', id).maybeSingle()
+  const { data: app } = await db.from('registration_applications').select('id, application_code, branch_id, student_name, student_date_of_birth, parent_name, parent_phone, program_interest, instrument_interest, curriculum_id, level_id, subject_id, desired_start_date, preferred_schedule, status, invoice_id, payment_confirmed_at, completed_at, linked_student_id, linked_parent_id, linked_enrollment_id, version, branches(name)').eq('id', id).maybeSingle()
   if (!app) notFound()
-  const [{ data: events }, { data: placement }, { data: invoice }, { data: zaloRows }] = await Promise.all([
+  const [{ data: events }, { data: placement }, { data: invoice }, { data: zaloRows }, { data: level }] = await Promise.all([
     db.from('registration_application_events').select('id, event_type, from_status, to_status, created_at').eq('application_id', id).order('created_at'),
     db.from('student_placement_cases').select('id, status, scheduled_start_date, assigned_class_id').eq('registration_application_id', id).maybeSingle(),
     app.invoice_id ? db.from('invoice_receivables').select('invoice_status, outstanding_balance').eq('invoice_id', app.invoice_id).maybeSingle() : Promise.resolve({ data: null }),
     db.rpc('registration_zalo_connection', { p_application: id }),
+    app.level_id ? db.from('curriculum_levels').select('name').eq('id', app.level_id).maybeSingle() : Promise.resolve({ data: null }),
   ])
   const zalo = (Array.isArray(zaloRows) ? zaloRows[0] : zaloRows) as ZaloConnectionView | undefined
   const connection: ZaloConnectionView = zalo ?? {
@@ -40,6 +41,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             <div><dt className="text-gray-500">Học viên</dt><dd>{app.student_name} · {app.student_date_of_birth}</dd></div>
             <div><dt className="text-gray-500">Phụ huynh</dt><dd>{app.parent_name} · {app.parent_phone || '—'}</dd></div>
             <div><dt className="text-gray-500">Bộ môn</dt><dd>{app.program_interest || '—'} · {app.instrument_interest || '—'}</dd></div>
+            <div><dt className="text-gray-500">Trình độ đã chọn</dt><dd>{level?.name || 'Chưa chọn'}</dd></div>
             <div><dt className="text-gray-500">Ngày muốn học</dt><dd>{app.desired_start_date || '—'} · {app.preferred_schedule || 'Chưa có lịch mong muốn'}</dd></div>
             <div><dt className="text-gray-500">Thanh toán</dt><dd>{app.invoice_id ? (invoice?.outstanding_balance === 0 ? 'Đã đủ theo công nợ hóa đơn' : 'Hóa đơn chưa thanh toán đủ') : 'Chưa gắn hóa đơn'}</dd></div>
             <div><dt className="text-gray-500">Kết quả</dt><dd>{app.linked_student_id ? <Link href={`/admin/students/${app.linked_student_id}`}>Học viên đã liên kết</Link> : 'Chưa hoàn tất'}{placement ? ` · Xếp lớp ${placement.status}` : ''}</dd></div>
