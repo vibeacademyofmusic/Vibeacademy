@@ -39,7 +39,8 @@ test('students page derives current and waiting without a second student table',
 test('won lead can open a prefilled registration and completion stays reviewed', () => {
   assert.match(crm, /Tạo hồ sơ đăng ký/)
   assert.match(crm, /registrations\/new\?lead=/)
-  assert.match(detail, /Hoàn tất đăng ký/)
+  assert.match(detail, /Liên kết danh tính đã đối soát/)
+  assert.match(detail, /Lưu bản nháp chưa tạo học viên/)
   assert.match(migration, /REGISTRATION_REVIEW_REQUIRED/)
   assert.match(migration, /registration_invoice_settled/)
   assert.equal(migration.includes('waiting_students'), false)

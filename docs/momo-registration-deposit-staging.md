@@ -2,9 +2,9 @@
 
 ## Business rule
 
-The tuition quote uses the active tuition plan price for the application branch, snapshotted in VND. The deposit threshold is `ceil(tuition_amount / 2)` in whole VND. Separate exact-amount MoMo orders may pay the remaining deposit. A signed MoMo IPN with `resultCode = 0` is required for each order. A partial deposit keeps the application pending. Only the transaction reaching the threshold can complete registration; a possible duplicate identity remains paid but requires staff review.
+The tuition quote snapshots the branch list price and only a discount accepted by `calculate_tuition_discount_amount` with a decision name. The agreed amount is that net, in whole VND. The deposit threshold is `ceil(agreed tuition / 2)`. Do not quote half of the list price when an approved discount changed the agreed total. Staff may replace the quote only before any MoMo order exists. Separate exact-amount MoMo orders may pay the remaining deposit. A signed MoMo IPN with `resultCode = 0` is required for each order. A partial deposit keeps the application pending. Only the transaction reaching the threshold can complete registration; a possible duplicate identity remains paid but requires staff review.
 
-`registration_momo_orders` is the pre-admission receipt source. On completion each paid order is mirrored once to `payments` with `finance_payment_id` and the MoMo transaction reference. Do not create a second manual payment for the same transaction. The remaining tuition is `tuition_amount - sum(paid MoMo orders)`. Once a class and enrollment exist, finance must reconcile these receipts against the issued tuition invoice; this allocation workflow is **not yet automated** and must be verified before financial rollout.
+`registration_momo_orders` is the pre-admission receipt source. On completion each paid order is mirrored once to `payments` with `finance_payment_id` and the MoMo transaction reference. Do not create a second manual payment for the same transaction. After scheduling staff create the class, enrollment, and issued internal tuition receivable, `allocate_registration_deposits_to_invoice` applies each receipt once. The remaining balance is the agreed tuition minus those allocations. This document is an internal receivable, not an electronic tax invoice. Refunds are not automatic.
 
 After any successful partial deposit, cancellation/rejection/expiry is blocked at the database boundary. Finance must first establish and implement a documented refund or credit procedure; this change does not perform refunds. A failed or ambiguous MoMo create response can leave a reserved order, so staff must inspect the provider order before retrying. No browser redirect counts as proof of payment.
 
@@ -29,6 +29,6 @@ Do not configure production credentials or enable the Zalo sender from this chan
 ## Incomplete gates
 
 - No MoMo test merchant keys were available here. Neither a real checkout nor an end-to-end IPN has been exercised.
-- Database tests require a running isolated Supabase/Postgres instance and were not run in this workspace.
+- `registration_momo_deposit_test.sql` and `registration_agreed_deposit_test.sql` passed on the isolated preview database and rolled back. A labeled local fixture may call the same confirmation RPCs; it is not a MoMo payment.
 - Production MoMo QR/deeplink permissions and settlement account must be confirmed with MoMo. The personal wallet screenshot is not merchant access.
-- Automatic invoice allocation, refund/chargeback reconciliation, discount approval and Zalo API delivery remain separate gates. Do not describe an unallocated deposit as a settled tuition invoice or a queued notification as delivered.
+- Deposit receipts can be allocated once the internal tuition receivable exists. Refunds and chargebacks are still a finance review, not an automatic payout. Zalo delivery stays off until staging OA credentials and one approved test recipient exist. A queued job is not a delivered message.

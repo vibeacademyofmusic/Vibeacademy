@@ -82,6 +82,6 @@ export async function loadLeadPage(filters: LeadFilters) {
     if (digits.length >= 4) clauses.push(`phone_key.ilike.%${digits}%`)
     query = query.or(clauses.join(','))
   }
-  const { data, count } = await query.order('created_at', { ascending: false }).range((page - 1) * pageSize, page * pageSize - 1)
-  return { rows: data ?? [], count: count ?? 0, page, today }
+  const { data, count, error } = await query.order('created_at', { ascending: false }).range((page - 1) * pageSize, page * pageSize - 1)
+  return { rows: data ?? [], count: count ?? 0, page, today, error: error?.message ?? null }
 }

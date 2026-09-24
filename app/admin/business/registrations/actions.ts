@@ -42,7 +42,7 @@ export async function createRegistration(formData: FormData) {
     p_desired_start: datePattern.test(start) ? start : null,
     p_preferred_schedule: String(formData.get('preferred_schedule') ?? ''),
   })
-  if (error || !data) fail('/admin/business/registrations', error)
+  if (error || !data) fail('/admin/business/registrations/new', error)
   redirect(`/admin/business/registrations/${data}`)
 }
 
@@ -91,9 +91,37 @@ export async function setRegistrationDepositQuote(formData: FormData) {
   const client = await db()
   const id = String(formData.get('application_id') ?? '')
   const plan = String(formData.get('tuition_plan_id') ?? '')
+  const discountType = String(formData.get('discount_type') ?? 'NONE').trim().toUpperCase()
+  const discountValue = Number(formData.get('discount_value') ?? 0)
+  const discountName = String(formData.get('discount_name') ?? '').trim()
   if (!uuidPattern.test(plan)) fail(`/admin/business/registrations/${id}`, { message: 'Chọn gói học phí hợp lệ.' })
+  if (!['NONE', 'PERCENT', 'FIXED'].includes(discountType)) {
+    fail(`/admin/business/registrations/${id}`, { message: 'Loại giảm giá không hợp lệ.' })
+  }
+  if (discountType !== 'NONE' && !discountName) {
+    fail(`/admin/business/registrations/${id}`, { message: 'Giảm giá đã duyệt cần tên quyết định.' })
+  }
   const { error } = await client.rpc('set_registration_deposit_quote', {
-    p_application: id, p_version: Number(formData.get('version') ?? 0), p_plan: plan,
+    p_application: id,
+    p_version: Number(formData.get('version') ?? 0),
+    p_plan: plan,
+    p_discount_type: discountType,
+    p_discount_value: Number.isFinite(discountValue) ? discountValue : 0,
+    p_discount_name: discountName || null,
+  })
+  fail(`/admin/business/registrations/${id}`, error)
+}
+
+export async function allocateRegistrationDeposits(formData: FormData) {
+  const client = await db()
+  const id = String(formData.get('application_id') ?? '')
+  const invoice = String(formData.get('invoice_id') ?? '').trim()
+  if (!uuidPattern.test(invoice)) {
+    fail(`/admin/business/registrations/${id}`, { message: 'Chọn công nợ học phí nội bộ đã phát hành.' })
+  }
+  const { error } = await client.rpc('allocate_registration_deposits_to_invoice', {
+    p_application: id,
+    p_invoice: invoice,
   })
   fail(`/admin/business/registrations/${id}`, error)
 }
