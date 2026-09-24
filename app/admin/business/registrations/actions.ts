@@ -26,7 +26,7 @@ export async function createRegistration(formData: FormData) {
   const birth = String(formData.get('student_date_of_birth') ?? '').trim()
   const start = String(formData.get('desired_start_date') ?? '').trim()
   const lead = String(formData.get('crm_lead_id') ?? '').trim()
-  const { data, error } = await client.rpc('create_registration_application', {
+  const { data, error } = await client.rpc('create_registration_application_with_academics', {
     p_request: request,
     p_branch: String(formData.get('branch_id') ?? ''),
     p_lead: uuidPattern.test(lead) ? lead : null,
@@ -34,8 +34,9 @@ export async function createRegistration(formData: FormData) {
     p_student_date_of_birth: datePattern.test(birth) ? birth : null,
     p_parent_name: String(formData.get('parent_name') ?? ''),
     p_parent_phone: String(formData.get('parent_phone') ?? ''),
-    p_program: String(formData.get('program_interest') ?? ''),
-    p_instrument: String(formData.get('instrument_interest') ?? ''),
+    p_curriculum: String(formData.get('curriculum_id') ?? ''),
+    p_level: String(formData.get('level_id') ?? ''),
+    p_subject: String(formData.get('subject_id') ?? ''),
     p_desired_start: datePattern.test(start) ? start : null,
     p_preferred_schedule: String(formData.get('preferred_schedule') ?? ''),
   })
