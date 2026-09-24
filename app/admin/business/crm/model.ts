@@ -10,6 +10,12 @@ export const statusLabel: Record<string, string> = {
   LOST: 'Không tiếp tục',
 }
 
+export const interestLevelLabel: Record<string, string> = {
+  REFERENCE: 'Tham khảo',
+  INTERESTED: 'Quan tâm',
+  POTENTIAL: 'Tiềm năng',
+}
+
 export const sourceLabel: Record<string, string> = {
   MANUAL: 'Nhập tay',
   WALK_IN: 'Khách đến',
@@ -36,6 +42,7 @@ export const eventLabel: Record<string, string> = {
   FOLLOW_UP_SET: 'Hẹn theo dõi',
   CONVERSION_REVIEWED: 'Đưa vào xem xét chuyển đổi',
   CONVERTED: 'Đã gắn học viên',
+  INTEREST_LEVEL_SET: 'Cập nhật mức độ quan tâm',
 }
 
 export const tabs = [
