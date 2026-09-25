@@ -10,7 +10,8 @@ const crm = fs.readFileSync('app/admin/business/crm/[id]/page.tsx', 'utf8')
 const migration = fs.readFileSync('supabase/migrations/20260922260000_registration_placement_v1.sql', 'utf8')
 
 test('registration is a business route and students stay one menu item', () => {
-  assert.match(navigation, /Hồ sơ đăng ký/)
+  assert.match(navigation, /CRM & Tuyển sinh/)
+  assert.equal(navigation.includes("name: 'Hồ sơ đăng ký'"), false)
   assert.match(navigation, /\/admin\/business\/registrations/)
   assert.equal(navigation.includes('waiting_students'), false)
   assert.equal((navigation.match(/name: 'Học viên'/g) || []).length, 1)
@@ -38,7 +39,8 @@ test('students page derives current and waiting without a second student table',
 test('won lead can open a prefilled registration and completion stays reviewed', () => {
   assert.match(crm, /Tạo hồ sơ đăng ký/)
   assert.match(crm, /registrations\/new\?lead=/)
-  assert.match(detail, /Hoàn tất đăng ký/)
+  assert.match(detail, /Liên kết danh tính đã đối soát/)
+  assert.match(detail, /Lưu bản nháp chưa tạo học viên/)
   assert.match(migration, /REGISTRATION_REVIEW_REQUIRED/)
   assert.match(migration, /registration_invoice_settled/)
   assert.equal(migration.includes('waiting_students'), false)

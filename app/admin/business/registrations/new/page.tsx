@@ -1,33 +1,45 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { createRegistration } from '../actions'
+import { AppPage, Eyebrow, InlineNotice, PageHeader } from '@/app/admin/_components/vibe'
+import { CounterForm } from './CounterForm'
 
-export default async function NewRegistrationPage({ searchParams }: { searchParams: Promise<{ lead?: string }> }) {
+export default async function NewRegistrationPage({ searchParams }: { searchParams: Promise<{ lead?: string; error?: string }> }) {
   const params = await searchParams
   const db = await createClient()
   const leadId = params.lead ?? ''
-  const [{ data: branches }, { data: lead }] = await Promise.all([
+  const [{ data: branches, error: branchError }, { data: lead }, { data: curriculums, error: curriculumError }, { data: levels, error: levelError }, { data: subjects, error: subjectError }] = await Promise.all([
     db.from('branches').select('id, name').eq('status', 'ACTIVE').order('name'),
-    leadId ? db.from('crm_leads').select('id, branch_id, status, full_name, phone, parent_name, student_name, student_date_of_birth, program_interest, instrument_interest').eq('id', leadId).maybeSingle() : Promise.resolve({ data: null }),
+    leadId ? db.from('crm_leads').select('id, branch_id, status, full_name, phone, parent_name, student_name, student_date_of_birth').eq('id', leadId).maybeSingle() : Promise.resolve({ data: null }),
+    db.from('curriculums').select('id, name').eq('status', 'ACTIVE').order('name'),
+    db.from('curriculum_levels').select('id, curriculum_id, name, sequence_no').eq('status', 'ACTIVE').order('sequence_no'),
+    db.from('curriculum_subjects').select('id, level_id, name').eq('status', 'ACTIVE').order('name'),
   ])
-  const field = 'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2'
+  const loadError = branchError || curriculumError || levelError || subjectError
   return (
-    <div>
-      <p className="text-sm font-medium text-gray-500">Kinh doanh</p>
-      <h1 className="mt-1 text-3xl font-bold text-gray-950">Tạo hồ sơ đăng ký</h1>
-      {lead && lead.status !== 'WON' && <p className="mt-4 text-sm text-red-700">Chỉ tạo hồ sơ từ khách đã chốt thành công.</p>}
-      <form action={createRegistration} className="mt-6 max-w-xl space-y-4 rounded-2xl border border-gray-200 bg-white p-6">
-        {lead && <input type="hidden" name="crm_lead_id" value={lead.id} />}
-        <label className="block text-sm">Chi nhánh<select name="branch_id" required defaultValue={lead?.branch_id ?? ''} className={field}>{(branches ?? []).map(branch => <option key={branch.id} value={branch.id}>{branch.name}</option>)}</select></label>
-        <label className="block text-sm">Học viên<input name="student_name" required defaultValue={lead?.student_name || lead?.full_name || ''} className={field} /></label>
-        <label className="block text-sm">Ngày sinh<input name="student_date_of_birth" type="date" required defaultValue={lead?.student_date_of_birth ?? ''} className={field} /></label>
-        <label className="block text-sm">Phụ huynh<input name="parent_name" required defaultValue={lead?.parent_name || lead?.full_name || ''} className={field} /></label>
-        <label className="block text-sm">Điện thoại<input name="parent_phone" defaultValue={lead?.phone ?? ''} className={field} /></label>
-        <label className="block text-sm">Bộ môn<input name="program_interest" defaultValue={lead?.program_interest ?? ''} className={field} /></label>
-        <label className="block text-sm">Nhạc cụ<input name="instrument_interest" defaultValue={lead?.instrument_interest ?? ''} className={field} /></label>
-        <label className="block text-sm">Ngày muốn bắt đầu<input name="desired_start_date" type="date" className={field} /></label>
-        <label className="block text-sm">Lịch mong muốn<input name="preferred_schedule" className={field} /></label>
-        <button className="rounded-lg bg-gray-950 px-4 py-2 text-sm text-white">Lưu bản nháp</button>
-      </form>
-    </div>
+    <AppPage>
+      <Eyebrow>Kinh doanh</Eyebrow>
+      <PageHeader title="Đăng ký tại quầy" description="Khách đến và quyết định học ngay. Bản nháp chưa phải đăng ký thành công." actions={<Link href="/admin/business/registrations">Danh sách đăng ký</Link>} />
+      <nav className="vibe-tabs" aria-label="Không gian tuyển sinh">
+        <span aria-current="page" aria-selected="true">Đăng ký tại quầy</span>
+        <Link href="/admin/business/registrations?tab=crm">CRM</Link>
+        <Link href="/admin/business/registrations">Danh sách đăng ký</Link>
+      </nav>
+      {params.error && <InlineNotice tone="error">{params.error}</InlineNotice>}
+      {loadError && <InlineNotice tone="error">Không tải được dữ liệu đăng ký: {loadError.message}</InlineNotice>}
+      <div className="mt-4 grid items-start gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)]">
+        <CounterForm branches={branches ?? []} lead={lead} curriculums={curriculums ?? []} levels={levels ?? []} subjects={subjects ?? []} />
+        <aside className="vibe-card grid gap-3 text-sm">
+          <h2>Trạng thái hồ sơ</h2>
+          <ol className="grid gap-2 text-slate-700">
+            <li>1. Bản nháp — đang nhập</li>
+            <li>2. Đã nộp — chờ xác minh</li>
+            <li>3. Đã xác minh — chốt học phí</li>
+            <li>4. Chờ cọc — MoMo chưa đủ 50%</li>
+            <li>5. Đã nhận đủ cọc — tạo học viên và chờ xếp lớp</li>
+          </ol>
+          <p>Thanh toán chỉ được ghi nhận từ thông báo MoMo đã ký. Ảnh chuyển khoản hoặc nút “đã thu” không làm hồ sơ thành công.</p>
+        </aside>
+      </div>
+    </AppPage>
   )
 }
