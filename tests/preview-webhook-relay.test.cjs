@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict')
+const crypto = require('node:crypto')
 const fs = require('node:fs')
 const test = require('node:test')
 const { relayRequest } = require('../hooks-preview-relay/relay.cjs')
@@ -106,4 +107,30 @@ test('vercel entry keeps the raw body, disables body parsing, and does not log',
   assert.equal(res.statusCode, 200)
   assert.equal(seen[0].body, '{"event_name":"widget_interaction_accepted"}')
   assert.equal(seen[0].headers['x-zevent-signature'], 'mac')
+})
+
+test('exact Zalo verifier file is served before the catch-all', async () => {
+  const file = 'hooks-preview-relay/zalo_verifierKlcQC8Z773rCw98af_mUELp-p0smY1TJD3Ks.html'
+  const bytes = fs.readFileSync(file)
+  assert.equal(bytes.length, 233)
+  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), '72d04062810677c5f9e54886b66174ae6d7a2c7d099f71d55eaf95d05b54693a')
+  const routing = JSON.parse(fs.readFileSync('hooks-preview-relay/vercel.json', 'utf8'))
+  assert.equal(routing.rewrites[0].source, '/zalo_verifierKlcQC8Z773rCw98af_mUELp-p0smY1TJD3Ks.html')
+  assert.equal(routing.rewrites[1].destination, '/api/blocked')
+  assert.equal(JSON.stringify(routing).includes('*.html'), false)
+  const handler = require('../hooks-preview-relay/api/zalo-verifier.js')
+  async function call(method) {
+    const res = { statusCode: 0, headers: {}, setHeader(name, value) { this.headers[name] = value }, end(body) { this.body = body } }
+    await handler({ method }, res)
+    return res
+  }
+  const get = await call('GET')
+  const head = await call('HEAD')
+  const post = await call('POST')
+  assert.equal(get.statusCode, 200)
+  assert.equal(crypto.createHash('sha256').update(get.body).digest('hex'), '72d04062810677c5f9e54886b66174ae6d7a2c7d099f71d55eaf95d05b54693a')
+  assert.equal(head.statusCode, 200)
+  assert.equal(head.body, undefined)
+  assert.equal(post.statusCode, 404)
+  assert.match(String(post.body), /PREVIEW_CALLBACK_ONLY/)
 })
