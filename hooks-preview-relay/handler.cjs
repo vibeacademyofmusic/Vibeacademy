@@ -21,7 +21,7 @@ async function handleNodeRequest(req, res, env = process.env, fetchImpl = global
   }
   const host = req.headers.host || 'hooks-preview.vibe.edu.vn'
   const headers = {}
-  for (const name of ['content-type', 'content-length', 'x-zevent-signature', 'x-zevent-timestamp']) {
+  for (const name of ['content-type', 'content-length', 'x-zevent-signature', 'x-zevent-timestamp', 'x-zevent-server']) {
     const value = req.headers[name]
     if (typeof value === 'string') headers[name] = value
   }

@@ -2,7 +2,7 @@ const ALLOWED = new Set([
   '/api/integrations/payos/webhook',
   '/api/integrations/zalo/webhook',
 ])
-const FORWARDED_HEADERS = ['content-type', 'x-zevent-signature', 'x-zevent-timestamp']
+const FORWARDED_HEADERS = ['content-type', 'x-zevent-signature', 'x-zevent-timestamp', 'x-zevent-server']
 const MAX_BODY_BYTES = 64 * 1024
 const UPSTREAM_TIMEOUT_MS = 8000
 

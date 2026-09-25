@@ -22,7 +22,7 @@ test('relay forwards both webhook posts and preserves the raw body and signature
   }), 'https://tunnel.example.test', fetchOk(seen))
   const zalo = await relayRequest(new Request('https://hooks-preview.vibe.edu.vn/api/integrations/zalo/webhook', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-zevent-signature': 'mac', 'x-zevent-timestamp': '1710000000000' },
+    headers: { 'content-type': 'application/json', 'x-zevent-signature': 'mac', 'x-zevent-timestamp': '1710000000000', 'x-zevent-server': 'ZNS' },
     body: '{"event_name":"widget_interaction_accepted"}',
   }), 'https://tunnel.example.test/', fetchOk(seen))
   assert.equal(payos.status, 200)
@@ -32,6 +32,7 @@ test('relay forwards both webhook posts and preserves the raw body and signature
   assert.equal(seen[0].headers.authorization, undefined)
   assert.equal(seen[1].headers['x-zevent-signature'], 'mac')
   assert.equal(seen[1].headers['x-zevent-timestamp'], '1710000000000')
+  assert.equal(seen[1].headers['x-zevent-server'], 'ZNS')
   assert.equal(seen[1].url, 'https://tunnel.example.test/api/integrations/zalo/webhook')
 })
 
@@ -99,7 +100,7 @@ test('vercel entry keeps the raw body, disables body parsing, and does not log',
   const req = {
     method: 'POST',
     url: '/api/integrations/zalo/webhook',
-    headers: { host: 'hooks-preview.vibe.edu.vn', 'content-type': 'application/json', 'x-zevent-signature': 'mac' },
+    headers: { host: 'hooks-preview.vibe.edu.vn', 'content-type': 'application/json', 'x-zevent-signature': 'mac', 'x-zevent-server': 'ZNS' },
     async *[Symbol.asyncIterator]() { yield Buffer.from('{"event_name":"widget_interaction_accepted"}') },
   }
   const res = { statusCode: 0, headers: {}, setHeader(name, value) { this.headers[name] = value }, end(body) { this.body = body } }
@@ -107,6 +108,7 @@ test('vercel entry keeps the raw body, disables body parsing, and does not log',
   assert.equal(res.statusCode, 200)
   assert.equal(seen[0].body, '{"event_name":"widget_interaction_accepted"}')
   assert.equal(seen[0].headers['x-zevent-signature'], 'mac')
+  assert.equal(seen[0].headers['x-zevent-server'], 'ZNS')
 })
 
 test('exact Zalo verifier file is served before the catch-all', async () => {
