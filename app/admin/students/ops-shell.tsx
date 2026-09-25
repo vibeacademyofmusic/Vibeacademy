@@ -3,6 +3,7 @@ import Link from 'next/link'
 export const studentOpsTabs = [
   { id: 'overview', label: 'Tổng quan' },
   { id: 'students', label: 'Hồ sơ học viên' },
+  { id: 'waiting', label: 'Chờ vào ca dạy' },
   { id: 'teaching-shifts', label: 'Ca dạy' },
   { id: 'schedule', label: 'Lịch học' },
   { id: 'attendance', label: 'Điểm danh' },

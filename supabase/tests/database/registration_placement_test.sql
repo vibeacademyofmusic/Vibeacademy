@@ -50,6 +50,22 @@ insert into public.students(id, student_code, full_name, date_of_birth, default_
   ('d8400000-0000-4000-8000-000000000006', 'REG-INV-0', 'Regplace Invoice Zero', '2010-06-06', 'd8100000-0000-4000-8000-000000000001', 'ACTIVE'),
   ('d8400000-0000-4000-8000-000000000007', 'REG-INV-1', 'Regplace Invoice Due', '2010-07-07', 'd8100000-0000-4000-8000-000000000001', 'ACTIVE');
 insert into public.parents(id, parent_code, status) values ('d8500000-0000-4000-8000-000000000001', 'REG-PAR', 'ACTIVE');
+update public.classes set accepted_from_level_id = 'd8300000-0000-4000-8000-000000000002', accepted_to_level_id = 'd8300000-0000-4000-8000-000000000002'
+where id in (
+  'd8300000-0000-4000-8000-000000000004',
+  'd8300000-0000-4000-8000-000000000005',
+  'd8300000-0000-4000-8000-000000000006',
+  'd8300000-0000-4000-8000-000000000007'
+);
+insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at)
+select student.id, 'd8300000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()
+from public.students student
+where student.id in (
+  'd8400000-0000-4000-8000-000000000004',
+  'd8400000-0000-4000-8000-000000000005',
+  'd8400000-0000-4000-8000-000000000006',
+  'd8400000-0000-4000-8000-000000000007'
+);
 insert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status) values
   ('d8500000-0000-4000-8000-000000000004', 'd8400000-0000-4000-8000-000000000004', 'd8300000-0000-4000-8000-000000000007', public.registration_vietnam_today() - 30, public.registration_vietnam_today() - 20, 'ACTIVE'),
   ('d8500000-0000-4000-8000-000000000005', 'd8400000-0000-4000-8000-000000000005', 'd8300000-0000-4000-8000-000000000005', public.registration_vietnam_today() - 10, public.registration_vietnam_today() - 5, 'ACTIVE'),
@@ -95,6 +111,23 @@ select is((select count(*) from public.list_current_student_enrollments(null, 'R
 
 select lives_ok($$select public.set_student_placement_matching('d8630000-0000-4000-8000-000000000001', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000001'), 1)$$, 'matching');
 select is((select count(*) from public.list_waiting_placements(null, 'MATCHING', 'Regplace Moi')), 1::bigint, 'matching stays waiting');
+update public.classes set accepted_from_level_id = 'd8300000-0000-4000-8000-000000000002', accepted_to_level_id = 'd8300000-0000-4000-8000-000000000002'
+where id in ('d8300000-0000-4000-8000-000000000004', 'd8300000-0000-4000-8000-000000000005', 'd8300000-0000-4000-8000-000000000007');
+insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
+values ('d8300000-0000-4000-8000-000000000004', 2, '18:00', '19:00', '2020-01-01', 'ACTIVE');
+select set_config('registration.write', 'on', true);
+update public.registration_applications set course_id = 'd8300000-0000-4000-8000-000000000003' where id = 'd8600000-0000-4000-8000-000000000001';
+select set_config('registration.write', 'off', true);
+insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at)
+select linked_student_id, 'd8300000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()
+from public.registration_applications where id = 'd8600000-0000-4000-8000-000000000001';
+insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id) values
+  ('d8300000-0000-4000-8000-000000000014', 'd8100000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000003', 'REG-DRAFT', 'Ca nhap', 'GROUP', 4, 'DRAFT', 'd8300000-0000-4000-8000-000000000002', 'd8300000-0000-4000-8000-000000000002'),
+  ('d8300000-0000-4000-8000-000000000015', 'd8100000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000003', 'REG-NOTEACH', 'Ca khong giao vien', 'GROUP', 4, 'ACTIVE', 'd8300000-0000-4000-8000-000000000002', 'd8300000-0000-4000-8000-000000000002');
+insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
+values ('d8300000-0000-4000-8000-000000000015', 3, '18:00', '19:00', '2020-01-01', 'ACTIVE');
+select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000091', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000001'), 2, 'd8300000-0000-4000-8000-000000000014', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_CLASS_DENIED', 'inactive teaching shift denied');
+select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000092', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000001'), 2, 'd8300000-0000-4000-8000-000000000015', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_TEACHER_REQUIRED', 'teaching shift without a teacher denied');
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 2, %L::uuid, %L::date)', 'd8630000-0000-4000-8000-000000000002', 'd8600000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 30), 'future assign');
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 2, %L::uuid, %L::date)', 'd8630000-0000-4000-8000-000000000002', 'd8600000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 30), 'assign replay');
 select is((select count(*) from public.enrollments e join public.students s on s.id = e.student_id where s.full_name = 'Regplace Moi'), 1::bigint, 'one enrollment after assign');
@@ -139,6 +172,12 @@ select lives_ok($$select public.create_registration_application('d8600000-0000-4
 select lives_ok($$select public.transition_registration_application('d8610000-0000-4000-8000-000000000051', 'd8600000-0000-4000-8000-000000000007', 1, 'SUBMIT')$$, 'today submit');
 select lives_ok($$select public.transition_registration_application('d8610000-0000-4000-8000-000000000052', 'd8600000-0000-4000-8000-000000000007', 2, 'VERIFY')$$, 'today verify');
 select lives_ok($$select public.complete_registration_application('d8620000-0000-4000-8000-000000000051', 'd8600000-0000-4000-8000-000000000007', 3, null, null)$$, 'today complete');
+select set_config('registration.write', 'on', true);
+update public.registration_applications set course_id = 'd8300000-0000-4000-8000-000000000003' where id = 'd8600000-0000-4000-8000-000000000007';
+select set_config('registration.write', 'off', true);
+insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at)
+select linked_student_id, 'd8300000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()
+from public.registration_applications where id = 'd8600000-0000-4000-8000-000000000007';
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 1, %L::uuid, %L::date)', 'd8630000-0000-4000-8000-000000000011', 'd8600000-0000-4000-8000-000000000007', 'd8300000-0000-4000-8000-000000000004', public.registration_vietnam_today()), 'start today');
 select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Regplace Today')), 0::bigint, 'today start leaves waiting');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Regplace Today')), 1::bigint, 'today start is current');
@@ -151,6 +190,9 @@ select lives_ok($$select public.complete_registration_application('d8620000-0000
 select is((select count(*) from public.students where full_name = 'Regplace Song'), 1::bigint, 'second program reuses the student');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Regplace Song')), 1::bigint, 'current program remains');
 select is((select count(*) from public.list_waiting_placements(null, 'UNASSIGNED', 'Regplace Song')), 1::bigint, 'new program waits');
+select set_config('registration.write', 'on', true);
+update public.registration_applications set course_id = 'd8300000-0000-4000-8000-000000000013' where id = 'd8600000-0000-4000-8000-000000000008';
+select set_config('registration.write', 'off', true);
 select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000021', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000008'), 1, 'd8300000-0000-4000-8000-000000000007', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_ALREADY_ENROLLED', 'duplicate class enrollment denied');
 
 select lives_ok($$select public.create_registration_application('d8600000-0000-4000-8000-000000000009', 'd8100000-0000-4000-8000-000000000001', null, 'Regplace Cheo', '2007-02-02', 'Phu Cheo', null, 'Piano', null, null, null)$$, 'cross class draft');
@@ -163,6 +205,12 @@ select lives_ok($$select public.create_registration_application('d8600000-0000-4
 select lives_ok($$select public.transition_registration_application('d8610000-0000-4000-8000-000000000081', 'd8600000-0000-4000-8000-000000000010', 1, 'SUBMIT')$$, 'full class submit');
 select lives_ok($$select public.transition_registration_application('d8610000-0000-4000-8000-000000000082', 'd8600000-0000-4000-8000-000000000010', 2, 'VERIFY')$$, 'full class verify');
 select lives_ok($$select public.complete_registration_application('d8620000-0000-4000-8000-000000000081', 'd8600000-0000-4000-8000-000000000010', 3, null, null)$$, 'full class complete');
+select set_config('registration.write', 'on', true);
+update public.registration_applications set course_id = 'd8300000-0000-4000-8000-000000000003' where id = 'd8600000-0000-4000-8000-000000000010';
+select set_config('registration.write', 'off', true);
+insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at)
+select linked_student_id, 'd8300000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()
+from public.registration_applications where id = 'd8600000-0000-4000-8000-000000000010';
 select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000041', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000010'), 1, 'd8300000-0000-4000-8000-000000000005', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_CLASS_FULL', 'full class denied');
 
 select lives_ok($$select public.create_crm_lead('d8900000-0000-4000-8000-000000000001', 'd8100000-0000-4000-8000-000000000001', 'Phu Lead', '0901888888', null, 'Phu Lead', 'Be Lead', '2016-04-02', 'Guitar', 'Guitar', 'MANUAL', null)$$, 'crm lead');

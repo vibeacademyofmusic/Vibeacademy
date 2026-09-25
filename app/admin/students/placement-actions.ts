@@ -16,23 +16,26 @@ async function db() {
 function back(error: { message?: string } | null) {
   revalidatePath('/admin/students')
   redirect(error?.message
-    ? `/admin/students?view=waiting&error=${encodeURIComponent(placementMessage(error.message))}`
-    : '/admin/students?view=waiting')
+    ? `/admin/students?tab=waiting&error=${encodeURIComponent(placementMessage(error.message))}`
+    : '/admin/students?tab=waiting')
 }
 
 function placementMessage(error: string) {
-  if (error.includes('PLACEMENT_UNAUTHORIZED')) return 'Bạn không có quyền xếp lớp tại chi nhánh này.'
-  if (error.includes('PLACEMENT_PROGRAM_DENIED')) return 'Lớp không cùng chương trình với hồ sơ đăng ký.'
-  if (error.includes('PLACEMENT_CLASS_FULL')) return 'Lớp đã đủ sĩ số.'
-  if (error.includes('PLACEMENT_CLASS_DENIED')) return 'Lớp không thuộc chi nhánh hoặc không còn nhận học viên.'
-  if (error.includes('PLACEMENT_ALREADY_ENROLLED')) return 'Học viên đã có ghi danh ở lớp này.'
-  if (error.includes('PLACEMENT_TRANSITION_DENIED')) return 'Hồ sơ này không còn ở trạng thái có thể xếp lớp.'
-  if (error.includes('PLACEMENT_START_DENIED')) return 'Ngày bắt đầu nằm ngoài thời gian của lớp.'
-  if (error.includes('PLACEMENT_ALREADY_STARTED')) return 'Đã bắt đầu học — cần quy trình chuyển lớp.'
-  if (error.includes('PLACEMENT_HISTORY_LOCKED')) return 'Hồ sơ đã có dữ liệu học tập, chưa thể sửa phân lớp tại đây.'
+  if (error.includes('PLACEMENT_UNAUTHORIZED')) return 'Bạn không có quyền xếp học viên vào ca dạy tại chi nhánh này.'
+  if (error.includes('PLACEMENT_PROGRAM_DENIED')) return 'Ca dạy không cùng chương trình với hồ sơ đăng ký.'
+  if (error.includes('PLACEMENT_LEVEL_DENIED')) return 'Ca dạy không nhận trình độ hiện tại của học viên.'
+  if (error.includes('PLACEMENT_TEACHER_REQUIRED')) return 'Ca dạy chưa có giáo viên chính hợp lệ.'
+  if (error.includes('PLACEMENT_SCHEDULE_REQUIRED')) return 'Ca dạy chưa có lịch định kỳ.'
+  if (error.includes('PLACEMENT_CLASS_FULL')) return 'Ca dạy đã đủ sĩ số.'
+  if (error.includes('PLACEMENT_CLASS_DENIED')) return 'Ca dạy không thuộc chi nhánh hoặc không còn nhận học viên.'
+  if (error.includes('PLACEMENT_ALREADY_ENROLLED')) return 'Học viên đã có ghi danh ở ca dạy này.'
+  if (error.includes('PLACEMENT_TRANSITION_DENIED')) return 'Hồ sơ này không còn ở trạng thái có thể vào ca dạy.'
+  if (error.includes('PLACEMENT_START_DENIED')) return 'Ngày bắt đầu nằm ngoài thời gian của ca dạy.'
+  if (error.includes('PLACEMENT_ALREADY_STARTED')) return 'Đã bắt đầu học — cần quy trình đổi ca dạy.'
+  if (error.includes('PLACEMENT_HISTORY_LOCKED')) return 'Hồ sơ đã có dữ liệu học tập, chưa thể sửa ca dạy tại đây.'
   if (error.includes('PLACEMENT_REASON_REQUIRED')) return 'Cần nhập lý do từ 1 đến 2000 ký tự.'
-  if (error.includes('PLACEMENT_UNCHANGED')) return 'Lớp và ngày bắt đầu chưa thay đổi.'
-  return 'Không xếp lớp được. Vui lòng kiểm tra lại lớp và ngày bắt đầu.'
+  if (error.includes('PLACEMENT_UNCHANGED')) return 'Ca dạy và ngày bắt đầu chưa thay đổi.'
+  return 'Không vào ca dạy được. Vui lòng kiểm tra lại ca dạy và ngày bắt đầu.'
 }
 
 export async function matchPlacement(formData: FormData) {

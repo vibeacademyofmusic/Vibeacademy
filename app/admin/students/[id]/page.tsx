@@ -10,6 +10,8 @@ import {
 } from '../actions'
 
 import { createClient } from '@/lib/supabase/server'
+import { businessDate } from '@/app/admin/_lib/business-date'
+import { placementLabel } from '@/app/admin/business/crm/model'
 
 type EditStudentPageProps = {
   params: Promise<{
@@ -345,13 +347,13 @@ async function StudentPlacement({ studentId }: { studentId: string }) {
     db.from('student_placement_cases').select('id, status, scheduled_start_date, assigned_class_id').eq('student_id', studentId).order('opened_at', { ascending: false }).limit(5),
   ])
   if (!applications?.length && !placements?.length) return null
-  const labels: Record<string, string> = { UNASSIGNED: 'Chưa xếp lớp', MATCHING: 'Đang tìm lịch', SCHEDULED: 'Đã xếp lớp' }
+  const today = businessDate()
   return (
     <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4 text-sm">
-      <h2 className="font-semibold text-gray-950">Đăng ký và xếp lớp</h2>
+      <h2 className="font-semibold text-gray-950">Đăng ký và ca dạy</h2>
       <ul className="mt-3 space-y-2">
         {(applications ?? []).map(application => <li key={application.id}>Hồ sơ {application.application_code} · {application.status}</li>)}
-        {(placements ?? []).map(placement => <li key={placement.id}>{labels[placement.status] || placement.status}{placement.scheduled_start_date ? ` · bắt đầu ${placement.scheduled_start_date}` : ''}</li>)}
+        {(placements ?? []).map(placement => <li key={placement.id}>{placementLabel(placement.status, placement.scheduled_start_date, today)}{placement.scheduled_start_date ? ` · bắt đầu ${placement.scheduled_start_date}` : ''}</li>)}
       </ul>
     </section>
   )

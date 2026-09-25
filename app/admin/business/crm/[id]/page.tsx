@@ -112,7 +112,7 @@ export default async function CrmLeadDetailPage({
             {lead.status === 'WON' && !registration && <Link className="vibe-button vibe-button-primary" href={`/admin/business/registrations/new?lead=${lead.id}`}>Bắt đầu đăng ký</Link>}
             {registration && <Link className="vibe-button" href={`/admin/business/registrations/${registration.id}`}>Mở hồ sơ đăng ký</Link>}
             {studentId && <Link className="vibe-button vibe-button-primary" href={`/admin/students/${studentId}`}>Mở hồ sơ học viên</Link>}
-            {placement.data && <Link className="vibe-button" href="/admin/students">Mở xếp lớp</Link>}
+            {placement.data && <Link className="vibe-button" href="/admin/students?tab=waiting">Chọn ca dạy</Link>}
           </div>
           {converted && <p className="text-sm">Đã trở thành học viên. Hồ sơ CRM vẫn được giữ.</p>}
           {!converted && lead.status !== 'WON' && <p className="text-sm text-gray-500">Học viên chỉ được tạo từ hồ sơ đăng ký đã hoàn tất. CRM không tạo hồ sơ học tập riêng.</p>}

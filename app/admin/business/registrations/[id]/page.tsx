@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { completeRegistration, transitionRegistration } from '../actions'
 import { ZaloConnectionCard } from './ZaloConnection'
+import { placementLabel } from '../../crm/model'
 
 export default async function RegistrationDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> }) {
   const { id } = await params
@@ -35,7 +36,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             <div><dt className="text-gray-500">Bộ môn</dt><dd>{app.program_interest || '—'} · {app.instrument_interest || '—'}</dd></div>
             <div><dt className="text-gray-500">Ngày muốn học</dt><dd>{app.desired_start_date || '—'} · {app.preferred_schedule || 'Chưa có lịch mong muốn'}</dd></div>
             <div><dt className="text-gray-500">Thanh toán</dt><dd>{app.invoice_id ? (invoice?.outstanding_balance === 0 ? 'Đã đủ theo công nợ hóa đơn' : 'Hóa đơn chưa thanh toán đủ') : 'Chưa gắn hóa đơn'}</dd></div>
-            <div><dt className="text-gray-500">Kết quả</dt><dd>{app.linked_student_id ? <Link href={`/admin/students/${app.linked_student_id}`}>Học viên đã liên kết</Link> : 'Chưa hoàn tất'}{placement ? ` · Ca dạy ${placement.status}` : ''}</dd></div>
+            <div><dt className="text-gray-500">Kết quả</dt><dd>{app.linked_student_id ? <Link href={`/admin/students/${app.linked_student_id}`}>Học viên đã liên kết</Link> : 'Chưa hoàn tất'}{placement ? <> · {placementLabel(placement.status, placement.scheduled_start_date)}{placement.status === 'UNASSIGNED' || placement.status === 'MATCHING' ? <> · <Link href="/admin/students?tab=waiting">Chờ vào ca dạy</Link></> : null}</> : ''}</dd></div>
           </dl>
         </section>
         <section className="rounded-2xl border border-gray-200 bg-white p-5">

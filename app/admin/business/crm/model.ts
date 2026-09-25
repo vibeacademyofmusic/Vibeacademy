@@ -165,9 +165,14 @@ export function paymentLabel(input: { status?: string | null; invoiceId?: string
   return 'Chưa có hóa đơn'
 }
 
-export function placementLabel(status?: string | null) {
-  if (status === 'UNASSIGNED' || status === 'MATCHING') return 'Chưa vào ca dạy'
-  if (status === 'SCHEDULED') return 'Đã vào ca dạy'
+export function placementLabel(status?: string | null, startDate?: string | null, today?: string | null) {
+  if (status === 'UNASSIGNED') return 'Chưa vào ca dạy'
+  if (status === 'MATCHING') return 'Đang tìm ca phù hợp'
+  if (status === 'SCHEDULED_FUTURE') return 'Đã vào ca dạy – chờ bắt đầu'
+  if (status === 'SCHEDULED') {
+    if (startDate && today && startDate > today) return 'Đã vào ca dạy – chờ bắt đầu'
+    return 'Đã vào ca dạy'
+  }
   return '—'
 }
 

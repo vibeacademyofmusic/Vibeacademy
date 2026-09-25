@@ -20,6 +20,7 @@ import {
 import { businessDate, shiftBusinessDate } from '@/app/admin/_lib/business-date'
 import { createClient } from '@/lib/supabase/server'
 import { assignPlacement, cancelPlacement, changePlacement, matchPlacement } from './placement-actions'
+import { placementLabel } from '@/app/admin/business/crm/model'
 import { StudentOpsHub } from './hub'
 import { StudentOpsShell, type StudentOpsTab } from './ops-shell'
 import { pageNumber, pageSize, uuidPattern } from '@/app/admin/finance/operations'
@@ -40,13 +41,48 @@ type StudentsPageProps = {
     }>
   }
 
-  const opsTabs = ['overview', 'students', 'teaching-shifts', 'schedule', 'attendance', 'reports', 'feedback'] as const
+  const opsTabs = ['overview', 'students', 'waiting', 'teaching-shifts', 'schedule', 'attendance', 'reports', 'feedback'] as const
   
   export default async function StudentsPage({
     searchParams,
   }: StudentsPageProps) {
     const params = await searchParams
-    const tab = opsTabs.includes(params.tab as StudentOpsTab) ? params.tab as StudentOpsTab : 'overview'
+    const tab = opsTabs.includes(params.tab as StudentOpsTab) ? params.tab as StudentOpsTab : params.view === 'waiting' ? 'waiting' : 'overview'
+    if (tab === 'waiting') {
+      const waitingHref = (patch: Record<string, string | undefined> = {}) => {
+        const query = buildQuery({
+          tab: 'waiting',
+          branch: (params.branch ?? '').trim() || undefined,
+          q: (params.q ?? '').trim() || undefined,
+          filter: params.filter || 'ALL',
+          page: undefined,
+        }, patch)
+        return `/admin/students?${query}`
+      }
+      return (
+        <AppPage>
+          <StudentOpsShell tab="waiting">
+            <PageHeader
+              title="Chờ vào ca dạy"
+              description="Sau khi thanh toán, học viên chờ được chọn một ca dạy đang hoạt động và ngày bắt đầu."
+            />
+            {params.error && <InlineNotice tone="error">{params.error}</InlineNotice>}
+            <StudentPlacementBoard
+              view="waiting"
+              branch={(params.branch ?? '').trim()}
+              classId=""
+              teacherId=""
+              q={(params.q ?? '').trim()}
+              filter={params.filter ?? 'ALL'}
+              page={pageNumber(params.page)}
+              canOpenStudent={(await (await createClient()).rpc('has_role', { role_code: 'SUPER_ADMIN' })).data === true}
+              earliestStart={shiftBusinessDate(businessDate(), 1)}
+              hrefBuilder={waitingHref}
+            />
+          </StudentOpsShell>
+        </AppPage>
+      )
+    }
     if (tab !== 'students') {
       return <StudentOpsHub tab={tab} searchParams={searchParams} />
     }
@@ -489,18 +525,26 @@ type WaitingRow = {
   days_waiting: number
   enrollment_id: string | null
   class_id: string | null
+  course_id: string | null
 }
 
-type ClassOption = { id: string; name: string; branch_id: string; open_seats: number }
-
-const placementLabels: Record<string, string> = {
-  UNASSIGNED: 'Chưa xếp lớp',
-  MATCHING: 'Đang tìm lịch phù hợp',
-  SCHEDULED_FUTURE: 'Đã xếp lớp – chờ bắt đầu',
-}
-
-function placementLabel(status: string) {
-  return placementLabels[status] ?? 'Chưa xác định'
+type ClassOption = {
+  id: string
+  name: string
+  branch_id: string
+  open_seats: number
+  code: string | null
+  branch_name: string | null
+  course_id: string | null
+  curriculum_name: string | null
+  level_label: string | null
+  teacher_name: string | null
+  room_name: string | null
+  schedule_label: string | null
+  duration_minutes: number | null
+  enrolled_count: number | null
+  capacity: number | null
+  status: string | null
 }
 
 type CurrentRow = {
@@ -523,34 +567,71 @@ type CurrentRow = {
   enrollment_status?: string
 }
 
-function classChoices(classes: ClassOption[], branchId: string, currentClassId?: string | null) {
-  return classes.filter(item => item.branch_id === branchId && (item.open_seats > 0 || item.id === currentClassId))
+function compatibleShifts(classes: ClassOption[], row: WaitingRow) {
+  if (!row.course_id) return []
+  return classes.filter(item =>
+    item.branch_id === row.branch_id
+    && item.course_id === row.course_id
+    && item.status === 'ACTIVE'
+    && Boolean(item.teacher_name)
+    && Boolean(item.schedule_label)
+    && Boolean(item.level_label)
+    && (item.open_seats > 0 || item.id === row.class_id)
+  )
+}
+
+function ShiftChoices({ shifts, current }: { shifts: ClassOption[]; current?: string | null }) {
+  if (!shifts.length) {
+    return (
+      <p className="max-w-xs text-xs text-[var(--vibe-muted)]">
+        Chưa có ca dạy phù hợp. <Link href="/admin/students?tab=teaching-shifts">Tạo ca dạy mới</Link>. Hồ sơ giữ trạng thái Chờ vào ca dạy.
+      </p>
+    )
+  }
+  return (
+    <div className="max-w-sm space-y-2">
+      {shifts.map(item => (
+        <label key={item.id} className="block rounded-lg border border-[var(--vibe-line)] bg-white p-2 text-xs">
+          <span className="flex items-center gap-2 font-semibold text-[var(--vibe-navy)]">
+            <input type="radio" name="class_id" value={item.id} required defaultChecked={item.id === current} />
+            {item.code} · {item.name}
+          </span>
+          <span className="mt-1 block text-[var(--vibe-muted)]">
+            Giáo viên chính: {item.teacher_name} · {item.branch_name} · Phòng: {item.room_name || 'Chưa có phòng'}
+          </span>
+          <span className="block text-[var(--vibe-muted)]">
+            {item.schedule_label} · {item.duration_minutes ?? '—'} phút · {item.curriculum_name} · {item.level_label}
+          </span>
+          <span className="block text-[var(--vibe-muted)]">
+            {item.enrolled_count ?? 0}/{item.capacity ?? '—'} học viên · {item.status === 'ACTIVE' ? 'Đang hoạt động' : 'Ngưng'}
+          </span>
+        </label>
+      ))}
+    </div>
+  )
 }
 
 function PlacementActions({ row, canManage, classes, earliestStart }: { row: WaitingRow; canManage: boolean; classes: ClassOption[]; earliestStart: string }) {
   if (!canManage) return 'Chỉ xem'
-  const choices = classChoices(classes, row.branch_id, row.class_id)
+  const shifts = compatibleShifts(classes, row)
   if (row.placement_status === 'SCHEDULED_FUTURE' && row.enrollment_id) {
     return (
       <div className="space-y-2">
-        <form action={changePlacement} className="space-y-1">
+        <form action={changePlacement} className="space-y-2">
           <input type="hidden" name="placement_id" value={row.placement_id} />
           <input type="hidden" name="version" value={row.placement_version} />
           <input type="hidden" name="enrollment_id" value={row.enrollment_id} />
-          <select name="class_id" required className="w-40 rounded border px-2 py-1" defaultValue={row.class_id ?? ''}>
-            <option value="">Lớp</option>
-            {choices.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
-          <input name="start_date" type="date" required min={earliestStart} defaultValue={row.scheduled_start ?? earliestStart} className="w-40 rounded border px-2 py-1" />
+          <ShiftChoices shifts={shifts} current={row.class_id} />
+          <input name="start_date" type="date" required min={earliestStart} defaultValue={row.scheduled_start ?? earliestStart} aria-label="Ngày bắt đầu" className="w-40 rounded border px-2 py-1" />
           <input name="reason" required minLength={1} maxLength={2000} placeholder="Lý do" className="w-40 rounded border px-2 py-1" />
-          <button className="rounded border px-2 py-1">Đổi lớp</button>
+          <button className="vibe-button">Đổi ca dạy</button>
         </form>
         <form action={cancelPlacement} className="space-y-1">
           <input type="hidden" name="placement_id" value={row.placement_id} />
           <input type="hidden" name="version" value={row.placement_version} />
           <input type="hidden" name="enrollment_id" value={row.enrollment_id} />
           <input name="reason" required minLength={1} maxLength={2000} placeholder="Lý do hủy" className="w-40 rounded border px-2 py-1" />
-          <button className="rounded border px-2 py-1">Hủy xếp lớp</button>
+          <button className="vibe-button">Hủy vào ca dạy</button>
         </form>
       </div>
     )
@@ -562,18 +643,18 @@ function PlacementActions({ row, canManage, classes, earliestStart }: { row: Wai
         <form action={matchPlacement}>
           <input type="hidden" name="placement_id" value={row.placement_id} />
           <input type="hidden" name="version" value={row.placement_version} />
-          <button className="rounded border px-2 py-1">Đang tìm lịch</button>
+          <button className="vibe-button">Đang tìm ca phù hợp</button>
         </form>
       )}
-      <form action={assignPlacement} className="space-y-1">
+      <form action={assignPlacement} className="space-y-2">
         <input type="hidden" name="placement_id" value={row.placement_id} />
         <input type="hidden" name="version" value={row.placement_version} />
-        <select name="class_id" required className="w-40 rounded border px-2 py-1">
-          <option value="">Lớp</option>
-          {classChoices(classes, row.branch_id).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-        </select>
-        <input name="start_date" type="date" required className="w-40 rounded border px-2 py-1" />
-        <button className="rounded bg-gray-950 px-2 py-1 text-white">Xếp lớp</button>
+        <p className="text-xs font-semibold">Chọn ca dạy</p>
+        <ShiftChoices shifts={shifts} />
+        <label className="block text-xs">Ngày bắt đầu
+          <input name="start_date" type="date" required defaultValue={row.desired_start ?? ''} className="mt-1 w-40 rounded border px-2 py-1" />
+        </label>
+        <button className="vibe-button vibe-button-primary" disabled={!shifts.length}>Xác nhận vào ca dạy</button>
       </form>
     </div>
   )
@@ -641,28 +722,31 @@ async function StudentPlacementBoard({
     return (
       <section className="space-y-4">
         <div className="vibe-metrics">
-          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Needs Attention" value={kpi?.waiting_count ?? 0} note="Tổng chờ sắp lớp" />
-          <OpsMetricLink href={hrefBuilder({ filter: 'UNASSIGNED' })} title="Chưa xếp lớp" value={kpi?.unassigned_count ?? 0} />
-          <OpsMetricLink href={hrefBuilder({ filter: 'MATCHING' })} title="Đang tìm lịch" value={kpi?.matching_count ?? 0} />
-          <OpsMetricLink href={hrefBuilder({ filter: 'SCHEDULED_FUTURE' })} title="Chờ bắt đầu" value={kpi?.scheduled_count ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Tổng chờ" value={kpi?.waiting_count ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'UNASSIGNED' })} title="Chưa vào ca dạy" value={kpi?.unassigned_count ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'MATCHING' })} title="Đang tìm ca phù hợp" value={kpi?.matching_count ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'SCHEDULED_FUTURE' })} title="Đã chọn ca – chờ bắt đầu" value={kpi?.scheduled_count ?? 0} />
+          <section className="vibe-card vibe-metric"><p>Số ngày chờ trung bình</p><strong>{kpi?.average_wait ?? 0}</strong></section>
+          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Chờ hơn 3 ngày" value={kpi?.over_3 ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Chờ hơn 7 ngày" value={kpi?.over_7 ?? 0} />
         </div>
-        <InlineNotice tone="warning">Hệ thống chưa tự động kiểm tra đầy đủ xung đột lịch giáo viên/phòng.</InlineNotice>
+        <InlineNotice tone="warning">Chưa xác minh đầy đủ xung đột giáo viên/phòng học.</InlineNotice>
         <OperationsFilterBar
           action="/admin/students"
-          hidden={{ view: 'waiting', filter }}
-          resetHref="/admin/students?view=waiting"
+          hidden={{ tab: 'waiting', filter }}
+          resetHref="/admin/students?tab=waiting"
           fields={[
             { name: 'branch', label: 'Chi nhánh', type: 'select', value: branch, options: branchSelect },
             { name: 'q', label: 'Tìm học viên', type: 'search', value: q, placeholder: 'Tên / mã học viên' },
           ]}
         />
         <OpsTabs
-          ariaLabel="Lọc chờ sắp lớp"
+          ariaLabel="Lọc chờ vào ca dạy"
           tabs={[
             ['ALL', 'Tất cả'],
-            ['UNASSIGNED', 'Chưa xếp lớp'],
-            ['MATCHING', 'Đang tìm lịch'],
-            ['SCHEDULED_FUTURE', 'Đã xếp – chờ bắt đầu'],
+            ['UNASSIGNED', 'Chưa vào ca dạy'],
+            ['MATCHING', 'Đang tìm ca phù hợp'],
+            ['SCHEDULED_FUTURE', 'Đã chọn ca – chờ bắt đầu'],
           ].map(([id, label]) => ({
             href: hrefBuilder({ view: 'waiting', filter: id }),
             label,
@@ -671,7 +755,7 @@ async function StudentPlacementBoard({
         />
         <div className="vibe-table-scroll">
           <table className="vibe-table">
-            <thead><tr>{['Học viên', 'Phụ huynh', 'Chi nhánh', 'Bộ môn', 'Cấp độ', 'Lịch mong muốn', 'Trạng thái', 'Lớp', 'Giáo viên', 'Ngày bắt đầu', 'Phụ trách', 'Số ngày chờ', 'Xếp lớp'].map(h => <th key={h}>{h}</th>)}</tr></thead>
+            <thead><tr>{['Học viên', 'Phụ huynh', 'Chi nhánh', 'Nhạc cụ / Curriculum', 'Grade', 'Lịch mong muốn', 'Trạng thái', 'Ca dạy hiện tại', 'Giáo viên', 'Ngày bắt đầu dự kiến', 'Người phụ trách', 'Số ngày chờ', 'Hành động'].map(h => <th key={h}>{h}</th>)}</tr></thead>
             <tbody>
               {waiting.map(row => (
                 <tr key={row.placement_id}>
@@ -743,7 +827,7 @@ async function StudentPlacementBoard({
       <div className="vibe-table-scroll">
         <table className="vibe-table">
           <thead>
-            <tr>{['Học viên', 'Chương trình', 'Grade', 'Lớp', 'Giáo viên', 'Chi nhánh', 'Academic Status', 'Học phí', 'Hành động'].map(h => <th key={h}>{h}</th>)}</tr>
+            <tr>{['Học viên', 'Chương trình', 'Grade', 'Ca dạy', 'Giáo viên', 'Chi nhánh', 'Academic Status', 'Học phí', 'Hành động'].map(h => <th key={h}>{h}</th>)}</tr>
           </thead>
           <tbody>
             {current.map(row => (
