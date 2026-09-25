@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/integrations/payos/webhook.js": { "maxDuration": 10 },
+    "api/integrations/zalo/webhook.js": { "maxDuration": 10 },
+    "api/blocked.js": { "maxDuration": 5 }
+  },
+  "rewrites": [
+    { "source": "/((?!api/integrations/(?:payos|zalo)/webhook$|api/blocked$).*)", "destination": "/api/blocked" }
+  ]
+}
