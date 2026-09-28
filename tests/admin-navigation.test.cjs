@@ -78,7 +78,8 @@ test('unimplemented domains are omitted and existing finance routes are present'
     '/admin/business/reactivation',
     '/admin/business/instrument-customers',
   ])
-  assert.deepEqual(navigationGroups.find(g => g.name === 'E-LEARNING & KIỂM TRA').items.map(i => i.href), ['/admin/elearning'])
+  assert.ok(!navigationGroups.some(g => g.name === 'E-LEARNING & KIỂM TRA'))
+  assert.ok(!navigationGroups.flatMap(g => g.items).some(item => item.href.startsWith('/admin/elearning')))
   assert.deepEqual(navigationGroups.find(g => g.name === 'KHO & CỬA HÀNG').items.map(i => i.href), ['/admin/inventory', '/admin/instruments'])
   assert.equal(navigationGroups.find(g => g.name === 'VẬN HÀNH').items.length, 10)
 })

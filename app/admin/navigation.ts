@@ -37,7 +37,6 @@ export const navigationGroups = [
     { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },
   ] },
   { name: 'KHO & CỬA HÀNG', items: [{ name: 'Kho sách và vật tư', href: '/admin/inventory' }, { name: 'Nhạc cụ theo serial', href: '/admin/instruments' }] },
-  { name: 'E-LEARNING & KIỂM TRA', items: [{ name: 'Nội dung học trực tuyến', href: '/admin/elearning' }] },
   { name: 'HR', items: [
     { name: 'Tổng quan HR', href: '/admin/hr' },
     { name: 'Nhân viên', href: '/admin/employees' },
