@@ -28,7 +28,7 @@ test('business shell navigation hides unaudited admin domains', () => {
     '/admin/business/reactivation',
     '/admin/business/instrument-customers',
   ])
-  assert.ok(navigationForShell(false).some(group => group.name === 'TÀI CHÍNH'))
+  assert.ok(navigationForShell(false).some(group => group.name === 'VẬN HÀNH'))
 })
 
 function layout({ pathname, superAdmin = false, mayEnter = false, mayStudents = false, signedIn = true }) {

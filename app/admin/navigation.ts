@@ -24,8 +24,8 @@ export const systemTabs = [
 
 export const navigationGroups = [
   { name: 'TỔNG QUAN', items: [{ name: 'Bảng điều khiển', href: '/admin' }] },
-  { name: 'ĐÀO TẠO', items: [{ name: 'Đào tạo', href: '/admin/students' }] },
-  { name: 'TÀI CHÍNH', items: [
+  { name: 'VẬN HÀNH', items: [
+    { name: 'Đào tạo', href: '/admin/students' },
     { name: 'Tổng quan tài chính', href: '/admin/finance' },
     { name: 'Học phí', href: '/admin/tuition' },
     { name: 'Hóa đơn', href: '/admin/finance/invoices' },
@@ -63,7 +63,7 @@ export const navigationGroups = [
   { name: 'HỆ THỐNG', items: [{ name: 'Hệ thống', href: '/admin/branches' }] },
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
-// Learning reports remain in ĐÀO TẠO at their existing URL.
+// Learning reports remain in the Đào tạo workspace under VẬN HÀNH at their existing URL.
 export function isBusinessShellPath(pathname: string | null | undefined) {
   return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))
 }
@@ -82,8 +82,8 @@ export function navigationForAccess(mode: ShellMode) {
   if (mode === 'full') return navigationGroups
   const business = navigationGroups.filter(group => group.name === 'KINH DOANH')
   const students = navigationGroups
-    .filter(group => group.name === 'ĐÀO TẠO')
     .map(group => ({ ...group, items: group.items.filter(item => item.href === '/admin/students') }))
+    .filter(group => group.items.length > 0)
   if (mode === 'business') return business
   if (mode === 'students') return students
   return [...business, ...students]
