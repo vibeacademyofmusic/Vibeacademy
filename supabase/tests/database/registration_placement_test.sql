@@ -41,6 +41,15 @@ insert into public.teachers(id, teacher_code, full_name) values ('d8700000-0000-
 insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
   ('d8300000-0000-4000-8000-000000000004', 'd8700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');
 
+-- Operational placement now checks the actual timetable on all enrollment writes.
+insert into public.rooms(id,branch_id,code,name,capacity)
+select ('d8900000-0000-4000-8000-'||lpad(row_number() over()::text,12,'0'))::uuid,id,'REG-ROOM','TEST room',20 from branches where code in ('REG-A','REG-B');
+insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at)
+select id,'d8700000-0000-4000-8000-000000000001','PRIMARY','2020-01-01' from classes where code in ('REG-SOLO','REG-OTHER','REG-SONG');
+insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from)
+select c.id,r.id,1,('08:00'::time + (row_number() over(order by c.code))*interval '2 hours'),('09:00'::time + (row_number() over(order by c.code))*interval '2 hours'),'2020-01-01'
+from classes c join rooms r on r.branch_id=c.branch_id and r.code='REG-ROOM' where c.code in ('REG-GROUP','REG-SOLO','REG-OTHER','REG-SONG');
+
 insert into public.students(id, student_code, full_name, date_of_birth, default_branch_id, status) values
   ('d8400000-0000-4000-8000-000000000001', 'REG-REUSE', 'Regplace Reuse', '2014-02-02', 'd8100000-0000-4000-8000-000000000001', 'ACTIVE'),
   ('d8400000-0000-4000-8000-000000000002', 'REG-TRUNG-1', 'Regplace Trung', '2013-03-03', 'd8100000-0000-4000-8000-000000000001', 'ACTIVE'),
@@ -126,14 +135,21 @@ insert into public.classes(id, branch_id, course_id, code, name, class_type, cap
   ('d8300000-0000-4000-8000-000000000015', 'd8100000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000003', 'REG-NOTEACH', 'Ca khong giao vien', 'GROUP', 4, 'ACTIVE', 'd8300000-0000-4000-8000-000000000002', 'd8300000-0000-4000-8000-000000000002');
 insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
 values ('d8300000-0000-4000-8000-000000000015', 3, '18:00', '19:00', '2020-01-01', 'ACTIVE');
+update public.schedules s set room_id=r.id from public.classes c join public.rooms r on r.branch_id=c.branch_id and r.code='REG-ROOM' where s.class_id=c.id and c.code like 'REG-%' and s.room_id is null;
 select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000091', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000001'), 2, 'd8300000-0000-4000-8000-000000000014', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_CLASS_DENIED', 'inactive teaching shift denied');
 select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000092', (select id from public.student_placement_cases where registration_application_id = 'd8600000-0000-4000-8000-000000000001'), 2, 'd8300000-0000-4000-8000-000000000015', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_TEACHER_REQUIRED', 'teaching shift without a teacher denied');
+select throws_ok($$select public.assign_student_placement('d8630000-0000-4000-8000-000000000087',(select id from student_placement_cases where registration_application_id='d8600000-0000-4000-8000-000000000001'),2,'d8300000-0000-4000-8000-000000000007',registration_vietnam_today()+30)$$,'P0001','PLACEMENT_PROGRAM_DENIED','wrong registration program denied');
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 2, %L::uuid, %L::date)', 'd8630000-0000-4000-8000-000000000002', 'd8600000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 30), 'future assign');
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 2, %L::uuid, %L::date)', 'd8630000-0000-4000-8000-000000000002', 'd8600000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 30), 'assign replay');
 select is((select count(*) from public.enrollments e join public.students s on s.id = e.student_id where s.full_name = 'Regplace Moi'), 1::bigint, 'one enrollment after assign');
-select is((select placement_status from public.list_waiting_placements(null, 'SCHEDULED_FUTURE', 'Regplace Moi')), 'SCHEDULED_FUTURE', 'future stays waiting');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Regplace Moi')), 0::bigint, 'future start leaves waiting');
+select is((select placement_status from public.list_future_start_placements(null, 'ALL', 'Regplace Moi')), 'SCHEDULED_FUTURE', 'future start waits to begin');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Regplace Moi')), 0::bigint, 'future start is not current');
 
+select lives_ok($$select change_future_student_placement('d8630000-0000-4000-8000-000000000088',(select id from student_placement_cases where registration_application_id='d8600000-0000-4000-8000-000000000001'),3,(select enrollment_id from student_placement_cases where registration_application_id='d8600000-0000-4000-8000-000000000001'),'d8300000-0000-4000-8000-000000000004',registration_vietnam_today()+31,'TEST adjust future start')$$,'future change checks and saves');
+select lives_ok($$select change_future_student_placement('d8630000-0000-4000-8000-000000000088',(select id from student_placement_cases where registration_application_id='d8600000-0000-4000-8000-000000000001'),3,(select enrollment_id from student_placement_cases where registration_application_id='d8600000-0000-4000-8000-000000000001'),'d8300000-0000-4000-8000-000000000004',registration_vietnam_today()+31,'TEST adjust future start')$$,'future change retry is idempotent');
+select throws_ok($$select assign_student_placement('d8630000-0000-4000-8000-000000000089',(select id from student_placement_cases where registration_application_id='d8600000-0000-4000-8000-000000000001'),2,'d8300000-0000-4000-8000-000000000004',registration_vietnam_today()+31)$$,'P0001','PLACEMENT_STALE','stale form rejected');
+select is((select count(*) from student_placement_events where id='d8630000-0000-4000-8000-000000000088'),1::bigint,'one change event after retry');
 select lives_ok($$select public.create_registration_application('d8600000-0000-4000-8000-000000000002', 'd8100000-0000-4000-8000-000000000001', null, null, null, null, null, null, null, null, null)$$, 'blank draft');
 select throws_ok($$select public.transition_registration_application('d8610000-0000-4000-8000-000000000012', 'd8600000-0000-4000-8000-000000000002', 1, 'SUBMIT')$$, 'P0001', 'REGISTRATION_INCOMPLETE', 'incomplete submit');
 
@@ -253,7 +269,8 @@ select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Reg
 
 select set_config('request.jwt.claim.sub', 'd8200000-0000-4000-8000-000000000002', true);
 select lives_ok($$select public.create_registration_application('d8600000-0000-4000-8000-000000000031', 'd8100000-0000-4000-8000-000000000001', null, 'Regplace Own', '2006-02-02', 'Phu Own', null, null, null, null, null)$$, 'own branch registration allowed');
-select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Regplace Moi')) > 0, true, 'own branch can see waiting');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Regplace Song')) > 0, true, 'own branch can see waiting');
+select is((select count(*) from public.list_future_start_placements(null, 'ALL', 'Regplace Moi')) > 0, true, 'own branch can see a future start');
 set local role authenticated;
 select set_config('request.jwt.claim.sub', 'd8200000-0000-4000-8000-000000000002', true);
 select is((select count(*) from public.registration_applications where id = 'd8600000-0000-4000-8000-000000000022'), 0::bigint, 'branch admin cannot read the other branch');

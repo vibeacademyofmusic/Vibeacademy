@@ -15,7 +15,7 @@ function fail(message: string): never {
     : message.includes('NOTE_REQUIRED') ? 'Cần ghi chú cho trạng thái này.'
     : message.includes('UNAUTHORIZED') ? 'Bạn không có quyền thực hiện thao tác này.'
     : 'Không thực hiện được thao tác.'
-  redirect('/admin/business/reactivation?error=' + encodeURIComponent(text))
+  redirect('/admin/business/after-sales?tab=returning&error=' + encodeURIComponent(text))
 }
 
 export async function refreshReactivation(formData: FormData) {
@@ -25,8 +25,8 @@ export async function refreshReactivation(formData: FormData) {
   const branch = String(formData.get('branch_id') ?? '')
   const { error } = await client.rpc('refresh_crm_reactivation', { p_branch: uuidPattern.test(branch) ? branch : null })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/reactivation')
-  redirect('/admin/business/reactivation?success=' + encodeURIComponent('Đã làm mới danh sách'))
+  revalidatePath('/admin/business/after-sales')
+  redirect('/admin/business/after-sales?tab=returning&success=' + encodeURIComponent('Đã làm mới danh sách'))
 }
 
 export async function transitionReactivation(formData: FormData) {
@@ -41,6 +41,6 @@ export async function transitionReactivation(formData: FormData) {
     p_note: String(formData.get('note') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/reactivation')
-  redirect('/admin/business/reactivation')
+  revalidatePath('/admin/business/after-sales')
+  redirect('/admin/business/after-sales?tab=returning')
 }

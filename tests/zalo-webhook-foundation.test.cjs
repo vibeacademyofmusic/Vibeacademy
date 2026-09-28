@@ -139,3 +139,15 @@ test('handler source does not hard-code ids, secrets, or a live Zalo call', () =
   assert.match(route, /ZALO_OA_ACCESS_TOKEN/)
   assert.match(route, /ZALO_OA_REFRESH_TOKEN/)
 })
+
+test('signed interaction with explicit matching OA is accepted; conflicting OA and absent MAC stay rejected', async () => {
+  const good = signed({event_name:'widget_interaction_accepted',oa_id:OA,sender:undefined,recipient:undefined,data:{user_id:'123456789',user_external_id:'synthetic-key'}})
+  const db=memory()
+  assert.equal((await acceptZaloWebhook({rawBody:good.raw,signature:good.signature,env:ENV,record:db.record})).status,200)
+  assert.equal(db.rows.length,1)
+  assert.equal(db.rows[0].event.supported,true)
+  const wrong=signed({oa_id:'wrong'})
+  assert.equal((await acceptZaloWebhook({rawBody:wrong.raw,signature:wrong.signature,env:ENV,record:db.record})).status,401)
+  assert.equal((await acceptZaloWebhook({rawBody:good.raw,signature:null,env:ENV,record:db.record})).status,401)
+  assert.equal(db.rows.length,1)
+})

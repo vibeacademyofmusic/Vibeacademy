@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { AppPage, FormField, InlineNotice, PageHeader, SectionCard, SelectField, StatusBadge } from '@/app/admin/_components/vibe'
 import { businessDate } from '@/app/admin/_lib/business-date'
 import { createClient } from '@/lib/supabase/server'
-import { assignCrmLead, attributeCrmLead, followUpCrmLead, noteCrmLead, reviewCrmLead, transitionCrmLead } from '../actions'
-import { channelStateLabel, contactChannels, eventLabel, followUpState, journeyLabel, nextSteps, openRegistrationStatuses, paymentLabel, placementLabel, registrationEventLabel, registrationStatusLabel, sourceLabel, statusTone } from '../model'
+import { setCrmLeadInterest, assignCrmLead, attributeCrmLead, followUpCrmLead, noteCrmLead, reviewCrmLead, transitionCrmLead } from '../actions'
+import { interestLevelLabel, channelStateLabel, contactChannels, eventLabel, followUpState, journeyLabel, nextSteps, openRegistrationStatuses, paymentLabel, placementLabel, registrationEventLabel, registrationStatusLabel, sourceLabel, statusTone } from '../model'
 
 const hidden = (values: Record<string, string>) => Object.entries(values).map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)
 
@@ -25,7 +25,7 @@ export default async function CrmLeadDetailPage({
   const db = await createClient()
   const today = businessDate()
   const [{ data: lead }, { data: events }, { data: reviews }, { data: candidates }, { data: owners }, channel] = await Promise.all([
-    db.from('crm_leads').select('id, branch_id, status, full_name, phone, email, phone_key, parent_name, student_name, student_date_of_birth, program_interest, instrument_interest, source_type, campaign_id, owner_user_id, first_contact_at, last_contact_at, next_follow_up_on, lost_reason, converted_at, converted_student_id, converted_parent_id, version').eq('id', id).maybeSingle(),
+    db.from('crm_leads').select('id, branch_id, status, interest_level, full_name, phone, email, phone_key, parent_name, student_name, student_date_of_birth, program_interest, instrument_interest, source_type, campaign_id, owner_user_id, first_contact_at, last_contact_at, next_follow_up_on, lost_reason, converted_at, converted_student_id, converted_parent_id, version').eq('id', id).maybeSingle(),
     db.from('crm_lead_events').select('id, event_type, channel, note, created_at').eq('lead_id', id).order('created_at', { ascending: true }).limit(50),
     db.from('crm_lead_conversion_reviews').select('id, decision, note, created_at').eq('lead_id', id).order('created_at', { ascending: false }).limit(10),
     db.rpc('crm_lead_match_candidates', { p_lead: id }),
@@ -85,6 +85,11 @@ export default async function CrmLeadDetailPage({
           </dl>
         </SectionCard>
         <SectionCard title="Nhu cầu học">
+          <form action={setCrmLeadInterest} className="vibe-filter">
+            {hidden({ ...fields, request: crypto.randomUUID() })}
+            <SelectField label="Mức độ quan tâm" name="interest_level" defaultValue={lead.interest_level}>{Object.entries(interestLevelLabel).map(([value,label]) => <option key={value} value={value}>{label}</option>)}</SelectField>
+            <button className="vibe-button">Cập nhật mức độ quan tâm</button>
+          </form>
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div><dt className="text-gray-500">Bộ môn</dt><dd>{lead.program_interest || registration?.program_interest || '—'}</dd></div>
             <div><dt className="text-gray-500">Nhạc cụ</dt><dd>{lead.instrument_interest || registration?.instrument_interest || '—'}</dd></div>

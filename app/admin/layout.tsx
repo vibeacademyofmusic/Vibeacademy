@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import AdminNavigation from './AdminNavigation'
+import WorkspaceSectionTabs from './WorkspaceSectionTabs'
+import { Suspense } from 'react'
 import HRContext from './_components/vibe/Context'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -7,6 +9,10 @@ import type { ReactNode } from 'react'
 
 import { logout } from '@/app/login/actions'
 import { createClient } from '@/lib/supabase/server'
+import { TuitionPaymentNav } from './finance/SectionNav'
+import { HrSectionNav } from './hr/SectionNav'
+import { fullBusinessAccess, loadBranchBusinessAccess } from './business/access'
+import { hiddenBusinessHrefs } from './business/workspaces'
 import { isBusinessShellPath, isStudentOpsPath, type ShellMode } from './navigation'
 
 export default async function AdminLayout({
@@ -47,6 +53,10 @@ export default async function AdminLayout({
     mode = business && students ? 'business-students' : business ? 'business' : 'students'
   }
 
+  const includeBusiness = mode === 'full' || mode === 'business' || mode === 'business-students'
+  const businessAccess = !includeBusiness ? null : isSuperAdmin ? fullBusinessAccess : await loadBranchBusinessAccess(supabase)
+  const hiddenHrefs = businessAccess ? hiddenBusinessHrefs(businessAccess) : []
+
   const userId = claimsData.claims.sub
 
   const { data: profile } = await supabase
@@ -58,8 +68,8 @@ export default async function AdminLayout({
   return (
     <div className="vibe-admin min-h-screen bg-gray-50">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-gray-200 bg-white lg:block">
-        <div className="flex h-full flex-col">
-          <div className="border-b border-gray-200 px-6 py-6">
+        <div className="flex h-full min-h-0 flex-col">
+          <div className="shrink-0 border-b border-gray-200 px-6 py-6">
           <Link href={mode === 'students' ? '/admin/students' : mode === 'full' ? '/admin' : '/admin/business'} prefetch={false}>
               <img src="/vibe-logo.png" alt="VIBE Academy" width={120} height={64} className="h-16 w-32 object-contain"/>
             </Link>
@@ -69,9 +79,9 @@ export default async function AdminLayout({
             </p>
           </div>
 
-          <AdminNavigation mode={mode} />
+          <AdminNavigation mode={mode} hiddenHrefs={hiddenHrefs} />
 
-          <div className="border-t border-gray-200 p-4">
+          <div className="shrink-0 border-t border-gray-200 p-4">
             <div className="mb-4 px-2">
               <p className="text-xs text-gray-500">Đăng nhập với tài khoản</p>
 
@@ -126,10 +136,10 @@ export default async function AdminLayout({
           </div>
         </header>
 
-        <AdminNavigation mobile mode={mode} />
+        <AdminNavigation mobile mode={mode} hiddenHrefs={hiddenHrefs} />
 
         <main className="px-6 py-8 lg:px-8">
-          <div className="mx-auto max-w-7xl"><HRContext />{children}</div>
+          <div className="mx-auto max-w-7xl"><HRContext /><Suspense><WorkspaceSectionTabs mode={mode} /></Suspense><HrSectionNav /><TuitionPaymentNav />{children}</div>
         </main>
       </div>
     </div>

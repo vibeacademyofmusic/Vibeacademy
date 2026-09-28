@@ -5,6 +5,8 @@ import { createHash, timingSafeEqual } from 'node:crypto'
 // The OA secret key is not the application secret. This module never calls Zalo.
 
 export const SUPPORTED_ZALO_EVENTS = new Set([
+  'widget_interaction_accepted',
+  'widget_failed_to_sync_user_external_id',
   'user_send_text',
   'user_send_image',
   'user_send_link',
@@ -146,7 +148,9 @@ export async function acceptZaloWebhook(input: {
   if (
     !zaloSignatureMatches(input.signature, mac) ||
     appId !== input.env.appId ||
-    (senderId !== input.env.oaId && recipientId !== input.env.oaId)
+    (Object.prototype.hasOwnProperty.call(body, 'oa_id')
+      ? body.oa_id !== input.env.oaId
+      : senderId !== input.env.oaId && recipientId !== input.env.oaId)
   ) {
     return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
   }

@@ -186,3 +186,5 @@ export function crmError(message: string) {
   if (message.includes('CRM_LEAD_INVALID')) return 'Thiếu thông tin bắt buộc.'
   return 'Không thực hiện được thao tác.'
 }
+
+export const interestLevelLabel: Record<string, string> = { REFERENCE: 'Tham khảo', INTERESTED: 'Quan tâm', POTENTIAL: 'Tiềm năng' }
