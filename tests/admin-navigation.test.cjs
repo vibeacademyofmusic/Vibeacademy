@@ -3,9 +3,9 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const { harness } = require('./helpers/finance-operations.cjs')
-const { navigationGroups, activeNavigationHref } = harness().load('../navigation.ts')
+const { navigationGroups, activeNavigationHref, trainingTabs, studentTabs, systemTabs, activeWorkspaceTab, activeStudentTab, workspaceTabsForAccess } = harness().load('../navigation.ts')
 test('menu targets existing standalone routes only', () => {
-  for (const group of navigationGroups) for (const item of group.items) {
+  for (const item of [...navigationGroups.flatMap(group => group.items), ...trainingTabs, ...studentTabs, ...systemTabs]) {
     assert.ok(fs.existsSync('app' + item.href + '/page.tsx'), item.href)
     assert.ok(!item.href.includes('['))
   }
@@ -15,6 +15,36 @@ test('active menu chooses the most specific existing URL', () => {
   assert.equal(activeNavigationHref('/admin/tuition/reminders'), '/admin/tuition/reminders')
   assert.equal(activeNavigationHref('/admin/students/123'), '/admin/students')
   assert.equal(activeNavigationHref('/admin'), '/admin')
+})
+test('consolidated workspaces retain deep links and select the most specific tab', () => {
+  for (const item of [...trainingTabs, ...studentTabs]) {
+    assert.equal(activeNavigationHref(item.href + '/record'), '/admin/students')
+  }
+  for (const item of systemTabs) {
+    assert.equal(activeNavigationHref(item.href + '/record'), '/admin/branches')
+    assert.equal(activeWorkspaceTab(item.href + '/record'), item.href)
+  }
+  assert.equal(activeWorkspaceTab('/admin/attendance/retention'), '/admin/attendance/retention')
+  assert.equal(activeWorkspaceTab('/admin/attendance/session-1'), '/admin/attendance')
+  assert.equal(activeWorkspaceTab('/admin/rooms/room-1'), '/admin/students')
+  assert.equal(activeStudentTab('/admin/rooms/room-1'), '/admin/rooms')
+  assert.equal(activeStudentTab('/admin/students/student-1'), '/admin/students')
+  assert.equal(activeWorkspaceTab('/admin/rooms-extra'), null)
+  assert.equal(activeWorkspaceTab('/admin/system/integrations-extra'), null)
+  assert.ok(!navigationGroups.some(group => ['ĐÀO TẠO', 'HỌC VIÊN', 'TÀI CHÍNH'].includes(group.name)))
+  assert.equal(navigationGroups.find(group => group.name === 'VẬN HÀNH').items.filter(item => item.href === '/admin/students').length, 1)
+  assert.equal(navigationGroups.filter(group => group.name === 'HỆ THỐNG').length, 1)
+  assert.equal(navigationGroups.at(-1).name, 'HỆ THỐNG')
+})
+test('workspace tabs never extend restricted staff access to rooms or settings', () => {
+  for (const mode of ['students', 'business-students']) {
+    assert.deepEqual(workspaceTabsForAccess('/admin/students', mode).map(tab => tab.href), ['/admin/students'])
+    for (const item of [...trainingTabs, ...studentTabs, ...systemTabs]) {
+      if (item.href !== '/admin/students') assert.deepEqual(workspaceTabsForAccess(item.href, mode), [])
+    }
+    assert.deepEqual(workspaceTabsForAccess('/admin/students/student-1', mode), [])
+  }
+  assert.deepEqual(workspaceTabsForAccess('/admin/students', 'business'), [])
 })
 test('HR Chấm công opens the canonical attendance workspace', () => {
   const hr = navigationGroups.find(g => g.name === 'HR').items
@@ -43,14 +73,15 @@ test('unimplemented domains are omitted and existing finance routes are present'
   assert.ok(!navigationGroups.some(g => /CRM/.test(g.name)))
   assert.deepEqual(navigationGroups.find(g => g.name === 'KINH DOANH').items.map(i => i.href), [
     '/admin/business',
-    '/admin/business/crm',
     '/admin/business/registrations',
     '/admin/business/campaigns',
     '/admin/business/reports',
     '/admin/business/reactivation',
     '/admin/business/instrument-customers',
   ])
-  assert.deepEqual(navigationGroups.find(g => g.name === 'E-LEARNING & KIỂM TRA').items.map(i => i.href), ['/admin/elearning'])
-  assert.deepEqual(navigationGroups.find(g => g.name === 'KHO & CỬA HÀNG').items.map(i => i.href), ['/admin/inventory', '/admin/instruments'])
-  assert.equal(navigationGroups.find(g => g.name === 'TÀI CHÍNH').items.length, 9)
+  assert.ok(!navigationGroups.some(g => g.name === 'E-LEARNING & KIỂM TRA'))
+  assert.ok(!navigationGroups.flatMap(g => g.items).some(item => item.href.startsWith('/admin/elearning')))
+  assert.ok(!navigationGroups.some(g => g.name === 'KHO & CỬA HÀNG'))
+  assert.deepEqual(navigationGroups.find(g => g.name === 'HỆ THỐNG').items.map(i => i.href), ['/admin/inventory', '/admin/instruments', '/admin/branches'])
+  assert.equal(navigationGroups.find(g => g.name === 'VẬN HÀNH').items.length, 10)
 })

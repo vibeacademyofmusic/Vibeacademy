@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AdminNavigation from './AdminNavigation'
+import WorkspaceSectionTabs from './WorkspaceSectionTabs'
 import HRContext from './_components/vibe/Context'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -129,7 +130,7 @@ export default async function AdminLayout({
         <AdminNavigation mobile mode={mode} />
 
         <main className="px-6 py-8 lg:px-8">
-          <div className="mx-auto max-w-7xl"><HRContext />{children}</div>
+          <div className="mx-auto max-w-7xl"><HRContext /><WorkspaceSectionTabs mode={mode} />{children}</div>
         </main>
       </div>
     </div>
