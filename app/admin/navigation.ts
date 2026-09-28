@@ -36,7 +36,6 @@ export const navigationGroups = [
     { name: 'Chi phí vận hành', href: '/admin/finance/operating-expenses' },
     { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },
   ] },
-  { name: 'KHO & CỬA HÀNG', items: [{ name: 'Kho sách và vật tư', href: '/admin/inventory' }, { name: 'Nhạc cụ theo serial', href: '/admin/instruments' }] },
   { name: 'HR', items: [
     { name: 'Tổng quan HR', href: '/admin/hr' },
     { name: 'Nhân viên', href: '/admin/employees' },
@@ -59,7 +58,11 @@ export const navigationGroups = [
     { name: 'Khách hàng cũ', href: '/admin/business/reactivation' },
     { name: 'Khách mua đàn', href: '/admin/business/instrument-customers' },
   ] },
-  { name: 'HỆ THỐNG', items: [{ name: 'Hệ thống', href: '/admin/branches' }] },
+  { name: 'HỆ THỐNG', items: [
+    { name: 'Kho sách và vật tư', href: '/admin/inventory' },
+    { name: 'Nhạc cụ theo serial', href: '/admin/instruments' },
+    { name: 'Hệ thống', href: '/admin/branches' },
+  ] },
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
 // Learning reports remain in the Đào tạo workspace under VẬN HÀNH at their existing URL.

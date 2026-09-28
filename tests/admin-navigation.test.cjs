@@ -33,7 +33,8 @@ test('consolidated workspaces retain deep links and select the most specific tab
   assert.equal(activeWorkspaceTab('/admin/system/integrations-extra'), null)
   assert.ok(!navigationGroups.some(group => ['ĐÀO TẠO', 'HỌC VIÊN', 'TÀI CHÍNH'].includes(group.name)))
   assert.equal(navigationGroups.find(group => group.name === 'VẬN HÀNH').items.filter(item => item.href === '/admin/students').length, 1)
-  assert.equal(navigationGroups.find(group => group.name === 'HỆ THỐNG').items.length, 1)
+  assert.equal(navigationGroups.filter(group => group.name === 'HỆ THỐNG').length, 1)
+  assert.equal(navigationGroups.at(-1).name, 'HỆ THỐNG')
 })
 test('workspace tabs never extend restricted staff access to rooms or settings', () => {
   for (const mode of ['students', 'business-students']) {
@@ -80,6 +81,7 @@ test('unimplemented domains are omitted and existing finance routes are present'
   ])
   assert.ok(!navigationGroups.some(g => g.name === 'E-LEARNING & KIỂM TRA'))
   assert.ok(!navigationGroups.flatMap(g => g.items).some(item => item.href.startsWith('/admin/elearning')))
-  assert.deepEqual(navigationGroups.find(g => g.name === 'KHO & CỬA HÀNG').items.map(i => i.href), ['/admin/inventory', '/admin/instruments'])
+  assert.ok(!navigationGroups.some(g => g.name === 'KHO & CỬA HÀNG'))
+  assert.deepEqual(navigationGroups.find(g => g.name === 'HỆ THỐNG').items.map(i => i.href), ['/admin/inventory', '/admin/instruments', '/admin/branches'])
   assert.equal(navigationGroups.find(g => g.name === 'VẬN HÀNH').items.length, 10)
 })
