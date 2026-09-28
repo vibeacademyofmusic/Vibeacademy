@@ -47,7 +47,7 @@ export async function dispatchPreviewRegistrationZalo(admin: ZaloAdmin, orderCod
                 const started = recovery
                     ? await admin.rpc('start_zalo_recovery_outbound', { p_attempt: claimed.attemptId })
                     : await admin.rpc('authorize_zalo_registration_outbound', { p_attempt: claimed.attemptId, p_manual: false });
-                if (!started.error && started.data === 'NO_CONSENT') locallyBlocked = 'NO_CONSENT';
+                if (!started.error && (started.data === 'NO_CONSENT' || started.data === 'GATE_DISABLED')) locallyBlocked = started.data;
                 if (started.error || started.data !== 'STARTED') throw new Error('OUTBOUND_NOT_STARTED');
                 return (transport ?? fetchTransport)(url, init);
             };

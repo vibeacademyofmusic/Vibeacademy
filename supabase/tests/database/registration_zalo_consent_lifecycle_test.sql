@@ -69,6 +69,11 @@ select is(zalo_registration_recovery((select job from fixture),'CHECK',0)->>'sta
 select is((select attempts from notification_jobs where id=(select job from fixture)),0,'save/check never increments sends');
 select is((select count(*)::int from zalo_notification_attempts where job_id=(select job from fixture)),0,'no outbound attempt created');
 select is((select count(*)::int from notification_jobs where entity_id='aa920000-0000-4000-8000-000000000051'),1,'one durable job throughout lifecycle');
+update notification_templates set enabled=false where template_key='ZALO_REGISTRATION_CONFIRMED';
+select is((select decision from preview_zalo_dispatch_decision(880925002)),'GATE_DISABLED','disabled template blocks preflight for an already queued phone job');
+select is((select count(*)::int from zalo_notification_attempts where job_id=(select job from fixture)),0,'disabled template does not reserve an outbound attempt');
+update notification_templates set enabled=true where template_key='ZALO_REGISTRATION_CONFIRMED';
+select is((select decision from preview_zalo_dispatch_decision(880925002)),'SEND','explicit re-enable restores preflight for eligible job');
 savepoint permissions;
 select set_config('request.jwt.claim.sub','',true);
 select throws_ok($$select update_registration_zalo_consent('aa920000-0000-4000-8000-000000000051',null,'RECORD','0900000000',true,'IN_PERSON')$$,'P0001','Unauthorized','unauthenticated request denied');
@@ -91,6 +96,13 @@ select is(start_zalo_recovery_outbound('aa920000-0000-4000-8000-000000000099'),'
 select is((select attempts from notification_jobs where id=(select job from fixture)),0,'locally blocked reservation does not count as a send');
 select is((select error_code from zalo_notification_attempts where id='aa920000-0000-4000-8000-000000000099'),'ZALO_CONSENT_WITHDRAWN','no fabricated provider response');
 select is(start_zalo_recovery_outbound('aa920000-0000-4000-8000-000000000099'),'DENIED','same reservation cannot be replayed');
+insert into zalo_notification_attempts(id,job_id,attempt_number,credential_version,state) values('aa920000-0000-4000-8000-000000000098',(select job from fixture),2,1,'REQUESTING');
+update notification_jobs set status='PROCESSING',lease_token='aa920000-0000-4000-8000-000000000098',attempts=1 where id=(select job from fixture);
+update notification_templates set enabled=false where template_key='ZALO_REGISTRATION_CONFIRMED';
+select is(start_zalo_recovery_outbound('aa920000-0000-4000-8000-000000000098'),'GATE_DISABLED','disabling template after claim stops final outbound boundary');
+select is((select attempts from notification_jobs where id=(select job from fixture)),1,'disabled send does not consume another attempt count');
+select is((select error_code from zalo_notification_attempts where id='aa920000-0000-4000-8000-000000000098'),'ZALO_GATE_DISABLED','disabled send leaves local audit evidence');
+select is(start_zalo_recovery_outbound('aa920000-0000-4000-8000-000000000098'),'DENIED','disabled reservation cannot be replayed');
 -- Creation and consent share one transaction. Forged consent failures leave no draft.
 select throws_ok($$select create_registration_with_zalo_consent('aa920000-0000-4000-8000-000000000090','aa920000-0000-4000-8000-000000000011',null,'Atomic Invalid Consent','2014-08-08','Synthetic Parent','0900000000','e9500000-0000-4000-8000-000000000020','e9500000-0000-4000-8000-000000000021','e9500000-0000-4000-8000-000000000022',null,'',true,'')$$,'P0001','PHONE_CONSENT_SOURCE_REQUIRED','invalid consent rolls back complete creation');
 select is((select count(*)::int from registration_applications where student_name='Atomic Invalid Consent'),0,'no partial draft after failure');
