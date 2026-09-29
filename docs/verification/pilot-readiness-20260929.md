@@ -3,7 +3,7 @@
 Nhánh: `codex/release-candidate-lint`. Pull request: https://github.com/vibeacademyofmusic/Vibeacademy/pull/3 (chưa merge).
 
 Commit xuất phát: `3dde64c0dfb4041ca920f5fb21ff16bc8b70496f`.
-Commit hoàn tất phần mã và bằng chứng này: ghi ở dòng “Commit cuối” phía dưới sau khi commit được tạo. Trước commit, cây làm việc đứng trên `3dde64c`.
+Commit mã và bằng chứng: `75e0d016a8a1bd75e8856106aa327abb10707ae3`.
 
 ## Quyết định
 
@@ -92,4 +92,4 @@ Không có bằng chứng lộ qua Git. Chưa cần xoay khóa chỉ vì reposit
 
 ## Commit cuối
 
-Sẽ điền sau commit.
+`75e0d016a8a1bd75e8856106aa327abb10707ae3` chứa mã, test và bằng chứng nâng cấp. Dòng này nằm ở commit tài liệu ngay sau commit đó trên `codex/release-candidate-lint`. Job `regression` chạy trên HEAD của pull request.
