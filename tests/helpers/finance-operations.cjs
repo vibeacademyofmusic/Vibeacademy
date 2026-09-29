@@ -66,7 +66,7 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
   }
   const mocks = {
     '@/lib/supabase/server': { createClient: async () => db },
-    'next/navigation': { useRouter: () => ({ refresh() {}, push() {} }), usePathname: () => '/admin/payroll', redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
+    'next/navigation': { notFound: () => { throw Object.assign(new Error('Not found'), { code: 'NOT_FOUND' }) }, useRouter: () => ({ refresh() {}, push() {} }), usePathname: () => '/admin/payroll', redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
     'next/cache': { revalidatePath: p => invalidated.push(p) },
     'next/link': { default: ({ children, href }) => React.createElement('a', { href }, children) },
   }

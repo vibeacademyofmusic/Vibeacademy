@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { signMomoCreate, verifyMomoCreateResponse } from '@/lib/integrations/momo/signature'
 import { createPayosPaymentLink, payosConfigurationGaps, payosReturnUrls, payosCheckoutError } from '@/lib/integrations/payos/client'
+import { homeAddress, isOver18, normalizeVnPhone, vietnamToday } from './intake'
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
@@ -23,31 +24,69 @@ function fail(path: string, error: { message?: string } | null): never {
   redirect(error?.message ? `${path}?error=${encodeURIComponent(error.message)}` : path)
 }
 
-export async function createRegistration(formData: FormData) {
-  const client = await db()
-  const request = crypto.randomUUID()
+function intakeInput(formData: FormData) {
   const birth = String(formData.get('student_date_of_birth') ?? '').trim()
   const start = String(formData.get('desired_start_date') ?? '').trim()
   const lead = String(formData.get('crm_lead_id') ?? '').trim()
-  const subjectId = String(formData.get('subject_id') ?? '')
-  const { data, error } = await client.rpc('create_registration_with_zalo_consent', {
-    p_consent: formData.get('phone_consent') === 'yes',
-    p_consent_method: String(formData.get('consent_method') ?? ''),
-    p_request: request,
-    p_branch: String(formData.get('branch_id') ?? ''),
-    p_lead: uuidPattern.test(lead) ? lead : null,
-    p_student_name: String(formData.get('student_name') ?? ''),
-    p_student_date_of_birth: datePattern.test(birth) ? birth : null,
-    p_parent_name: String(formData.get('parent_name') ?? ''),
-    p_parent_phone: String(formData.get('parent_phone') ?? ''),
-    p_curriculum: String(formData.get('curriculum_id') ?? ''),
-    p_level: String(formData.get('level_id') ?? ''),
-    p_subject: subjectId,
-    p_desired_start: datePattern.test(start) ? start : null,
-    p_preferred_schedule: String(formData.get('preferred_schedule') ?? ''),
-  })
+  const request = String(formData.get('request_id') ?? '').trim()
+  const subject = String(formData.get('subject_id') ?? '').trim()
+  const over18 = formData.get('student_over_18') === 'yes'
+  const address = homeAddress(String(formData.get('home_address') ?? ''))
+  const zalo = normalizeVnPhone(String(formData.get('zalo_phone') ?? ''))
+  const parentPhoneRaw = String(formData.get('parent_phone') ?? '')
+  const parentPhone = parentPhoneRaw.trim() ? normalizeVnPhone(parentPhoneRaw) : null
+  const today = vietnamToday()
+  if (!address) return { error: 'Địa chỉ nhà không được để trống hoặc chỉ gồm khoảng trắng.' }
+  if (!zalo) return { error: 'Số Zalo không hợp lệ. Chỉ dùng chữ số và phải là số Việt Nam.' }
+  if (!datePattern.test(birth) || over18 !== isOver18(birth, today)) return { error: 'Ngày sinh không khớp ô Trên 18 tuổi. Trên 18 tuổi nghĩa là đã qua ngày sinh nhật thứ 18 theo giờ Việt Nam, không tính đúng ngày sinh nhật.' }
+  if (!over18 && (!String(formData.get('parent_name') ?? '').trim() || !parentPhone)) return { error: 'Học viên chưa trên 18 tuổi thì cần họ tên và số điện thoại phụ huynh hợp lệ.' }
+  if (over18 && parentPhoneRaw.trim() && !parentPhone) return { error: 'Số điện thoại phụ huynh không hợp lệ.' }
+  return {
+    args: {
+      p_consent: formData.get('phone_consent') === 'yes',
+      p_consent_method: formData.get('phone_consent') === 'yes' ? 'IN_PERSON' : '',
+      p_request: uuidPattern.test(request) ? request : crypto.randomUUID(),
+      p_branch: String(formData.get('branch_id') ?? ''),
+      p_lead: uuidPattern.test(lead) ? lead : null,
+      p_student_name: String(formData.get('student_name') ?? ''),
+      p_student_date_of_birth: birth,
+      p_parent_name: String(formData.get('parent_name') ?? ''),
+      p_parent_phone: parentPhone ?? '',
+      p_curriculum: String(formData.get('curriculum_id') ?? ''),
+      p_level: String(formData.get('level_id') ?? ''),
+      p_subject: uuidPattern.test(subject) ? subject : null,
+      p_desired_start: datePattern.test(start) ? start : null,
+      p_preferred_schedule: String(formData.get('preferred_schedule') ?? ''),
+      p_over_18: over18,
+      p_zalo_phone: zalo,
+      p_home_address: address,
+    },
+  }
+}
+
+export async function createRegistration(formData: FormData) {
+  const client = await db()
+  const intake = intakeInput(formData)
+  if ('error' in intake) fail('/admin/business/registrations/new', { message: intake.error })
+  const { data, error } = await client.rpc('create_registration_with_zalo_consent', intake.args)
   if (error || !data) fail('/admin/business/registrations/new', error)
   redirect(`/admin/business/registrations/${data}`)
+}
+
+export async function updateRegistrationIntake(formData: FormData) {
+  const client = await db()
+  const id = String(formData.get('application_id') ?? '')
+  const path = `/admin/business/registrations/${id}`
+  const intake = intakeInput(formData)
+  if ('error' in intake) fail(path, { message: intake.error })
+  const { error } = await client.rpc('update_registration_intake', {
+    ...intake.args,
+    p_application: id,
+    p_version: Number(formData.get('version') ?? 0),
+  })
+  if (error) fail(path, error)
+  revalidatePath(path)
+  redirect(path)
 }
 
 export async function transitionRegistration(formData: FormData) {
@@ -93,7 +132,7 @@ export async function setRegistrationDepositQuote(formData: FormData) {
   }
   const paymentOption = String(formData.get('payment_option') ?? 'DEPOSIT_50').trim().toUpperCase()
   if (!['DEPOSIT_50', 'FULL'].includes(paymentOption)) {
-    fail(`/admin/business/registrations/${id}`, { message: 'Chọn cọc 50% hoặc thanh toán đủ học phí.' })
+    fail(`/admin/business/registrations/${id}`, { message: 'Chọn thanh toán 50% hoặc thanh toán đủ học phí.' })
   }
   const { error } = await client.rpc('set_registration_deposit_quote', {
     p_application: id,
@@ -142,7 +181,7 @@ export async function createRegistrationMomoCheckout(formData: FormData) {
   if (reserveError || !order) fail(path, reserveError)
   if (order.state === 'READY' && order.pay_url) redirect(path)
   if (order.state !== 'RESERVED' || order.amount < 1000 || order.amount > 50_000_000) {
-    fail(path, { message: 'Số tiền cọc không phù hợp giới hạn giao dịch MoMo.' })
+    fail(path, { message: 'Số tiền thanh toán không phù hợp giới hạn giao dịch MoMo.' })
   }
   const ipnUrl = `${origin}/api/integrations/momo/ipn`
   const redirectUrl = `${origin}${path}`
@@ -169,7 +208,7 @@ export async function createRegistrationMomoCheckout(formData: FormData) {
       response.resultCode !== 0 || response.partnerCode !== partnerCode ||
       response.orderId !== order.order_id || response.requestId !== order.request_id ||
       Number(response.amount) !== order.amount || typeof response.payUrl !== 'string') {
-    fail(path, { message: 'Phản hồi MoMo không khớp đơn cọc.' })
+    fail(path, { message: 'Phản hồi MoMo không khớp đơn thanh toán.' })
   }
   const admin = createServiceClient(supabaseUrl, serviceKey, { auth: { persistSession: false } })
   const { error } = await admin.rpc('activate_registration_momo_order', {

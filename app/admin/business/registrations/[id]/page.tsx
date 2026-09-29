@@ -13,6 +13,8 @@ import { allocateRegistrationDeposits, completeRegistration, createRegistrationM
 import { PayosAwaiting } from './PayosAwaiting'
 import { notificationProgressLabel, registrationEventLabel, registrationProgressLabel, staffFacingError, vnd } from '../status'
 import { ConsentPanel, type ConsentEntry } from '../ConsentPanel'
+import { vietnamToday } from '../intake'
+import { CounterForm } from '../new/CounterForm'
 
 const steps = ['Bản nháp', 'Đã nộp', 'Đã xác minh', 'Thanh toán', 'Xác nhận thanh toán', 'Chờ vào ca dạy']
 
@@ -28,7 +30,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   if (waitingPayos?.payment_link_id && waitingPayos.order_code && waitingPayos.amount) {
     await syncPendingPayosPayment(id, Number(waitingPayos.order_code), waitingPayos.payment_link_id, Number(waitingPayos.amount))
   }
-  const { data: app, error: appError } = await db.from('registration_applications').select('id, application_code, branch_id, student_name, student_date_of_birth, parent_name, parent_phone, program_interest, curriculum_id, level_id, subject_id, desired_start_date, preferred_schedule, status, invoice_id, deposit_confirmed_at, completed_at, linked_student_id, version, branches(name)').eq('id', id).maybeSingle()
+  const { data: app, error: appError } = await db.from('registration_applications').select('id, application_code, branch_id, student_name, student_date_of_birth, student_over_18, parent_name, parent_phone, zalo_phone, home_address, program_interest, curriculum_id, level_id, subject_id, desired_start_date, preferred_schedule, status, invoice_id, deposit_confirmed_at, completed_at, linked_student_id, version, branches(name)').eq('id', id).maybeSingle()
   if (appError) {
     return <RecruitmentShell title="Đăng ký tại quầy" current="counter" crumb="Hồ sơ"><InlineNotice tone="error">Không tải được hồ sơ đăng ký.</InlineNotice></RecruitmentShell>
   }
@@ -84,6 +86,11 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
     return price ? [{ id: plan.id, name: plan.name, duration: plan.name, listPrice: Number(price.list_price) }] : []
   })
   const stepIndex = app.status === 'COMPLETED' ? 5 : steps.indexOf(progress)
+  const intakeCatalogs = app.status === 'DRAFT' ? await Promise.all([
+    db.from('branches').select('id, name').eq('status', 'ACTIVE').order('name'),
+    db.from('curriculums').select('id, name').eq('status', 'ACTIVE').order('name'),
+    db.from('curriculum_levels').select('id, curriculum_id, name').eq('status', 'ACTIVE').order('sequence_no'),
+  ]) : null
 
   return (
     <RecruitmentShell title={app.application_code} description={`${branch?.name ?? 'Chi nhánh'} · ${progress}`} current="counter" crumb={app.application_code}>
@@ -94,10 +101,13 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
         <div className={styles.stack}>
           <SectionCard title="Hồ sơ">
             <dl className={styles.facts}>
-              <div><dt className="text-slate-500">Học viên</dt><dd>{app.student_name} · {app.student_date_of_birth}</dd></div>
-              <div><dt className="text-slate-500">Phụ huynh</dt><dd>{app.parent_name} · {app.parent_phone || '—'}</dd></div>
+              <div><dt className="text-slate-500">Học viên</dt><dd>{app.student_name} · {app.student_date_of_birth} · {app.student_over_18 ? 'Trên 18 tuổi' : 'Chưa đánh dấu trên 18 tuổi'}</dd></div>
+              <div><dt className="text-slate-500">Phụ huynh</dt><dd>{app.parent_name || 'Không có'} · {app.parent_phone || '—'}</dd></div>
+              <div><dt className="text-slate-500">Địa chỉ nhà</dt><dd>{app.home_address || 'Chưa có. Hồ sơ cũ cần bổ sung khi lưu lại bước thông tin.'}</dd></div>
+              <div><dt className="text-slate-500">Số Zalo</dt><dd>{app.zalo_phone || 'Chưa có'}</dd></div>
               <div><dt className="text-slate-500">Chương trình</dt><dd>{curriculum?.name || app.program_interest || 'Chưa chọn'}</dd></div>
               <div><dt className="text-slate-500">Trình độ</dt><dd>{level?.name || '—'}</dd></div>
+              <div><dt className="text-slate-500">Môn học</dt><dd>{app.subject_id ? 'Đã gắn từ hồ sơ trước' : 'Chưa chọn. Môn học gắn khi vào ca, không chọn ở bước thông tin.'}</dd></div>
               <div><dt className="text-slate-500">Muốn bắt đầu</dt><dd>{app.desired_start_date || '—'} · {app.preferred_schedule || 'Chưa có khung giờ'}</dd></div>
               <div><dt className="text-slate-500">Xếp lớp</dt><dd>{placement ? registrationProgressLabel('COMPLETED', placement.status, placement.scheduled_start_date) : 'Chưa mở hồ sơ chờ lớp'}{placement?.assigned_class_id ? '' : placement ? ' · chưa gán lớp' : ''}</dd></div>
             </dl>
@@ -106,7 +116,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             {!terms && <p className="text-sm">Chưa chốt học phí. Chọn thời hạn và cách thu trước khi xác nhận. Giá đã chốt không đổi khi bảng giá sau này thay đổi.</p>}
             {terms && <dl className={styles.facts}>
               <div><dt className="text-slate-500">Chi nhánh</dt><dd>{branch?.name}</dd></div>
-              <div><dt className="text-slate-500">Cách thu</dt><dd>{terms.payment_option === 'FULL' ? 'Thanh toán đủ' : 'Cọc tối thiểu 50%'}</dd></div>
+              <div><dt className="text-slate-500">Cách thu</dt><dd>{terms.payment_option === 'FULL' ? 'Thanh toán đủ' : 'Thanh toán tối thiểu 50%'}</dd></div>
               <div><dt className="text-slate-500">Giá niêm yết</dt><dd>{vnd(terms.list_amount)}</dd></div>
               <div><dt className="text-slate-500">Giảm giá đã duyệt</dt><dd>{terms.discount_type === 'NONE' ? 'Không' : `${terms.discount_name} · ${vnd(terms.discount_amount)}`}</dd></div>
               <div><dt className="text-slate-500">Học phí đã chốt</dt><dd>{vnd(terms.tuition_amount)}</dd></div>
@@ -121,7 +131,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
                 <select name="tuition_plan_id" required defaultValue=""><option value="" disabled>Chọn thời hạn</option>{applicablePlans.map(plan => <option key={plan.id} value={plan.id}>{plan.duration} · {vnd(plan.listPrice)}</option>)}</select>
               </label>
               <label className="vibe-field"><span>Cách thu</span>
-                <select name="payment_option" defaultValue="DEPOSIT_50"><option value="DEPOSIT_50">Cọc tối thiểu 50%</option><option value="FULL">Thanh toán đủ 100%</option></select>
+                <select name="payment_option" defaultValue="DEPOSIT_50"><option value="DEPOSIT_50">Thanh toán tối thiểu 50%</option><option value="FULL">Thanh toán đủ 100%</option></select>
               </label>
               <label className="vibe-field"><span>Giảm giá đã duyệt</span>
                 <select name="discount_type" defaultValue="NONE"><option value="NONE">Không giảm</option><option value="PERCENT">Phần trăm</option><option value="FIXED">Số tiền</option></select>
@@ -133,6 +143,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             </form>}
           </SectionCard>
           <SectionCard title="Bước tiếp theo">
+            {app.status === 'DRAFT' && intakeCatalogs && <CounterForm branches={intakeCatalogs[0].data ?? []} lead={null} curriculums={intakeCatalogs[1].data ?? []} levels={intakeCatalogs[2].data ?? []} today={vietnamToday()} existing={app} consentPhone={phone?.consent_present ? app.zalo_phone : null} />}
             {app.status === 'DRAFT' && <ActionForm action={transitionRegistration} hidden={hidden} name="SUBMIT" label="Nộp hồ sơ" />}
             {app.status === 'SUBMITTED' && <ActionForm action={transitionRegistration} hidden={hidden} name="VERIFY" label="Xác minh hồ sơ" />}
             {app.status === 'DRAFT' && <p className="text-sm text-slate-600">Lưu bản nháp chưa tạo học viên và chưa phải đăng ký thành công.</p>}
@@ -167,7 +178,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
               <input type="hidden" name="application_id" value={app.id} />
               <label className="vibe-field"><span>ID công nợ học phí nội bộ đã phát hành</span><input name="invoice_id" defaultValue={app.invoice_id ?? ''} required /></label>
               <p className="text-sm text-slate-600">Chỉ phân bổ sau khi lớp và kỳ học phí đã tạo công nợ. Đây không phải hóa đơn thuế điện tử. Mỗi phiếu thu chỉ phân bổ một lần.</p>
-              <button className="vibe-button" type="submit">Phân bổ cọc vào công nợ nội bộ</button>
+              <button className="vibe-button" type="submit">Phân bổ thanh toán vào công nợ nội bộ</button>
             </form>}
             {paidTotal > 0 && app.status !== 'COMPLETED' && <p className="text-sm text-amber-900">Đã nhận {vnd(paidTotal)}. Hủy hồ sơ bị chặn. Chưa có quy trình hoàn tiền tự động.</p>}
             <ol className="grid gap-1 text-sm text-slate-600">{(events ?? []).map(event => <li key={event.id}>{event.created_at ? new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'medium', timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date(event.created_at)) + ' (UTC+7)' : ''} · {registrationEventLabel(event.event_type)}{event.to_status ? ` → ${registrationProgressLabel(event.to_status)}` : ''}</li>)}</ol>
@@ -182,7 +193,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             {paidPayos.length > 0 && <ul className="grid gap-1 text-sm">{paidPayos.map(order => <li key={order.id}>{order.provider_reference?.startsWith('FIXTURE') ? 'Dữ liệu thử nghiệm, chưa phải giao dịch payOS' : 'payOS đã xác thực'} · {order.order_code} · {vnd(order.amount)}</li>)}</ul>}
             <p className="text-sm">{placement ? `Hồ sơ chờ lớp: ${registrationProgressLabel('COMPLETED', placement.status, placement.scheduled_start_date)}` : 'Chưa có hồ sơ chờ lớp.'}</p>
             <p className="text-sm">{invoice && app.invoice_id ? <>Công nợ nội bộ {invoice.invoice_number}: còn {vnd(invoice.outstanding_balance)} / {vnd(invoice.total_amount)}. <Link href={`/admin/finance/invoices?selected=${app.invoice_id}`}>Mở hóa đơn kỳ học phí</Link></> : 'Chưa có hóa đơn kỳ học phí ghi công nợ. Hóa đơn nội bộ của từng khoản đã thu có thể xem bên dưới; khoản thu chưa tự tạo công nợ.'}</p>
-            {receiptIds.map(receiptId => <p key={receiptId} className="text-sm"><Link href={`/admin/finance/payments?selected=${receiptId}#payment-detail`}>Mở phiếu thu</Link></p>)}
+            {receiptIds.map(receiptId => <p key={receiptId} className="text-sm"><Link href={`/admin/finance/payments?selected=${receiptId}#payment-detail`}>Mở phiếu thu</Link> · <Link href={`/documents/finance/payment-invoices/${receiptId}`}>Xem / In hóa đơn A5</Link></p>)}
             <p className="text-sm">Đã phân bổ vào công nợ: {vnd(allocated)}</p>
           </SectionCard>
           <SectionCard title="Zalo">

@@ -164,7 +164,8 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     sessions,
     studentCounts,
     admittedThisMonth,
-    pauses,
+    activeEnrollmentCount,
+    pausedEnrollmentCount,
     remindersPending,
     alerts,
     reportsReadyForReview,
@@ -187,9 +188,8 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     ),
     Promise.all(studentStatuses.map(status => exactCount(db, 'students', query => query.eq('status', status)))),
     exactCount(db, 'students', query => query.gte('admission_date', monthStart).lte('admission_date', today)),
-    readAll<{ enrollment_id: string }>((from, to) =>
-      db.from('enrollment_pauses').select('enrollment_id').eq('status', 'ACTIVE').lte('starts_on', today).gte('ends_on', today).order('id').range(from, to),
-    ),
+    db.rpc('count_current_student_enrollments', { p_branch: null, p_search: null, p_class: null, p_teacher: null }),
+    db.rpc('count_paused_student_enrollments', { p_branch: null, p_search: null, p_class: null, p_teacher: null }),
     exactCount(db, 'tuition_reminders', query => query.eq('status', 'PENDING')),
     readAll<{ branch_id: string }>((from, to) =>
       db.from('student_retention_alerts').select('branch_id').in('status', ['NEW', 'CONTACTED', 'FOLLOW_UP']).order('id').range(from, to),
@@ -285,7 +285,8 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
 
   const staffAttendance = Object.fromEntries(staffStatuses.map((status, index) => [status, staffCounts[index]])) as Record<string, number | null>
   const student = Object.fromEntries(studentStatuses.map((status, index) => [status, studentCounts[index]])) as Record<(typeof studentStatuses)[number], number | null>
-  const pausedEnrollmentsToday = pauses ? new Set(pauses.map(row => row.enrollment_id)).size : null
+  const lifecycleActive = activeEnrollmentCount.error ? null : activeEnrollmentCount.data ?? 0
+  const pausedEnrollmentsToday = pausedEnrollmentCount.error ? null : pausedEnrollmentCount.data ?? 0
   const retentionOpen = alerts ? alerts.length : null
 
   const actions: ActionItem[] = []
@@ -411,7 +412,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     lessons,
     attendance,
     students: {
-      active: student.ACTIVE,
+      active: lifecycleActive,
       inactive: student.INACTIVE,
       paused: student.PAUSED,
       graduated: student.GRADUATED,
@@ -448,7 +449,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     links: {
       attendance: `/admin/attendance?date=${today}`,
       finance: `/admin/finance?month=${today.slice(0, 7)}`,
-      studentsActive: '/admin/students?status=ACTIVE',
+      studentsActive: '/admin/students?tab=students',
       receivablesOverdue: '/admin/finance/receivables?receivable=OVERDUE',
     },
   }

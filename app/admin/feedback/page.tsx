@@ -17,6 +17,7 @@ import { feedbackList, feedbackMetrics, feedbackClasses, teachers, states, state
 
 function href(params: Params, patch: Record<string, string | undefined> = {}) {
   const query = buildQuery({
+    tab: params.tab,
     branch: params.branch,
     class: params.class,
     teacher: params.teacher,
@@ -29,7 +30,8 @@ function href(params: Params, patch: Record<string, string | undefined> = {}) {
     q: params.q,
     view: params.view,
   }, patch)
-  return query ? `/admin/feedback?${query}` : '/admin/feedback'
+  const basePath = params.tab === 'feedback' ? '/admin/students' : '/admin/feedback'
+  return query ? `${basePath}?${query}` : basePath
 }
 
 export default async function FeedbackPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -69,19 +71,19 @@ export default async function FeedbackPage({ searchParams }: { searchParams: Pro
         <OpsMetricLink href={href(scoped, { view: 'all', status: 'RESOLVED', page: undefined })} title="Đã xử lý" value={metrics.resolved} note="Trong khoảng ngày đang lọc" />
       </div>
 
-      <OpsTabs
+      {params.tab !== 'feedback' && <OpsTabs
         ariaLabel="Chế độ xem phản hồi"
         tabs={[
           { href: href(scoped, { view: undefined, status: undefined }), label: 'Cần xử lý', active: view === 'attention' },
           { href: href(scoped, { view: 'all', status: undefined }), label: 'Tất cả phản hồi', active: view === 'all' },
           { href: href(scoped, { view: 'quality', status: undefined }), label: 'Tổng quan chất lượng', active: view === 'quality' },
         ]}
-      />
+      />}
 
       <OperationsFilterBar
-        action="/admin/feedback"
-        hidden={{ view: view === 'attention' ? undefined : view }}
-        resetHref={href({ view: view === 'attention' ? undefined : view, from: scoped.from, to: scoped.to })}
+        action={params.tab === 'feedback' ? '/admin/students' : '/admin/feedback'}
+        hidden={{ tab: params.tab, view: view === 'attention' ? undefined : view }}
+        resetHref={href({ tab: params.tab, view: view === 'attention' ? undefined : view, from: scoped.from, to: scoped.to })}
         fields={[
           { name: 'branch', label: 'Chi nhánh', type: 'select', value: scoped.branch, options: branchRows },
           { name: 'class', label: 'Ca dạy', type: 'select', value: scoped.class, options: classRows.map(c => ({ id: c.id, name: c.name })) },

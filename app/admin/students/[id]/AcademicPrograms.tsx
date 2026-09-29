@@ -2,7 +2,7 @@ import { displayLabel } from '@/lib/display'
 
 import { createClient } from '@/lib/supabase/server'
 
-import { updateComponentProgressStatus, updateDirectSubjectProgressStatus, startStudentAcademicLevel, updateStudentAcademicEnrollmentStartDate } from '../actions'
+import { updateComponentProgressStatus, updateDirectSubjectProgressStatus, updateLessonProgressStatus, startStudentAcademicLevel, updateStudentAcademicEnrollmentStartDate } from '../actions'
 
 import { gradeProgressPercent, academicStatuses, academicStatusLabel, isAcademicScheduled, successfulAcademicStatus } from './academic-progress'
 
@@ -64,11 +64,11 @@ export default async function AcademicPrograms({ studentId }: { studentId: strin
 
   return <div className="mt-5 space-y-5">
 
-    <AddProgram student={{ id: studentId }} />
-
     {!enrollments?.length && <p className="text-sm text-gray-500">Chưa có chương trình học.</p>}
 
     {(enrollments ?? []).map(enrollment => <ProgramJourney key={enrollment.id} student={{ id: studentId }} enrollment={enrollment} />)}
+
+    <AddProgram student={{ id: studentId }} />
 
   </div>
 
@@ -458,13 +458,24 @@ const { data: academicRecordComponents, error: academicRecordComponentsError } =
 
     ? await supabase.from('curriculum_subject_components')
 
-      .select('id, subject_id, name, sort_order, is_required, status')
+      .select('id, subject_id, name, sort_order, is_required, status, completion_rule')
 
       .in('subject_id', subjectProgress.map(item => item.subject.id)).eq('status', 'ACTIVE')
 
     : { data: [], error: null }
 
   if (componentError) throw componentError
+
+  const componentIds = (componentDefinitions ?? []).map(component => component.id)
+  const { data: lessonDefinitions, error: lessonError } = componentIds.length
+    ? await supabase.from('curriculum_component_items').select('id, component_id, name, code, sort_order, is_required, status').in('component_id', componentIds).eq('status', 'ACTIVE')
+    : { data: [], error: null }
+  if (lessonError) throw lessonError
+  const componentProgressIds = (componentProgressRows ?? []).map(row => row.id)
+  const { data: lessonProgressRows, error: lessonProgressError } = componentProgressIds.length
+    ? await supabase.from('student_component_item_progress').select('id, component_progress_id, item_id, status').in('component_progress_id', componentProgressIds)
+    : { data: [], error: null }
+  if (lessonProgressError) throw lessonProgressError
 
   const componentsBySubjectProgressId = new Map(subjectProgress.map(item => [item.id,
 
@@ -474,7 +485,11 @@ const { data: academicRecordComponents, error: academicRecordComponentsError } =
 
         const row = (componentProgressRows ?? []).find(row => row.subject_progress_id === item.id && row.component_id === component.id)
 
-        return { id: row?.id ?? component.id, hasProgress: !!row, status: row?.status ?? 'NOT_STARTED', component }
+        return { id: row?.id ?? component.id, hasProgress: !!row, status: row?.status ?? 'NOT_STARTED', component,
+          lessons: (lessonDefinitions ?? []).filter(lesson => lesson.component_id === component.id).sort((a, b) => a.sort_order - b.sort_order).map(lesson => {
+            const progress = (lessonProgressRows ?? []).find(entry => entry.component_progress_id === row?.id && entry.item_id === lesson.id)
+            return { id: progress?.id ?? '', hasProgress: !!progress, status: progress?.status ?? 'NOT_STARTED', itemId: lesson.id, name: lesson.name, code: lesson.code, isRequired: lesson.is_required }
+          }) }
 
       })
 
@@ -510,7 +525,7 @@ const { data: academicRecordComponents, error: academicRecordComponentsError } =
 
     sortedSubjectProgress.map(item => ({ ...item.subject, progressStatus: item.status,
 
-      components: item.components.map(c => ({ ...c.component, progressStatus: c.status })) })))
+      components: item.components.map(c => ({ ...c.component, progressStatus: c.status, lessons: (c.lessons ?? []).map(lesson => ({ status: lesson.status, isRequired: lesson.isRequired })) })) })))
 
   const inProgressLevels = (academicRecordLevelProgress ?? []).filter(row => row.status === 'IN_PROGRESS')
 
@@ -776,7 +791,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
   </div>
 
-  {isCurrentLevelScheduled && <p className="mt-3 text-sm text-gray-600">Chưa đến ngày bắt đầu grade. Dropdown đánh giá sẽ mở khi đến thời điểm bắt đầu.</p>}
+  {isCurrentLevelScheduled && <p className="mt-3 text-sm text-gray-600">Chưa đến ngày bắt đầu trình độ. Đang học và Đạt của từng bài học sẽ mở khi đến thời điểm bắt đầu.</p>}
 
   <details className="group mt-5">
 
@@ -964,9 +979,11 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
               key={componentItem.id}
 
-              className="flex items-center justify-between gap-4 rounded-md px-3 py-2"
+              className="rounded-md px-3 py-2"
 
             >
+
+              <div className="flex items-center justify-between gap-4">
 
               <div className="flex items-center gap-3">
 
@@ -990,7 +1007,9 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
               componentItem.hasProgress &&
 
-              item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' ? (
+              item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' &&
+
+              componentItem.component.completion_rule !== 'ALL_REQUIRED_ITEMS' ? (
 
                 <form
 
@@ -1040,7 +1059,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                   >
 
-                    In Progress
+                    Đang học
 
                   </button>
 
@@ -1064,7 +1083,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                   >
 
-                    Pass
+                    Đạt
 
                   </button>
 
@@ -1077,6 +1096,62 @@ return (<div className="space-y-5">            <div className="rounded-xl border
                   {academicStatusLabel(componentItem.status)}
 
                 </span>
+
+              )}
+
+              </div>
+
+              {componentItem.lessons.length > 0 && (
+
+                <div className="ml-5 mt-2 space-y-1 border-l border-gray-200 pl-3">
+
+                  {componentItem.lessons.map(lesson => (
+
+                    <div key={lesson.itemId} className="flex items-center justify-between gap-3 py-1">
+
+                      <p className="text-sm text-gray-700">
+
+                        {lesson.code ? `${lesson.code} · ` : ''}{lesson.name}
+
+                      </p>
+
+                      {canEdit && item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' && componentItem.component.completion_rule === 'ALL_REQUIRED_ITEMS' ? (
+
+                        <form action={updateLessonProgressStatus} className="flex items-center gap-2">
+
+                          {lesson.hasProgress && (
+
+                            <input type="hidden" name="progress_id" value={lesson.id} />
+
+                          )}
+
+                          <input type="hidden" name="level_progress_id" value={currentLevelProgress?.id ?? ''} />
+
+                          <input type="hidden" name="subject_id" value={item.subject.id} />
+
+                          <input type="hidden" name="component_id" value={componentItem.component.id} />
+
+                          <input type="hidden" name="item_id" value={lesson.itemId} />
+
+                          <input type="hidden" name="student_id" value={student.id} />
+
+                          <button type="submit" name="status" value="IN_PROGRESS" className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${lesson.status === 'IN_PROGRESS' ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'}`}>Đang học</button>
+
+                          <button type="submit" name="status" value="PASS" className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${lesson.status === 'PASS' ? 'border-green-300 bg-green-50 text-green-700' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'}`}>Đạt</button>
+
+                        </form>
+
+                      ) : (
+
+                        <span className="text-xs">{academicStatusLabel(lesson.status)}</span>
+
+                      )}
+
+                    </div>
+
+                  ))}
+
+                </div>
 
               )}
 

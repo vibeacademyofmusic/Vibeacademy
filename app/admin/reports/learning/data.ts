@@ -1,5 +1,6 @@
 import { rows, type DB } from '../../finance/query'
 import { pageNumber, pageSize, uuidPattern, validDate, vietnamDateTime, type Params } from '../../finance/operations'
+import { monthlyPeriod, reportTiming, type ReportTiming } from './periods'
 export const types = [{ id: 'MONTHLY', name: 'Báo cáo tháng' }, { id: 'END_OF_COURSE', name: 'Tổng kết cuối khóa' }]
 export const statuses = [
   { id: 'DRAFT', name: 'Bản nháp' },
@@ -150,6 +151,51 @@ export async function enrollmentChoices(db: DB, params: Params) {
   if (search) q = q.or(`full_name.ilike.%${search}%,student_code.ilike.%${search}%`, { referencedTable: 'students' })
   const data = await rows(q.order('started_at', { ascending: false }).order('id').range((page - 1) * pageSize, page * pageSize).returns<{ id: string; started_at: string; ended_at: string | null; students: { full_name: string; student_code: string }; classes: { name: string; branches: { name: string } } }[]>())
   return { data: data.slice(0, pageSize), page, more: data.length > pageSize }
+}
+
+export type DueReport = {
+  enrollmentId: string
+  studentName: string
+  studentCode: string
+  className: string
+  periodStart: string
+  periodEnd: string
+  timing: ReportTiming
+}
+
+export async function reportsAwaitingCreation(db: DB, today = vietnamDateTime().slice(0, 10)): Promise<DueReport[]> {
+  const enrollments = await rows(db.from('enrollments')
+    .select('id,started_at,ended_at,status,students!inner(full_name,student_code),classes!inner(name)')
+    .eq('status', 'ACTIVE')
+    .not('started_at', 'is', null)
+    .order('started_at')
+    .limit(200)
+    .returns<{ id: string; started_at: string | null; ended_at: string | null; status: string; students: { full_name: string; student_code: string }; classes: { name: string } }[]>())
+  const reports = await rows(db.from('learning_reports')
+    .select('enrollment_id,report_type,period_start,period_end')
+    .eq('report_type', 'MONTHLY')
+    .limit(500)
+    .returns<{ enrollment_id: string; report_type: string; period_start: string; period_end: string }[]>())
+  const due: DueReport[] = []
+  for (const enrollment of enrollments) {
+    if (!enrollment.started_at) continue
+    const period = monthlyPeriod(enrollment.started_at)
+    if (period.end >= today) continue
+    if (enrollment.ended_at && period.end > enrollment.ended_at) continue
+    const exists = reports.some(report => report.enrollment_id === enrollment.id && report.period_start === period.start && report.period_end === period.end)
+    const timing = reportTiming(period.end, today)
+    if (exists || !timing) continue
+    due.push({
+      enrollmentId: enrollment.id,
+      studentName: enrollment.students.full_name,
+      studentCode: enrollment.students.student_code,
+      className: enrollment.classes.name,
+      periodStart: period.start,
+      periodEnd: period.end,
+      timing,
+    })
+  }
+  return due
 }
 
 export async function latestMonthlyReport(db: DB, enrollmentId: string) {

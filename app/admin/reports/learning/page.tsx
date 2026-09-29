@@ -16,12 +16,13 @@ import {
   OpsStatusBadge,
   buildQuery,
 } from '../../_components/vibe'
-import { reportList, reportMetrics, reportFilterOptions, enrollmentChoices, types, statuses, statusLabels, latestMonthlyReport, reportView } from './data'
+import { reportList, reportMetrics, reportFilterOptions, enrollmentChoices, reportsAwaitingCreation, types, statuses, statusLabels, latestMonthlyReport, reportView } from './data'
 import { generateReport } from './actions'
-import { monthlyPeriod } from './periods'
+import { monthlyPeriod, reportTiming, reportTimingLabels } from './periods'
 
 function href(params: Params, patch: Record<string, string | undefined> = {}) {
   const base = {
+    tab: params.tab,
     branch: params.branch,
     class: params.class,
     type: params.type,
@@ -34,12 +35,14 @@ function href(params: Params, patch: Record<string, string | undefined> = {}) {
     view: params.view,
   }
   const query = buildQuery(base, patch)
-  return query ? `/admin/reports/learning?${query}` : '/admin/reports/learning'
+  const basePath = params.tab === 'reports' ? '/admin/students' : '/admin/reports/learning'
+  return query ? `${basePath}?${query}` : basePath
 }
 
 export default async function LearningReportsPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams, db = await adminClient()
   const view = reportView(params)
+  const today = vietnamDateTime().slice(0, 10)
   let loaded
   try {
     loaded = await Promise.all([
@@ -48,14 +51,14 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
       branches(db),
       reportFilterOptions(db, params),
       enrollmentChoices(db, params),
+      reportsAwaitingCreation(db, today),
     ])
   } catch { return <LoadError /> }
-  const [list, metrics, branchRows, options, choices] = loaded
+  const [list, metrics, branchRows, options, choices, due] = loaded
   const selected = choices.data.find(e => e.id === params.enrollment)
   let latest = null
   try { if (selected) latest = await latestMonthlyReport(db, selected.id) } catch { return <LoadError /> }
   const period = selected ? monthlyPeriod(selected.started_at, latest?.period_end) : null
-  const today = vietnamDateTime().slice(0, 10)
   const emptyMessage = view === 'needs'
     ? 'Không có báo cáo cần xử lý.'
     : 'Chưa có báo cáo trong phạm vi này.'
@@ -64,24 +67,20 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
     <AppPage>
       <PageHeader
         title="Báo cáo học tập"
-        description="Bảng điều khiển vận hành báo cáo học tập cho Admin/Academic: theo dõi bản nháp, chờ duyệt, quá hạn và báo cáo đã duyệt."
+        description="Theo dõi học viên cần tạo báo cáo. Sau khi kỳ khép, 14 ngày là trong hạn, đến hết 30 ngày là cảnh báo, sau đó là quá hạn."
       />
       <Notice params={params} />
 
       <div className="vibe-metrics">
         <OpsMetricLink href={href(params, { view: 'needs', status: undefined, page: undefined })} title="Cần xử lý" value={metrics.needs} note="Bản nháp + chờ duyệt" />
-        <section className="vibe-card vibe-metric">
-          <p>Cần tạo báo cáo</p>
-          <strong>—</strong>
-          <small>Chưa có lịch báo cáo canonical</small>
-        </section>
+        <OpsMetricLink href={href(params) + '#can-tao'} title="Cần tạo báo cáo" value={due.length} note="Kỳ đã khép, chưa có báo cáo" />
         <OpsMetricLink href={href(params, { view: 'needs', status: 'DRAFT', page: undefined })} title="Bản nháp" value={metrics.draft} />
         <OpsMetricLink href={href(params, { view: 'needs', status: 'READY_FOR_REVIEW', page: undefined })} title="Chờ duyệt" value={metrics.review} />
         <OpsMetricLink href={href(params, { view: 'approved', status: undefined, page: undefined })} title="Đã duyệt" value={metrics.approved} />
         <OpsMetricLink href={href(params, { view: 'overdue', status: undefined, page: undefined })} title="Quá hạn" value={metrics.overdue} note="Kỳ đã kết thúc, chưa duyệt" />
       </div>
 
-      <OpsTabs
+      {params.tab !== 'reports' && <OpsTabs
         ariaLabel="Chế độ xem báo cáo"
         tabs={[
           { href: href(params, { view: undefined, status: undefined, page: undefined }), label: 'Cần xử lý', active: view === 'needs' },
@@ -89,12 +88,12 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
           { href: href(params, { view: 'approved', status: undefined, page: undefined }), label: 'Đã duyệt', active: view === 'approved' },
           { href: href(params, { view: 'overdue', status: undefined, page: undefined }), label: 'Quá hạn', active: view === 'overdue' },
         ]}
-      />
+      />}
 
       <OperationsFilterBar
-        action="/admin/reports/learning"
-        hidden={{ view: view === 'needs' ? undefined : view }}
-        resetHref={href({ view: view === 'needs' ? undefined : view })}
+        action={params.tab === 'reports' ? '/admin/students' : '/admin/reports/learning'}
+        hidden={{ tab: params.tab, view: view === 'needs' ? undefined : view }}
+        resetHref={href({ tab: params.tab, view: view === 'needs' ? undefined : view })}
         fields={[
           { name: 'branch', label: 'Chi nhánh', type: 'select', value: params.branch, options: branchRows },
           { name: 'class', label: 'Ca dạy', type: 'select', value: params.class, options: options.classes },
@@ -108,11 +107,28 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
         ]}
       />
 
+      <SectionCard title="Học viên cần tạo báo cáo">
+        <div id="can-tao" />
+        {!due.length ? <p>Không có học viên đến hạn tạo báo cáo.</p> : (
+          <DataTable
+            headers={['Học viên', 'Ca dạy', 'Kỳ cần tạo', 'Trạng thái hệ thống', 'Hành động']}
+            rows={due.map(row => [
+              `${row.studentName} (${row.studentCode})`,
+              row.className,
+              dateText(row.periodStart) + ' → ' + dateText(row.periodEnd),
+              <OpsStatusBadge key={row.enrollmentId} status={row.timing} labels={reportTimingLabels} />,
+              <Link key="create" prefetch={false} className="vibe-button vibe-button-primary" href={href(params, { student: row.studentCode, enrollment: row.enrollmentId })}>Tạo báo cáo</Link>,
+            ])}
+          />
+        )}
+      </SectionCard>
+
       {!list.data.length ? <EmptyState>{emptyMessage}</EmptyState> : (
         <DataTable
           headers={['Học viên', 'Ca dạy', 'Grade', 'Giáo viên', 'Chi nhánh', 'Loại', 'Kỳ báo cáo', 'Trạng thái', 'Academic Status', 'Hành động']}
           rows={list.data.map(r => {
             const overdue = ['DRAFT', 'READY_FOR_REVIEW'].includes(r.status) && r.period_end < today
+            const timing = overdue ? reportTiming(r.period_end, today) : null
             const actions: ReactNode[] = [
               <Link key="view" prefetch={false} href={'/admin/reports/learning/' + r.id} className="vibe-button">Xem</Link>,
             ]
@@ -129,7 +145,8 @@ export default async function LearningReportsPage({ searchParams }: { searchPara
               dateText(r.period_start) + ' → ' + dateText(r.period_end),
               <span key="status" className="inline-flex flex-wrap gap-1">
                 <OpsStatusBadge status={r.status} labels={statusLabels} />
-                {overdue && <OpsStatusBadge status="OVERDUE" labels={{ OVERDUE: 'Quá hạn' }} />}
+                {timing && <OpsStatusBadge status={timing} labels={reportTimingLabels} />}
+                {overdue && !timing && <OpsStatusBadge status="OVERDUE" labels={{ OVERDUE: 'Quá hạn' }} />}
               </span>,
               r.academic_status || '—',
               <div key="actions" className="vibe-actions">{actions}</div>,

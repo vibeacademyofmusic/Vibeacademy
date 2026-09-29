@@ -104,6 +104,13 @@ test('first monthly suggestions handle day one, mid-month, leap day and year rol
  assert.deepEqual(monthlyPeriod('2026-09-20','2026-10-31'),{start:'2026-11-01',end:'2026-11-30',first:false})
  assert.deepEqual(monthlyPeriod('2025-01-20','2025-12-31'),{start:'2026-01-01',end:'2026-01-31',first:false})
 })
+test('closed report periods move from trong hạn to cảnh báo then quá hạn', () => {
+ const { reportTiming } = harness().load(base+'periods.ts')
+ assert.equal(reportTiming('2026-09-22','2026-09-29'),'TRONG_HAN')
+ assert.equal(reportTiming('2026-08-31','2026-09-29'),'CANH_BAO')
+ assert.equal(reportTiming('2026-06-30','2026-09-29'),'QUA_HAN')
+ assert.equal(reportTiming('2026-09-29','2026-09-29'),null)
+})
 const enrollment = {id:id(8),started_at:'2025-09-20',ended_at:null,students:{full_name:'Midmonth student',student_code:'MID'},classes:{name:'Piano',branches:{name:'Test branch'}}}
 async function renderCreation(e, reports=[]) {
  const h=harness({enrollments:[e],learning_reports:reports})
@@ -244,3 +251,14 @@ test('official print content excludes internal notes, delivery and administratio
  const {html}=await officialReport('APPROVED',{snapshot_data:{...snapshot,academic:{...snapshot.academic,subjects:statuses.map(status=>({name:'Subject',grade:'Grade 1',status,score:null,is_required:true,completion_rule:'DIRECT_ASSESSMENT',components:[]}))}}})
  for(const label of ['Pass','Merit','Distinction','Needs Review','Exempt']) assert.ok(html.includes('>'+label+'<'))
  })
+
+
+test('published portal renders V2 and legacy public summaries without internal notes',()=>{
+ const h=harness();const Page=h.load('../../my-learning/ApprovedReport.tsx').default
+ for(const summary of [{achievement:'Approved achievement',difficulty:'Approved difficulty',next_month_plan:'Approved plan'},{general_comment:'Legacy comment',strengths:'Legacy strength'}]){
+  const html=renderToStaticMarkup(Page({snapshot:{...snapshot,teacher_summary:{...summary,internal_note:'PRIVATE ADMIN NOTE'}}}))
+  for(const value of Object.values(summary))assert.ok(html.includes(value))
+  assert.doesNotMatch(html,/PRIVATE ADMIN NOTE|Chưa có nhận xét/)
+ }
+ const empty=renderToStaticMarkup(Page({snapshot}));assert.match(empty,/Chưa có nhận xét/)
+})

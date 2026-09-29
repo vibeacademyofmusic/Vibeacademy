@@ -8,14 +8,16 @@ import { money } from '@/app/admin/payroll/data'
 import { Table, timeText, dateText, LoadError } from '@/app/admin/finance/_components/ui'
 import { paymentDetail, effectiveAllocationTotal, total } from '@/app/admin/finance/payments/data'
 import Document from '../../../_components/Document'
-const kinds = ['invoices', 'payments', 'refunds', 'credits']
+import PaymentInvoiceTemplate from '../../../_components/PaymentInvoiceTemplate'
+const kinds = ['invoices', 'payment-invoices', 'payments', 'refunds', 'credits']
 export default async function FinanceDocument({ params }: { params: Promise<{ kind: string; id: string }> }) {
   const { kind, id } = await params, { db, isSuperAdmin } = await financeContext()
   if (!kinds.includes(kind) || !uuidPattern.test(id)) notFound()
-  const table = kind === 'credits' ? 'customer_credit_balances' : kind
+  const table = kind === 'credits' ? 'customer_credit_balances' : kind === 'payment-invoices' ? 'payments' : kind
   const fields: Record<string, string> = {
     invoices: 'id,invoice_number,enrollment_tuition_id,student_id_snapshot,branch_id_snapshot,branch_name_snapshot,currency,subtotal,total_amount,status,issued_on,due_on,notes,created_by',
     payments: 'id,payment_number,student_id_snapshot,branch_name_snapshot,currency,amount,status,paid_at,payment_method,reference,created_by,voided_at,void_reason',
+    'payment-invoices': 'id,payment_number,student_id_snapshot,branch_id_snapshot,branch_name_snapshot,currency,amount,status,paid_at,payment_method,reference',
     refunds: 'id,refund_number,payment_id,student_id_snapshot,branch_name_snapshot,currency,amount,status,refunded_at,reason,created_by,created_at',
     credits: 'id,student_id,branch_id,payment_id,opening_receivable_id,correction_id,currency,amount,applied_amount,refunded_amount,remaining_credit,voided_amount,created_at',
   }
@@ -27,6 +29,14 @@ export default async function FinanceDocument({ params }: { params: Promise<{ ki
   const text = (key: string) => String(d[key] ?? ''), amount = (key: string) => money(Number(d[key] ?? 0), text('currency'))
   let body
     const student = (await studentNames(db, [text(kind === 'credits' ? 'student_id' : 'student_id_snapshot')])).values().next().value
+    if (kind === 'payment-invoices') {
+      if (text('status') !== 'POSTED') notFound()
+      const detail = await paymentDetail(db, id)
+      if (!detail || detail.payment.status !== 'POSTED') notFound()
+      const refunded = total(detail.refunds)
+      const contact = uuidPattern.test(text('branch_id_snapshot')) ? await rows(db.from('branches').select('address,phone').eq('id', text('branch_id_snapshot'))) : []
+      return <PaymentInvoiceTemplate payment={{ id, payment_number: text('payment_number'), amount: Number(d.amount), currency: text('currency'), paid_at: text('paid_at'), payment_method: text('payment_method'), reference: text('reference') || null, branch_name_snapshot: text('branch_name_snapshot') }} student={student ?? text('student_id_snapshot')} refunded={refunded} contact={contact[0]} actions={<><Link prefetch={false} href="/admin/finance/invoices">Danh sách hóa đơn</Link><Link prefetch={false} href={'/admin/finance/payments?selected=' + id + '#payment-detail'}>Mở phiếu thu gốc</Link></>} />
+    }
     if (kind === 'invoices') {
       const [balance, items, tuition, contact] = await Promise.all([
         selectedInvoice(db, id),

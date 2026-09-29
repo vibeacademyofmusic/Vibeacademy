@@ -200,9 +200,15 @@ begin
 end $$;
 grant select on reminder_cases to authenticated;
 set local role authenticated;
-select is((select window_start from tuition_reminder_window('2026-01-31',3)),date '2026-02-28','3 month anniversary clamps month end');
-select is((select window_end from tuition_reminder_window('2026-01-31',3)),date '2026-03-06','first week exactly 7 days');
-select is((select window_start from tuition_reminder_window('2024-01-31',3)),date '2024-02-29','leap year calendar');
+select is((select window_start from tuition_reminder_window('2026-01-31',3)),date '2026-03-31','3 month schedule opens on month 3 anniversary');
+select is((select window_end from tuition_reminder_window('2026-01-31',3)),date '2026-04-29','3 month stays in deadline through the term end');
+select is((select window_start from tuition_reminder_window('2024-01-31',3)),date '2024-03-31','leap year month 3 anniversary');
+select is((select window_start from tuition_reminder_window('2025-12-31',3)),date '2026-02-28','month 3 clamps to month end');
+select is((select window_start from tuition_balance_due_window('2026-01-31',3)),date '2026-02-28','3 month 50 percent balance due in week 1 of month 2');
+select is((select window_end from tuition_balance_due_window('2026-01-31',3)),date '2026-03-06','3 month balance week is exactly 7 days');
+select is((select window_start from tuition_balance_due_window('2024-01-31',3)),date '2024-02-29','leap year month 2 balance week');
+select is((select window_start from tuition_balance_due_window('2026-01-15')),date '2026-04-05','annual 50 percent balance due in week 4 of month 3');
+select is((select window_end from tuition_balance_due_window('2026-01-15')),date '2026-04-21','balance stays due through week 1 of month 4');
 select is((select window_start from tuition_reminder_window('2026-01-15',12)),date '2026-10-15','12 month reminder starts month 10');
 select is((select window_end from tuition_reminder_window('2026-01-15',12)),date '2026-11-14','month 10 inclusive end');
 select is((select count(*) from tuition_reminder_window('2026-01-15',6)),0::bigint,'unsupported duration excluded');

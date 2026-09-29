@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import StudentEnrollmentSection from './StudentEnrollmentSection'
 import { createClient } from '@/lib/supabase/server'
+import { setClassLevelScope } from '../actions'
 
 import {
   assignTeacher,
@@ -41,7 +42,9 @@ export default async function ClassDetailPage({
       start_date,
       end_date,
       notes,
-      status
+      status,
+      accepted_from_level_id,
+      accepted_to_level_id
     `)
     .eq('id', id)
     .maybeSingle()
@@ -58,10 +61,17 @@ export default async function ClassDetailPage({
 
   const { data: course } = await supabase
     .from('courses')
-    .select('id, code, name')
+    .select('id, code, name, curriculum_id, level_id')
     .eq('id', classItem.course_id)
     .maybeSingle()
 
+  const { data: levels } = course?.curriculum_id
+    ? await supabase.from('curriculum_levels').select('id, name, sequence_no').eq('curriculum_id', course.curriculum_id).eq('status', 'ACTIVE').order('sequence_no')
+    : { data: [] as { id: string; name: string; sequence_no: number }[] }
+
+  const fromLevel = levels?.find(l => l.id === classItem.accepted_from_level_id)
+  const toLevel = levels?.find(l => l.id === classItem.accepted_to_level_id)
+  const scopeLabel = fromLevel && toLevel ? `${fromLevel.name} → ${toLevel.name}` : 'Chưa cấu hình phạm vi'
   const { count: enrolledStudents } = await supabase
     .from('enrollments')
     .select('id', {
@@ -70,6 +80,15 @@ export default async function ClassDetailPage({
     })
     .eq('class_id', classItem.id)
     .in('status', ['ACTIVE', 'PAUSED'])
+
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date())
+  const { data: upcomingSessions } = await supabase
+    .from('session_occurrences')
+    .select('id, occurrence_date, starts_at, status, occurrence_type, schedules!inner(class_id)')
+    .eq('schedules.class_id', classItem.id)
+    .gte('occurrence_date', today)
+    .order('starts_at')
+    .limit(5)
 
   const { data: activeTeachers } = await supabase
     .from('teachers')
@@ -128,15 +147,15 @@ export default async function ClassDetailPage({
   return (
     <div className="max-w-6xl">
       <Link
-        href="/admin/classes"
+        href="/admin/classes?view=classes"
         className="text-sm font-medium text-gray-500 hover:text-gray-900"
       >
-        ← Back to Classes
+        ← Ca dạy
       </Link>
 
       <div className="mt-6">
         <p className="text-sm font-medium text-gray-500">
-          Class Management
+          Ca dạy
         </p>
 
         <div className="mt-1 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -193,6 +212,15 @@ export default async function ClassDetailPage({
             <p className="mt-1 text-xs text-gray-400">
               {course?.code ?? '—'}
             </p>
+            <p className="mt-2 text-xs text-gray-500">Course target Level (metadata): {course?.level_id ? 'có gắn level_id' : 'NULL — không dùng làm trình độ học viên'}</p>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Phạm vi trình độ
+            </p>
+            <p className="mt-2 font-semibold text-gray-950">{scopeLabel}</p>
+            <p className="mt-1 text-xs text-gray-400">Không gọi đây là “Trình độ lớp”. Trình độ hiện tại thuộc từng học viên.</p>
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white p-4">
@@ -425,10 +453,49 @@ export default async function ClassDetailPage({
             </div>
           </section>
 
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-950">PHẠM VI TRÌNH ĐỘ</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Lớp có thể tiếp nhận học viên ở các cấp độ trong phạm vi này. Trình độ hiện tại vẫn được quản lý riêng trên từng học viên.
+          </p>
+          <form action={setClassLevelScope} className="mt-4 flex flex-wrap gap-3">
+            <input type="hidden" name="class_id" value={classItem.id} />
+            <label className="text-sm">Từ
+              <select name="accepted_from_level_id" className="ml-2 rounded border px-2 py-1" defaultValue={classItem.accepted_from_level_id ?? ''}>
+                <option value="">—</option>
+                {(levels ?? []).map(level => <option key={level.id} value={level.id}>{level.name}</option>)}
+              </select>
+            </label>
+            <label className="text-sm">Đến
+              <select name="accepted_to_level_id" className="ml-2 rounded border px-2 py-1" defaultValue={classItem.accepted_to_level_id ?? ''}>
+                <option value="">—</option>
+                {(levels ?? []).map(level => <option key={level.id} value={level.id}>{level.name}</option>)}
+              </select>
+            </label>
+            <button className="rounded bg-gray-950 px-3 py-1 text-sm text-white">Lưu phạm vi</button>
+          </form>
+          <p className="mt-2 text-sm font-medium">{scopeLabel}</p>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-950">Buổi học sắp tới</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {(upcomingSessions ?? []).map(session => (
+              <li key={session.id}>
+                <Link href={`/admin/attendance/${session.id}`} className="font-medium text-gray-950">
+                  {session.occurrence_date} · {new Date(session.starts_at).toLocaleTimeString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit' })}
+                </Link>
+                <span className="ml-2 text-gray-500">{session.occurrence_type === 'MAKEUP' ? 'Học bù' : 'Buổi thường'} · {session.status}</span>
+              </li>
+            ))}
+            {!(upcomingSessions ?? []).length && <li className="text-gray-500">Chưa có ca học được tạo từ lịch.</li>}
+          </ul>
+        </section>
+
           <StudentEnrollmentSection
-  classId={classItem.id}
-  capacity={classItem.capacity}
-/>
+            classId={classItem.id}
+            capacity={classItem.capacity}
+          />
         </div>
 
         <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">

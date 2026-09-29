@@ -128,16 +128,19 @@ export function opsStatusTone(status: string): 'neutral' | 'warning' | 'error' |
     case 'NEEDS_ATTENTION':
     case 'OVERDUE':
     case 'PAUSED':
+    case 'CANH_BAO':
       return 'warning'
     case 'APPROVED':
     case 'COMPLETED':
     case 'RESOLVED':
     case 'ACTIVE':
+    case 'TRONG_HAN':
       return 'success'
     case 'CANCELLED':
     case 'REJECTED':
     case 'FAILED':
     case 'LOW_RATING':
+    case 'QUA_HAN':
       return 'error'
     default:
       return 'neutral'

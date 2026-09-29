@@ -1,0 +1,14 @@
+✔ date validation, Vietnam default, and all server-side filters (43.283208ms)
+✔ return URL retains filters and rejects external or unrelated destinations (7.768625ms)
+✔ launcher renders canonical roster directly and forwards filters to bounded RPC (45.345792ms)
+✔ empty and failed queries show an explicit state without class detours (51.392042ms)
+✔ branch roster is readable without exposing admin mutation controls (76.531791ms)
+✔ forged session is denied before any session rows are loaded (62.988541ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 442.808083

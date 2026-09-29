@@ -12,9 +12,13 @@ const tabForView: Record<string, string> = {
 
 export default async function ClassesPage({ searchParams }: Props) {
   const params = await searchParams
+  if (params.view === 'rooms') {
+    const roomsQuery = new URLSearchParams(Object.entries(params).filter(([key, value]) => key !== 'view' && value) as [string, string][])
+    redirect(`/admin/rooms${roomsQuery.size ? `?${roomsQuery}` : ''}`)
+  }
   const query = new URLSearchParams({ tab: tabForView[params.view ?? ''] ?? 'teaching-shifts' })
   for (const [key, value] of Object.entries(params)) {
-    if (value && key !== 'view') query.set(key, value)
+    if (value && (key !== 'view' || value === 'overview')) query.set(key, value)
   }
   redirect(`/admin/students?${query.toString()}`)
 }

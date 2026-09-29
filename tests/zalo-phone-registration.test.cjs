@@ -34,7 +34,7 @@ const parameters = {
   program_name: 'Piano',
   branch_name: 'Cần Thơ',
   order_code: 'DK-TEST',
-  payment_status: 'Đã nhận cọc 50%',
+  payment_status: 'Đã nhận thanh toán 50%',
 }
 
 test('vietnamese phones normalize to the country-code form and mask', () => {
@@ -69,7 +69,7 @@ test('phone sender uses msg_id and does not call without a token', async () => {
     assert.equal(init.headers.appsecret_proof, zaloAppSecretProof('token', 'app-secret'))
     assert.notEqual(init.headers.appsecret_proof, expectedProof('token', 'oa-webhook-secret'))
     assert.equal(JSON.parse(init.body).phone, '84987654321')
-    assert.equal(JSON.parse(init.body).template_data.payment_status, 'Đã nhận cọc 50%')
+    assert.equal(JSON.parse(init.body).template_data.payment_status, 'Đã nhận thanh toán 50%')
     assert.equal(JSON.stringify(init).includes(init.headers.appsecret_proof) && init.body.includes(init.headers.appsecret_proof), false)
     return { json: async () => ({ error: 0, data: { msg_id: 'phone-msg-1' } }) }
   })

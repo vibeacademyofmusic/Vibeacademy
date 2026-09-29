@@ -122,7 +122,14 @@ select is((select payload->'parameters'->>'program_name' from public.notificatio
 
 select set_config('request.jwt.claim.role', 'authenticated', true);
 update public.classes set accepted_from_level_id='e9300000-0000-4000-8000-000000000021', accepted_to_level_id='e9300000-0000-4000-8000-000000000021' where id='e9300000-0000-4000-8000-000000000024';
-insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,status,is_primary,started_at) select linked_student_id,'e9300000-0000-4000-8000-000000000020','e9300000-0000-4000-8000-000000000021','ACTIVE',true,current_date from public.registration_applications where id='e9300000-0000-4000-8000-000000000003';
+select is((
+  select count(*) from public.student_curriculum_enrollments enrollment
+  join public.registration_applications application on application.linked_student_id = enrollment.student_id
+  where application.id = 'e9300000-0000-4000-8000-000000000003'
+    and enrollment.curriculum_id = 'e9300000-0000-4000-8000-000000000020'
+    and enrollment.current_level_id = 'e9300000-0000-4000-8000-000000000021'
+    and enrollment.status = 'ACTIVE'
+), 1::bigint, 'completion opens one program path and does not add a second');
 insert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status)
 select 'e9300000-0000-4000-8000-000000000030', linked_student_id,
   'e9300000-0000-4000-8000-000000000024', '2026-10-01', '2026-10-01', 'ACTIVE'

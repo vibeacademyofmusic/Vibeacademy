@@ -102,7 +102,7 @@ function makeDB(options = {}) {
 }
 function load(fileOutput, env, page = false) {
   const redirect = url => { const error = new Error('REDIRECT');error.redirect = url;throw error }
-  const module = {exports:{}}
+  const compiled = {exports:{}}
   const requireMock = name => {
     if (name === 'next/navigation') return {redirect, notFound:()=>{throw new Error('NOT_FOUND')}}
     if (name === 'next/cache') return {revalidatePath:(...args)=>env.trace.revalidated.push(args)}
@@ -128,9 +128,9 @@ function load(fileOutput, env, page = false) {
     if (name === './actions' && page) return {configureStaffCompensation: function NEW_V2_ACTION(){}}
     throw new Error('Unexpected import: '+name)
   }
-  vm.runInNewContext(fileOutput, {module,exports:module.exports,require:requireMock,
+  vm.runInNewContext(fileOutput, {module:compiled,exports:compiled.exports,require:requireMock,
     console:{error:()=>{}},URLSearchParams,Date,Number,FormData}, {filename: page ? pagePath : actionPath})
-  return module.exports
+  return compiled.exports
 }
 function form(patch = {}) {
   const values = {employee:EMP,branch:BRANCH,component_code:'SOCIAL_LABOR_INSURANCE',value:'100000',

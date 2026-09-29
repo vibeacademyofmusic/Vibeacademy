@@ -36,10 +36,15 @@ insert into public.curriculum_levels(id, curriculum_id, code, name, sequence_no)
 insert into public.courses(id, curriculum_id, level_id, code, name) values
   ('e7300000-0000-4000-8000-000000000003', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', 'OPS-PIANO', 'Piano'),
   ('e7300000-0000-4000-8000-000000000013', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', 'OPS-GUITAR', 'Guitar');
-insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status) values
-  ('e7300000-0000-4000-8000-000000000004', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-A', 'Lop Piano A', 'GROUP', 8, 'ACTIVE'),
-  ('e7300000-0000-4000-8000-000000000005', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000013', 'OPS-GUITAR-A', 'Lop Guitar A', 'GROUP', 8, 'ACTIVE'),
-  ('e7300000-0000-4000-8000-000000000006', 'e7100000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-B', 'Lop Piano B', 'GROUP', 8, 'ACTIVE');
+insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id) values
+  ('e7300000-0000-4000-8000-000000000004', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-A', 'Lop Piano A', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002'),
+  ('e7300000-0000-4000-8000-000000000005', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000013', 'OPS-GUITAR-A', 'Lop Guitar A', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002'),
+  ('e7300000-0000-4000-8000-000000000006', 'e7100000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-B', 'Lop Piano B', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002');
+insert into public.teachers(id, teacher_code, full_name) values ('e7700000-0000-4000-8000-000000000001', 'OPS-T', 'GV Piano');
+insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
+  ('e7300000-0000-4000-8000-000000000004', 'e7700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');
+insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
+values ('e7300000-0000-4000-8000-000000000004', 2, '18:00', '19:00', '2020-01-01', 'ACTIVE');
 
 select is(public.student_ops_may_enter(), false, 'anonymous denied');
 
@@ -59,6 +64,14 @@ select lives_ok($$select public.transition_registration_application('e7610000-00
 select lives_ok($$select public.complete_registration_application('e7620000-0000-4000-8000-000000000003', 'e7600000-0000-4000-8000-a10000000003', 3, null, null)$$, 'other complete');
 select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell')), 3::bigint, 'super admin sees every waiting placement');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell')), 0::bigint, 'completed registration is not current before class assignment');
+insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at)
+select linked_student_id, 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()
+from public.registration_applications
+where id in ('e7600000-0000-4000-8000-a10000000001', 'e7600000-0000-4000-8000-a10000000002');
+select set_config('registration.write', 'on', true);
+update public.registration_applications set course_id = 'e7300000-0000-4000-8000-000000000003'
+where id in ('e7600000-0000-4000-8000-a10000000001', 'e7600000-0000-4000-8000-a10000000002');
+select set_config('registration.write', 'off', true);
 
 select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000002', true);
 select is(public.student_ops_may_enter(), true, 'branch admin A may enter');
@@ -70,7 +83,8 @@ select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-80
 select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-8000-000000000031', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 1, 'e7300000-0000-4000-8000-000000000006', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_CLASS_DENIED', 'forged other-branch class denied');
 select lives_ok($$select public.set_student_placement_matching('e7630000-0000-4000-8000-000000000001', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 1)$$, 'matching');
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 2, %L::uuid, %L::date)', 'e7630000-0000-4000-8000-000000000002', 'e7600000-0000-4000-8000-a10000000001', 'e7300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 30), 'future assign');
-select is((select placement_status from public.list_waiting_placements(null, 'SCHEDULED_FUTURE', 'Shell Future')), 'SCHEDULED_FUTURE', 'future assignment stays waiting');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Future')), 0::bigint, 'future assignment leaves waiting');
+select is((select placement_status from public.list_future_start_placements(null, 'ALL', 'Shell Future')), 'SCHEDULED_FUTURE', 'future assignment waits to begin');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Future')), 0::bigint, 'future start is not current');
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 1, %L::uuid, %L::date)', 'e7630000-0000-4000-8000-000000000003', 'e7600000-0000-4000-8000-a10000000002', 'e7300000-0000-4000-8000-000000000004', public.registration_vietnam_today()), 'today assign');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Today')), 1::bigint, 'today start is current');
@@ -84,20 +98,28 @@ select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-80
 
 select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000002', true);
 select is(public.registration_vietnam_today(), (now() at time zone 'Asia/Ho_Chi_Minh')::date, 'placement boundary uses the Vietnam business date');
-select is((select waiting_count from public.waiting_placement_summary(null)), 1, 'branch A KPI excludes branch B');
+select is((select waiting_count from public.waiting_placement_summary(null)), 0, 'branch A waiting KPI excludes future starts and branch B');
+select is((select scheduled_count from public.waiting_placement_summary(null)), public.count_future_start_placements(null, null), 'future KPI matches the future list');
 select is((select waiting_count from public.waiting_placement_summary('e7100000-0000-4000-8000-000000000002')), 0, 'forged branch KPI is empty');
 select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Other')), 0::bigint, 'search does not expose branch B');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Other')), 0::bigint, 'current search does not expose branch B');
-select is((select student_name from public.list_waiting_placements(null, 'ALL', null, 1, 0)), 'Shell Future', 'first page stays inside branch A');
-select is((select count(*) from public.list_waiting_placements(null, 'ALL', null, 1, 1)), 0::bigint, 'next page does not reveal another branch');
-select is((select count(*) from public.list_waiting_placements(null, 'ALL', null)), 1::bigint, 'authorized waiting count excludes branch B');
+select is((select student_name from public.list_future_start_placements(null, 'ALL', null, 1, 0)), 'Shell Future', 'first future page stays inside branch A');
+select is((select count(*) from public.list_future_start_placements(null, 'ALL', null, 1, 1)), 0::bigint, 'future next page does not reveal another branch');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', null)), 0::bigint, 'authorized waiting queue excludes confirmed assignments');
 
-insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status) values
-  ('e7300000-0000-4000-8000-000000000007', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-A2', 'Lop Piano A2', 'GROUP', 8, 'ACTIVE'),
-  ('e7300000-0000-4000-8000-000000000008', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-FULL-A', 'Lop Full A', 'GROUP', 2, 'ACTIVE');
+insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id) values
+  ('e7300000-0000-4000-8000-000000000007', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-A2', 'Lop Piano A2', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002'),
+  ('e7300000-0000-4000-8000-000000000008', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-FULL-A', 'Lop Full A', 'GROUP', 2, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002');
+insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
+  ('e7300000-0000-4000-8000-000000000007', 'e7700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');
+insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
+values ('e7300000-0000-4000-8000-000000000007', 4, '18:00', '19:00', '2020-01-01', 'ACTIVE');
 insert into public.students(id, student_code, full_name, default_branch_id, status) values
   ('e7400000-0000-4000-8000-000000000001', 'OPS-FILL-1', 'Ops Fill 1', 'e7100000-0000-4000-8000-000000000001', 'ACTIVE'),
   ('e7400000-0000-4000-8000-000000000002', 'OPS-FILL-2', 'Ops Fill 2', 'e7100000-0000-4000-8000-000000000001', 'ACTIVE');
+insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at) values
+  ('e7400000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()),
+  ('e7400000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today());
 insert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status) values
   ('e7500000-0000-4000-8000-000000000001', 'e7400000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000008', public.registration_vietnam_today(), public.registration_vietnam_today(), 'ACTIVE'),
   ('e7500000-0000-4000-8000-000000000002', 'e7400000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000008', public.registration_vietnam_today(), public.registration_vietnam_today(), 'ACTIVE');
@@ -118,7 +140,8 @@ select throws_ok($$select public.change_future_student_placement('e7660000-0000-
 select is((select assigned_class_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 'e7300000-0000-4000-8000-000000000004'::uuid, 'rejected program change leaves the original class');
 
 select lives_ok($$select public.change_future_student_placement('e7660000-0000-4000-8000-000000000007', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 3, (select enrollment_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 'e7300000-0000-4000-8000-000000000007', public.registration_vietnam_today() + 40, 'Doi sang lop piano A2')$$, 'future placement changes class');
-select is((select class_name from public.list_waiting_placements(null, 'SCHEDULED_FUTURE', 'Shell Future')), 'Lop Piano A2', 'changed placement stays waiting on the new class');
+select is((select class_name from public.list_future_start_placements(null, 'ALL', 'Shell Future')), 'Lop Piano A2', 'changed placement is future on the new class');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Future')), 0::bigint, 'changed future placement stays out of waiting');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Future')), 0::bigint, 'changed future placement is not current');
 select is((select metadata->>'reason' from public.student_placement_events where id = 'e7660000-0000-4000-8000-000000000007'), 'Doi sang lop piano A2', 'change records the reason');
 select is((select actor_id from public.student_placement_events where id = 'e7660000-0000-4000-8000-000000000007'), 'e7200000-0000-4000-8000-000000000002'::uuid, 'change records the actor');
@@ -145,10 +168,41 @@ where role_id = (select id from public.roles where code = 'BRANCH_ADMIN')
   and permission_id = (select id from public.permissions where code = 'student_placement.manage');
 select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000002', true);
 select is(public.student_ops_may_enter(), true, 'view without manage still enters');
-select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Future')) > 0, true, 'view without manage can list');
+select is((select count(*) from public.list_future_start_placements(null, 'ALL', 'Shell Future')) > 0, true, 'view without manage can list future starts');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Future')), 0::bigint, 'view without manage still excludes a future start from waiting');
 select throws_ok($$select public.set_student_placement_matching('e7630000-0000-4000-8000-000000000006', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000003'), 1)$$, 'P0001', 'PLACEMENT_UNAUTHORIZED', 'view without manage cannot mutate');
 select throws_ok($$select public.change_future_student_placement('e7660000-0000-4000-8000-000000000013', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 6, (select enrollment_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 'e7300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 25, 'Khong co quyen doi')$$, 'P0001', 'PLACEMENT_UNAUTHORIZED', 'view without manage cannot change class');
 select throws_ok($$select public.cancel_future_student_placement('e7660000-0000-4000-8000-000000000014', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 6, (select enrollment_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 'Khong co quyen huy')$$, 'P0001', 'PLACEMENT_UNAUTHORIZED', 'view without manage cannot cancel');
+
+select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000002', true);
+select is((select waiting_count from public.waiting_placement_summary(null)), (select count(*)::integer from public.list_waiting_placements(null, 'ALL', null)), 'waiting KPI matches the waiting list');
+select is(public.count_current_student_enrollments(null), (select count(*)::integer from public.list_current_student_enrollments(null, null)), 'active KPI matches the active list');
+select is(public.count_future_start_placements(null, null), (select count(*)::integer from public.list_future_start_placements(null, 'ALL', null)), 'future count matches the future list');
+select is(public.count_paused_student_enrollments(null), (select count(*)::integer from public.list_paused_student_enrollments(null, null)), 'paused KPI matches the paused list');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Today')), 0::bigint, 'active student is not waiting');
+select is((select count(*) from public.list_future_start_placements(null, 'ALL', 'Shell Today')), 0::bigint, 'active student is not waiting to begin');
+insert into public.enrollment_pauses(id, enrollment_id, starts_on, ends_on, reason)
+select 'e7800000-0000-4000-8000-000000000001', enrollment_id, public.registration_vietnam_today(), public.registration_vietnam_today(), 'Bao luu'
+from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000002';
+select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Today')), 0::bigint, 'paused enrollment leaves the active list');
+select is((select count(*) from public.list_paused_student_enrollments(null, 'Shell Today')), 1::bigint, 'paused enrollment is listed as paused');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Today')), 0::bigint, 'paused enrollment does not return to waiting');
+select is(public.count_paused_student_enrollments(null, 'Shell Today'), 1, 'paused KPI matches the paused search');
+update public.enrollment_pauses set status = 'CANCELLED', cancelled_at = clock_timestamp() where id = 'e7800000-0000-4000-8000-000000000001';
+select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Today')), 1::bigint, 'cancelled pause returns the student to active');
+update public.enrollments set status = 'COMPLETED', ended_at = public.registration_vietnam_today()
+where id = (select enrollment_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000002');
+select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Today')), 0::bigint, 'ended enrollment is excluded from active');
+select is((select count(*) from public.list_paused_student_enrollments(null, 'Shell Today')), 0::bigint, 'ended enrollment is excluded from paused');
+select set_config('registration.write', 'on', true);
+update public.enrollments set started_at = public.registration_vietnam_today()
+where id = (select enrollment_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001');
+update public.student_placement_cases set scheduled_start_date = public.registration_vietnam_today()
+where registration_application_id = 'e7600000-0000-4000-8000-a10000000001';
+select set_config('registration.write', 'off', true);
+select is((select count(*) from public.list_future_start_placements(null, 'ALL', 'Shell Future')), 0::bigint, 'effective date leaves the future list');
+select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Future')), 0::bigint, 'effective date does not return the student to waiting');
+select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Future')), 1::bigint, 'effective date activates the enrollment');
 
 select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000004', true);
 select is(public.student_ops_may_enter(), false, 'teacher without placement permission denied');

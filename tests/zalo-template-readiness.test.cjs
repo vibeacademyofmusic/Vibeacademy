@@ -29,7 +29,7 @@ const message = {
     program_name: 'Guitar Preview',
     branch_name: 'Vibe Academy Cần Thơ',
     order_code: 'DK-20260925-266C422B8595',
-    payment_status: 'Đã nhận cọc 50%',
+    payment_status: 'Đã nhận thanh toán 50%',
   },
   idempotencyKey: 'domain:REGISTRATION_COMPLETED:preview',
 }
@@ -90,7 +90,7 @@ test('mocked Zalo UID send covers denial, expiry, rejection, and acceptance', as
   const sent = JSON.parse(accepted.calls[0].init.body)
   assert.equal(sent.user_id, 'owner-zalo-user')
   assert.equal(sent.template_id, '640377')
-  assert.equal(sent.template_data.payment_status, 'Đã nhận cọc 50%')
+  assert.equal(sent.template_data.payment_status, 'Đã nhận thanh toán 50%')
   assert.equal(Object.hasOwn(sent, 'phone'), false)
   assert.equal(accepted.calls[0].init.headers.access_token, 'access')
   assert.equal(accepted.calls[0].init.headers.appsecret_proof, proofModule.zaloAppSecretProof('access', 'secret'))

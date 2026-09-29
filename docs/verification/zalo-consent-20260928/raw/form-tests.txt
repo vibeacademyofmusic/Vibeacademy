@@ -1,0 +1,13 @@
+✔ new registration forwards explicit consent false in the same RPC (40.593625ms)
+✔ new registration forwards explicit consent true in the same RPC (20.326667ms)
+✔ detail forwards expected consent, actual source and explicit withdrawal; refreshes both screens (15.413958ms)
+✔ permission and read errors never expose a writable consent form (3.779625ms)
+✔ active consent renders masked audit and explicit unchecked withdrawal (12.714125ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 292.084875

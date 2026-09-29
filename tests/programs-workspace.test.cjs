@@ -2,18 +2,20 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const ts = require('typescript')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 
 function load(file) {
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText
   const compiled = { exports: {} }
-  new Function('require', 'module', 'exports', code)(require, compiled, compiled.exports)
+  const localRequire = name => name.startsWith('.') || name.startsWith('@/') ? load(resolveModule(file, name)) : require(name)
+  new Function('require', 'module', 'exports', code)(localRequire, compiled, compiled.exports)
   return compiled.exports
 }
 
 const model = load('app/admin/programs/model.ts')
-const { navigationGroups, activeNavigationHref } = load('app/admin/navigation.ts')
+const { navigationGroups, trainingTabs, activeNavigationHref, activeWorkspaceTab } = load('app/admin/navigation.ts')
 const page = fs.readFileSync('app/admin/programs/page.tsx', 'utf8')
 const data = fs.readFileSync('app/admin/programs/data.ts', 'utf8')
 const subject = fs.readFileSync('app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/page.tsx', 'utf8')
@@ -67,14 +69,16 @@ test('H06 component remains the technical parent of a lesson', () => {
 })
 
 test('N01 N02 N03 N04 curriculum stays one workspace under Đào tạo', () => {
-  const training = navigationGroups.find(group => group.name === 'ĐÀO TẠO').items
+  const training = trainingTabs
   assert.equal(training.filter(item => item.name === 'Chương trình học').length, 1)
   assert.equal(training.find(item => item.name === 'Chương trình học').href, '/admin/programs')
   const names = navigationGroups.flatMap(group => group.items.map(item => item.name))
   assert.equal(names.filter(name => name === 'Khóa học').length, 0)
   assert.equal(names.filter(name => name === 'Chương trình và khóa học').length, 0)
-  assert.equal(activeNavigationHref('/admin/academic/program/levels/level'), '/admin/programs')
-  assert.equal(activeNavigationHref('/admin/courses/course/edit'), '/admin/programs')
+  assert.equal(activeNavigationHref('/admin/academic/program/levels/level'), '/admin/students')
+  assert.equal(activeWorkspaceTab('/admin/academic/program/levels/level'), '/admin/programs')
+  assert.equal(activeNavigationHref('/admin/courses/course/edit'), '/admin/students')
+  assert.equal(activeWorkspaceTab('/admin/courses/course/edit'), '/admin/programs?view=courses')
   assert.ok(fs.existsSync('app/admin/programs/page.tsx'))
   assert.ok(fs.existsSync('app/admin/academic/[id]/page.tsx'))
   assert.ok(fs.existsSync('app/admin/courses/[id]/edit/page.tsx'))

@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache'
 
 import { createClient } from '@/lib/supabase/server'
 import { uuidPattern } from '../finance/operations'
+import { inspectPortrait, type PortraitInspection } from '@/lib/staff/profile'
+import { commitPortrait } from './portrait'
 
 function get(form: FormData, key: string) {
   return String(form.get(key) ?? '').trim()
@@ -87,6 +89,23 @@ async function submit(
     | 'unit'
 ) {
   const db = await assertSuperAdmin()
+  let portraitBytes: Uint8Array | null = null
+  let portraitMeta: Extract<PortraitInspection, { ok: true }> | null = null
+  if (operation === 'create') {
+    const portrait = form.get('portrait')
+    if (portrait instanceof File && portrait.size > 0) {
+      portraitBytes = new Uint8Array(await portrait.arrayBuffer())
+      const inspected = inspectPortrait(portraitBytes, portrait.type)
+      if (!inspected.ok) {
+        redirect('/admin/employees?error=' + encodeURIComponent(inspected.message))
+      }
+      portraitMeta = inspected
+    }
+  }
+  if (operation === 'link' && get(form, 'confirm') !== 'LINK') {
+    const employee = get(form, 'employee_id')
+    redirect('/admin/employees?selected=' + encodeURIComponent(employee) + '&error=' + encodeURIComponent('Cần xác nhận đúng người trước khi liên kết.'))
+  }
 
   const reason = get(form, 'reason')
 
@@ -236,14 +255,22 @@ async function submit(
           )
         : result.error.message
     )
+  } else if (operation === 'create' && portraitBytes && portraitMeta) {
+    const saved = await commitPortrait(db, String(result.data), portraitBytes, portraitMeta)
+    revalidatePath('/admin/employees')
+    revalidatePath('/documents/staff-cards/' + result.data)
+    const card = new URLSearchParams({ created: '1' })
+    if (saved.error || saved.warning) card.set('error', saved.error || saved.warning || '')
+    redirect('/documents/staff-cards/' + result.data + '?' + card.toString())
+  } else if (operation === 'create') {
+    revalidatePath('/admin/employees')
+    redirect('/documents/staff-cards/' + result.data + '?created=1')
   } else {
     revalidatePath('/admin/employees')
 
     query.set(
       'success',
-      operation === 'create'
-        ? 'Đã tạo nhân viên cùng thông tin liên hệ và định danh.'
-        : 'Đã lưu hồ sơ và lịch sử thay đổi.'
+      'Đã lưu hồ sơ và lịch sử thay đổi.'
     )
   }
 

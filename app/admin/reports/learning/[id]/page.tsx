@@ -35,6 +35,7 @@ export default async function LearningReportDetail({ params, searchParams }: { p
         <p>Nội dung đã duyệt được khóa. Phát hành không đồng nghĩa với gửi email hoặc Zalo.</p>
       </div>
       <ReportDocument report={r} />
+      {r.status === 'PUBLISHED' && <div className="report-controls flex flex-wrap gap-4"><Link href={`/my-learning/reports/${r.id}/pdf`}>Mở / tải PDF dành cho gia đình</Link><Link href={`/my-learning/conversations/report/${r.id}`}>Trao đổi và xử lý yêu cầu</Link></div>}
       <div className="report-controls learning-report-admin space-y-6">
         {r.status === 'PUBLISHED' && <Panel title="DELIVERY">
           <p>Thông tin liên hệ hiện tại; không thay đổi bản báo cáo đã duyệt.</p>

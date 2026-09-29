@@ -28,9 +28,9 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
   const singleInvoice = invoices?.page === 1 && !invoices.more && invoices.data.length === 1
   return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Thanh toán</h1><Notice params={params} />
     <form className="grid gap-3 sm:grid-cols-4"><Select name="status" label="Trạng thái" options={['POSTED', 'VOIDED'].map(id => ({ id, name: id }))} value={params.status} /><Select name="branch" label="Chi nhánh" options={branchRows} value={params.branch} /><Field name="currency" label="Tiền tệ" required={false} value={params.currency} /><button className="self-end rounded border p-2">Lọc</button></form>
-    <Table headers={['Thanh toán', 'Học viên', 'Chi nhánh', 'Tiền tệ', 'Số tiền', 'Phương thức', 'Ngày thu', 'Tham chiếu', 'Trạng thái', 'Phân bổ gốc', 'Chưa phân bổ']} rows={list.data.map(p => {
+    <Table headers={['Thanh toán', 'Học viên', 'Chi nhánh', 'Tiền tệ', 'Số tiền', 'Phương thức', 'Ngày thu', 'Tham chiếu', 'Trạng thái', 'Phân bổ gốc', 'Chưa phân bổ', 'Hóa đơn']} rows={list.data.map(p => {
       const allocated = effectiveAllocationTotal(list.allocations.filter(a => a.payment_id === p.id))
-      return [<Link prefetch={false} key={p.id} className="underline" href={'?selected=' + p.id}>{p.payment_number}</Link>, names.get(p.student_id_snapshot), p.branch_name_snapshot, p.currency, money(p.amount, p.currency), p.payment_method, timeText(p.paid_at), p.reference ?? '—', p.status, money(allocated, p.currency), p.status === 'POSTED' ? money(Math.max(0, Number(p.amount) - total(list.allocations.filter(a => a.payment_id === p.id))), p.currency) : '—']
+      return [<Link prefetch={false} key={p.id} className="underline" href={'?selected=' + p.id + '#payment-detail'}>{p.payment_number}</Link>, names.get(p.student_id_snapshot), p.branch_name_snapshot, p.currency, money(p.amount, p.currency), p.payment_method, timeText(p.paid_at), p.reference ?? '—', p.status, money(allocated, p.currency), p.status === 'POSTED' ? money(Math.max(0, Number(p.amount) - total(list.allocations.filter(a => a.payment_id === p.id))), p.currency) : '—', p.status === 'POSTED' ? <Link prefetch={false} key={'invoice-' + p.id} className="underline" href={'/documents/finance/payment-invoices/' + p.id}>Xem / In A5</Link> : '—']
     })} /><Pager path="/admin/finance/payments" params={params} {...list} />
     <p className="text-sm text-gray-600">Chưa phân bổ = tiền thu trừ các phân bổ gốc, theo hợp đồng RPC hiện tại. Hoàn tiền được theo dõi riêng.</p>
     {targetInvoice && <Panel title={'Thu tiền cho ' + targetInvoice.invoice_number}>
@@ -53,7 +53,8 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
         <SubmitButton>Ghi nhận tiền và chuyển đến phân bổ</SubmitButton>
       </form>}
     </Panel>}
-    {payment && detail && <Panel title={'Thanh toán ' + payment.payment_number}>
+    {payment && detail && <div id="payment-detail"><Panel title={'Thanh toán ' + payment.payment_number}>
+      {payment.status === 'POSTED' && <p><Link prefetch={false} className="underline font-semibold" href={'/documents/finance/payment-invoices/' + payment.id}>Xem / In hóa đơn A5</Link></p>}
       <Link prefetch={false} className="underline" href={'/documents/finance/payments/' + payment.id}>Xem / In chứng từ</Link>
       <dl className="grid gap-4 rounded-lg bg-gray-50 p-4 sm:grid-cols-3">
         <div><dt className="text-sm text-gray-600">Số thanh toán</dt><dd className="font-semibold">{payment.payment_number}</dd></div>
@@ -112,7 +113,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
         {openings && <Pager path="/admin/finance/payments" params={params} page={openings.page} more={openings.more} keyName="opening_page"/>}
         <form action={voidPayment} className="space-y-3"><input type="hidden" name="idempotency_key" value={randomUUID()}/><input type="hidden" name="payment_id" value={payment.id} /><input type="hidden" name="selected" value={payment.id} /><Field name="reason" label="Lý do vô hiệu thanh toán" /><Confirm text="Vô hiệu thanh toán có thể làm công nợ mở lại. Tôi xác nhận thao tác." /><SubmitButton>Gửi yêu cầu vô hiệu thanh toán</SubmitButton></form>
       </>}
-    </Panel>}
+    </Panel></div>}
     <Panel title="Ghi nhận thanh toán mới">
       <form className="flex flex-wrap items-end gap-3"><Field name="student_q" label="Tìm học viên theo tên hoặc mã (tối đa 25 kết quả)" required={false} value={params.student_q} /><button className="rounded border p-2">Tìm học viên</button></form>
       {params.student_q && students.length === 0 && <p>Không tìm thấy học viên.</p>}

@@ -1,3 +1,5 @@
+import { attendanceReturn } from '../launcher-model'
+import styles from '../attendance.module.css'
 import SessionTeacher from '@/app/admin/session-teachers/SessionTeacher'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -19,6 +21,7 @@ type SessionDetailPageProps = {
   searchParams: Promise<{
     error?: string
     success?: string
+    return_to?: string
   }>
 }
 
@@ -27,6 +30,14 @@ type StudentSummary = {
   student_code: string
   full_name: string | null
   preferred_name: string | null
+}
+
+type BranchRosterRow = StudentSummary & {
+  student_id: string
+  enrollment_id: string
+  attendance_id: string | null
+  status: string | null
+  notes: string | null
 }
 
 type MakeupCreditSummary = {
@@ -57,7 +68,7 @@ function formatDateTime(
   value: string,
   timezone: string
 ) {
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat('vi-VN', {
     weekday: 'long',
     day: '2-digit',
     month: 'long',
@@ -73,7 +84,7 @@ function formatTime(
   value: string,
   timezone: string
 ) {
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat('vi-VN', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -107,9 +118,17 @@ export default async function SessionDetailPage({
   searchParams,
 }: SessionDetailPageProps) {
   const { id } = await params
-  const { error, success } = await searchParams
+  const { error, success, return_to } = await searchParams
 
   const supabase = await createClient()
+  const [{ data: mayRead, error: accessError }, { data: isSuperAdmin }] = await Promise.all([
+    supabase.rpc('can_access_session', { p_session: id }),
+    supabase.rpc('has_role', { role_code: 'SUPER_ADMIN' }),
+  ])
+  if (accessError || mayRead !== true) notFound()
+  // Branch readers use existing RLS. Mutations retain the established admin gate.
+  const canManage = isSuperAdmin === true
+
 
   const {
     data: occurrence,
@@ -152,7 +171,7 @@ export default async function SessionDetailPage({
 
   const { data: classItem } = await supabase
     .from('classes')
-    .select('id, branch_id, code, name')
+    .select('id, branch_id, code, name, course_id')
     .eq('id', schedule.class_id)
     .maybeSingle()
 
@@ -169,7 +188,7 @@ export default async function SessionDetailPage({
       data: makeupParticipants,
       error: participantsError,
     },
-    { data: attendance, error: attendanceError },
+    { data: rawAttendance, error: attendanceError },
     {
       data: relatedMakeupSessions,
       error: relatedMakeupSessionsError,
@@ -248,6 +267,9 @@ export default async function SessionDetailPage({
         }),
   ])
 
+  let attendance: { id: string | null; enrollment_id: string; status: string | null; notes: string | null }[] | null = rawAttendance
+  let branchRoster: BranchRosterRow[] | null = null
+
   const makeupParticipantIds = new Set(
     (makeupParticipants ?? []).map(
       (participant) => participant.enrollment_id
@@ -286,7 +308,7 @@ if (
     ])
   )
 
-  const roster = (enrollments ?? []).filter(
+  let roster: { id: string; student_id: string }[] = (enrollments ?? []).filter(
     (enrollment) => {
       if (occurrence.occurrence_type === 'MAKEUP') {
         return makeupParticipantIds.has(enrollment.id)
@@ -304,6 +326,17 @@ if (
       )
     }
   )
+  if (!canManage) {
+    const result = await supabase.rpc('attendance_roster_read', { p_session: id })
+    if (result.error || !Array.isArray(result.data)) {
+      throw new Error('Không thể tải sổ điểm danh trong phạm vi được phép')
+    }
+    branchRoster = result.data as BranchRosterRow[]
+    roster = branchRoster.map(row => ({ id: row.enrollment_id, student_id: row.student_id }))
+    attendance = branchRoster.filter(row => row.attendance_id).map(row => ({
+      id: row.attendance_id, enrollment_id: row.enrollment_id, status: row.status, notes: row.notes,
+    }))
+  }
   const canCreateMakeup =
     occurrence.occurrence_type === 'REGULAR' &&
     ['COMPLETED', 'CANCELLED'].includes(
@@ -388,7 +421,9 @@ if (
     )
   )
 
-  if (studentIds.length > 0) {
+  if (branchRoster) {
+    students = branchRoster.map(row => ({ ...row, id: row.student_id }))
+  } else if (studentIds.length > 0) {
     const studentResult = await supabase
       .from('students')
       .select(
@@ -399,6 +434,18 @@ if (
     students = (studentResult.data ?? []) as StudentSummary[]
     studentsError = studentResult.error
   }
+
+  const levelByStudent = new Map<string, string>()
+  await Promise.all(
+    studentIds.map(async studentId => {
+      const { data: levelRows } = await supabase.rpc('class_student_current_level', {
+        p_class: classItem.id,
+        p_student: studentId,
+      })
+      const level = Array.isArray(levelRows) ? levelRows[0] : levelRows
+      if (level?.level_name) levelByStudent.set(studentId, level.level_name)
+    })
+  )
 
   const loadError =
     roomsError ||
@@ -423,6 +470,11 @@ if (
     ])
   )
 
+  const returnTo = attendanceReturn(return_to, occurrence.occurrence_date)
+  const { data: nextSession } = await supabase.from('session_occurrences')
+    .select('id').eq('schedule_id', occurrence.schedule_id).eq('status', 'SCHEDULED')
+    .gt('starts_at', occurrence.starts_at).order('starts_at').limit(1).maybeSingle()
+
   const timezone =
     schedule.timezone ?? 'Asia/Ho_Chi_Minh'
 
@@ -442,18 +494,17 @@ if (
     !hasAttendance
 
   return (
-    <div className="max-w-6xl">
-      <SessionTeacher id={id} />
+    <div className="vibe-page min-w-0 max-w-6xl">
       <Link
-        href="/admin/attendance"
+        href={returnTo}
         className="text-sm font-medium text-gray-500 hover:text-gray-900"
       >
-        ← Back to Sessions & Attendance
+        ← Quay lại danh sách điểm danh
       </Link>
 
       <div className="mt-6">
         <p className="text-sm font-medium text-gray-500">
-          Session Engine
+          Điểm danh buổi học
         </p>
 
         <div className="mt-1 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -461,6 +512,7 @@ if (
             <h1 className="text-3xl font-bold tracking-tight text-gray-950">
               {classItem.name}
             </h1>
+            {canManage && <Link href={`/admin/classes/${classItem.id}`} className="vibe-button">Xem ca dạy</Link>}
 
             <p className="mt-2 text-sm text-gray-500">
               {classItem.code} ·{' '}
@@ -478,7 +530,7 @@ if (
                     : 'bg-gray-100 text-gray-600'
                 }`}
               >
-                {occurrence.occurrence_type}
+                {occurrence.occurrence_type === 'MAKEUP' ? 'Học bù' : 'Buổi thường'}
               </span>
 
               {occurrence.source_occurrence_id && (
@@ -499,7 +551,7 @@ if (
               ] ?? 'bg-gray-100 text-gray-600'
             }`}
           >
-            {occurrence.status}
+            {{ SCHEDULED: 'Chờ diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy' }[occurrence.status as string] ?? occurrence.status}
           </span>
         </div>
 
@@ -517,7 +569,7 @@ if (
 
         {loadError && (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            Could not load the complete attendance roster.
+            Không thể tải đầy đủ sổ điểm danh. Vui lòng thử lại.
           </div>
         )}
 
@@ -537,11 +589,11 @@ if (
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-gray-200 bg-white p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Branch
+              Chi nhánh
             </p>
 
             <p className="mt-2 font-semibold text-gray-950">
-              {branch?.name ?? 'Unknown branch'}
+              {branch?.name ?? 'Chưa có chi nhánh'}
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
@@ -551,11 +603,11 @@ if (
 
           <div className="rounded-xl border border-gray-200 bg-white p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Room
+              Phòng
             </p>
 
             <p className="mt-2 font-semibold text-gray-950">
-              {room?.name ?? 'No room'}
+              {room?.name ?? 'Chưa có phòng'}
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
@@ -565,7 +617,7 @@ if (
 
           <div className="rounded-xl border border-gray-200 bg-white p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Time
+              Giờ
             </p>
 
             <p className="mt-2 font-semibold text-gray-950">
@@ -587,21 +639,211 @@ if (
 
           <div className="rounded-xl border border-gray-200 bg-white p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Attendance
+              Điểm danh
             </p>
 
             <p className="mt-2 font-semibold text-gray-950">
               {attendance?.length ?? 0} /{' '}
-              {roster.length} marked
+              {roster.length} đã điểm danh
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
-              Session roster
+              Danh sách buổi học
             </p>
           </div>
         </div>
 
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+        <section id="attendance-roster" className={`vibe-card mt-6 ${styles.roster}`}>
+          <div className="border-b border-gray-200 px-6 py-5">
+            <h2 className="text-lg font-semibold text-gray-950">
+              Sổ điểm danh
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {occurrence.occurrence_type === 'MAKEUP'
+                ? 'Học viên đã được chọn tham gia buổi học bù này.'
+                : 'Học viên đủ điều kiện tham gia vào ngày diễn ra buổi học.'}
+            </p>
+          </div>
+
+          {isAttendanceLocked && (
+            <div className="border-b border-amber-200 bg-amber-50 px-6 py-4 text-sm text-amber-800">
+              Điểm danh đã khóa vì buổi học không còn ở trạng thái chờ diễn ra.
+            </div>
+          )}
+
+          {roster.length === 0 ? (
+            <div className="p-10 text-center">
+              <p className="text-sm font-medium text-gray-700">
+                Buổi học chưa có học viên đủ điều kiện
+              </p>
+
+              <p className="mt-1 text-sm text-gray-400">
+                {occurrence.occurrence_type === 'MAKEUP'
+                  ? 'Buổi học bù chưa có học viên được chọn.'
+                  : 'Kiểm tra thời gian xếp lớp của học viên cho buổi học này.'}
+              </p>
+            </div>
+          ) : (
+            <>
+            {!canManage && <p className="vibe-notice mb-4">Bạn đang xem sổ điểm danh theo phạm vi chi nhánh. Giáo viên được phân công hoặc quản trị cấp cao thực hiện ghi điểm danh.</p>}
+            <form action={saveAttendance}>
+              <input type="hidden" name="return_to" value={returnTo} />
+              <input
+                type="hidden"
+                name="occurrence_id"
+                value={occurrence.id}
+              />
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">
+                        Học viên
+                      </th>
+
+                      <th className="px-5 py-3 font-medium">
+                        Trình độ hiện tại
+                      </th>
+
+                      <th className="px-5 py-3 font-medium">
+                        Trạng thái điểm danh
+                      </th>
+
+                      <th className="px-5 py-3 font-medium">
+                        Ghi chú
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-100">
+                    {roster.map((enrollment) => {
+                      const student = studentMap.get(
+                        enrollment.student_id
+                      )
+
+                      const record = attendanceMap.get(
+                        enrollment.id
+                      )
+
+                      const makeupCredit =
+                        makeupCreditByEnrollment.get(
+                          enrollment.id
+                        )
+
+                      return (
+                        <tr key={enrollment.id}>
+                          <td data-label="Học viên" className="px-5 py-4">
+                            <p className="font-semibold text-gray-950">
+                              {student?.preferred_name ||
+                                student?.full_name ||
+                                'Chưa có tên học viên'}
+                            </p>
+
+                            <p className="mt-1 text-xs text-gray-500">
+                              {student?.student_code ?? '—'}
+                            </p>
+
+                            {makeupCredit && (
+                              <div className="mt-2 flex flex-wrap items-center gap-2">
+                                <span
+                                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                                    CREDIT_STATUS_STYLES[
+                                      makeupCredit.status
+                                    ] ??
+                                    'bg-gray-100 text-gray-600'
+                                  }`}
+                                >
+                                  Credit {makeupCredit.status}
+                                </span>
+
+                                <Link
+                                  href={`/admin/attendance/${makeupCredit.source_occurrence_id}`}
+                                  className="text-xs font-medium text-purple-700 hover:text-purple-900"
+                                >
+                                  {makeupCredit.source_reason ===
+                                  'EXCUSED'
+                                    ? 'Excused absence source'
+                                    : 'Cancelled session source'}{' '}
+                                  →
+                                </Link>
+                              </div>
+                            )}
+                          </td>
+
+                          <td data-label="Trình độ hiện tại" className="px-5 py-4 text-sm text-gray-700">
+                            {levelByStudent.get(enrollment.student_id) ?? '—'}
+                          </td>
+
+                          <td data-label="Trạng thái điểm danh" className="px-5 py-4">
+                            <select
+                              aria-label={`Điểm danh ${student?.full_name ?? student?.student_code}`}
+                              name={`status_${enrollment.id}`}
+                              defaultValue={
+                                record?.status ?? ''
+                              }
+                              disabled={!canManage || isAttendanceLocked || Boolean(loadError)}
+                              className="min-w-40 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900 disabled:bg-gray-100"
+                            >
+                              <option value="" disabled>
+                                Chọn trạng thái
+                              </option>
+
+                              <option value="PRESENT">
+                                Có mặt
+                              </option>
+
+                              <option value="LATE">
+                                Đi muộn
+                              </option>
+
+                              <option value="ABSENT">
+                                Vắng
+                              </option>
+
+                              <option value="EXCUSED">
+                                Có phép
+                              </option>
+                            </select>
+                          </td>
+
+                          <td data-label="Ghi chú" className="px-5 py-4">
+                            <input
+                              aria-label={`Ghi chú ${student?.full_name ?? student?.student_code}`}
+                              name={`notes_${enrollment.id}`}
+                              defaultValue={
+                                record?.notes ?? ''
+                              }
+                              disabled={!canManage || isAttendanceLocked || Boolean(loadError)}
+                              maxLength={500}
+                              placeholder="Ghi chú (không bắt buộc)"
+                              className="w-full min-w-64 rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900 disabled:bg-gray-100"
+                            />
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex justify-end border-t border-gray-200 bg-gray-50 px-6 py-4">
+                <button
+                  type="submit"
+                  disabled={!canManage || isAttendanceLocked || Boolean(loadError)}
+                  className="vibe-button vibe-button-primary disabled:opacity-50"
+                >
+                  Lưu điểm danh
+                </button>
+              </div>
+            </form>
+            </>
+          )}
+                </section>
+
+<div className="vibe-actions mt-4"><Link href={returnTo} className="vibe-button vibe-button-primary">Quay lại danh sách điểm danh</Link>{nextSession && <Link className="vibe-button" href={`/admin/attendance/${nextSession.id}?return_to=${encodeURIComponent(returnTo)}#attendance-roster`}>Buổi tiếp theo</Link>}{canManage && <Link className="vibe-button" href={`/admin/classes/${classItem.id}`}>Xem ca dạy</Link>}</div>
+{canManage && <details className="mt-6"><summary className="cursor-pointer text-sm font-semibold">Quản lý buổi học</summary><SessionTeacher id={id} />        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
           <div>
             <h2 className="text-lg font-semibold text-gray-950">
               Reschedule Session
@@ -656,7 +898,7 @@ if (
               </label>
 
               <label className="text-sm font-medium text-gray-700">
-                Room
+                Phòng
 
                 <select
                   name="room_id"
@@ -947,7 +1189,7 @@ if (
                 </label>
 
                 <label className="text-sm font-medium text-gray-700">
-                  Room
+                  Phòng
 
                   <select
                     name="room_id"
@@ -1031,7 +1273,7 @@ if (
                             <span className="block font-semibold text-gray-950">
                               {student?.preferred_name ||
                                 student?.full_name ||
-                                'Unknown Student'}
+                                'Chưa có tên học viên'}
                             </span>
 
                             <span className="mt-1 block text-xs text-gray-500">
@@ -1081,184 +1323,9 @@ if (
           </section>
         )}
 
-        <section className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-          <div className="border-b border-gray-200 px-6 py-5">
-            <h2 className="text-lg font-semibold text-gray-950">
-              Attendance Roster
-            </h2>
-
-            <p className="mt-1 text-sm text-gray-500">
-              {occurrence.occurrence_type === 'MAKEUP'
-                ? 'Only the students explicitly selected for this makeup session.'
-                : 'Students enrolled in this class on the occurrence date.'}
-            </p>
-          </div>
-
-          {isAttendanceLocked && (
-            <div className="border-b border-amber-200 bg-amber-50 px-6 py-4 text-sm text-amber-800">
-              Attendance is locked because this session is no
-              longer Scheduled.
-            </div>
-          )}
-
-          {roster.length === 0 ? (
-            <div className="p-10 text-center">
-              <p className="text-sm font-medium text-gray-700">
-                No students in this session roster
-              </p>
-
-              <p className="mt-1 text-sm text-gray-400">
-                {occurrence.occurrence_type === 'MAKEUP'
-                  ? 'This makeup session has no selected participants.'
-                  : 'Check the class enrollment dates for this occurrence.'}
-              </p>
-            </div>
-          ) : (
-            <form action={saveAttendance}>
-              <input
-                type="hidden"
-                name="occurrence_id"
-                value={occurrence.id}
-              />
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
-                    <tr>
-                      <th className="px-5 py-3 font-medium">
-                        Student
-                      </th>
-
-                      <th className="px-5 py-3 font-medium">
-                        Attendance Status
-                      </th>
-
-                      <th className="px-5 py-3 font-medium">
-                        Notes
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody className="divide-y divide-gray-100">
-                    {roster.map((enrollment) => {
-                      const student = studentMap.get(
-                        enrollment.student_id
-                      )
-
-                      const record = attendanceMap.get(
-                        enrollment.id
-                      )
-
-                      const makeupCredit =
-                        makeupCreditByEnrollment.get(
-                          enrollment.id
-                        )
-
-                      return (
-                        <tr key={enrollment.id}>
-                          <td className="px-5 py-4">
-                            <p className="font-semibold text-gray-950">
-                              {student?.preferred_name ||
-                                student?.full_name ||
-                                'Unknown Student'}
-                            </p>
-
-                            <p className="mt-1 text-xs text-gray-500">
-                              {student?.student_code ?? '—'}
-                            </p>
-
-                            {makeupCredit && (
-                              <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <span
-                                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                                    CREDIT_STATUS_STYLES[
-                                      makeupCredit.status
-                                    ] ??
-                                    'bg-gray-100 text-gray-600'
-                                  }`}
-                                >
-                                  Credit {makeupCredit.status}
-                                </span>
-
-                                <Link
-                                  href={`/admin/attendance/${makeupCredit.source_occurrence_id}`}
-                                  className="text-xs font-medium text-purple-700 hover:text-purple-900"
-                                >
-                                  {makeupCredit.source_reason ===
-                                  'EXCUSED'
-                                    ? 'Excused absence source'
-                                    : 'Cancelled session source'}{' '}
-                                  →
-                                </Link>
-                              </div>
-                            )}
-                          </td>
-
-                          <td className="px-5 py-4">
-                            <select
-                              name={`status_${enrollment.id}`}
-                              defaultValue={
-                                record?.status ?? ''
-                              }
-                              disabled={isAttendanceLocked}
-                              className="min-w-40 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900 disabled:bg-gray-100"
-                            >
-                              <option value="" disabled>
-                                Select status
-                              </option>
-
-                              <option value="PRESENT">
-                                Present
-                              </option>
-
-                              <option value="LATE">
-                                Late
-                              </option>
-
-                              <option value="ABSENT">
-                                Absent
-                              </option>
-
-                              <option value="EXCUSED">
-                                Excused
-                              </option>
-                            </select>
-                          </td>
-
-                          <td className="px-5 py-4">
-                            <input
-                              name={`notes_${enrollment.id}`}
-                              defaultValue={
-                                record?.notes ?? ''
-                              }
-                              disabled={isAttendanceLocked}
-                              maxLength={500}
-                              placeholder="Optional note"
-                              className="w-full min-w-64 rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900 disabled:bg-gray-100"
-                            />
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="flex justify-end border-t border-gray-200 bg-gray-50 px-6 py-4">
-                <button
-                  type="submit"
-                  disabled={isAttendanceLocked}
-                  className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
-                >
-                  Save Attendance
-                </button>
-              </div>
-            </form>
-          )}
-                </section>
-
+</details>}
 <div className="mt-6">
-  <SessionJournals occurrenceId={occurrence.id} />
+  {canManage && <SessionJournals occurrenceId={occurrence.id} />}
 </div>
 </div>
 </div>

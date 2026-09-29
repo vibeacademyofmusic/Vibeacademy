@@ -2,6 +2,11 @@
 
 import { createClient } from '@/lib/supabase/server'
 
+export type QrBranch = { id: string; name: string; code?: string }
+export type QrStatus = { status: string; session_id: string | null }
+export type QrToken = { token: string; expires_at: string }
+export type QrScan = { id: string; employee_id: string; employee_code?: string | null; employee_name?: string | null; work_date?: string; shift_code: string; event_type: 'CHECK_IN' | 'CHECK_OUT'; scanned_at: string; verification_status?: 'WAITING_CHECK_OUT' | 'VERIFIED' | 'CONFLICT' | 'PENDING' }
+
 type Result<T = unknown> =
   | { ok: true; data: T }
   | { ok: false; error: string }
@@ -10,7 +15,7 @@ async function rpc<T>(
   name: string,
   args: Record<string, unknown> = {},
 ): Promise<Result<T>> {
-  const db = (await createClient()) as any
+  const db = await createClient()
 
   const { data, error } = await db.rpc(
     name,
@@ -31,7 +36,7 @@ async function rpc<T>(
 }
 
 export async function getQrBranchesAction() {
-  return rpc<any[]>(
+  return rpc<QrBranch[]>(
     'get_attendance_qr_manageable_branches',
   )
 }
@@ -39,7 +44,7 @@ export async function getQrBranchesAction() {
 export async function getQrStatusAction(
   branchId: string,
 ) {
-  return rpc<any>(
+  return rpc<QrStatus>(
     'get_attendance_qr_status',
     {
       p_branch: branchId,
@@ -50,7 +55,7 @@ export async function getQrStatusAction(
 export async function startQrSessionAction(
   branchId: string,
 ) {
-  return rpc<any>(
+  return rpc<QrStatus>(
     'start_attendance_qr_session',
     {
       p_branch: branchId,
@@ -61,7 +66,7 @@ export async function startQrSessionAction(
 export async function mintQrTokenAction(
   sessionId: string,
 ) {
-  return rpc<any>(
+  return rpc<QrToken>(
     'mint_attendance_qr_token',
     {
       p_session: sessionId,
@@ -72,7 +77,7 @@ export async function mintQrTokenAction(
 export async function stopQrSessionAction(
   sessionId: string,
 ) {
-  return rpc<any>(
+  return rpc<unknown>(
     'stop_attendance_qr_session',
     {
       p_session: sessionId,
@@ -84,7 +89,7 @@ export async function stopQrSessionAction(
 export async function getQrRecentScansAction(
   branchId: string,
 ) {
-  return rpc<any[]>(
+  return rpc<QrScan[]>(
     'get_attendance_qr_recent_scans',
     {
       p_branch: branchId,

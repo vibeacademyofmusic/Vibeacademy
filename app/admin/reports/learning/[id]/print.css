@@ -1,6 +1,7 @@
 @media print {
-  body * { visibility: hidden; }
-  .learning-report, .learning-report * { visibility: visible; }
+  body:has(.learning-report):not(:has(.official-learning-report)) * { visibility: hidden; }
+  body:has(.learning-report):not(:has(.official-learning-report)) .learning-report,
+  body:has(.learning-report):not(:has(.official-learning-report)) .learning-report * { visibility: visible; }
   .learning-report { position: absolute; left: 0; top: 0; width: 100%; color: #000; }
   .learning-report .report-controls { display: none; }
   .learning-report section { break-inside: avoid; }

@@ -4,7 +4,7 @@ import { zaloAccessHeaders } from './app-secret-proof'
 
 export const ZALO_TEMPLATE_ID = '640377'
 export const ZALO_REGISTRATION_PAYMENT_STATUS = {
-  DEPOSIT_50: 'Đã nhận cọc 50%',
+  DEPOSIT_50: 'Đã nhận thanh toán 50%',
   FULL: 'Đã thanh toán đủ',
 } as const
 export const ZALO_TEMPLATE_PARAMETERS = [

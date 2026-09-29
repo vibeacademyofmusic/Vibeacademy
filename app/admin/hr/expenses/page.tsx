@@ -51,6 +51,7 @@ type Claim = {
   title: string
   requested_month: string
   currency: string
+  claim_model: 'LEGACY_TRIP_SUMMARY' | 'ITEMIZED_V2'
   status: string
   version: number
   created_by: string
@@ -75,6 +76,11 @@ type ClaimLine = {
   claim_id: string
   total_amount: string | number
   evidence_reference: string | null
+}
+
+type ExpenseItemRow = {
+  claim_id: string
+  amount: string | number
 }
 
 type Posting = {
@@ -341,9 +347,8 @@ export default async function Expenses({
   }
 
   // ----------------------------------------------------
-  // Auth identity: used only to decide whether to show
-  // "Bảng kê của tôi". Lack of employee identity is NOT
-  // an error for an operator.
+  // The same database context that authorizes claim creation
+  // decides whether the operator can open self-service.
   // ----------------------------------------------------
 
   const auth = await db.auth.getClaims()
@@ -352,19 +357,14 @@ export default async function Expenses({
       ? auth.data.claims.sub
       : ''
 
-  let hasEmployeeIdentity = false
-
-  if (userId) {
-    const identity = await db
-      .from('employee_directory')
-      .select('id')
-      .eq('profile_id', userId)
-      .limit(1)
-
-    hasEmployeeIdentity =
-      !identity.error &&
-      Boolean(identity.data?.length)
-  }
+  const selfContext = userId
+    ? await db.rpc('get_expense_claim_v2_create_context')
+    : { data: null, error: null }
+  const canSelfClaim = !selfContext.error && Boolean(selfContext.data)
+  const selfContextFailed = Boolean(
+    selfContext.error &&
+    !selfContext.error.message.includes('EXPENSE_ACTIVE_EMPLOYEE_LINK_AND_OWN_PERMISSION_REQUIRED')
+  )
 
   // ----------------------------------------------------
   // Main claim scope
@@ -373,7 +373,7 @@ export default async function Expenses({
   let claimQuery = db
     .from('employee_expense_claims')
     .select(
-      'id,employee_id,branch_id,title,requested_month,currency,status,version,created_by,approved_amount,created_at,reviewed_at,review_reason'
+      'id,employee_id,branch_id,title,requested_month,currency,claim_model,status,version,created_by,approved_amount,created_at,reviewed_at,review_reason'
     )
     .order('created_at', {
       ascending: false,
@@ -498,6 +498,8 @@ export default async function Expenses({
 
   let lines: ClaimLine[] = []
   let linesAvailable = true
+  let items: ExpenseItemRow[] = []
+  let itemsAvailable = true
 
   if (claimIds.length) {
     const result = await db
@@ -513,6 +515,16 @@ export default async function Expenses({
     if (!result.error) {
       lines =
         (result.data || []) as ClaimLine[]
+    }
+
+    const itemResult = await db
+      .from('employee_expense_claim_items_v2')
+      .select('claim_id,amount')
+      .in('claim_id', claimIds)
+
+    itemsAvailable = !itemResult.error
+    if (!itemResult.error) {
+      items = (itemResult.data || []) as ExpenseItemRow[]
     }
   }
 
@@ -593,6 +605,13 @@ export default async function Expenses({
     )
   }
 
+  const itemsByClaim = new Map<string, ExpenseItemRow[]>()
+  for (const item of items) {
+    const current = itemsByClaim.get(item.claim_id) || []
+    current.push(item)
+    itemsByClaim.set(item.claim_id, current)
+  }
+
   const postingByClaim = new Map<
     string,
     Posting
@@ -646,17 +665,17 @@ export default async function Expenses({
     claim => {
       const claimLines =
         linesByClaim.get(claim.id) || []
+      const claimItems = itemsByClaim.get(claim.id) || []
+      const itemized = claim.claim_model === 'ITEMIZED_V2'
+      const requested = itemized
+        ? itemsAvailable
+          ? claimItems.reduce((sum, item) => sum + (amount(item.amount) || 0), 0)
+          : null
+        : linesAvailable
+          ? claimLines.reduce((sum, line) => sum + (amount(line.total_amount) || 0), 0)
+          : null
 
-      const requested = linesAvailable
-        ? claimLines.reduce(
-            (sum, line) =>
-              sum +
-              (amount(line.total_amount) || 0),
-            0
-          )
-        : null
-
-      const evidenceCount = linesAvailable
+      const evidenceCount = !itemized && linesAvailable
         ? claimLines.filter(line =>
             Boolean(
               line.evidence_reference?.trim()
@@ -664,9 +683,9 @@ export default async function Expenses({
           ).length
         : null
 
-      const lineCount = linesAvailable
-        ? claimLines.length
-        : null
+      const lineCount = itemized
+        ? itemsAvailable ? claimItems.length : null
+        : linesAvailable ? claimLines.length : null
 
       const posting = postingsAvailable
         ? postingByClaim.get(claim.id)
@@ -694,7 +713,7 @@ export default async function Expenses({
       }
 
       if (
-        linesAvailable &&
+        !itemized && linesAvailable &&
         lineCount !== null &&
         lineCount > 0 &&
         evidenceCount !== null &&
@@ -880,7 +899,10 @@ export default async function Expenses({
       ? 'Không đọc đủ tên nhân viên.'
       : '',
     !linesAvailable
-      ? 'Không đọc đủ chi tiết tiền/chứng từ; không hiển thị 0 thay cho dữ liệu thiếu.'
+      ? 'Không đọc đủ chi tiết bảng kê cũ; không hiển thị 0 thay cho dữ liệu thiếu.'
+      : '',
+    !itemsAvailable
+      ? 'Không đọc đủ các khoản chi trong bảng kê mới.'
       : '',
     !postingsAvailable
       ? 'Không đọc được trạng thái đưa vào Payroll.'
@@ -923,13 +945,13 @@ export default async function Expenses({
               Điều hành
             </Link>
 
-            {hasEmployeeIdentity && (
+            {canSelfClaim && (
               <Link
                 href="/admin/hr/expenses?view=self"
                 className={styles.button}
                 prefetch={false}
               >
-                Bảng kê của tôi
+                Tạo bảng kê của tôi
               </Link>
             )}
 
@@ -950,6 +972,16 @@ export default async function Expenses({
             </Link>
           </div>
         </header>
+
+        {selfContextFailed ? (
+          <div className={styles.errorNotice}>
+            Không xác nhận được quyền lập bảng kê cá nhân. Hãy tải lại trang trước khi thử tạo hồ sơ.
+          </div>
+        ) : !canSelfClaim && (
+          <div className={styles.notice}>
+            Nhân viên tự lập khoản công tác phí sau khi tài khoản được liên kết với hồ sơ đang làm việc và chuyến công tác được duyệt. Tài khoản quản trị xử lý hồ sơ trong phạm vi được phân quyền. Kiểm tra <Link href="/admin/employees">hồ sơ nhân viên</Link> và <Link href="/admin/employees/attendance">chuyến công tác</Link>.
+          </div>
+        )}
 
         {p.success && (
           <div className={styles.notice}>
@@ -1331,7 +1363,7 @@ export default async function Expenses({
                       <th>Tháng</th>
                       <th>Đề nghị</th>
                       <th>Đã duyệt</th>
-                      <th>Chứng từ</th>
+                      <th>Khoản chi / chứng từ</th>
                       <th>Workflow</th>
                       <th>Tuổi hồ sơ</th>
                       <th>Tác vụ</th>
@@ -1341,9 +1373,17 @@ export default async function Expenses({
                   <tbody>
                     {rows.length ? (
                       rows.map(row => {
-                        const evidence =
-                          row.lineCount === null
-                            ? '—'
+                        const ownDraft =
+                          row.claim.claim_model === 'ITEMIZED_V2' &&
+                          row.claim.created_by === userId &&
+                          ['DRAFT', 'RETURNED'].includes(row.claim.status)
+                        const rowHref = ownDraft
+                          ? `/admin/hr/expenses?view=self&claim=${row.claim.id}`
+                          : href(p, { claim: row.claim.id })
+                        const evidence = row.lineCount === null
+                          ? '—'
+                          : row.claim.claim_model === 'ITEMIZED_V2'
+                            ? `${row.lineCount} khoản chi`
                             : row.lineCount === 0
                               ? 'Chưa có dòng'
                               : `${row.evidenceCount}/${row.lineCount}`
@@ -1379,10 +1419,7 @@ export default async function Expenses({
 
                             <td>
                               <Link
-                                href={href(p, {
-                                  claim:
-                                    row.claim.id,
-                                })}
+                                href={rowHref}
                                 className={
                                   styles.rowAction
                                 }
@@ -1460,16 +1497,13 @@ export default async function Expenses({
 
                             <td>
                               <Link
-                                href={href(p, {
-                                  claim:
-                                    row.claim.id,
-                                })}
+                                href={rowHref}
                                 className={
                                   styles.rowAction
                                 }
                                 prefetch={false}
                               >
-                                Xử lý →
+                                {ownDraft ? 'Xem hồ sơ →' : 'Xử lý →'}
                               </Link>
                             </td>
                           </tr>
@@ -1642,7 +1676,8 @@ export default async function Expenses({
                     REVIEW
                 ------------------------------------------ */}
 
-                {selected.claim.status ===
+                {selected.claim.claim_model === 'ITEMIZED_V2' &&
+                  selected.claim.status ===
                   'SUBMITTED' &&
                   selected.claim.created_by !==
                     userId && (
@@ -1659,7 +1694,7 @@ export default async function Expenses({
                       <input
                         type="hidden"
                         name="action"
-                        value="review"
+                        value="review_v2"
                       />
 
                       <input

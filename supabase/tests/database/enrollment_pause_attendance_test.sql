@@ -127,6 +127,14 @@ values
     '18000000-0000-0000-0000-000000000001',
     'Future Start Student'
   );
+-- Valid mixed-level enrollment prerequisites; preserve the attendance assertions below.
+update public.classes set accepted_from_level_id = '38000000-0000-0000-0000-000000000001', accepted_to_level_id = '38000000-0000-0000-0000-000000000001'
+where branch_id = '18000000-0000-0000-0000-000000000001';
+insert into public.curriculum_subjects(level_id, family_code, code, name, completion_rule)
+values ('38000000-0000-0000-0000-000000000001', 'DIRECT', 'TEST_DIRECT', 'TEST direct assessment', 'DIRECT_ASSESSMENT');
+select public.assign_student_academic_program(id, '28000000-0000-0000-0000-000000000001', '38000000-0000-0000-0000-000000000001', '2026-09-01')
+from public.students where default_branch_id = '18000000-0000-0000-0000-000000000001';
+
 insert into public.enrollments (
   id,
   student_id,

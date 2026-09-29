@@ -1,0 +1,3 @@
+pg_restore: error: could not execute query: ERROR:  must be able to SET ROLE "supabase_admin"
+Command was: ALTER SCHEMA auth OWNER TO supabase_admin;
+

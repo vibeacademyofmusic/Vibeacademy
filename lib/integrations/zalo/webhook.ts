@@ -17,6 +17,7 @@ export const SUPPORTED_ZALO_EVENTS = new Set([
   'user_send_business_card',
   'user_send_file',
   'user_received_message',
+  'user_click_response_button',
   'oa_send_anonymous_text',
   'oa_send_anonymous_image',
   'oa_send_anonymous_file',
@@ -157,6 +158,10 @@ export async function acceptZaloWebhook(input: {
 
   const message = body.message
   let externalEventId: string | null = null
+  const rootMessageId = body.msg_id
+  if (typeof rootMessageId === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(rootMessageId)) {
+    externalEventId = rootMessageId
+  }
   if (message && typeof message === 'object' && !Array.isArray(message)) {
     const msgId = (message as { msg_id?: unknown }).msg_id
     if (typeof msgId === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(msgId)) {

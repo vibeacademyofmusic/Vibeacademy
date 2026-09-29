@@ -5,16 +5,15 @@ const fs = require('node:fs')
 const { harness } = require('./helpers/finance-operations.cjs')
 
 test('NAV: class ops lists live under Học viên, rooms stay in Vận hành', () => {
-  const { navigationGroups, activeNavigationHref } = harness().load('../navigation.ts')
+  const { navigationGroups, activeNavigationHref, trainingTabs } = harness().load('../navigation.ts')
   const ops = navigationGroups.find(g => g.name === 'VẬN HÀNH').items
-  const students = navigationGroups.find(g => g.name === 'HỌC VIÊN').items
-  assert.deepEqual(students.map(i => i.href), ['/admin/students'])
+  assert.equal(ops.some(i => i.href === '/admin/students'), true)
   assert.equal(ops.some(i => i.name === 'Vận hành lớp học'), false)
-  assert.equal(ops.some(i => i.name === 'Phòng học'), true)
+  assert.equal(trainingTabs.some(i => i.href === '/admin/rooms'), true)
   assert.equal(activeNavigationHref('/admin/attendance/abc'), '/admin/students')
   assert.equal(activeNavigationHref('/admin/classes/abc'), '/admin/students')
   assert.equal(activeNavigationHref('/admin/schedule'), '/admin/students')
-  assert.equal(activeNavigationHref('/admin/rooms'), '/admin/rooms')
+  assert.equal(activeNavigationHref('/admin/rooms'), '/admin/students')
   assert.equal(activeNavigationHref('/admin/attendance/retention'), '/admin/students')
 })
 

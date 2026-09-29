@@ -81,7 +81,7 @@ test('verified deposit threshold creates one phone confirmation and one mocked s
   assert.equal(Number(summary.placements), 1)
   assert.equal(Number(summary.phone_jobs), 1)
   assert.equal(Number(summary.receipts), 2)
-  assert.equal(summary.payment_status, 'Đã nhận cọc 50%')
+  assert.equal(summary.payment_status, 'Đã nhận thanh toán 50%')
   let calls = 0
   const sent = sendZaloPhoneTemplate({
     jobId: 'aa920000-0000-4000-8000-000000000081',

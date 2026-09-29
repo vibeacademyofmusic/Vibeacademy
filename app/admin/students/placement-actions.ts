@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { businessDate } from '@/app/admin/_lib/business-date'
 import { createClient } from '@/lib/supabase/server'
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
@@ -13,15 +14,22 @@ async function db() {
   return client
 }
 
-function back(error: { message?: string } | null) {
+function back(error: { message?: string } | null, destination = '/admin/students?tab=waiting') {
   revalidatePath('/admin/students')
+  revalidatePath('/admin/classes')
   redirect(error?.message
     ? `/admin/students?tab=waiting&error=${encodeURIComponent(placementMessage(error.message))}`
-    : '/admin/students?tab=waiting')
+    : destination)
 }
 
 function placementMessage(error: string) {
-  if (error.includes('PLACEMENT_UNAUTHORIZED')) return 'Bạn không có quyền xếp học viên vào ca dạy tại chi nhánh này.'
+  if (error.includes('PLACEMENT_STALE')) return 'Hồ sơ đã thay đổi. Hãy kiểm tra lại thông tin mới trước khi xếp ca.'
+  if (error.includes('PLACEMENT_REQUEST_REUSED')) return 'Yêu cầu đã được dùng cho thao tác khác. Hãy tải lại hồ sơ.'
+  if (error.includes('PLACEMENT_SCHEDULE_UNKNOWN')) return 'Chưa đủ dữ liệu lịch, phòng hoặc phân công giáo viên để kiểm tra xung đột.'
+  if (error.includes('PLACEMENT_STUDENT_CONFLICT')) return 'Học viên đã có lịch học trùng thời gian.'
+  if (error.includes('PLACEMENT_TEACHER_CONFLICT')) return 'Giáo viên có ca dạy trùng thời gian.'
+  if (error.includes('PLACEMENT_ROOM_CONFLICT')) return 'Phòng học đã có lịch trùng thời gian.'
+  if (error.includes('PLACEMENT_UNAUTHORIZED')) return 'Bạn không có quyền xác nhận học viên vào ca dạy tại chi nhánh này.'
   if (error.includes('PLACEMENT_PROGRAM_DENIED')) return 'Ca dạy không cùng chương trình với hồ sơ đăng ký.'
   if (error.includes('PLACEMENT_LEVEL_DENIED')) return 'Ca dạy không nhận trình độ hiện tại của học viên.'
   if (error.includes('PLACEMENT_TEACHER_REQUIRED')) return 'Ca dạy chưa có giáo viên chính hợp lệ.'
@@ -41,7 +49,7 @@ function placementMessage(error: string) {
 export async function matchPlacement(formData: FormData) {
   const client = await db()
   const { error } = await client.rpc('set_student_placement_matching', {
-    p_request: crypto.randomUUID(),
+    p_request: String(formData.get('request_id') || crypto.randomUUID()),
     p_placement: String(formData.get('placement_id') ?? ''),
     p_version: Number(formData.get('version') ?? 0),
   })
@@ -52,20 +60,23 @@ export async function assignPlacement(formData: FormData) {
   const client = await db()
   const start = String(formData.get('start_date') ?? '')
   const { error } = await client.rpc('assign_student_placement', {
-    p_request: crypto.randomUUID(),
+    p_request: String(formData.get('request_id') || crypto.randomUUID()),
     p_placement: String(formData.get('placement_id') ?? ''),
     p_version: Number(formData.get('version') ?? 0),
     p_class: String(formData.get('class_id') ?? ''),
     p_start: datePattern.test(start) ? start : null,
   })
-  back(error)
+  const destination = datePattern.test(start) && start <= businessDate()
+    ? '/admin/students?tab=students'
+    : '/admin/students?tab=students&lifecycle=future'
+  back(error, destination)
 }
 
 export async function changePlacement(formData: FormData) {
   const client = await db()
   const start = String(formData.get('start_date') ?? '')
   const { error } = await client.rpc('change_future_student_placement', {
-    p_request: crypto.randomUUID(),
+    p_request: String(formData.get('request_id') || crypto.randomUUID()),
     p_placement: String(formData.get('placement_id') ?? ''),
     p_version: Number(formData.get('version') ?? 0),
     p_enrollment: String(formData.get('enrollment_id') ?? ''),
@@ -73,13 +84,13 @@ export async function changePlacement(formData: FormData) {
     p_start: datePattern.test(start) ? start : null,
     p_reason: String(formData.get('reason') ?? ''),
   })
-  back(error)
+  back(error, '/admin/students?tab=students&lifecycle=future')
 }
 
 export async function cancelPlacement(formData: FormData) {
   const client = await db()
   const { error } = await client.rpc('cancel_future_student_placement', {
-    p_request: crypto.randomUUID(),
+    p_request: String(formData.get('request_id') || crypto.randomUUID()),
     p_placement: String(formData.get('placement_id') ?? ''),
     p_version: Number(formData.get('version') ?? 0),
     p_enrollment: String(formData.get('enrollment_id') ?? ''),

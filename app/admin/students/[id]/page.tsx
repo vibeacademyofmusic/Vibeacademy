@@ -44,6 +44,7 @@ export default async function EditStudentPage({
       phone,
       email,
       address,
+      declares_over_18,
       admission_date,
       notes,
       status
@@ -54,6 +55,7 @@ export default async function EditStudentPage({
   if (!student) {
     notFound()
   }
+  const { data: intake } = await supabase.from('registration_applications').select('application_code, student_over_18, parent_name, parent_phone, zalo_phone, home_address').eq('linked_student_id', student.id).order('completed_at', { ascending: false }).limit(1).maybeSingle()
   const { data: branches } = await supabase.from('branches').select('id, name, status').order('name')
       return (
         <div className="max-w-6xl">
@@ -119,7 +121,14 @@ export default async function EditStudentPage({
 </div>
 
             </div>
-            <StudentPlacement studentId={student.id} />
+            <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 text-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Thông tin tiếp nhận{intake?.application_code ? ` ${intake.application_code}` : ''}</p>
+              <p className="mt-2">Tuổi: {(student.declares_over_18 ?? intake?.student_over_18) ? 'Trên 18 tuổi' : 'Chưa đánh dấu trên 18 tuổi'}</p>
+              <p>Phụ huynh: {intake?.parent_name || 'Không có'}{intake?.parent_phone ? ` · ${intake.parent_phone}` : ''}</p>
+              <p>Số Zalo: {student.phone || intake?.zalo_phone || 'Chưa có'}</p>
+              <p>Địa chỉ nhà: {student.address || intake?.home_address || 'Chưa có'}</p>
+            </div>
+            <StudentPlacement studentId={student.id} studentCode={student.student_code} />
             <div id="learning"><AcademicPrograms studentId={student.id} /></div>
             </div>
             <div id="shifts"><ClassEnrollments studentId={student.id} /></div>
@@ -137,7 +146,9 @@ export default async function EditStudentPage({
 
       {error && (
         <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
+          {error === 'Academic progress cannot be updated before the scheduled start date'
+            ? 'Hành trình đã được ghi nhận. Kết quả học chỉ được cập nhật từ ngày bắt đầu đã chốt.'
+            : error}
         </div>
       )}
 
@@ -340,21 +351,31 @@ export default async function EditStudentPage({
   )
 }
 
-async function StudentPlacement({ studentId }: { studentId: string }) {
+async function StudentPlacement({ studentId, studentCode }: { studentId: string; studentCode: string }) {
   const db = await createClient()
   const [{ data: applications }, { data: placements }] = await Promise.all([
-    db.from('registration_applications').select('id, application_code, status').eq('linked_student_id', studentId).order('completed_at', { ascending: false }).limit(5),
-    db.from('student_placement_cases').select('id, status, scheduled_start_date, assigned_class_id').eq('student_id', studentId).order('opened_at', { ascending: false }).limit(5),
+    db.from('registration_applications').select('id, application_code, status, curriculum_id, level_id, desired_start_date').eq('linked_student_id', studentId).order('completed_at', { ascending: false }).limit(5),
+    db.from('student_placement_cases').select('id, status, scheduled_start_date, desired_start_date, assigned_class_id, curriculum_id, level_id').eq('student_id', studentId).order('opened_at', { ascending: false }).limit(5),
   ])
   if (!applications?.length && !placements?.length) return null
+  const curriculumIds = [...new Set([...(applications ?? []), ...(placements ?? [])].map(item => item.curriculum_id).filter((id): id is string => Boolean(id)))]
+  const levelIds = [...new Set([...(applications ?? []), ...(placements ?? [])].map(item => item.level_id).filter((id): id is string => Boolean(id)))]
+  const [{ data: curriculums }, { data: levels }] = await Promise.all([
+    curriculumIds.length ? db.from('curriculums').select('id, name').in('id', curriculumIds) : Promise.resolve({ data: [] }),
+    levelIds.length ? db.from('curriculum_levels').select('id, name').in('id', levelIds) : Promise.resolve({ data: [] }),
+  ])
+  const curriculumName = new Map((curriculums ?? []).map(item => [item.id, item.name]))
+  const levelName = new Map((levels ?? []).map(item => [item.id, item.name]))
   const today = businessDate()
+  const waiting = (placements ?? []).some(placement => placement.status === 'UNASSIGNED' || placement.status === 'MATCHING')
   return (
     <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4 text-sm">
-      <h2 className="font-semibold text-gray-950">Đăng ký và ca dạy</h2>
+      <h2 className="font-semibold text-gray-950">Hành trình và ca dạy</h2>
       <ul className="mt-3 space-y-2">
-        {(applications ?? []).map(application => <li key={application.id}>Hồ sơ {application.application_code} · {application.status}</li>)}
-        {(placements ?? []).map(placement => <li key={placement.id}>{placementLabel(placement.status, placement.scheduled_start_date, today)}{placement.scheduled_start_date ? ` · bắt đầu ${placement.scheduled_start_date}` : ''}</li>)}
+        {(placements ?? []).map(placement => <li key={placement.id}>{curriculumName.get(placement.curriculum_id ?? '') || 'Chương trình'} · {levelName.get(placement.level_id ?? '') || 'Trình độ'} · {placementLabel(placement.status, placement.scheduled_start_date, today)}{placement.desired_start_date ? ` · ngày vào ca ${placement.desired_start_date}` : ''}</li>)}
+        {(applications ?? []).map(application => <li key={application.id}>Hồ sơ {application.application_code} · {application.status === 'COMPLETED' ? 'đã hoàn tất đăng ký' : application.status}</li>)}
       </ul>
+      {waiting && <p className="mt-3"><Link className="inline-flex rounded-lg bg-gray-950 px-3 py-2 text-sm font-semibold text-white" href={`/admin/students?tab=waiting&q=${encodeURIComponent(studentCode)}`}>Sắp vào ca dạy</Link></p>}
     </section>
   )
 }

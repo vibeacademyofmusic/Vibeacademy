@@ -66,7 +66,10 @@ function loadDashboard(options = {}) {
     auth: { getClaims: async () => ({ data: { claims: { sub: 'admin' } }, error: null }) },
     rpc: async (name, args) => {
       calls.push({ rpc: name, args })
+      if (failing.has(name)) return { data: null, error: { message: 'query failed' } }
       if (name === 'has_role') return { data: true, error: null }
+      if (name === 'count_current_student_enrollments') return { data: 1, error: null }
+      if (name === 'count_paused_student_enrollments') return { data: (rows.enrollment_pauses ?? []).length, error: null }
       if (name === 'get_financial_management_report') return { data: options.report === undefined ? report() : options.report, error: options.reportError ?? null }
       if (name === 'crm_business_snapshot') return { data: options.crm ?? [
         { metric: 'follow_up_overdue', value: 2 },
@@ -207,7 +210,7 @@ test('zero queues and a failed optional query still render', async () => {
   assert.match(zeroHtml, /Không có hàng đợi đang chờ/)
   assert.match(zeroHtml, />0</)
 
-  const failed = loadDashboard({ failing: ['students'] })
+  const failed = loadDashboard({ failing: ['students', 'count_current_student_enrollments'] })
   const partial = await failed.dashboard.loadExecutiveDashboard(now)
   const failedHtml = renderToStaticMarkup(await failed.page.default())
   assert.equal(partial.students.active, null)

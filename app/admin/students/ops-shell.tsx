@@ -1,8 +1,7 @@
-import Link from 'next/link'
 
 export const studentOpsTabs = [
   { id: 'overview', label: 'Tổng quan' },
-  { id: 'students', label: 'Hồ sơ học viên' },
+  { id: 'students', label: 'Học viên đang hoạt động' },
   { id: 'waiting', label: 'Chờ vào ca dạy' },
   { id: 'teaching-shifts', label: 'Ca dạy' },
   { id: 'schedule', label: 'Lịch học' },
@@ -27,25 +26,23 @@ export function StudentOpsShell({ tab, children }: { tab: StudentOpsTab; childre
   return (
     <div className="min-w-0 space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-950">Học viên</h1>
-        <p className="mt-2 max-w-3xl text-sm text-gray-600">
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--vibe-navy)]">Học viên</h1>
+        <p className="mt-2 max-w-3xl text-sm text-[var(--vibe-muted)]">
           Quản lý hồ sơ, ca dạy, lịch học, điểm danh và quá trình học tập của học viên.
         </p>
       </header>
-      <nav className="flex gap-2 overflow-x-auto pb-1" aria-label="Học viên">
-        {studentOpsTabs.map(item => (
-          <Link
-            key={item.id}
-            prefetch={false}
-            href={studentOpsHref(item.id)}
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${
-              tab === item.id ? 'bg-gray-950 text-white' : 'border border-gray-300 bg-white text-gray-800'
-            }`}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      {(['overview', 'students', 'waiting'] as StudentOpsTab[]).includes(tab) && (
+        <form action="/admin/students" className="flex flex-wrap items-end gap-3">
+          <label className="text-sm font-semibold text-[var(--vibe-navy)]">Danh sách học viên
+            <select name="tab" defaultValue={tab} className="ml-3 rounded-lg border border-[var(--vibe-line)] bg-white px-3 py-2">
+              <option value="overview">Tổng quan học viên</option>
+              <option value="students">Học viên đang hoạt động</option>
+              <option value="waiting">Chờ vào ca dạy</option>
+            </select>
+          </label>
+          <button className="vibe-button" type="submit">Xem</button>
+        </form>
+      )}
       {children}
     </div>
   )

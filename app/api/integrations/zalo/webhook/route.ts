@@ -76,6 +76,30 @@ async function persistZaloWebhook(event: WebhookRecord, serverHeader: string | n
         link_result: typeof applied.data === 'string' ? applied.data : 'unreadable',
       }))
     }
+    const tuitionDelivery = await client.rpc('note_tuition_zalo_delivery', {
+      p_tracking_id: typeof trackingId === 'string' ? trackingId : '',
+      p_message_id: typeof msgId === 'string' ? msgId : '',
+      p_delivery_time: typeof deliveryTime === 'string' ? deliveryTime : '',
+    })
+    if (tuitionDelivery.error) throw new Error('APPLY_FAILED')
+    console.info(JSON.stringify({
+      component: 'zalo_webhook',
+      result: 'tuition_delivery',
+      link_result: typeof tuitionDelivery.data === 'string' ? tuitionDelivery.data : 'unreadable',
+    }))
+  }
+  if (event.eventType === 'user_click_response_button') {
+    const oaId = readZaloWebhookEnv(process.env)?.oaId ?? ''
+    const applied = await client.rpc('apply_tuition_zalo_response', {
+      p_payload: event.payload,
+      p_oa_id: oaId,
+    })
+    if (applied.error) throw new Error('APPLY_FAILED')
+    console.info(JSON.stringify({
+      component: 'zalo_webhook',
+      result: 'tuition_reply',
+      reply_result: typeof applied.data === 'string' ? applied.data : 'unreadable',
+    }))
   }
   return {
     id: row.event_id,

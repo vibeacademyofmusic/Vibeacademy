@@ -53,7 +53,7 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
       </div>
       <section className={styles.warn}>
         <h2>Đối soát tài chính</h2>
-        <p>Hồ sơ đã nhận tiền nhưng chưa tạo học viên nằm ở đây. Hệ thống không tự hoàn tiền. Hủy hồ sơ sau khi đã nhận cọc bị chặn cho đến khi tài chính xử lý.</p>
+        <p>Hồ sơ đã nhận tiền nhưng chưa tạo học viên nằm ở đây. Hệ thống không tự hoàn tiền. Hủy hồ sơ sau khi đã nhận thanh toán bị chặn cho đến khi tài chính xử lý.</p>
         {error ? <p>Chưa kiểm tra được hàng đợi vì danh sách hồ sơ lỗi.</p> : review.length === 0 ? <p>Không có hồ sơ đang chờ đối soát.</p> : <ul>{review.map(row => <li key={row.id}><Link href={`/admin/business/registrations/${row.id}`}>{row.application_code}</Link> · {row.student_name}</li>)}</ul>}
       </section>
     </RecruitmentShell>

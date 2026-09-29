@@ -175,6 +175,15 @@ type QrVerification = {
 }
 
 
+type Employee = { id: string; employee_code: string; full_name: string }
+type Unit = { code: string; name: string; branch_id: string | null }
+type Request = { id: string; work_date: string; shift_code: string; proposed_status: string; reason: string; maker: string; created_at: string; schedule_snapshot: { scheduled_minutes: number } }
+type Trip = { id: string; starts_on: string; ends_on: string; origin_unit: string; destination_unit: string; reason: string }
+type Policy = { unit_code: string; employee_group: string | null; employee_id: string | null; starts_on: string; ends_on: string; paid_minutes: number; reason: string; actor: string; created_at: string }
+type History = { id: string; work_date: string; shift_code: string; revision: number; status: string; entry_kind: string; reason: string; actor: string; checker: string; created_at: string }
+type Review = { request_id: string; decision: string; checker: string; created_at: string; reason: string }
+type TripReview = { trip_id: string; decision: string; checker: string }
+
 export type AttendanceDataResult = {
   month: string
   from: string
@@ -183,21 +192,21 @@ export type AttendanceDataResult = {
   personNames:
     Record<string, string>
 
-  employees: any[]
-  units: any[]
+  employees: Employee[]
+  units: Unit[]
 
   schedule: Shift[]
 
   entries:
     AttendanceEntry[]
 
-  requests: any[]
-  trips: any[]
-  policies: any[]
-  history: any[]
+  requests: Request[]
+  trips: Trip[]
+  policies: Policy[]
+  history: History[]
 
-  reviews: any[]
-  tripReviews: any[]
+  reviews: Review[]
+  tripReviews: TripReview[]
 }
 
 
@@ -500,10 +509,10 @@ export async function attendanceData(
 
 
   const employees =
-    result[0].data || []
+    (result[0].data || []) as unknown as Employee[]
 
   const units =
-    result[1].data || []
+    (result[1].data || []) as unknown as Unit[]
 
   const schedule =
     (
@@ -514,16 +523,16 @@ export async function attendanceData(
     (result[3].data || []) as unknown as AttendanceEntryRow[]
 
   const requests =
-    result[4].data || []
+    (result[4].data || []) as unknown as Request[]
 
   const trips =
-    result[5].data || []
+    (result[5].data || []) as unknown as Trip[]
 
   const policies =
-    result[6].data || []
+    (result[6].data || []) as unknown as Policy[]
 
   const history =
-    result[7].data || []
+    (result[7].data || []) as unknown as History[]
 
   const qrRows: QrVerification[] =
     (result[8].data || []) as unknown as QrVerification[]
@@ -579,7 +588,7 @@ export async function attendanceData(
 
               requests.map(
                 (
-                  request: any,
+                  request,
                 ) =>
                   request.id,
               ),
@@ -605,7 +614,7 @@ export async function attendanceData(
 
               trips.map(
                 (
-                  trip: any,
+                  trip,
                 ) =>
                   trip.id,
               ),
@@ -632,10 +641,10 @@ export async function attendanceData(
 
 
   const reviews =
-    reviewResults[0].data || []
+    (reviewResults[0].data || []) as unknown as Review[]
 
   const tripReviews =
-    reviewResults[1].data || []
+    (reviewResults[1].data || []) as unknown as TripReview[]
 
 
   const personIds =
@@ -645,7 +654,7 @@ export async function attendanceData(
 
           ...requests.map(
             (
-              request: any,
+              request,
             ) =>
               request.maker,
           ),
@@ -653,7 +662,7 @@ export async function attendanceData(
 
           ...history.flatMap(
             (
-              item: any,
+              item,
             ) => [
               item.actor,
               item.checker,
@@ -663,7 +672,7 @@ export async function attendanceData(
 
           ...policies.map(
             (
-              policy: any,
+              policy,
             ) =>
               policy.actor,
           ),
@@ -671,7 +680,7 @@ export async function attendanceData(
 
           ...reviews.map(
             (
-              review: any,
+              review,
             ) =>
               review.checker,
           ),

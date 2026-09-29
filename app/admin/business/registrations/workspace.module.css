@@ -131,6 +131,10 @@
   font-weight: 500;
 }
 .field textarea, .card textarea { min-height: 76px; resize: vertical; }
+.headingRow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.check { display: flex; align-items: flex-start; gap: 8px; color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.4; }
+.check input { width: auto; margin-top: 3px; }
+.hint { color: var(--muted); font-size: 13px; font-weight: 500; }
 
 .tableWrap { width: 100%; overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: white; }
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }

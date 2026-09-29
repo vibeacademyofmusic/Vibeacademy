@@ -5,6 +5,7 @@ const {dispatch,mockProvider}=mod.exports
 const job={id:'job',channel:'EMAIL',delivery_mode:'MOCK',idempotency_key:'stable',lease_token:'lease',recipient_id:'user',payload:{title:'Hello',href:'/'}}
 function queue(j=job){const calls=[];return {calls,claim:async()=>j,complete:async(...args)=>calls.push(args)}}
 test('unconfigured provider fails closed without SENT',async()=>{const q=queue();assert.equal(await dispatch(q,'job',{}),'FAILED');assert.equal(q.calls[0][2],null);assert.equal(q.calls[0][3],'PROVIDER_NOT_CONFIGURED')})
+test('Zalo channel fails closed with typed outbound code',async()=>{const q=queue({...job,channel:'ZALO',delivery_mode:'LIVE'});assert.equal(await dispatch(q,'job',{}),'FAILED');assert.equal(q.calls[0][2],null);assert.equal(q.calls[0][3],'ZALO_OUTBOUND_NOT_CONFIGURED')})
 test('mock confirms success with stable idempotency receipt',async()=>{const p=mockProvider();assert.deepEqual(await p.send(job),await p.send(job));const q=queue();assert.equal(await dispatch(q,'job',{EMAIL:p}),'SENT');assert.equal(q.calls[0][2],'mock:stable')})
 test('mock refuses live job',async()=>{const q=queue({...job,delivery_mode:'LIVE'});assert.equal(await dispatch(q,'job',{EMAIL:mockProvider()}),'FAILED')})
 test('provider failure is sanitized',async()=>{const q=queue();await dispatch(q,'job',{EMAIL:{send:async()=>{throw Error('SECRET-ADDRESS')}}});assert.equal(q.calls[0][3],'PROVIDER_REJECTED');assert.doesNotMatch(JSON.stringify(q.calls),/SECRET/)})

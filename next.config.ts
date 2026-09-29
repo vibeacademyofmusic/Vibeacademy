@@ -15,6 +15,7 @@ function localDevOrigin() {
 const devOrigin = localDevOrigin()
 
 const nextConfig: NextConfig = {
+  logging: { incomingRequests: { ignore: [/\/api\/integrations\/zalo\/oauth\/callback/] } },
   ...(devOrigin ? { allowedDevOrigins: [devOrigin] } : {}),
   async redirects() {
     return [

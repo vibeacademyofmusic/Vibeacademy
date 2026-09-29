@@ -19,12 +19,12 @@ export async function loadClassOps(db: DB, params: Params, view: OpsView) {
   const page = pageNumber(params.page)
   const date = /^\d{4}-\d{2}-\d{2}$/.test(params.date ?? '') ? params.date! : todayVietnam()
 
-  const compatibility = loadScopeWarnings(db, branch)
+  const compatibility = view === 'classes' || view === 'overview' ? loadScopeWarnings(db, branch) : Promise.resolve({ byClass: new Map<string, Set<string>>(), affectedClasses: [], studentCount: 0 })
   const [branches, courses, overview, classes, schedules, rooms, sessions, sessionDiag] = await Promise.all([
     db.from('branches').select('id,name,status').eq('status', 'ACTIVE').order('name').limit(200),
-    db.from('courses').select('id,name,code,curriculum_id,level_id,status').eq('status', 'ACTIVE').order('name').limit(200),
-    loadOverview(db, branch, compatibility),
-    view === 'classes' || view === 'overview' ? loadClasses(db, { branch, page, q: params.q }, compatibility) : Promise.resolve(null),
+    view === 'classes' ? db.from('courses').select('id,name,code,curriculum_id,level_id,status').eq('status', 'ACTIVE').order('name').limit(200) : Promise.resolve({ data: [] }),
+    view === 'overview' ? loadOverview(db, branch, compatibility) : Promise.resolve(null),
+    view === 'classes' ? loadClasses(db, { branch, page, q: params.q }, compatibility) : Promise.resolve(null),
     view === 'schedule' ? loadSchedules(db, { branch, page }) : Promise.resolve(null),
     view === 'rooms' ? loadRooms(db, { branch, page }) : Promise.resolve(null),
     view === 'attendance' ? loadAttendanceSessions(db, { branch, date, page, classId: params.class }) : Promise.resolve(null),
@@ -261,7 +261,7 @@ async function diagnoseAttendanceDay(db: DB, opts: { branch: string | null; date
   if (opts.branch) scheduleQ = scheduleQ.eq('classes.branch_id', opts.branch)
   const { count: activeSchedules } = await scheduleQ
 
-  let sessionQ = db.from('session_occurrences').select('id', { count: 'exact', head: true }).eq('occurrence_date', opts.date).neq('status', 'CANCELLED')
+  const sessionQ = db.from('session_occurrences').select('id', { count: 'exact', head: true }).eq('occurrence_date', opts.date).neq('status', 'CANCELLED')
   const { count: sessions } = await sessionQ
 
   return {

@@ -42,7 +42,7 @@ export default async function TeacherAssignmentCenter({ searchParams }: { search
   } catch {
     return (
       <AppPage>
-        <PageHeader title="Phân công giáo viên" description="Điều phối giáo viên theo lịch dạy, theo dõi giáo viên thực tế và xử lý các trường hợp cần can thiệp." />
+        <PageHeader title="Phân công nhân viên" description="Phân công giáo viên theo buổi dạy, theo dõi giáo viên thực tế và dạy thay. Trang này dành cho phân công giảng dạy, chưa hỗ trợ phân công công việc hành chính." />
         <div className="vibe-metrics">
           <MetricCard title="Cần phân công" value="—" />
           <MetricCard title="Đang giảng dạy" value="—" />
@@ -185,7 +185,7 @@ export default async function TeacherAssignmentCenter({ searchParams }: { search
 
   return (
     <AppPage>
-      <PageHeader title="Phân công giáo viên" description="Điều phối giáo viên theo lịch dạy, theo dõi giáo viên thực tế và xử lý các trường hợp cần can thiệp." />
+      <PageHeader title="Phân công nhân viên" description="Phân công giáo viên theo buổi dạy, theo dõi giáo viên thực tế và dạy thay. Trang này dành cho phân công giảng dạy, chưa hỗ trợ phân công công việc hành chính." />
       <div className="vibe-metrics">
         <MetricCard title="Cần phân công" value={counts ? counts.needed : '—'} />
         <MetricCard title="Đang giảng dạy" value={counts ? counts.active : '—'} />

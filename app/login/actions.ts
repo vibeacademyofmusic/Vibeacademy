@@ -23,6 +23,13 @@ export async function login(formData: FormData) {
     redirect('/login?error=Invalid%20email%20or%20password')
   }
 
+  const next = String(formData.get('next') ?? '')
+  // Only known local academic destinations; authorization runs again at the destination.
+  if (/^\/my-learning\/(?:reports\/[0-9a-f-]{36}\/pdf|conversations\/(?:report|feedback)\/[0-9a-f-]{36})$/i.test(next)) {
+    revalidatePath('/', 'layout')
+    redirect(next)
+  }
+
   // Kiểm tra đây có phải SUPER_ADMIN không
   const { data: isSuperAdmin, error: roleError } = await supabase.rpc(
     'has_role',

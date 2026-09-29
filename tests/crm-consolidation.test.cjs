@@ -13,8 +13,11 @@ test('legacy CRM redirect preserves repeated parameters, search and lifecycle ta
  assert.equal(parsed.searchParams.get('q'),'Nguyễn')
  assert.equal(parsed.searchParams.get('page'),'2')
 })
-test('CRM filter retains workspace and counter explicitly selects academic subject',()=>{
+test('CRM filter retains workspace and counter intake does not require a subject',()=>{
  assert.match(fs.readFileSync('app/admin/business/crm/CrmContent.tsx','utf8'),/name="workspace" value="crm"/)
- assert.match(fs.readFileSync('app/admin/business/registrations/new/CounterForm.tsx','utf8'),/name="subject_id" required/)
- assert.match(fs.readFileSync('app/admin/business/registrations/actions.ts','utf8'),/p_subject: subjectId/)
+ const form = fs.readFileSync('app/admin/business/registrations/new/CounterForm.tsx','utf8')
+ assert.match(form,/name="curriculum_id" required/)
+ assert.match(form,/name="level_id" required/)
+ assert.doesNotMatch(form,/name="subject_id"/)
+ assert.match(fs.readFileSync('app/admin/business/registrations/actions.ts','utf8'),/p_subject: uuidPattern\.test\(subject\) \? subject : null/)
 })

@@ -4,6 +4,7 @@ const { spawnSync } = require('node:child_process')
 // a renamed or removed test must fail the release gate instead of disappearing.
 const applicationTests = [
   'tests/registration-zalo-consent.test.cjs',
+  'tests/counter-intake.test.cjs',
   'tests/momo-signature.test.mjs',
   'tests/payos-hardening.test.mjs',
   'tests/payos-registration.test.mjs',
@@ -23,6 +24,7 @@ const databaseTests = [
   'supabase/tests/database/registration_momo_deposit_test.sql',
   'supabase/tests/database/registration_payos_test.sql',
   'supabase/tests/database/registration_zalo_consent_lifecycle_test.sql',
+  'supabase/tests/database/counter_intake_test.sql',
   'supabase/tests/database/zalo_channel_recovery_test.sql',
   'supabase/tests/database/zalo_durable_recovery_test.sql',
   'supabase/tests/database/zalo_template_readiness_test.sql',

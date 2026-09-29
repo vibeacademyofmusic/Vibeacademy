@@ -37,6 +37,7 @@ const registrationEvents: Record<string, string> = {
   COMPLETED: 'Hoàn tất đăng ký',
   REGISTRATION_COMPLETED: 'Hoàn tất đăng ký',
   PLACEMENT_OPENED: 'Mở chờ xếp lớp',
+  INTAKE_UPDATED: 'Cập nhật thông tin tiếp nhận',
   ENROLLMENT_CREATED: 'Tạo ghi danh',
   CANCELLED: 'Hủy hồ sơ',
 }
@@ -48,6 +49,10 @@ export function registrationEventLabel(eventType: string) {
 export function staffFacingError(code: string | undefined) {
   if (!code) return null
   if (code === 'REGISTRATION_STALE') return 'Hồ sơ đã được cập nhật. Vui lòng kiểm tra thông tin mới trước khi tiếp tục.'
+  if (code === 'ADDRESS_REQUIRED') return 'Địa chỉ nhà không được để trống hoặc chỉ gồm khoảng trắng.'
+  if (code === 'PHONE_INVALID') return 'Số điện thoại không hợp lệ. Chỉ dùng chữ số và phải là số Việt Nam.'
+  if (code === 'PARENT_REQUIRED') return 'Học viên chưa trên 18 tuổi thì cần thông tin phụ huynh.'
+  if (code === 'REGISTRATION_AGE_MISMATCH') return 'Ngày sinh không khớp ô Trên 18 tuổi. Trên 18 tuổi nghĩa là đã qua ngày sinh nhật thứ 18 theo giờ Việt Nam, không tính đúng ngày sinh nhật.'
   if (/^[A-Z0-9_]+$/.test(code)) return 'Thao tác chưa hoàn tất. Kiểm tra lại thông tin trên hồ sơ trước khi tiếp tục.'
   return code
 }

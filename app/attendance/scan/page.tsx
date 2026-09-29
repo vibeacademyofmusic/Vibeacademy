@@ -163,7 +163,7 @@ export default async function AttendanceScanPage({
     )
   }
 
-  const result = data as any
+  const result = data as { event_type?: string; employee_name?: string; employee_code?: string; shift_code?: string; scanned_at?: string } | null
 
   const checkIn =
     result?.event_type

@@ -1,8 +1,9 @@
 import { InlineNotice, SectionCard } from '@/app/admin/_components/vibe'
 import { recordRegistrationZaloPhoneConsent } from './actions'
 
-export type ConsentEntry = { id: string; phone: string; at: string; actor: string | null; source: string; method: string | null; revokedAt: string | null; revokedBy: string | null }
+export type ConsentEntry = { id: string; phone: string; at: string; actor: string | null; source: string; method: string | null; consenter: string | null; revokedAt: string | null; revokedBy: string | null }
 const methods: Record<string, string> = { IN_PERSON: 'Trao đổi trực tiếp', PHONE: 'Cuộc gọi', WRITTEN: 'Văn bản / tin nhắn' }
+const consenters: Record<string, string> = { STUDENT: 'Học viên', PARENT: 'Phụ huynh' }
 const time = (value: string) => new Date(value).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })
 
 export function ConsentPanel({ applicationId, allowed, error, history }: { applicationId: string; allowed: boolean; error: boolean; history: ConsentEntry[] }) {
@@ -27,7 +28,7 @@ export function ConsentPanel({ applicationId, allowed, error, history }: { appli
         <label className="flex items-start gap-2 text-sm"><input type="checkbox" name="phone_consent" value="yes" required />Phụ huynh yêu cầu rút đồng ý cho {active.phone}. Tin đã chuyển tới Zalo không thể thu hồi bằng thao tác này.</label>
         <button className="vibe-button" type="submit">Ghi nhận rút đồng ý</button>
       </form>}
-      {!!history.length && <details className="mt-4 text-sm"><summary>Lịch sử đồng ý và rút đồng ý</summary><ul className="mt-2 grid gap-2">{history.map(item => <li key={item.id}>{item.phone} · {time(item.at)} · Người ghi nhận: {item.actor ?? 'Chưa ghi nhận'} · {item.source === 'REGISTRATION_FORM' ? 'Form đăng ký' : 'Tại hồ sơ'} · {methods[item.method ?? ''] ?? 'Chưa ghi nguồn xác nhận'}{item.revokedAt && <p>Hết hiệu lực: {time(item.revokedAt)} · Người ghi nhận: {item.revokedBy ?? 'Chưa ghi nhận'}</p>}</li>)}</ul></details>}
+      {!!history.length && <details className="mt-4 text-sm"><summary>Lịch sử đồng ý và rút đồng ý</summary><ul className="mt-2 grid gap-2">{history.map(item => <li key={item.id}>{item.phone} · {time(item.at)} · Người đồng ý: {consenters[item.consenter ?? ''] ?? 'Chưa ghi'} · Người ghi nhận: {item.actor ?? 'Chưa ghi nhận'} · {item.source === 'REGISTRATION_FORM' ? 'Đăng ký tại quầy' : 'Tại hồ sơ'} · {methods[item.method ?? ''] ?? 'Chưa ghi nguồn xác nhận'}{item.revokedAt && <p>Hết hiệu lực: {time(item.revokedAt)} · Người ghi nhận: {item.revokedBy ?? 'Chưa ghi nhận'}</p>}</li>)}</ul></details>}
     </>}
   </SectionCard>
 }

@@ -305,6 +305,21 @@ export async function enrollStudent(
       )
     }
 
+    const { data: compatibility } = await supabase.rpc('class_enrollment_compatibility', {
+      p_class: classId,
+      p_student: studentId,
+    })
+    if (compatibility && compatibility !== 'IN_SCOPE') {
+      const messages: Record<string, string> = {
+        OUTSIDE_SCOPE: 'Học viên ngoài phạm vi trình độ của lớp',
+        WRONG_PROGRAM: 'Học viên không có chương trình Academic đúng curriculum của lớp',
+        ACADEMIC_PROGRAM_MISSING: 'Học viên chưa có chương trình Academic đang hoạt động',
+        CURRENT_LEVEL_MISSING: 'Học viên chưa có trình độ hiện tại trên chương trình Academic',
+        CLASS_SCOPE_UNCONFIGURED: 'Lớp chưa cấu hình phạm vi trình độ; không thể ghi danh mới',
+      }
+      redirect(`/admin/classes/${classId}?error=` + encodeURIComponent(messages[String(compatibility)] || String(compatibility)))
+    }
+
     const { data: student } = await supabase
       .from('students')
       .select('id, status')
