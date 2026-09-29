@@ -10,10 +10,18 @@ function load(file) {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText
   const loaded = { exports: {} }
-  const localRequire = (id) => id === './app-secret-proof' ? proofModule : require(id)
+  const localRequire = (id) => id === './app-secret-proof' ? proofModule : id === './pilot-outbound' ? pilotModule : require(id)
   new Function('module', 'exports', 'require', transpiled)(loaded, loaded.exports, localRequire)
   return loaded.exports
 }
+const pilotModule = (() => {
+  const transpiled = ts.transpileModule(fs.readFileSync('lib/integrations/zalo/pilot-outbound.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText
+  const loaded = { exports: {} }
+  new Function('module', 'exports', 'require', transpiled)(loaded, loaded.exports, require)
+  return loaded.exports
+})()
 const proofModule = load('lib/integrations/zalo/app-secret-proof.ts')
 const { sendZaloTemplateMessage, zaloOutboundReadiness, zaloOneJobAllows, ZALO_TEMPLATE_PARAMETERS } = load('lib/integrations/zalo/readiness.ts')
 
@@ -58,6 +66,7 @@ function mockTransport(responses) {
 }
 
 const enabled = {
+  ZALO_PILOT_OUTBOUND: 'enabled',
   ZALO_TEMPLATE_SEND_ENABLED: 'true',
   ZALO_OA_ACCESS_TOKEN: 'access',
   ZALO_OA_REFRESH_TOKEN: 'refresh',

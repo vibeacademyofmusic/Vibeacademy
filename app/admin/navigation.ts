@@ -3,7 +3,6 @@ import { isAfterSalesPath, isMarketingPath } from './business/workspaces'
 export const trainingTabs: { name: string; href: string; studentTab?: string }[] = [
   { name: 'Học viên', href: '/admin/students' },
   { name: 'Chương trình học', href: '/admin/programs' },
-  { name: 'Khóa học', href: '/admin/programs?view=courses' },
   { name: 'Ca dạy', href: '/admin/classes', studentTab: 'teaching-shifts' },
   { name: 'Lịch học', href: '/admin/schedule', studentTab: 'schedule' },
   { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },
@@ -175,9 +174,7 @@ export function activeWorkspaceTab(pathname: string, view?: string | null, tab?:
     const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }
     return aliases[tab || ''] || '/admin/students'
   }
-  if (pathname === '/admin/programs') return view === 'courses' ? '/admin/programs?view=courses' : '/admin/programs'
-  if (inRoute(pathname, '/admin/academic')) return '/admin/programs'
-  if (inRoute(pathname, '/admin/courses')) return '/admin/programs?view=courses'
+  if (pathname === '/admin/programs' || inRoute(pathname, '/admin/academic') || inRoute(pathname, '/admin/courses')) return '/admin/programs'
   if (inRoute(pathname, '/admin/rooms')) return '/admin/rooms'
   if (inRoute(pathname, '/admin/students')) return '/admin/students'
   return activeTab(pathname, [...trainingTabs, ...systemTabs])

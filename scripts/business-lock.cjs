@@ -12,6 +12,7 @@ const applicationTests = [
   'tests/zalo-admin-ui.test.cjs',
   'tests/zalo-durable-recovery.test.cjs',
   'tests/zalo-phone-registration.test.cjs',
+  'tests/zalo-pilot-outbound.test.cjs',
   'tests/zalo-recovery-controls.test.cjs',
   'tests/zalo-registration-recovery-action.test.cjs',
   'tests/zalo-template-readiness.test.cjs',

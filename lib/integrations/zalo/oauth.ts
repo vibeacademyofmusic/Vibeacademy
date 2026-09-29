@@ -1,5 +1,6 @@
 import 'server-only';
 import { verifyZaloToken } from './connection';
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound';
 import { randomUUID } from 'node:crypto';
 import { renewalSettings } from './renewal-settings';
 export type ZaloAdmin = {
@@ -79,6 +80,7 @@ export async function getZaloCredential(admin: ZaloAdmin, env: NodeJS.ProcessEnv
         }
         return fail('ZALO_REFRESH_BUSY');
     }
+    if (zaloPilotOutboundBlocked(env)) return fail(ZALO_PILOT_OUTBOUND_DISABLED);
     if (env.ZALO_CREDENTIAL_OWNER !== 'main') return fail('ZALO_OWNERSHIP_UNCONFIRMED');
     if (!env.ZALO_APP_SECRET?.trim())
         return fail('ZALO_OUTBOUND_NOT_CONFIGURED');

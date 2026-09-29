@@ -1,5 +1,6 @@
 import { DEFINITIVE_PHONE_REJECTIONS, phoneErrorCode } from './errors'
 import { zaloAccessHeaders } from './app-secret-proof'
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound'
 import { ZALO_TEMPLATE_ID, ZALO_TEMPLATE_PARAMETERS, ZALO_REGISTRATION_PAYMENT_STATUS, type ZaloTransport } from './readiness'
 
 export const ZALO_PHONE_TEMPLATE_URL = 'https://business.openapi.zalo.me/message/template'
@@ -29,7 +30,7 @@ export type PhoneTemplateRequest = {
 }
 
 export type PhoneSendResult = { httpStatus?: number; providerError?: number; errorCode?: string } & (
-  | { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' | 'RECIPIENT_INELIGIBLE' | 'ZALO_TOKEN_INVALID' | 'ZALO_PROOF_INVALID' | 'PROVIDER_REJECTED' | 'AMBIGUOUS' }
+  | { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' | 'ZALO_PILOT_OUTBOUND_DISABLED' | 'RECIPIENT_INELIGIBLE' | 'ZALO_TOKEN_INVALID' | 'ZALO_PROOF_INVALID' | 'PROVIDER_REJECTED' | 'AMBIGUOUS' }
   | { state: 'ACCEPTED'; messageId: string; delivered: false; duplicate: boolean }
 )
 
@@ -49,6 +50,7 @@ export async function sendZaloPhoneTemplate(
   const parameters = Object.fromEntries(ZALO_TEMPLATE_PARAMETERS.map(key => [key, message.parameters[key] ?? '']))
   const blocker = phoneRequestBlocker(message, env)
   if (blocker) return { state: blocker }
+  if (zaloPilotOutboundBlocked(env)) return { state: ZALO_PILOT_OUTBOUND_DISABLED }
   if (!transport) return { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' }
   const token = env.ZALO_OA_ACCESS_TOKEN!.trim()
   const appSecret = env.ZALO_APP_SECRET!.trim()

@@ -1,9 +1,11 @@
 import 'server-only';
 import { zaloAccessHeaders } from './app-secret-proof';
 import { phoneErrorCode, oaErrorCode } from './errors';
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound';
 import { ZALO_TEMPLATE_ID } from './readiness';
 // Read-only identity + template checks. Response bodies never leave this module.
 export async function verifyZaloToken(token: string, env: NodeJS.ProcessEnv = process.env, request: typeof fetch = fetch): Promise<string> {
+    if (zaloPilotOutboundBlocked(env)) return ZALO_PILOT_OUTBOUND_DISABLED
     if (!token || !env.ZALO_APP_SECRET || !env.ZALO_OA_ID)
         return 'ZALO_OUTBOUND_NOT_CONFIGURED';
     try {

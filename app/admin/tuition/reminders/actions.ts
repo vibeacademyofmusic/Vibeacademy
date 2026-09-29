@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient, uuidPattern } from '../../finance/operations'
 import { sendZaloTemplateMessage } from '@/lib/integrations/zalo/outbound'
+import { ZALO_PILOT_OUTBOUND_DISABLED } from '@/lib/integrations/zalo/pilot-outbound'
 import { TUITION_TEMPLATE_KEY } from '@/lib/integrations/zalo/tuition-notice'
 import { loadTuitionNotice } from './notice'
 
@@ -42,7 +43,7 @@ export async function confirmTuitionZalo(form: FormData) {
   })
   const send = opened.data as { send_id?: string; tracking_id?: string } | null
   if (opened.error || !send?.send_id || !send.tracking_id) return back('Không tạo được lần gửi. Phản hồi vẫn là chưa phản hồi.')
-  await sendZaloTemplateMessage({
+  const sent = await sendZaloTemplateMessage({
     providerUserId: '',
     templateId: '',
     parameters: notice.parameters,
@@ -51,7 +52,7 @@ export async function confirmTuitionZalo(form: FormData) {
   const recorded = await db.rpc('finish_tuition_zalo_send', {
     p_send: send.send_id,
     p_outcome: 'ERROR',
-    p_error: 'PROVIDER_NOT_CONFIGURED',
+    p_error: sent.state === ZALO_PILOT_OUTBOUND_DISABLED ? ZALO_PILOT_OUTBOUND_DISABLED : 'PROVIDER_NOT_CONFIGURED',
     p_receipt: null,
     p_message_id: null,
   })

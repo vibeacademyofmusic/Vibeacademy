@@ -1,4 +1,5 @@
 import { zaloAccessHeaders } from './app-secret-proof'
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound'
 
 // Gated Zalo template sender. The default path never opens a network call.
 
@@ -69,7 +70,7 @@ const INVALID_TOKEN_ERRORS = new Set([-216, -220])
 export type ZaloTransport = (url: string, init: { method: 'POST'; headers: Record<string, string>; body: string }) => Promise<{ status?: number; json: () => Promise<unknown> }>
 
 type ZaloSendResult =
-  | { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' }
+  | { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' | 'ZALO_PILOT_OUTBOUND_DISABLED' }
   | { state: 'ZALO_ONE_JOB_DENIED' }
   | { state: 'RECIPIENT_INELIGIBLE' }
   | { state: 'ZALO_TOKEN_EXPIRED' | 'ZALO_TOKEN_INVALID' | 'ZALO_PROOF_INVALID' }
@@ -103,6 +104,7 @@ export async function sendZaloTemplateMessage(
     return { state: 'RECIPIENT_INELIGIBLE' }
   }
   if (message.acceptedMessageId) return { state: 'ACCEPTED', messageId: message.acceptedMessageId, delivered: false, duplicate: true }
+  if (zaloPilotOutboundBlocked(env)) return { state: ZALO_PILOT_OUTBOUND_DISABLED }
   if (!transport) return { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' }
   const response = await transport(ZBS_UID_TEMPLATE_URL, {
     method: 'POST',

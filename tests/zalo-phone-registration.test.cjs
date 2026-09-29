@@ -14,14 +14,15 @@ function load(file, localRequire) {
 }
 
 const proof = load('lib/integrations/zalo/app-secret-proof.ts', require)
-const readiness = load('lib/integrations/zalo/readiness.ts', (id) => id === './app-secret-proof' ? proof : require(id))
+const pilot = load('lib/integrations/zalo/pilot-outbound.ts', require)
+const readiness = load('lib/integrations/zalo/readiness.ts', (id) => id === './app-secret-proof' ? proof : id === './pilot-outbound' ? pilot : require(id))
 const errors = load('lib/integrations/zalo/errors.ts', require)
-const phone = load('lib/integrations/zalo/phone.ts', (id) => id === './errors' ? errors : id === './readiness' ? readiness : id === './app-secret-proof' ? proof : require(id))
+const phone = load('lib/integrations/zalo/phone.ts', (id) => id === './errors' ? errors : id === './readiness' ? readiness : id === './app-secret-proof' ? proof : id === './pilot-outbound' ? pilot : require(id))
 const oauth = { getZaloCredential: async () => ({app_id:'123456789',oa_id:'987654321',access_token:process.env.ZALO_OA_ACCESS_TOKEN ?? 'mock',version:1}), blockCredential:async()=>{}, connectionError:()=> 'ZALO_CREDENTIAL_STORE_UNAVAILABLE' }
-const dispatch = load('lib/integrations/zalo/preview-dispatch.ts', (id) => id === 'server-only' ? {} : id === './oauth' ? oauth : id === './readiness' ? readiness : id === './phone' ? phone : require(id))
+const dispatch = load('lib/integrations/zalo/preview-dispatch.ts', (id) => id === 'server-only' ? {} : id === './oauth' ? oauth : id === './readiness' ? readiness : id === './phone' ? phone : id === './pilot-outbound' ? pilot : require(id))
 const { normalizeVnPhone, maskVnPhone, sendZaloPhoneTemplate, ZALO_PHONE_TEMPLATE_URL } = phone
 const { zaloAppSecretProof } = proof
-const phoneEnv = { ZALO_OA_ACCESS_TOKEN: 'token', ZALO_APP_SECRET: 'app-secret' }
+const phoneEnv = { ZALO_OA_ACCESS_TOKEN: 'token', ZALO_APP_SECRET: 'app-secret', ZALO_PILOT_OUTBOUND: 'enabled', ZALO_TEMPLATE_SEND_ENABLED: 'true' }
 function expectedProof(token = 'token', secret = 'app-secret') {
   return crypto.createHmac('sha256', secret).update(token).digest('hex')
 }
@@ -91,7 +92,7 @@ test('phone rejection, OA-only error, and timeout stay distinct', async () => {
 test('unarmed gate and a failed claim make no provider call', async () => {
   let calls = 0
   const transport = async () => { calls += 1; return { json: async () => ({ error: 0, data: { msg_id: 'x' } }) } }
-  const unarmed = await dispatchPreviewRegistrationZalo({ rpc: async () => ({ data: [{ decision: 'NOT_ARMED' }], error: null }) }, 1, transport)
+  const unarmed = await dispatchPreviewRegistrationZalo({ rpc: async () => ({ data: [{ decision: 'NOT_ARMED' }], error: null }) }, 1, transport, phoneEnv)
   assert.equal(unarmed, 'NOT_ARMED')
   const claimed = await dispatchPreviewRegistrationZalo({
     rpc: async (fn) => fn === 'preview_zalo_dispatch_decision'
@@ -105,6 +106,7 @@ test('unarmed gate and a failed claim make no provider call', async () => {
 test('one claimed phone job records acceptance and a timeout is not retried', async () => {
   process.env.ZALO_OA_ACCESS_TOKEN = 'test-token'
   process.env.ZALO_APP_SECRET = 'test-app-secret'
+  process.env.ZALO_PILOT_OUTBOUND = 'enabled'
   const calls = []
   const rpcLog = []
   const admin = {
@@ -131,6 +133,7 @@ test('one claimed phone job records acceptance and a timeout is not retried', as
   assert.equal(calls.length, 1)
   delete process.env.ZALO_OA_ACCESS_TOKEN
   delete process.env.ZALO_APP_SECRET
+  delete process.env.ZALO_PILOT_OUTBOUND
 })
 
 
@@ -142,8 +145,8 @@ test('unknown provider responses stay ambiguous', async () => {
 })
 
 test('dispatcher records safe provider codes and reports database failure', async () => {
-  const old = {token:process.env.ZALO_OA_ACCESS_TOKEN,secret:process.env.ZALO_APP_SECRET}
-  process.env.ZALO_OA_ACCESS_TOKEN='test'; process.env.ZALO_APP_SECRET='test'
+  const old = {token:process.env.ZALO_OA_ACCESS_TOKEN,secret:process.env.ZALO_APP_SECRET,pilot:process.env.ZALO_PILOT_OUTBOUND}
+  process.env.ZALO_OA_ACCESS_TOKEN='test'; process.env.ZALO_APP_SECRET='test'; process.env.ZALO_PILOT_OUTBOUND='enabled'
   try {
     for (const [error,expected] of [[-124,'ZALO_TOKEN_INVALID'],[-117,'ZALO_PROVIDER_-117'],[-132,'ZALO_PROVIDER_-132']]) {
       let saved
@@ -164,5 +167,6 @@ test('dispatcher records safe provider codes and reports database failure', asyn
   } finally {
     if(old.token===undefined)delete process.env.ZALO_OA_ACCESS_TOKEN;else process.env.ZALO_OA_ACCESS_TOKEN=old.token
     if(old.secret===undefined)delete process.env.ZALO_APP_SECRET;else process.env.ZALO_APP_SECRET=old.secret
+    if(old.pilot===undefined)delete process.env.ZALO_PILOT_OUTBOUND;else process.env.ZALO_PILOT_OUTBOUND=old.pilot
   }
 })

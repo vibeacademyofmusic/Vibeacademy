@@ -22,7 +22,7 @@ export default function ClassCreateLevelFields({
   return (
     <>
       <label className="vibe-field">
-        <span>Khóa học</span>
+        <span>Liên kết khóa học cũ</span>
         <select name="course_id" required value={courseId} onChange={e => setCourseId(e.target.value)}>
           <option value="">Chọn khóa học</option>
           {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}

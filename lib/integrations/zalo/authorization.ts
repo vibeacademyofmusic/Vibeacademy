@@ -1,6 +1,7 @@
 import 'server-only'
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { credentialCommand, readCredential, identity, getZaloCredential, blockCredential, ZaloConnectionError, type ZaloAdmin } from './oauth'
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound'
 import { renewalSettings } from './renewal-settings'
 
 export const CALLBACK_PATH = '/api/integrations/zalo/oauth/callback'
@@ -24,6 +25,7 @@ export async function startAuthorization(admin: ZaloAdmin, userId: string, env: 
   return { url: url.toString(), state }
 }
 export async function finishAuthorization(admin: ZaloAdmin, userId: string, input: { state: string; cookieState: string; code: string; oaId: string }, env: NodeJS.ProcessEnv = process.env, request: typeof fetch = fetch) {
+  if (zaloPilotOutboundBlocked(env)) throw new ZaloConnectionError(ZALO_PILOT_OUTBOUND_DISABLED)
   const ids = identity(env)
   if (env.ZALO_CREDENTIAL_OWNER !== 'main') throw new ZaloConnectionError('ZALO_OWNERSHIP_UNCONFIRMED')
   if (!/^[A-Za-z0-9_-]{43}$/.test(input.state) || input.state !== input.cookieState || input.oaId !== ids.p_oa || !input.code || input.code.length > 4096) throw new ZaloConnectionError('ZALO_OAUTH_INVALID')

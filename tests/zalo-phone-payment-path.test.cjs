@@ -14,9 +14,10 @@ function load(file, localRequire) {
 }
 
 const proof = load('lib/integrations/zalo/app-secret-proof.ts', require)
-const readiness = load('lib/integrations/zalo/readiness.ts', (id) => id === './app-secret-proof' ? proof : require(id))
+const pilot = load('lib/integrations/zalo/pilot-outbound.ts', require)
+const readiness = load('lib/integrations/zalo/readiness.ts', (id) => id === './app-secret-proof' ? proof : id === './pilot-outbound' ? pilot : require(id))
 const errors = load('lib/integrations/zalo/errors.ts', require)
-const phone = load('lib/integrations/zalo/phone.ts', (id) => id === './errors' ? errors : id === './readiness' ? readiness : id === './app-secret-proof' ? proof : require(id))
+const phone = load('lib/integrations/zalo/phone.ts', (id) => id === './errors' ? errors : id === './readiness' ? readiness : id === './app-secret-proof' ? proof : id === './pilot-outbound' ? pilot : require(id))
 const { sendZaloPhoneTemplate, ZALO_PHONE_TEMPLATE_URL } = phone
 
 const sql = `
@@ -58,7 +59,7 @@ select json_build_object(
   'students', (select count(*) from students where full_name = 'Phone Path Synthetic 880925'),
   'placements', (select count(*) from student_placement_cases where registration_application_id = 'aa920000-0000-4000-8000-000000000051' and status = 'UNASSIGNED'),
   'phone_jobs', (select count(*) from notification_jobs where entity_id = 'aa920000-0000-4000-8000-000000000051' and payload->'delivery'->>'channel' = 'PHONE'),
-  'receipts', (select count(*) from payments where reference in ('PAYOS:ref-partial', 'PAYOS:ref-final')),
+  'receipts', (select count(*) from payments where reference in ('PAYOS:ref-partial', 'PAYOS:ref-final') and xmin::text = txid_current()::text),
   'payment_status', (select payload->'parameters'->>'payment_status' from notification_jobs where entity_id = 'aa920000-0000-4000-8000-000000000051' and payload->'delivery'->>'channel' = 'PHONE')
 ) as summary;
 rollback;
@@ -99,7 +100,7 @@ test('verified deposit threshold creates one phone confirmation and one mocked s
     trackingId: 'aa920000000040008000000000000081',
     registrationCompleted: true,
     allowlisted: true,
-  }, { ZALO_OA_ACCESS_TOKEN: 'mock-token', ZALO_APP_SECRET: 'mock-app-secret' }, async (url, init) => {
+  }, { ZALO_OA_ACCESS_TOKEN: 'mock-token', ZALO_APP_SECRET: 'mock-app-secret', ZALO_PILOT_OUTBOUND: 'enabled', ZALO_TEMPLATE_SEND_ENABLED: 'true' }, async (url, init) => {
     calls += 1
     assert.equal(url, ZALO_PHONE_TEMPLATE_URL)
     assert.equal(init.headers.access_token, 'mock-token')

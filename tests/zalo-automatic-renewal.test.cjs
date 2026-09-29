@@ -9,7 +9,7 @@ function loader() {
  }
 }
 const load=loader(), manager=load('lib/integrations/zalo/oauth.ts'), auth=load('lib/integrations/zalo/authorization.ts'), {maintainZaloCredentials}=load('lib/integrations/zalo/maintenance.ts')
-const env={ZALO_APP_ID:'123456789',ZALO_OA_ID:'987654321',ZALO_APP_SECRET:'synthetic-app-secret',ZALO_OA_ACCESS_TOKEN:'old-env',ZALO_OA_REFRESH_TOKEN:'old-env-refresh',ZALO_CREDENTIAL_OWNER:'main',ZALO_TOKEN_RENEWAL_ENABLED:'true',ZALO_OAUTH_REDIRECT_URI:'http://localhost:3000/api/integrations/zalo/oauth/callback'}
+const env={ZALO_PILOT_OUTBOUND:'enabled',ZALO_APP_ID:'123456789',ZALO_OA_ID:'987654321',ZALO_APP_SECRET:'synthetic-app-secret',ZALO_OA_ACCESS_TOKEN:'old-env',ZALO_OA_REFRESH_TOKEN:'old-env-refresh',ZALO_CREDENTIAL_OWNER:'main',ZALO_TOKEN_RENEWAL_ENABLED:'true',ZALO_OAUTH_REDIRECT_URI:'http://localhost:3000/api/integrations/zalo/oauth/callback'}
 function store(now) {
  const db={c:{app_id:env.ZALO_APP_ID,oa_id:env.ZALO_OA_ID,version:1,state:'READY',access_token:'access-1',refresh_token:'refresh-1',expires_at:new Date(now+1000).toISOString()},states:new Map(),health:null}
  db.rpc=async(fn,a)=>{

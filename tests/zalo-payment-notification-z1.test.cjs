@@ -16,8 +16,9 @@ function load(file) {
   return compiled.exports
 }
 
-const outbound = load(path.join(root, 'lib/integrations/zalo/outbound.ts'))
-const worker = load(path.join(root, 'lib/notifications/worker.ts'))
+const loadTs = require('./helpers/zalo-module-loader.cjs')()
+const outbound = loadTs(path.join(root, 'lib/integrations/zalo/outbound.ts'))
+const worker = loadTs(path.join(root, 'lib/notifications/worker.ts'))
 const migration = fs.readFileSync('supabase/migrations/20260923170000_zalo_payment_notification_z1.sql', 'utf8')
 const workerSource = fs.readFileSync('lib/notifications/worker.ts', 'utf8')
 const outboundSource = fs.readFileSync('lib/integrations/zalo/outbound.ts', 'utf8')
@@ -62,7 +63,7 @@ test('Z1-APP05 provider disabled never reports SENT', async () => {
     parameters: {},
     idempotencyKey: 'k',
   })
-  assert.equal(result.state, 'ZALO_OUTBOUND_NOT_CONFIGURED')
+  assert.equal(result.state, 'ZALO_PILOT_OUTBOUND_DISABLED')
   const job = {
     id: 'job',
     channel: 'ZALO',
@@ -79,7 +80,7 @@ test('Z1-APP05 provider disabled never reports SENT', async () => {
   }
   assert.equal(await worker.dispatch(queue, 'job', {}), 'FAILED')
   assert.equal(calls[0][2], null)
-  assert.equal(calls[0][3], 'ZALO_OUTBOUND_NOT_CONFIGURED')
+  assert.equal(calls[0][3], 'ZALO_PILOT_OUTBOUND_DISABLED')
 })
 
 test('Z1-APP06 no phone matching in recipient resolution', () => {

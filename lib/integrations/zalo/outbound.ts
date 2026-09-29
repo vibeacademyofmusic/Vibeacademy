@@ -1,3 +1,5 @@
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound'
+
 // Disabled Zalo outbound adapter. Never opens a network call and never reports SENT.
 
 export const ZALO_OUTBOUND_STATE = 'ZALO_OUTBOUND_NOT_CONFIGURED' as const
@@ -12,7 +14,7 @@ export type ZaloTemplateMessage = {
   idempotencyKey: string
 }
 
-export type ZaloTemplateResult = { state: typeof ZALO_OUTBOUND_STATE }
+export type ZaloTemplateResult = { state: typeof ZALO_OUTBOUND_STATE | typeof ZALO_PILOT_OUTBOUND_DISABLED }
 
 export function zaloTemplateIsSendable(template: {
   provider_template_id: string | null
@@ -28,6 +30,7 @@ export function zaloTemplateIsSendable(template: {
 }
 
 export async function sendZaloTemplateMessage(_message: ZaloTemplateMessage): Promise<ZaloTemplateResult> {
+  if (zaloPilotOutboundBlocked()) return { state: ZALO_PILOT_OUTBOUND_DISABLED }
   return { state: ZALO_OUTBOUND_STATE }
 }
 

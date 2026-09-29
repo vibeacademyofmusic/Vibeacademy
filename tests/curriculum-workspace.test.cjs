@@ -57,10 +57,10 @@ test('lesson breadcrumb includes the assessment group only when it is academic',
 })
 
 test('linked courses stay outside the academic tree', () => {
-  assert.match(programPage, /Khóa học liên kết/)
+  assert.match(programPage, /Hồ sơ khóa học cũ/)
   assert.match(programPage, /course\.curriculumId === program\.id/)
-  assert.match(programPage, /Khóa học là đơn vị vận hành/)
-  const levelRows = programPage.slice(programPage.indexOf('title="Cấp độ"'), programPage.indexOf('Khóa học liên kết'))
+  assert.match(programPage, /Đây là dữ liệu cũ/)
+  const levelRows = programPage.slice(programPage.indexOf('title="Cấp độ"'), programPage.indexOf('Hồ sơ khóa học cũ'))
   assert.doesNotMatch(levelRows, /course\.name/)
 })
 

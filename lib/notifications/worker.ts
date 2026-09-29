@@ -1,3 +1,5 @@
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from '../integrations/zalo/pilot-outbound'
+
 export type Job = { id: string; channel: 'EMAIL' | 'ZALO' | 'IN_APP'; delivery_mode: 'LIVE' | 'MOCK'; idempotency_key: string; lease_token: string; recipient_id: string; payload: { title: string; href: string } }
 export type Receipt = { confirmed: true; receipt: string }
 export interface Provider { send(job: Job): Promise<Receipt> }
@@ -16,7 +18,7 @@ export async function dispatch(queue: Queue, id: string, providers: Partial<Reco
   const job = await queue.claim(id)
   if (!job) return 'NOT_CLAIMED'
   if (job.channel === 'ZALO') {
-    await queue.complete(job.id, job.lease_token, null, 'ZALO_OUTBOUND_NOT_CONFIGURED')
+    await queue.complete(job.id, job.lease_token, null, zaloPilotOutboundBlocked() ? ZALO_PILOT_OUTBOUND_DISABLED : 'ZALO_OUTBOUND_NOT_CONFIGURED')
     return 'FAILED'
   }
   const provider = providers[job.channel]

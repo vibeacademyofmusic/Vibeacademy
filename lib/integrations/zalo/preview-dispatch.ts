@@ -1,5 +1,6 @@
 import 'server-only';
 import { sendZaloPhoneTemplate, phoneRequestBlocker } from './phone';
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from './pilot-outbound';
 import { ZALO_TEMPLATE_ID, type ZaloTransport } from './readiness';
 import { getZaloCredential, blockCredential, connectionError, type ZaloAdmin } from './oauth';
 type Decision = {
@@ -18,6 +19,7 @@ type Claim = {
     parameters: Record<string, string>;
 };
 export async function dispatchPreviewRegistrationZalo(admin: ZaloAdmin, orderCode: number, transport?: ZaloTransport, env: NodeJS.ProcessEnv = process.env, tokenRequest: typeof fetch = fetch, recovery?: { jobId: string; expectedAttempts: number }) {
+    if (zaloPilotOutboundBlocked(env)) return ZALO_PILOT_OUTBOUND_DISABLED
     try {
         const { data, error } = await admin.rpc('preview_zalo_dispatch_decision', { p_order_code: orderCode });
         const row = (Array.isArray(data) ? data[0] : data) as Decision | null;
@@ -84,6 +86,7 @@ export async function dispatchPreviewRegistrationZalo(admin: ZaloAdmin, orderCod
     }
 }
 const fetchTransport: ZaloTransport = async (url, init) => {
+    if (zaloPilotOutboundBlocked()) throw new Error(ZALO_PILOT_OUTBOUND_DISABLED)
     const response = await fetch(url, { ...init, cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(15000) });
     return { status: response.status, json: () => response.json() };
 };

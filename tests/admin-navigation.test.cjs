@@ -166,7 +166,7 @@ test('payroll retains its back link without a second cross-module navigation bar
   assert.deepEqual(n.navigationGroups.find(g => g.name === 'VẬN HÀNH').items.map(i => i.name), ['Đào tạo', 'Tổng quan tài chính', 'Học phí & Thanh toán', 'Số dư khách hàng', 'Chi phí vận hành'])
   assert.deepEqual(n.navigationGroups.find(g => g.name === 'HỆ THỐNG').items.map(i => i.name), ['Kho sách và vật tư', 'Nhạc cụ theo serial', 'Hệ thống'])
   for (const route of ['/admin/programs','/admin/academic/id','/admin/courses/id','/admin/classes/id','/admin/rooms','/admin/attendance/retention','/admin/reports/learning/id']) assert.equal(n.activeNavigationHref(route), '/admin/students')
-  assert.equal(n.activeWorkspaceTab('/admin/programs','courses'), '/admin/programs?view=courses')
+  assert.equal(n.activeWorkspaceTab('/admin/programs','courses'), '/admin/programs')
   assert.equal(n.activeWorkspaceTab('/admin/academic/id'), '/admin/programs')
   assert.equal(n.activeWorkspaceTab('/admin/attendance/retention'), '/admin/attendance/retention')
   assert.equal(n.activeWorkspaceTab('/admin/rooms'), '/admin/rooms')

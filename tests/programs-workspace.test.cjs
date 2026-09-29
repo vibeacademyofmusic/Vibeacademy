@@ -52,7 +52,7 @@ test('H04 counts stay secondary to the hierarchy path', () => {
 
 test('H05 breadcrumb order is workspace program level subject lesson', () => {
   const trail = fs.readFileSync('app/admin/programs/trail.tsx', 'utf8')
-  assert.match(trail, /Chương trình và khóa học/)
+  assert.match(trail, /Chương trình học/)
   assert.match(lesson, /curriculum\.name/)
   assert.match(lesson, /level\.name/)
   assert.match(lesson, /subject\.name/)
@@ -78,7 +78,7 @@ test('N01 N02 N03 N04 curriculum stays one workspace under Đào tạo', () => {
   assert.equal(activeNavigationHref('/admin/academic/program/levels/level'), '/admin/students')
   assert.equal(activeWorkspaceTab('/admin/academic/program/levels/level'), '/admin/programs')
   assert.equal(activeNavigationHref('/admin/courses/course/edit'), '/admin/students')
-  assert.equal(activeWorkspaceTab('/admin/courses/course/edit'), '/admin/programs?view=courses')
+  assert.equal(activeWorkspaceTab('/admin/courses/course/edit'), '/admin/programs')
   assert.ok(fs.existsSync('app/admin/programs/page.tsx'))
   assert.ok(fs.existsSync('app/admin/academic/[id]/page.tsx'))
   assert.ok(fs.existsSync('app/admin/courses/[id]/edit/page.tsx'))

@@ -2,8 +2,6 @@ import Link from 'next/link'
 
 import { AppPage, DataTable, EmptyState, FilterBar, FormField, InlineNotice, MetricCard, PageHeader, SectionCard, SelectField, StatusBadge } from '@/app/admin/_components/vibe'
 import { createCurriculum, setCurriculumStatus } from '@/app/admin/academic/actions'
-import { createCourse, deleteCourse, setCourseStatus } from '@/app/admin/courses/actions'
-import DeleteCourseButton from '@/app/admin/courses/delete-course-button'
 
 import { loadWorkspace, type CourseView, type ProgramView } from './data'
 import { statusLabel, statusTone } from './model'
@@ -57,11 +55,9 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
   return (
     <AppPage>
       <PageHeader
-        title="Chương trình và khóa học"
-        description="Quản lý cấu trúc chương trình đào tạo và các khóa học đang vận hành."
-        actions={view === 'programs'
-          ? <a href="#create-program" className="vibe-button-primary">+ Tạo chương trình</a>
-          : <a href="#create-course" className="vibe-button-primary">+ Tạo khóa học</a>}
+        title="Chương trình học"
+        description="Lộ trình là Chương trình, Trình độ, Môn học, Bài học. Ca dạy là lớp, không gán thêm khóa học."
+        actions={<a href="#create-program" className="vibe-button-primary">+ Tạo chương trình</a>}
       />
       {filters.error && <InlineNotice tone="error">{filters.error}</InlineNotice>}
       {filters.success && <InlineNotice>{filters.success}</InlineNotice>}
@@ -112,6 +108,8 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
           <ProgramPanel program={selectedProgram} />
         </div>
       ) : (
+        <>
+        <InlineNotice>Hồ sơ khóa học cũ được giữ để đối chiếu. Không tạo khóa học mới từ màn hình này.</InlineNotice>
         <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
           {courses.length === 0 ? <EmptyState>{workspace.courses.length === 0 ? 'Chưa có khóa học.' : 'Không có khóa học phù hợp bộ lọc.'}</EmptyState> : (
             <DataTable
@@ -121,8 +119,9 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
           )}
           <CoursePanel course={selectedCourse} />
         </div>
+        </>
       )}
-      {view === 'programs' ? <ProgramCreate /> : <CourseCreate programs={workspace.programs} />}
+      {view === 'programs' ? <ProgramCreate /> : null}
     </AppPage>
   )
 }
@@ -178,7 +177,7 @@ function ProgramPanel({ program }: { program?: ProgramView }) {
 }
 
 function CoursePanel({ course }: { course?: CourseView }) {
-  if (!course) return <SectionCard title="Khóa học"><p className="text-sm text-gray-500">Chọn một khóa học để xem vận hành.</p></SectionCard>
+  if (!course) return <SectionCard title="Khóa học cũ"><p className="text-sm text-gray-500">Chọn một hồ sơ cũ để xem. Không gán khóa học cho lộ trình mới.</p></SectionCard>
   return (
     <SectionCard title={course.name}>
       <dl className="grid gap-2 text-sm">
@@ -189,18 +188,7 @@ function CoursePanel({ course }: { course?: CourseView }) {
         <div><dt className="text-gray-500">Chi nhánh của lớp</dt><dd>{course.branches.length ? course.branches.join(', ') : '—'}</dd></div>
         <div><dt className="text-gray-500">Lớp / học viên</dt><dd>{course.classCount} lớp · {course.enrollmentCount} học viên</dd></div>
       </dl>
-      <div className="mt-4 flex flex-col gap-2">
-        <Link className="vibe-button-primary" href={`/admin/courses/${course.id}/edit`}>Chỉnh sửa</Link>
-        <form action={setCourseStatus}>
-          <input type="hidden" name="id" value={course.id} />
-          <input type="hidden" name="status" value={course.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
-          <button className="vibe-button" type="submit">{course.status === 'ACTIVE' ? 'Ngừng hoạt động' : 'Kích hoạt'}</button>
-        </form>
-        <form action={deleteCourse}>
-          <input type="hidden" name="id" value={course.id} />
-          <DeleteCourseButton courseName={course.name} />
-        </form>
-      </div>
+      <p className="mt-4 text-sm text-gray-500">Dữ liệu này được giữ nguyên. Lớp mới vẫn đọc liên kết cũ cho đến khi có quyết định chuyển schema.</p>
     </SectionCard>
   )
 }
@@ -218,23 +206,3 @@ function ProgramCreate() {
   )
 }
 
-function CourseCreate({ programs }: { programs: ProgramView[] }) {
-  return (
-    <SectionCard title="Tạo khóa học">
-      <form id="create-course" action={createCourse} className="grid gap-3 md:grid-cols-2">
-        <SelectField label="Chương trình" name="curriculum_id" required defaultValue="">
-          <option value="" disabled>Chọn chương trình</option>
-          {programs.filter(program => program.status === 'ACTIVE').map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
-        </SelectField>
-        <SelectField label="Cấp độ liên kết" name="level_id" defaultValue="">
-          <option value="">Không gắn cấp độ cụ thể</option>
-          {programs.flatMap(program => program.levels.map(level => <option key={level.id} value={level.id}>{program.name} · {level.name}</option>))}
-        </SelectField>
-        <FormField label="Mã khóa học" name="code" required maxLength={50} placeholder="GUITAR_G1" />
-        <FormField label="Tên khóa học" name="name" required placeholder="Guitar Grade 1" />
-        <label className="vibe-field md:col-span-2"><span>Mô tả</span><textarea name="description" rows={3} /></label>
-        <button className="vibe-button-primary" type="submit">Tạo khóa học</button>
-      </form>
-    </SectionCard>
-  )
-}

@@ -5,7 +5,7 @@ const {getZaloCredential,readCredential,credentialCommand}=load('lib/integration
 const {sendZaloPhoneTemplate}=load('lib/integrations/zalo/phone.ts')
 const {dispatchPreviewRegistrationZalo}=load('lib/integrations/zalo/preview-dispatch.ts')
 const {verifyZaloToken}=load('lib/integrations/zalo/connection.ts')
-const env={ZALO_CREDENTIAL_OWNER:'main',ZALO_APP_ID:'123456789',ZALO_OA_ID:'987654321',ZALO_APP_SECRET:'app-secret',ZALO_OA_ACCESS_TOKEN:'stale-env',ZALO_OA_REFRESH_TOKEN:'stale-refresh'}
+const env={ZALO_PILOT_OUTBOUND:'enabled',ZALO_TEMPLATE_SEND_ENABLED:'true',ZALO_CREDENTIAL_OWNER:'main',ZALO_APP_ID:'123456789',ZALO_OA_ID:'987654321',ZALO_APP_SECRET:'app-secret',ZALO_OA_ACCESS_TOKEN:'stale-env',ZALO_OA_REFRESH_TOKEN:'stale-refresh'}
 const ready=()=>({app_id:env.ZALO_APP_ID,oa_id:env.ZALO_OA_ID,access_token:'access1',refresh_token:'refresh1',expires_at:new Date(Date.now()+9000000).toISOString(),state:'READY',version:1,operation_id:null})
 const json=(body,status=200)=>({ok:status>=200&&status<300,status,json:async()=>body})
 const provider=async(url)=>url.includes('/access_token')?json({access_token:'access2',refresh_token:'refresh2',expires_in:'90000'}):url.includes('/getoa')?json({error:0,data:{oa_id:env.ZALO_OA_ID}}):json({error:0,data:{}})

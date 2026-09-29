@@ -1,39 +1,82 @@
 # Đánh giá sẵn sàng pilot — 29/09/2026
 
-Ứng viên: `df989b1257e89779149b354d4c39540b4b31455f` trên `codex/release-candidate-lint`.
-Pull request: https://github.com/vibeacademyofmusic/Vibeacademy/pull/3 (chưa merge).
+Nhánh: `codex/release-candidate-lint`. Pull request: https://github.com/vibeacademyofmusic/Vibeacademy/pull/3 (chưa merge).
+
+Commit xuất phát: `3dde64c0dfb4041ca920f5fb21ff16bc8b70496f`.
+Commit hoàn tất phần mã và bằng chứng này: ghi ở dòng “Commit cuối” phía dưới sau khi commit được tạo. Trước commit, cây làm việc đứng trên `3dde64c`.
 
 ## Quyết định
 
-**NO-GO** cho pilot có kiểm soát, kể cả pilot giới hạn trên staging hoặc dữ liệu học viên thật.
+**NO-GO.** Chưa bắt đầu pilot.
 
-Phạm vi đã chứng minh chỉ là kiểm thử tổng hợp trên database trống của GitHub Actions và bản sao local. Chưa có phiên đăng nhập, chưa có nâng cấp an toàn từ snapshot cũ, và đường gửi Zalo đăng ký chưa bị khóa cứng.
+Đã khóa đường gọi Zalo phía máy chủ khi không phải production, đã nâng một bản sao của snapshot qua toàn bộ migration còn thiếu mà không xóa học viên, payment hay trao đổi, và đã bỏ tạo khóa học mới. Vẫn thiếu phiên đăng nhập, ánh xạ preview sang database, và hai câu nghiệp vụ chưa chốt. Kiểm thử tổng hợp không phải pilot trên dữ liệu thật.
 
-Pilot dùng dữ liệu thật và bài kiểm thử dữ liệu tổng hợp là hai việc khác nhau. Báo cáo này không cho phép bắt đầu pilot.
+## Zalo — khóa gửi phía máy chủ
 
-## Triển khai Vercel của PR này
+Trước: `sendZaloPhoneTemplate`, gửi UID, `dispatchPreviewRegistrationZalo`, gia hạn token, đổi mã OAuth và `verifyZaloToken` vẫn gọi transport khi có credential và mẫu bật. Worker hàng đợi không gọi mạng nhưng ghi `ZALO_OUTBOUND_NOT_CONFIGURED`.
 
-Ba deployment do PR tạo đều là **Preview**, commit `df989b1`, không có bản ghi Production mới.
+Sau: `lib/integrations/zalo/pilot-outbound.ts`. Provider bị chặn khi `ZALO_PILOT_OUTBOUND=disabled`, hoặc khi biến đó không phải `enabled` và `VERCEL_ENV` khác `production`. Production giữ cổng cũ nếu không đặt biến mới và `VERCEL_ENV=production`. Không đổi cấu hình production.
 
-| Dự án | Môi trường GitHub | Kết quả | URL deployment |
-|---|---|---|---|
-| vibeacademy | Preview | thành công | `https://vibeacademy-ridi96bby-vibeacademyofmusic.vercel.app` |
-| vibeacademy-staging | Preview | thành công | `https://vibeacademy-staging-fv88z2xye-vibeacademyofmusic.vercel.app` |
-| hooks-preview-relay | Preview | thất bại | `https://hooks-preview-relay-572piz76b-vibeacademyofmusic.vercel.app` |
+Khi bị chặn, hàm trả `ZALO_PILOT_OUTBOUND_DISABLED`, không gọi transport, không ghi delivered. Nhắc học phí vẫn kết thúc `ERROR`, mã lỗi là mã khóa này, không phải `SENT`. Dispatch trả về trước khi claim. Gia hạn token và đổi authorization code không chạy.
 
-Ba URL preview yêu cầu đăng nhập SSO Vercel. Không đọc được biến môi trường hay mã dự án Supabase gắn với chúng. **Not verified** cho database của từng preview.
+`tests/zalo-pilot-outbound.test.cjs` chứng minh số lần gọi transport bằng 0 khi mẫu bật và credential có mặt, kể cả `VERCEL_ENV=production` cộng `ZALO_PILOT_OUTBOUND=disabled`, và khi biến pilot không đặt. Một ca `VERCEL_ENV=production` không đặt biến pilot vẫn đi qua mock transport đúng một lần và `delivered` vẫn là false.
 
-Môi trường Production mới nhất vẫn là 15/09/2026, SHA `770b81855609`, URL `https://vibeacademy-8ify44gfv-vibeacademyofmusic.vercel.app`. Alias công khai `https://vibeacademy-pink.vercel.app/login` vẫn trả trang đăng nhập của ứng dụng. Header không cho biết deployment id. Việc alias này còn trỏ đúng SHA 15/09 là **Not verified** ở mức tên miền, nhưng PR này không tạo deployment Production.
+## Nâng cấp `20260928200000`
 
-`hooks-preview-relay` không có trong repository này. Preview của nó thất bại. Lần Production của dự án đó ngày 25/09 cũng thất bại. Nó không phục vụ ứng dụng học viện. Một push mới, theo mẫu các commit gần đây, sẽ tạo thêm ba preview cho ba dự án trên. Mẫu đó không thay deployment Production ngày 15/09. Không promote, không rollback, không đổi cấu hình.
+Snapshot `vibe_pilot_restore_20260928_032001` không bị sửa. Trước và sau lượt này: 9 học viên, 2 payment, 2 `learning_conversations`, 16 tin nhắn, ledger không có `20260928200000`.
 
-Mã Supabase production `qhznfywwrhmcwbkujclm` và staging `owpfqwdrmyzcmjahehek` là định danh đã ghi trong tài liệu và liên kết CLI local. Không đọc lại được từ env của deployment Vercel trong lượt này.
+Ledger snapshot dừng ở `20260928190000` nhưng bỏ qua `20260928080000` và `20260928090000`. Bảng `learning_conversations` đã có đủ cột, ràng buộc, chỉ mục duy nhất `(kind, entity_id, source_version)`, RLS bật, không có policy, `anon` và `authenticated` không có quyền bảng. Bốn hàm trao đổi và ba mẫu `PENDING`/`enabled=false` đã có. Thân `learning_conversation_write` trùng database làm việc. Schema đi trước sổ migration vì SQL đã được chạy mà không ghi `schema_migrations`.
 
-## Nâng cấp schema
+Không đánh dấu mù, không `DROP`, không thêm `IF NOT EXISTS` vào file migration. `scripts/reconcile-academic-family-communications.sql` chỉ ghi ledger khi đối chiếu cột, ràng buộc, RLS, quyền và hàm khớp. Đã chạy trên bản sao `vibe_upgrade_20260929`, không chạy trên snapshot.
 
-Snapshot `vibe_pilot_restore_20260928_032001` có ledger tối đa `20260928190000`, 9 học viên và 2 payment. Đã sao chép sang `vibe_upgrade_gate` rồi áp các migration còn thiếu. Dừng ở `20260928200000_academic_family_communications.sql`: bảng `learning_conversations` đã tồn tại dù ledger chưa có phiên bản đó. Snapshot và sổ migration không khớp. Bản sao nâng cấp dở đã bị xóa. Snapshot gốc vẫn còn 9 học viên. Database `postgres` đang dùng không bị reset.
+`20260928201000` cũng đã có hàm và trigger khớp file. `attendance_roster_read(uuid)` đã có đúng thân và quyền (`authenticated` được execute, `anon`/`public`/`service_role` không). Hai phiên bản đó được ghi ledger trên bản sao sau đối chiếu, không chạy lại `CREATE`.
 
-CI `regression` trên SHA này đã áp migration từ database trống và chạy bộ SQL business-lock. Đó là bằng chứng cài đặt mới, không phải bằng chứng nâng cấp dữ liệu cũ.
+`20260928090000` đã có bảng `zalo_connection_checks` đúng cột. File gốc dùng `IF NOT EXISTS` nên lần chạy trên bản sao bỏ qua `CREATE TABLE` sau khi cột đã được đối chiếu, rồi thay hàm.
+
+Phần migration còn lại chạy được trên bản sao đến `20260929201000`. Sau nâng cấp: vẫn 9 học viên, 2 payment, 2 hội thoại, 16 tin. ACL hai bảng trao đổi không đổi: `{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}`.
+
+Cài đặt sạch của riêng file `20260928200000`: bản sao `vibe_clean_conversation_20260929` được xóa hai bảng trao đổi và bốn hàm để file gặp schema chưa có chúng. File chạy hết. Học viên vẫn 9, payment vẫn 2, hội thoại mới bằng 0 vì bản sao này cố ý bỏ dữ liệu trao đổi cũ để `CREATE TABLE` chạy được. `anon` và `authenticated` không được `SELECT`. `authenticated` được execute hàm ghi. Đây không phải đường giữ dữ liệu. Đường giữ dữ liệu là bản sao nâng cấp ở trên.
+
+Hai database tạm đã được xóa sau khi lấy số liệu. Snapshot gốc còn nguyên.
+
+Cài đặt sạch toàn bộ chuỗi migration vẫn là `supabase db reset` trong job `regression` trên runner trống. Kết quả CI của commit này ghi ở cuối sau khi push.
+
+## Khóa học
+
+Luật đã duyệt: Chương trình → Trình độ → Môn học → Bài học. Ca dạy là lớp. Không hỏi duyệt lại.
+
+Đã bỏ tab “Khóa học”. `createCourse` không còn ghi bảng `courses`. Màn `view=courses` chỉ còn hồ sơ cũ. Trang chương trình nói rõ lộ trình mới.
+
+Việc cần quyết định migration riêng, chưa làm:
+
+- `classes.course_id` vẫn `NOT NULL` từ `20260901101225_class_enrollment_management.sql`. Form tạo ca dạy vẫn phải chọn khóa học cũ.
+- Xếp lớp và một số hàm học liệu `join` qua `classes.course_id`. Bỏ cột hoặc cho phép null sẽ làm các ca mới biến mất khỏi những câu đó nếu chưa viết lại.
+- Trang sửa khóa học cũ vẫn còn. Không dùng cho đăng ký mới.
+
+Không xóa dòng `courses` hay `classes.course_id` hiện có.
+
+## Hai câu chưa chốt
+
+Không bịa quy tắc mới.
+
+1. Mốc “trên 18”: mã hiện tại coi ngày sinh nhật thứ 18 là chưa “trên 18” (`birth + 18 năm < hôm nay theo Asia/Ho_Chi_Minh`). Chưa có quyết định nghiệp vụ nào khác để đổi.
+2. Bảo lưu có làm đổi học phí, nợ hoặc điểm danh hay không: migration chỉ có khoảng ngày inclusive và trạng thái bản ghi `ACTIVE`/`CANCELLED`. Không thấy quy tắc đã duyệt về tiền hay điểm danh. Chưa thực hiện hệ quả tài chính.
+
+## Việc chưa làm được vì thiếu quyền
+
+Đăng nhập: trình duyệt local trước đó dừng ở `/login`. Không có phiên đã đăng nhập trong lượt này. Không xin mật khẩu và không đặt lại tài khoản. Cần đăng nhập local tại `http://localhost:3000/login` bằng tài khoản đã cấp rồi báo lại để kiểm tra vai trò.
+
+Ánh xạ preview sang database: URL preview vẫn cổng SSO Vercel. Lần đọc SQL staging/production trước đó bị chặn với lý do: công cụ từ chối vì hướng dẫn không được truy vấn staging hoặc production khi chưa có phê duyệt riêng. Không thử lại và không dùng tài liệu lịch sử (`qhznfywwrhmcwbkujclm`, `owpfqwdrmyzcmjahehek`) làm bằng chứng deployment.
+
+## Rollback
+
+Không dùng deployment Production ngày 15/09, SHA `770b81855609`, làm đích rollback của pilot. SHA đó phục vụ môi trường production đã biết, không phải snapshot pilot `vibe_pilot_restore_20260928_032001`.
+
+Phiên bản ứng dụng tương thích với snapshot trước khi nâng cấp là commit nền của buổi kiểm `45822a4d9dd56317324f9c554df76b42f55c1199` trên `feature/learning-report-v2`, kèm dirty tree lúc lấy snapshot. Các file migration từ `20260928080000` trở đi có trong commit `df989b1`, cùng một commit, nên không có commit Git nào vừa khớp ledger snapshot vừa chứa đủ mã sau đó.
+
+Phục hồi database là việc riêng: restore bản dump lấy ngay trước migration. Dump buổi kiểm có SHA-256 `ed4432261bad47cb682deb45265be9047d0554f013b86cf437db4a463acd683b` trong `docs/verification/system-pilot-20260928T032001Z/RECOVERY_EVIDENCE.md`. Không có migration đi xuống. Chưa diễn tập restore lên staging. **Not verified** ngoài bản sao local ở trên.
+
+Push nhánh `codex/**` chạy workflow `regression` và, theo các push trước của nhánh này, tạo deployment Preview cho vibeacademy, vibeacademy-staging và hooks-preview-relay. Workflow trong repo không deploy production. Không merge.
 
 ## Khóa SSH
 
@@ -43,49 +86,10 @@ Hai tệp chưa theo dõi nằm ở thư mục gốc, tên bắt đầu bằng `
 
 Không có bằng chứng lộ qua Git. Chưa cần xoay khóa chỉ vì repository. Cần xoay nếu khóa riêng đã bị copy ra ngoài máy này. Việc đó là **Not verified**.
 
-## Module
-
-| Module | Kết quả | Căn cứ |
-|---|---|---|
-| Đăng nhập và vai trò | NOT VERIFIED | Trình duyệt còn ở `/login`. Chưa thử hành động được phép và bị từ chối |
-| Đăng ký tại quầy | PASS trên test, NOT VERIFIED trên UI | Business-lock và SQL đã khóa địa chỉ, số Zalo, trên 18 tuổi, không chọn môn, đồng ý không kế thừa |
-| Hồ sơ học viên theo ID | NOT VERIFIED | Chưa mở lại hồ sơ sau khi đăng nhập |
-| Chương trình → trình độ → môn → bài | PASS một phần | SQL hoàn tất đăng ký mở một đường chương trình. UI chưa kiểm |
-| Khóa học trung gian | NOT VERIFIED | Màn `/admin/programs?view=courses` vẫn tạo khóa học. Cần quyết định của chủ sở hữu: giữ làm vỏ lớp hay bỏ |
-| Ca dạy, lịch, điểm danh | NOT VERIFIED | Có route và migration. Chưa chạy workflow đã đăng nhập |
-| Học phí, phiếu thu, công nợ | PASS một phần | SQL cọc, MoMo và PayOS trong business-lock. Chưa đối soát phiếu thu trên UI |
-| Bảo lưu / học lại | NOT VERIFIED | Luật trong migration, chưa diễn tập. Chỗ chưa chốt ghi ở dưới |
-| Báo cáo và xuất | NOT VERIFIED | Trang biến động học viên hết lỗi JSX trong `try/catch`. Chưa in khi đã đăng nhập |
-| Zalo | FAIL cho điều kiện “tắt hẳn” | Nhắc học phí local là `DRAFT`, `enabled=false`, không có mã mẫu. Hành động gửi ghi `ERROR`. Đường điện thoại đăng ký vẫn gửi được khi quyết định là SEND và có credential. Mẫu đăng ký local đang `APPROVED` và `enabled=true` |
-| Staging migration, backup, giám sát | NOT VERIFIED | Không đọc ledger staging, không diễn tập restore, không xem monitor |
-
-## Luật đã thấy, không bịa thêm
-
-Bảo lưu: khoảng ngày inclusive, trạng thái bản ghi là `ACTIVE` hoặc `CANCELLED`. Sắp tới, đang bảo lưu, đã hết được suy từ ngày, không lưu thêm trạng thái. Không thấy quy tắc đã duyệt nói bảo lưu có xóa học phí, điểm danh hay nợ. Không suy diễn.
-
-Học bù: có mặt, vắng không phép và đi trễ không tạo suất. Vắng có phép tạo một suất. Buổi thường bị hủy có thể cấp một suất cho mỗi ghi danh đủ điều kiện. Vòng đời `AVAILABLE → RESERVED → USED`. Một nguồn chỉ cấp một suất cho một ghi danh. Không thấy quy tắc đã duyệt về việc học bù có đổi công nợ.
-
-Tuổi “trên 18”: trong mã hiện tại, ngày sinh nhật thứ 18 chưa được tính là trên 18. Cần chủ sở hữu xác nhận nếu cách hiểu nghiệp vụ khác.
-
 ## Lint
 
-`npx eslint .` trên cây hiện tại: exit 0, **0 lỗi, 73 cảnh báo**.
+`npx eslint .` trên cây trước lượt này: exit 0, **0 lỗi, 73 cảnh báo**. Lượt này không tắt rule.
 
-- 52 cảnh báo là chỉ thị `eslint-disable` không còn cần. Không đổi hành vi.
-- 14 biến không dùng. Không mở quyền và không sửa số liệu.
-- 7 thẻ `img`. Ảnh vẫn hiện. Không phải lỗi bảo mật đã chứng minh.
+## Commit cuối
 
-Không tắt rule để xóa cảnh báo. CI vẫn fail khi có lỗi ESLint.
-
-## Việc chủ sở hữu cần làm
-
-1. Đăng nhập local tại `http://localhost:3000/login` bằng tài khoản đã được cấp. Không gửi mật khẩu vào chat và không đặt lại mật khẩu. Sau đó báo lại để kiểm tra đăng ký, hồ sơ, phiếu thu và quyền bị từ chối.
-2. Cho phép một câu `SELECT` chỉ đọc `template_key, status, enabled, provider_template_id is null` trên staging `owpfqwdrmyzcmjahehek` và production `qhznfywwrhmcwbkujclm`. Lượt đọc trước bị chặn với lý do không được truy vấn staging/production khi chưa có phê duyệt riêng.
-3. Chốt khóa học trung gian, cách tính “trên 18”, và bảo lưu có đụng học phí hay không.
-4. Trước pilot không gửi Zalo: tắt `notification_templates.enabled` của mẫu đăng ký trên đúng môi trường pilot và không bật scheduler. Chưa thực hiện thao tác đó trên database đang dùng.
-
-## Quy trình pilot khi được duyệt sau này
-
-Được làm chỉ sau khi các mục trên có bằng chứng: đăng ký quầy, hồ sơ học viên, xếp chương trình/trình độ, ca dạy, điểm danh, học phí và phiếu thu trên môi trường đã tách khỏi production. Zalo để tắt cho đến khi có mẫu đã duyệt và một lần thử có kiểm soát.
-
-Dừng ngay nếu một phiếu thu gắn sai học viên, một vai trò thấp đọc được dữ liệu ngoài phạm vi, hoặc một job Zalo rời hệ thống. Rollback ứng dụng là deployment Production trước `df989b1` (hiện ghi nhận SHA `770b81855609`). Rollback database là restore bản sao lấy ngay trước khi áp migration. Commit này không có migration đi xuống. Chưa có bằng chứng restore staging.
+Sẽ điền sau commit.

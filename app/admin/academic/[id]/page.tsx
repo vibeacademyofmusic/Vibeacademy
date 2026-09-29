@@ -98,8 +98,8 @@ export default async function CurriculumDetailPage({
           />
         )}
       </SectionCard>
-      <SectionCard title="Khóa học liên kết">
-        <p className="mb-3 text-sm text-gray-500">Khóa học là đơn vị vận hành gắn với chương trình. Khóa học không phải cấp độ, môn học hay chương trình.</p>
+      <SectionCard title="Hồ sơ khóa học cũ">
+        <p className="mb-3 text-sm text-gray-500">Đây là dữ liệu cũ, không phải bước trên lộ trình Chương trình → Trình độ → Môn học → Bài học. Ca dạy là lớp.</p>
         {courses.length === 0 ? <EmptyState>Chưa có khóa học liên kết.</EmptyState> : (
           <DataTable
             headers={['Khóa học', 'Cấp độ liên kết', 'Trạng thái', 'Lớp / học viên', 'Tác vụ']}
@@ -108,7 +108,7 @@ export default async function CurriculumDetailPage({
               course.levelName ?? '—',
               <StatusBadge key="status" tone={statusTone(course.status)}>{statusLabel(course.status)}</StatusBadge>,
               `${course.classCount} lớp · ${course.enrollmentCount} học viên`,
-              <Link key="edit" href={`/admin/courses/${course.id}/edit`}>Mở khóa học</Link>,
+              <span key="edit">Giữ nguyên hồ sơ cũ</span>,
             ])}
           />
         )}
