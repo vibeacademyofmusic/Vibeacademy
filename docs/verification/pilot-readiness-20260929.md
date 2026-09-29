@@ -92,4 +92,4 @@ Không có bằng chứng lộ qua Git. Chưa cần xoay khóa chỉ vì reposit
 
 ## Commit cuối
 
-`75e0d016a8a1bd75e8856106aa327abb10707ae3` chứa mã, test và bằng chứng nâng cấp. Dòng này nằm ở commit tài liệu ngay sau commit đó trên `codex/release-candidate-lint`. Job `regression` chạy trên HEAD của pull request.
+`75e0d016a8a1bd75e8856106aa327abb10707ae3` chứa khóa Zalo, đối chiếu migration và việc ngừng tạo khóa học. `ec7557d3d342cbd602bb8e49d461b2a4d754e227` ghi nhận commit đó. Run `regression` https://github.com/vibeacademyofmusic/Vibeacademy/actions/runs/36571794278 fail vì phục hồi đăng ký còn trả trạng thái SEND khi khóa pilot đã chặn provider. Commit sửa đường đó là HEAD sau commit này.

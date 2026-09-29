@@ -1,6 +1,7 @@
 import 'server-only'
 import { readCredential, connectionError, type ZaloAdmin } from './oauth'
 import { dispatchPreviewRegistrationZalo } from './preview-dispatch'
+import { ZALO_PILOT_OUTBOUND_DISABLED } from './pilot-outbound'
 import type { ZaloTransport } from './readiness'
 export type RecoveryView = {
   state: 'BLOCKED' | 'SEND' | 'RETRY' | 'ACCEPTED' | 'UNCERTAIN' | 'DELIVERED'
@@ -37,5 +38,9 @@ export async function recoverRegistrationNotification(db: ZaloAdmin, admin: Zalo
     return { ...latest, outcome: prepared.reason }
   }
   const outcome = await dispatchPreviewRegistrationZalo(admin, Number(prepared.orderCode), transport, env, tokenRequest, { jobId: input.jobId, expectedAttempts: input.expectedAttempts })
-  return { ...await readRecovery(db, admin, input.jobId, env), outcome }
+  const latest = await readRecovery(db, admin, input.jobId, env)
+  if (outcome === ZALO_PILOT_OUTBOUND_DISABLED && (latest.state === 'SEND' || latest.state === 'RETRY')) {
+    return { ...latest, state: 'BLOCKED', reason: outcome, connectionReason: outcome, outcome }
+  }
+  return { ...latest, outcome }
 }
