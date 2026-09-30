@@ -13,7 +13,7 @@ import { TuitionPaymentNav } from './finance/SectionNav'
 import { HrSectionNav } from './hr/SectionNav'
 import { fullBusinessAccess, loadBranchBusinessAccess } from './business/access'
 import { hiddenBusinessHrefs } from './business/workspaces'
-import { isBusinessShellPath, isStudentOpsPath, type ShellMode } from './navigation'
+import { isBusinessShellPath, isCashierDeskPath, isPauseApprovalPath, isStudentOpsPath, type ShellMode } from './navigation'
 
 export default async function AdminLayout({
   children,
@@ -44,13 +44,19 @@ export default async function AdminLayout({
       supabase.rpc('crm_shell_may_enter'),
       supabase.rpc('student_ops_may_enter'),
     ])
+    const [{ data: mayCashier }, { data: mayDecidePause }] = await Promise.all([
+      supabase.rpc('cashier_may_enter'),
+      supabase.rpc('academic_ops_may_manage'),
+    ])
     const business = !shellError && mayEnter === true
     const students = !studentError && mayStudents === true
-    const allowed = (business && isBusinessShellPath(pathname)) || (students && isStudentOpsPath(pathname))
+    const cashier = mayCashier === true && isCashierDeskPath(pathname)
+    const pauseDesk = mayDecidePause === true && isPauseApprovalPath(pathname)
+    const allowed = (business && isBusinessShellPath(pathname)) || (students && isStudentOpsPath(pathname)) || cashier || pauseDesk
     if (!allowed) {
       redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
     }
-    mode = business && students ? 'business-students' : business ? 'business' : 'students'
+    mode = cashier ? 'cashier' : pauseDesk ? 'academic' : business && students ? 'business-students' : business ? 'business' : 'students'
   }
 
   const includeBusiness = mode === 'full' || mode === 'business' || mode === 'business-students'
@@ -70,7 +76,7 @@ export default async function AdminLayout({
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-gray-200 bg-white lg:block">
         <div className="flex h-full min-h-0 flex-col">
           <div className="shrink-0 border-b border-gray-200 px-6 py-6">
-          <Link href={mode === 'students' ? '/admin/students' : mode === 'full' ? '/admin' : '/admin/business'} prefetch={false}>
+          <Link href={mode === 'cashier' ? '/admin/finance/payments' : mode === 'academic' ? '/admin/academic/pause-requests' : mode === 'students' ? '/admin/students' : mode === 'full' ? '/admin' : '/admin/business'} prefetch={false}>
               <img src="/vibe-logo.png" alt="VIBE Academy" width={120} height={64} className="h-16 w-32 object-contain"/>
             </Link>
 
@@ -90,7 +96,7 @@ export default async function AdminLayout({
               </p>
 
               <p className="mt-1 text-xs font-medium text-gray-400">
-                {mode === 'full' ? 'Quản trị viên cấp cao' : mode === 'students' ? 'Học viên' : 'Kinh doanh'}
+                {mode === 'full' ? 'Quản trị viên cấp cao' : mode === 'cashier' ? 'Thu ngân' : mode === 'academic' ? 'Đào tạo' : mode === 'students' ? 'Học viên' : 'Kinh doanh'}
               </p>
             </div>
 

@@ -271,7 +271,7 @@ select public.issue_invoice(
 -- =========================================================
 
 create function pg_temp.receipt(k uuid, amt numeric) returns uuid language sql as $$
- select public.create_payment_once(k,'f2000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001',amt,'VND','CASH',current_date::timestamptz,'INTEGRITY',null)
+ select public.create_payment_once(k,'f2000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001',amt,'VND','CASH',current_date::timestamptz,'INTEGRITY',null,true)
 $$;
 create function pg_temp.inv(n integer) returns uuid language sql as $$
  select id from public.invoices where enrollment_tuition_id=('f4000000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid

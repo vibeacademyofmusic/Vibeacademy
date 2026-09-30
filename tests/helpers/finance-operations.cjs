@@ -37,7 +37,7 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
   const calls = [], invalidated = []
   const db = {
     auth: { getClaims: async () => ({ data: signedIn ? { claims: { sub: id(1) } } : null, error: null }) },
-    rpc: async (name, args) => { calls.push({ rpc: name, args }); return ['has_role','is_global_super_admin'].includes(name) ? { data: role, error: null } : { data: id(99), error: rpcError } },
+    rpc: async (name, args) => { calls.push({ rpc: name, args }); return ['has_role','is_global_super_admin','has_permission'].includes(name) ? { data: role, error: null } : { data: id(99), error: rpcError } },
     from(table) {
       const call = { table, filters: [], orders: [] }; calls.push(call)
       const query = {

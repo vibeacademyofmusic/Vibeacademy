@@ -1,5 +1,25 @@
 # Consolidated execution — 30 September 2026
 
+## Continuation after the owner cashier decision
+
+Runtime checked again before this change. Branch `codex/release-candidate-lint`, HEAD `c9dd28e`, app `next-server` on port 3000, Supabase host `127.0.0.1:54321`, database container `supabase_db_vibe-academy-system`. The working tree already had unrelated observability and backup files; those were not reset. The previous report below remains the evidence for `963f427` / `c9dd28e`. It is not evidence for the cashier change.
+
+The owner decision in this execution replaces the earlier “decide reception payments” blocker. A narrow `CASHIER` role now has only `finance.cash.record` plus branch student lookup. `FINANCE` also receives cash recording, non-cash recording and reconciliation. `BRANCH_ADMIN` does not. Cash requires `p_cash_acknowledged = true`. PayOS and MoMo cannot be marked verified through `create_payment_once`. Posted receipts are still not silently edited. Direct void remains behind the existing financial-approval function.
+
+Local ledger on the app database now ends at `20260930153000` after applying the already reviewed pause migrations `20260929220000`, `20260930100000`, `20260930101000` and the new cashier migration. No production or staging database was changed.
+
+Cashier SQL, rolled back on the app database: 14/14 allow and deny checks in [cashier_cash_receipt_test.sql](../../../supabase/tests/database/cashier_cash_receipt_test.sql). Covered assigned cashier, missing acknowledgement, repeated key, changed amount, bank transfer, PayOS, forged student, other branch, branch admin, revoked assignment, and direct void. Payment action tests: 39/39 in `tests/finance-payment-operations.test.cjs` and `tests/admin-navigation.test.cjs`.
+
+Pause approval UI is at `/admin/academic/pause-requests` and calls `decide_enrollment_pause`. The controlled browser is on `http://localhost:3000/login` and has not completed an authenticated click-through in this continuation, so browser approval is not accepted yet.
+
+The previously classified 42 SQL fixture failures were not rewritten and were not rerun after this migration. They remain fixture blockers, not a new cashier defect.
+
+Recovery database `vibe_recovery_20260930` was created beside the app database and restored from a private custom dump. Source and restored counts match: auth users 38, students 522, enrollments 11, payments 9, storage metadata rows 2, `finance_private` functions 17, migration `20260930153000`, payment-amount checksum `ed13277cccc56d784cc0f00ef88fe46e`. Dump `~/.vibe-private/local-recovery-20260930/app-with-private.dump`, SHA-256 `43279da4a51e22b26bfe6b7907a2cde45cdd8a62331c0760789db71e0944f6fe`, 3,394,044 bytes. Dump about 0.6s, restore about 3.1s. Restore still reported 11 errors: existing `public` schema, default-privilege changes, and missing `vault.secrets`. Storage file bytes, realtime, and a live sign-in through an isolated Auth API were not restored. This is local database evidence, not cloud recovery and not an RTO/RPO commitment.
+
+No 60-minute rehearsal and no human UAT were run. The original 105-case matrix remains [acceptance-source.md](../system-pilot-20260928T032001Z/acceptance-source.md) and [SYSTEM_TEST_RESULTS.md](../system-pilot-20260928T032001Z/SYSTEM_TEST_RESULTS.md). Those historical statuses were not re-marked PASS. Decision for this local continuation: **NO-GO** for pilot operations. Cashier and pause screens are not a deployment approval.
+
+## Earlier same-day evidence
+
 Final implementation commit: **963f427**, following **7448a00**. Local execution only. No push, deployment, shared migration, staging account or real message. Older deployed Preview remains **fed93be** and is not evidence for these fixes.
 
 ## Completed and verified
@@ -28,4 +48,4 @@ Focused script lint and TypeScript check pass. Working-tree business-lock checks
 - The tracked browser app exposes the legacy direct-create/cancel pause screen, not a request/approval screen for the new RPC workflow. New approval authorization and state are verified through authenticated API/persistence tests; browser approval-click acceptance cannot be claimed for an absent screen. Attendance/makeup business mutations have authenticated API coverage plus browser persisted-state/lock verification, not a fresh teacher form submission in this run.
 - Full source recovery and a preserving source upgrade cannot be certified without the complete consistent recovery set. Public database metadata is not Storage file bytes. Auth identities, private functions, migration history, original ACL/RLS and the separate byte manifest remain prerequisites; clean platform creation does not replace them. No functions were manually skipped as an upgrade solution.
 
-Single next owner action: **decide the intended role for reception counter payments**. Current SUPER_ADMIN-only policy remains unchanged. No unlock, repeat sign-in or credential sharing is needed.
+The reception-payment decision above is superseded by the cashier continuation at the top of this file. Sign-in on the local login window is still required before the pause approval screen can be accepted in the browser. No credential is requested here.

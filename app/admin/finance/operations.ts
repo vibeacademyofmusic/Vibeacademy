@@ -27,6 +27,12 @@ export async function adminClient() {
   if (role.error || role.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
   return db
 }
+export async function signedInClient() {
+  const db = await createClient()
+  const { data, error } = await db.auth.getClaims()
+  if (error || !data?.claims) redirect('/login')
+  return db
+}
 export type Rule = 'id' | 'amount' | 'date' | 'datetime' | 'currency' | 'method' | 'required' | 'optional'
 export function readInput(form: FormData, fields: Record<string, Rule>) {
   const result: Record<string, string | null> = {}
@@ -58,8 +64,8 @@ const safeErrors: Record<string, string> = {
   'Refund exceeds the original payment allocation amount': 'Số tiền hoàn vượt phân bổ gốc còn lại.',
   'Refund allocation exceeds the refund amount': 'Số tiền phân bổ vượt phiếu hoàn tiền.',
 }
-export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: string, form: FormData, fields: Record<string, Rule>, options: { confirm?: boolean; issue?: boolean; selectResult?: boolean } = {}) {
-  const db = await adminClient()
+export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: string, form: FormData, fields: Record<string, Rule>, options: { confirm?: boolean; issue?: boolean; selectResult?: boolean; recordPayment?: boolean } = {}) {
+  const db = options.recordPayment ? await signedInClient() : await adminClient()
   const selected = String(form.get('selected') ?? '')
   const query = new URLSearchParams(uuidPattern.test(selected) ? { selected } : {})
   const entryKey = String(form.get('idempotency_key') ?? '')
@@ -73,12 +79,23 @@ export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: s
     args = readInput(form, fields)
     if (options.confirm && form.get('confirm') !== 'yes') throw new Error('INPUT')
     if (options.issue && args.p_due_on! < args.p_issued_on!) throw new Error('INPUT')
+    if (options.recordPayment && args.p_payment_method === 'CASH' && form.get('cash_acknowledged') !== 'yes') {
+      query.set('error', 'Tiền mặt chỉ được ghi khi đã xác nhận đã nhận tiền mặt tại quầy.')
+      redirect(`/admin/finance/${module}?${query}`)
+    }
   } catch {
     query.set('error', 'Vui lòng kiểm tra dữ liệu, ngày tháng và xác nhận thao tác.')
     redirect(`/admin/finance/${module}?${query}`)
   }
+  const rpcArgs: Record<string, string | boolean | null> = args
+  if (options.recordPayment) {
+    rpcArgs.p_cash_acknowledged = form.get('cash_acknowledged') === 'yes'
+    const permission = rpcArgs.p_payment_method === 'CASH' ? 'finance.cash.record' : 'finance.payment.record'
+    const allowed = await db.rpc('has_permission', { p_permission: permission, p_branch: rpcArgs.p_branch_id })
+    if (allowed.error || allowed.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  }
   let result
-  try { result = await db.rpc(rpc, args) } catch {
+  try { result = await db.rpc(rpc, rpcArgs) } catch {
     query.set('error', 'Không xác nhận được kết quả. Hãy tải lại danh sách trước khi thử lại để tránh tạo trùng.')
     redirect(`/admin/finance/${module}?${query}`)
   }

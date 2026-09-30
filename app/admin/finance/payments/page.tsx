@@ -50,6 +50,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
         <Select name="payment_method" label="Phương thức" required options={paymentMethods.map(id => ({ id, name: id }))} />
         <Field name="paid_at" label="Thời gian thu (giờ Việt Nam)" type="datetime-local" value={vietnamDateTime()} />
         <Field name="reference" label="Tham chiếu" required={false} /><Field name="notes" label="Ghi chú" required={false} />
+        <label className="flex items-start gap-2 text-sm text-[var(--vibe-navy)] sm:col-span-2"><input name="cash_acknowledged" type="checkbox" value="yes" /> Đã nhận đủ tiền mặt tại quầy. Không dùng mục này cho chuyển khoản hoặc ảnh chụp.</label>
         <SubmitButton>Ghi nhận tiền và chuyển đến phân bổ</SubmitButton>
       </form>}
     </Panel>}
@@ -117,7 +118,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
     <Panel title="Ghi nhận thanh toán mới">
       <form className="flex flex-wrap items-end gap-3"><Field name="student_q" label="Tìm học viên theo tên hoặc mã (tối đa 25 kết quả)" required={false} value={params.student_q} /><button className="rounded border p-2">Tìm học viên</button></form>
       {params.student_q && students.length === 0 && <p>Không tìm thấy học viên.</p>}
-      {students.length > 0 && <form action={createPayment} className="grid gap-3 sm:grid-cols-2"><input type="hidden" name="idempotency_key" value={entryKey} /><Select name="student_id" label="Học viên" required options={students.map(s => ({ id: s.id, name: `${s.full_name} (${s.student_code})` }))} /><Select name="branch_id" label="Chi nhánh nhận tiền" options={branchRows} required /><Field name="amount" label="Số tiền" type="number" /><Field name="currency" label="Tiền tệ" value="VND" /><Select name="payment_method" label="Phương thức" required options={paymentMethods.map(id => ({ id, name: id }))} /><Field name="paid_at" label="Thời gian thu (giờ Việt Nam)" type="datetime-local" value={vietnamDateTime()} /><Field name="reference" label="Tham chiếu" required={false} /><Field name="notes" label="Ghi chú" required={false} /><SubmitButton>Ghi nhận thanh toán</SubmitButton></form>}
+      {students.length > 0 && <form action={createPayment} className="grid gap-3 sm:grid-cols-2"><input type="hidden" name="idempotency_key" value={entryKey} /><Select name="student_id" label="Học viên" required options={students.map(s => ({ id: s.id, name: `${s.full_name} (${s.student_code})` }))} /><Select name="branch_id" label="Chi nhánh nhận tiền" options={branchRows} required /><Field name="amount" label="Số tiền" type="number" /><Field name="currency" label="Tiền tệ" value="VND" /><Select name="payment_method" label="Phương thức" required options={paymentMethods.map(id => ({ id, name: id }))} /><Field name="paid_at" label="Thời gian thu (giờ Việt Nam)" type="datetime-local" value={vietnamDateTime()} /><Field name="reference" label="Tham chiếu" required={false} /><Field name="notes" label="Ghi chú" required={false} /><label className="flex items-start gap-2 text-sm text-[var(--vibe-navy)] sm:col-span-2"><input name="cash_acknowledged" type="checkbox" value="yes" /> Đã nhận đủ tiền mặt tại quầy. Không dùng mục này cho chuyển khoản hoặc ảnh chụp.</label><SubmitButton>Ghi nhận thanh toán</SubmitButton></form>}
     </Panel>
   </div>
 }

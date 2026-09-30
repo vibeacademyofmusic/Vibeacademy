@@ -8,6 +8,7 @@ export const trainingTabs: { name: string; href: string; studentTab?: string }[]
   { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },
   { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },
   { name: 'Báo cáo học tập', href: '/admin/reports/learning' },
+  { name: 'Duyệt bảo lưu', href: '/admin/academic/pause-requests' },
   { name: 'Phản hồi buổi học', href: '/admin/feedback' },
   // Rooms belongs to the student workspace, never a separate sidebar group.
   { name: 'Phòng học', href: '/admin/rooms' },
@@ -79,7 +80,15 @@ export function isStudentOpsPath(pathname: string | null | undefined) {
   return pathname === '/admin/students' || Boolean(pathname && /^\/admin\/attendance\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(pathname))
 }
 
-export type ShellMode = 'full' | 'business' | 'students' | 'business-students'
+export function isCashierDeskPath(pathname: string | null | undefined) {
+  return pathname === '/admin/finance/payments'
+}
+
+export function isPauseApprovalPath(pathname: string | null | undefined) {
+  return pathname === '/admin/academic/pause-requests'
+}
+
+export type ShellMode = 'full' | 'business' | 'students' | 'business-students' | 'cashier' | 'academic'
 
 export function navigationForShell(businessOnly: boolean) {
   return businessOnly ? navigationGroups.filter(group => group.name === 'KINH DOANH') : navigationGroups
@@ -93,6 +102,8 @@ export function navigationForAccess(mode: ShellMode) {
     .map(group => ({ ...group, items: group.items.filter(item => item.href === '/admin/students') }))
   if (mode === 'business') return business
   if (mode === 'students') return students
+  if (mode === 'cashier') return [{ name: 'VẬN HÀNH', items: [{ name: 'Thu tiền mặt', href: '/admin/finance/payments' }] }]
+  if (mode === 'academic') return [{ name: 'VẬN HÀNH', items: [{ name: 'Duyệt bảo lưu', href: '/admin/academic/pause-requests' }] }]
   return [...business, ...students]
 }
 
@@ -174,6 +185,7 @@ export function activeWorkspaceTab(pathname: string, view?: string | null, tab?:
     const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }
     return aliases[tab || ''] || '/admin/students'
   }
+  if (pathname === '/admin/academic/pause-requests') return '/admin/academic/pause-requests'
   if (pathname === '/admin/programs' || inRoute(pathname, '/admin/academic') || inRoute(pathname, '/admin/courses')) return '/admin/programs'
   if (inRoute(pathname, '/admin/rooms')) return '/admin/rooms'
   if (inRoute(pathname, '/admin/students')) return '/admin/students'
