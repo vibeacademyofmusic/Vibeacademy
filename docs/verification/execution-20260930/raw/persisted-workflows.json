@@ -129,28 +129,15 @@
   },
   {
     "name": "Pause request, approval and cancellation preserve financial records",
-    "status": "FAIL",
-    "evidence": "{\"ok\":false,\"money\":\"Không hoàn tiền và không tạo khoản thu. effective_ends_on chỉ đổi sau khi bảo lưu được duyệt, theo hàm đang chạy.\",\"blockers\":[\"Khoảng này chồng lên một bảo lưu đang hiệu lực hoặc một yêu cầu đang chờ duyệt.\"],\"sessions\":[],\"decisions\":[\"Chưa có hạn báo vắng được duyệt.\",\"Chưa có hạn dùng quyền học bù được duyệt. Quyền hiện có không tự hết hạn.\",\"Chưa có số quyền học bù tối đa được duyệt.\",\"Chưa có quy định hủy muộn được duyệt. Hủy buổi bù còn lịch trả quyền theo sổ hiện tại.\",\"Chưa có thời lượng bảo lưu tối đa được duyệt.\",\"Tiền: chưa có quyết định hoàn hoặc thu thêm. Cơ chế đang chạy chỉ dời ngày kết thúc quyền học theo ngày bảo lưu giao với kỳ học phí. Xem trước không ghi sổ học phí.\"],\"request_id\":\"1219b01f-2075-4b7d-957d-79bceecae513\",\"policy_version\":1,\"tuition_preview\":[{\"status\":\"ACTIVE\",\"tuition_id\":\"ea720acd-4a06-4202-b266-4f9707f44e1e\",\"base_ends_on\":\"2027-09-29\",\"overlap_days\":3,\"effective_ends_on\":\"2027-09-29\"}],\"exception_recorded\":true,\"open_makeup_credits\":0}\n\nfalse !== true\n"
-  },
-  {
-    "name": "Blocked pause approval preserves request, payments and invoice; ordinary roles denied",
     "status": "PASS",
     "evidence": {
-      "request": "1219b01f-2075-4b7d-957d-79bceecae513",
-      "state": "REQUESTED",
-      "created_by": "b8a18ecb-894e-4378-b10b-19a65e1e1fc7",
-      "approval_blockers": [
-        "Khoảng này chồng lên một bảo lưu đang hiệu lực hoặc một yêu cầu đang chờ duyệt."
-      ],
-      "denials": {
-        "STAFF": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
-        "BA": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
-        "FIN": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
-        "TEACHER": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
-        "PARENT": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
-        "ANON": "Không xác định được người thao tác"
-      },
-      "no_pause_inserted": true,
+      "request": "b0e31233-19b1-433d-8dad-bd1356b4d36a",
+      "pause": "97ced329-575c-4b54-8d1a-3bb9122f5fc3",
+      "state": "CANCELLED",
+      "approved_actor": "b8a18ecb-894e-4378-b10b-19a65e1e1fc7",
+      "repeated_approval_same_pause": true,
+      "unauthorized_approval_denied": true,
+      "ordinary_overlap_still_blocked": true,
       "financial_records_unchanged": true
     }
   },

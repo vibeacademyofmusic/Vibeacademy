@@ -403,7 +403,7 @@
   "lib/supabase/client.ts": "223528371e71d1007c769935520714a2d0b4b599cf81064c240ed4a3beda1856",
   "lib/supabase/proxy.ts": "d4a6e945839cccf1925efda40da159bd6b34406c49f7ccb4ac753f34f66e0fd7",
   "lib/supabase/server.ts": "15c91b93ccf58291c183e873f103dc811b4c6994f9ef23b5ab3fdca4d460c249",
-  "next.config.ts": "04e239e6a4674e05dfd39cea59f67a065459c1632a975f0f3025bab42211f39e",
+  "next.config.ts": "f9bb286fb4a31c78829b65d0b8f9c210cc2fe392e86aadd1630f848cf7856170",
   "package-lock.json": "696ccbd99962674e2db9a0923106ce6abf5f0f2bef01d82746aae7f366f7748b",
   "package.json": "e41fe98a7160ff3ee060b4857450678a502338d9daa3e38ce1bd7996e3d8f046",
   "postcss.config.mjs": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",

@@ -1,16 +1,16 @@
-✔ local test preload rejects provider fetch and raw TCP without network access (94.264542ms)
-✔ only the exact value enabled opens the pilot gate (1.051708ms)
-✔ pilot control missing makes zero provider calls (3.972167ms)
-✔ pilot control missing-preview makes zero provider calls (0.415917ms)
-✔ pilot control empty makes zero provider calls (2.693833ms)
-✔ pilot control false makes zero provider calls (0.322292ms)
-✔ pilot control malformed-true makes zero provider calls (0.277542ms)
-✔ pilot control malformed-yes makes zero provider calls (0.22025ms)
-✔ pilot control malformed-case makes zero provider calls (0.217166ms)
-✔ pilot control malformed-space makes zero provider calls (0.250792ms)
-✔ pilot control disabled makes zero provider calls (0.281667ms)
-✔ explicitly enabled opens the direct send gate and still does not mark delivered (0.658917ms)
-✔ tuition reminder action sends only through the blocked outbound adapter (0.505333ms)
+✔ local test preload rejects provider fetch and raw TCP without network access (75.064667ms)
+✔ only the exact value enabled opens the pilot gate (0.510375ms)
+✔ pilot control missing makes zero provider calls (2.489958ms)
+✔ pilot control missing-preview makes zero provider calls (0.273292ms)
+✔ pilot control empty makes zero provider calls (1.884083ms)
+✔ pilot control false makes zero provider calls (0.248291ms)
+✔ pilot control malformed-true makes zero provider calls (0.17425ms)
+✔ pilot control malformed-yes makes zero provider calls (0.148333ms)
+✔ pilot control malformed-case makes zero provider calls (0.14025ms)
+✔ pilot control malformed-space makes zero provider calls (0.161167ms)
+✔ pilot control disabled makes zero provider calls (0.176834ms)
+✔ explicitly enabled opens the direct send gate and still does not mark delivered (0.518542ms)
+✔ tuition reminder action sends only through the blocked outbound adapter (0.375917ms)
 ℹ tests 13
 ℹ suites 0
 ℹ pass 13
@@ -18,4 +18,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 378.204958
+ℹ duration_ms 272.585416

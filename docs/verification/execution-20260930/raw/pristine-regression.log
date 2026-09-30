@@ -1,0 +1,714 @@
+Connecting to local database...
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/academic_engine_hardening_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/academic_engine_hardening_test.sql ............ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/academic_starting_grade_scope_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/academic_starting_grade_scope_test.sql ........ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_launcher_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_launcher_test.sql:36: ERROR:  insert or update on table "classes" violates foreign key constraint "classes_course_id_fkey"
+DETAIL:  Key (course_id)=(c2100000-0000-4000-8000-000000000040) is not present in table "courses".
+/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_launcher_test.sql ..................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 31/31 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_qr_phase1_foundation_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_qr_phase1_foundation_test.sql ...... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_qr_verification_payroll_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_qr_verification_payroll_test.sql ... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_records_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_records_test.sql:161: ERROR:  PLACEMENT_SCHEDULE_REQUIRED
+CONTEXT:  PL/pgSQL function guard_placement_enrollment_integrity() line 24 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_records_test.sql ...................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 4/7 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/authorization_foundation_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/authorization_foundation_test.sql ............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/branch_relationship_scope_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/branch_relationship_scope_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/branch_relationship_scope_test.sql ............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/class_teacher_temporal_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/class_teacher_temporal_test.sql ............... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/counter_intake_test.sql:13: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/counter_intake_test.sql ....................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/create_makeup_session_occurrence_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/create_makeup_session_occurrence_test.sql:248: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/create_makeup_session_occurrence_test.sql .....
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 16/16 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_campaign_report_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_campaign_report_test.sql .................. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_channel_state_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_channel_state_test.sql .................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_conversion_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_conversion_test.sql ....................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_foundation_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_foundation_test.sql ....................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_pipeline_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_pipeline_test.sql ......................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_reactivation_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_reactivation_test.sql:39: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_reactivation_test.sql .....................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_security_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_security_test.sql ......................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_shell_access_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_shell_access_test.sql ..................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/customer_credit_ledger_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/customer_credit_ledger_test.sql:33: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+   values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+/private/tmp/vibe-regression-20260930/supabase/tests/database/customer_credit_ledger_test.sql ...............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/debt_engine_v1_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/debt_engine_v1_test.sql:136: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/debt_engine_v1_test.sql .......................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 14/14 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/elearning_foundation_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/elearning_foundation_test.sql:14: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/elearning_foundation_test.sql .................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/employee_attendance_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/employee_attendance_test.sql .................. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/employee_master_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/employee_master_test.sql ...................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_attendance_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_attendance_test.sql:159: ERROR:  PLACEMENT_SCHEDULE_REQUIRED
+CONTEXT:  PL/pgSQL function guard_placement_enrollment_integrity() line 24 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_attendance_test.sql ..........
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 12/12 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_engine_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_engine_test.sql:132: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_engine_test.sql ..............
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 8/10 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/expense_claim_v2_itemized_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/expense_claim_v2_itemized_test.sql ............ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/feedback_authorization_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/feedback_authorization_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/feedback_authorization_test.sql ...............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_engine_v1_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_engine_v1_test.sql:113: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_engine_v1_test.sql ....................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 10/10 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_read_scope_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_read_scope_test.sql:125: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_read_scope_test.sql ...................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/financial_approval_workflows_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/financial_approval_workflows_test.sql ......... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/financial_management_report_v1_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/financial_management_report_v1_test.sql:50: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/financial_management_report_v1_test.sql .......
+Dubious, test returned 3 (wstat 768, 0x300)
+All 5 subtests passed
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/instrument_customer_care_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/instrument_customer_care_test.sql ............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/inventory_ledger_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/inventory_ledger_test.sql ..................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_cancellation_approval_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_cancellation_approval_test.sql:136: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_cancellation_approval_test.sql ........
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_engine_v1_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_engine_v1_test.sql:136: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_engine_v1_test.sql ....................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 12/12 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_analytics_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_analytics_test.sql:14: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_analytics_test.sql ...................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_assessment_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_assessment_test.sql:14: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_assessment_test.sql ..................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_journals_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_journals_test.sql:123: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_journals_test.sql ....................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 12/12 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_observation_taxonomy_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_observation_taxonomy_test.sql:57: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_observation_taxonomy_test.sql ........
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_regrade_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_regrade_test.sql:14: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_regrade_test.sql .....................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_reports_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_reports_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_reports_test.sql .....................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_shadow_mapping_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_shadow_mapping_test.sql:14: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_shadow_mapping_test.sql ..............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_theory_contents_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_theory_contents_test.sql ............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/legacy_migration_review_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/legacy_migration_review_test.sql:127: ERROR:  Source batch requires correction, not rollback
+CONTEXT:  PL/pgSQL function rollback_legacy_row(uuid,boolean,text) line 10 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/legacy_migration_review_test.sql ..............
+# Failed test 23: "Valid mapping imports atomically"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='row'),2)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 24: "Committed source crosswalk is exact match"
+#         have: NO_MATCH
+#         want: EXACT_MATCH
+# Failed test 25: "Imported source is not projected as a second new student"
+#         have: 1
+#         want: 0
+# Failed test 26: "Exactly one official student"
+#         have: 0
+#         want: 1
+# Failed test 27: "Exactly one valid class enrollment"
+#         have: 0
+#         want: 1
+# Failed test 28: "Exact opening reconciliation"
+#         have: NULL
+#         want: 5500000
+# Failed test 29: "Exact opening debt"
+#         have: NULL
+#         want: 2500000
+# Failed test 32: "Finance dashboard includes exact opening debt"
+#         have: NULL
+#         want: 2500000
+# Failed test 33: "Opening debt adds no billed revenue or cash"
+#         have: NULL
+#         want: 0
+# Failed test 34: "Opening debt does not invent invoice counts"
+#         have: NULL
+#         want: 0
+# Failed test 35: "Student summary includes opening debt"
+#         have: NULL
+#         want: 2500000
+# Failed test 36: "Opening debt is listed separately from invoices"
+#         have: 0
+#         want: 1
+# Failed test 38: "Same row import retry succeeds"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='row'),2)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 39: "Retry cannot duplicate enrollment"
+#         have: 0
+#         want: 1
+# Failed test 40: "Retry cannot duplicate opening posting"
+#         have: 0
+#         want: 1
+# Failed test 42: "Final-step financial error fails whole student transaction"
+#       caught: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#       wanted: P0001: Injected final posting failure
+# Failed test 44: "Enrollment insert rolled back; first student preserved"
+#         have: 0
+#         want: 1
+# Failed test 45: "Opening receivable rolled back"
+#         have: 0
+#         want: 1
+# Failed test 47: "Resume after transient error imports successfully"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='row2'),1)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 48: "Both student units reconcile exactly"
+#         have: NULL
+#         want: 11000000
+# Failed test 49: "Same source in another file reuses official entities"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='repeat-row'),1)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 50: "Cross-batch replay cannot duplicate enrollment"
+#         have: 0
+#         want: 2
+# Failed test 51: "Reused row reconciles to original posting"
+#         have: NULL
+#         want: 0
+# Failed test 52: "Current term may start after original activation anchor"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='historical'),1)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 53: "Original started_at preserved"
+#         have: NULL
+#         want: 2025-09-30
+# Failed test 54: "Paused opening baseline imports current pause only"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='paused'),1)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 55: "Historical extension excludes current pause contribution"
+#         have: NULL
+#         want: 7
+# Failed test 56: "No fabricated historical pause events"
+#         have: 0
+#         want: 1
+# Failed test 57: "Accepted effective end reconciles exactly"
+#         have: NULL
+#         want: 2026-10-31
+# Failed test 58: "Expired tuition retains opening debt without renewal"
+#     died: P0001: Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+#         CONTEXT:
+#             PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+#             SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+#                values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+#             PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+#             SQL statement "select public.import_legacy_row((select id from fixture where name='expired'),1)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 59: "Expired source maps to existing completed term state"
+#         have: NULL
+#         want: COMPLETED
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 31/59 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/lesson_feedback_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/lesson_feedback_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/lesson_feedback_test.sql ......................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/lesson_operator_writes_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/lesson_operator_writes_test.sql ............... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/makeup_credit_ledger_test.sql:633: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/makeup_credit_ledger_test.sql:801: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/makeup_credit_ledger_test.sql .................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 26/30 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/mixed_level_class_ops_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/mixed_level_class_ops_test.sql ................ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/notification_infrastructure_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/notification_infrastructure_test.sql .......... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/opening_balance_collections_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/opening_balance_collections_test.sql:33: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+SQL statement "insert into public.enrollments(student_id,class_id,student_curriculum_enrollment_id,started_at,status)
+   values(sid,classid,aid,(p->>'started_at')::date,'ACTIVE') returning id"
+PL/pgSQL function import_legacy_row(uuid,integer) line 27 at SQL statement
+/private/tmp/vibe-regression-20260930/supabase/tests/database/opening_balance_collections_test.sql ..........
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/operating_expenses_v1_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/operating_expenses_v1_test.sql ................ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/pause_tuition_effective_end_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/pause_tuition_effective_end_test.sql:135: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/pause_tuition_effective_end_test.sql ..........
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 8/8 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_cash_integrity_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_cash_integrity_test.sql:134: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_cash_integrity_test.sql ...............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_engine_v1_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_engine_v1_test.sql:135: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_engine_v1_test.sql ....................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 14/14 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_disbursements_v2_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_disbursements_v2_test.sql ............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_maker_checker_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_maker_checker_test.sql ................ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_scheduled_minutes_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_scheduled_minutes_test.sql ............ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_self_read_security_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_self_read_security_test.sql ........... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_v2_preview_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payroll_v2_preview_test.sql ................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/refund_engine_v1_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/refund_engine_v1_test.sql:136: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/refund_engine_v1_test.sql .....................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 12/12 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_agreed_deposit_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_agreed_deposit_test.sql .......... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_branch_payment_option_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_branch_payment_option_test.sql ... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_momo_deposit_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_momo_deposit_test.sql ............ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_payos_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_payos_test.sql ................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_placement_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_placement_test.sql ............... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_zalo_consent_lifecycle_test.sql:43: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/registration_zalo_consent_lifecycle_test.sql .. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/relationship_read_authorization_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/relationship_read_authorization_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/relationship_read_authorization_test.sql ......
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_makeup_foundation_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_makeup_foundation_test.sql:176: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_makeup_foundation_test.sql .........
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 14/14 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_session_occurrence_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_session_occurrence_test.sql:202: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_session_occurrence_test.sql ........
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 13/13 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/revenue_forecast_v1_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/revenue_forecast_v1_test.sql:128: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/revenue_forecast_v1_test.sql ..................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 8/8 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/security_catalogue_baseline_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/security_catalogue_baseline_test.sql .......... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/security_consistency_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/security_consistency_test.sql ................. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/serialized_instruments_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/serialized_instruments_test.sql ............... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/session_occurrences_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/session_occurrences_test.sql .................. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/session_status_workflow_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/session_status_workflow_test.sql:103: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/session_status_workflow_test.sql ..............
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 10/10 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/session_teacher_assignment_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/session_teacher_assignment_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/session_teacher_assignment_test.sql ...........
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/staff_profile_badges_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/staff_profile_badges_test.sql ................. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/student_code_sequence_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/student_code_sequence_test.sql ................ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/student_ops_shell_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/student_ops_shell_test.sql:125: ERROR:  PLACEMENT_SCHEDULE_REQUIRED
+CONTEXT:  PL/pgSQL function guard_placement_enrollment_integrity() line 24 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/student_ops_shell_test.sql ....................
+# Failed test 25: "future assign"
+#     died: P0001: PLACEMENT_SCHEDULE_UNKNOWN
+#         CONTEXT:
+#             PL/pgSQL function guard_placement_enrollment_integrity() line 24 at RAISE
+#             SQL statement "insert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status)
+#               values (v_enrollment, row.student_id, class_row.id, public.registration_vietnam_today(), p_start, 'ACTIVE')"
+#             PL/pgSQL function assign_student_placement(uuid,uuid,integer,uuid,date) line 65 at SQL statement
+#             SQL statement "select public.assign_student_placement('e7630000-0000-4000-8000-000000000002'::uuid, (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'::uuid), 2, 'e7300000-0000-4000-8000-000000000004'::uuid, '2026-10-30'::date)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 26: "future assignment leaves waiting"
+#         have: 1
+#         want: 0
+# Failed test 27: "future assignment waits to begin"
+#         have: NULL
+#         want: SCHEDULED_FUTURE
+# Failed test 29: "today assign"
+#     died: P0001: PLACEMENT_SCHEDULE_UNKNOWN
+#         CONTEXT:
+#             PL/pgSQL function guard_placement_enrollment_integrity() line 24 at RAISE
+#             SQL statement "insert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status)
+#               values (v_enrollment, row.student_id, class_row.id, public.registration_vietnam_today(), p_start, 'ACTIVE')"
+#             PL/pgSQL function assign_student_placement(uuid,uuid,integer,uuid,date) line 65 at SQL statement
+#             SQL statement "select public.assign_student_placement('e7630000-0000-4000-8000-000000000003'::uuid, (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000002'::uuid), 1, 'e7300000-0000-4000-8000-000000000004'::uuid, '2026-09-30'::date)"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 30: "today start is current"
+#         have: 0
+#         want: 1
+# Failed test 34: "branch A waiting KPI excludes future starts and branch B"
+#         have: 2
+#         want: 0
+# Failed test 39: "first future page stays inside branch A"
+#         have: NULL
+#         want: Shell Future
+# Failed test 41: "authorized waiting queue excludes confirmed assignments"
+#         have: 2
+#         want: 0
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 8/41 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/student_parent_history_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/student_parent_history_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/student_parent_history_test.sql ...............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/system_roles_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/system_roles_test.sql ......................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_historical_access_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_historical_access_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_historical_access_test.sql ............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_payroll_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_payroll_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_payroll_test.sql ......................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_session_workspace_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_session_workspace_test.sql:36: ERROR:  insert or update on table "classes" violates foreign key constraint "classes_course_id_fkey"
+DETAIL:  Key (course_id)=(c2100000-0000-4000-8000-000000000040) is not present in table "courses".
+/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_session_workspace_test.sql ............
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 29/29 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/training_placement_integrity_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/training_placement_integrity_test.sql ......... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_branch_pricing_discounts_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_branch_pricing_discounts_test.sql:222: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_branch_pricing_discounts_test.sql .....
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 12/12 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_discount_invoice_lock_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_discount_invoice_lock_test.sql:119: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_discount_invoice_lock_test.sql ........
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 4/4 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_operations_rpc_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_operations_rpc_test.sql:119: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_operations_rpc_test.sql ...............
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_phase1_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_phase1_test.sql:149: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_phase1_test.sql .......................
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 18/18 subtests
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_reminders_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_reminders_test.sql:119: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_reminders_test.sql ....................
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_admin_read_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_admin_read_test.sql ...................... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_automatic_renewal_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_automatic_renewal_test.sql ............... ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_channel_recovery_test.sql:35: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_channel_recovery_test.sql ................ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_durable_recovery_test.sql:37: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_durable_recovery_test.sql ................ ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_payment_notification_z1_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_payment_notification_z1_test.sql ......... ok
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_template_readiness_test.sql .............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_webhook_foundation_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/database/zalo_webhook_foundation_test.sql .............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/edit_academic_program_start_date_test.sql:3: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/edit_academic_program_start_date_test.sql .............. ok
+psql:/private/tmp/vibe-regression-20260930/supabase/tests/future_academic_start_scheduling_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/private/tmp/vibe-regression-20260930/supabase/tests/future_academic_start_scheduling_test.sql .............. ok
+
+Test Summary Report
+-------------------
+/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_launcher_test.sql                (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 31 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/attendance_records_test.sql                 (Wstat: 768 (exited 3) Tests: 3 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 7 tests but ran 3.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/branch_relationship_scope_test.sql          (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/create_makeup_session_occurrence_test.sql   (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 16 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/crm_reactivation_test.sql                   (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/customer_credit_ledger_test.sql             (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/debt_engine_v1_test.sql                     (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 14 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/elearning_foundation_test.sql               (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_attendance_test.sql        (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 12 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/enrollment_pause_engine_test.sql            (Wstat: 768 (exited 3) Tests: 2 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 10 tests but ran 2.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/feedback_authorization_test.sql             (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_engine_v1_test.sql                  (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 10 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/finance_read_scope_test.sql                 (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/financial_management_report_v1_test.sql     (Wstat: 768 (exited 3) Tests: 5 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_cancellation_approval_test.sql      (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/invoice_engine_v1_test.sql                  (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 12 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_analytics_test.sql                 (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_assessment_test.sql                (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_journals_test.sql                  (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 12 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_observation_taxonomy_test.sql      (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_regrade_test.sql                   (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_reports_test.sql                   (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/learning_shadow_mapping_test.sql            (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/legacy_migration_review_test.sql            (Wstat: 768 (exited 3) Tests: 59 Failed: 31)
+  Failed tests:  23-29, 32-36, 38-40, 42, 44-45, 47-59
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/lesson_feedback_test.sql                    (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/makeup_credit_ledger_test.sql               (Wstat: 768 (exited 3) Tests: 4 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 30 tests but ran 4.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/opening_balance_collections_test.sql        (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/pause_tuition_effective_end_test.sql        (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 8 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_cash_integrity_test.sql             (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/payment_engine_v1_test.sql                  (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 14 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/refund_engine_v1_test.sql                   (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 12 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/relationship_read_authorization_test.sql    (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_makeup_foundation_test.sql       (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 14 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/reschedule_session_occurrence_test.sql      (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 13 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/revenue_forecast_v1_test.sql                (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 8 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/session_status_workflow_test.sql            (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 10 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/session_teacher_assignment_test.sql         (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/student_ops_shell_test.sql                  (Wstat: 768 (exited 3) Tests: 41 Failed: 8)
+  Failed tests:  25-27, 29-30, 34, 39, 41
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/student_parent_history_test.sql             (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_historical_access_test.sql          (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_payroll_test.sql                    (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/teacher_session_workspace_test.sql          (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 29 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_branch_pricing_discounts_test.sql   (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 12 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_discount_invoice_lock_test.sql      (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 4 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_operations_rpc_test.sql             (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_phase1_test.sql                     (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: Bad plan.  You planned 18 tests but ran 0.
+/private/tmp/vibe-regression-20260930/supabase/tests/database/tuition_reminders_test.sql                  (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+Files=100, Tests=1624,  4 wallclock secs ( 0.18 usr  0.09 sys +  0.46 cusr  0.27 csys =  1.00 CPU)
+Result: FAIL
+error running container: exit 1

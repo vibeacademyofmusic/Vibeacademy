@@ -15,7 +15,8 @@
     "attendance": "fe2f54b5-444b-4bf7-98db-c02f2a1f0b0a",
     "credit": "f1394041-73c1-4387-856c-58b2a5b48806",
     "makeupSession": "e738af8e-d7b8-4490-aaeb-5cdee003d293",
-    "pauseRequest": "1219b01f-2075-4b7d-957d-79bceecae513"
+    "pauseRequest": "b0e31233-19b1-433d-8dad-bd1356b4d36a",
+    "pause": "97ced329-575c-4b54-8d1a-3bb9122f5fc3"
   },
   "actors": {
     "ADMIN": {
