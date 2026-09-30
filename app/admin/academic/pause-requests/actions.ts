@@ -22,6 +22,15 @@ export async function decidePauseRequest(form: FormData) {
   if (claimsError || !claims?.claims) redirect('/login')
   const allowed = await db.rpc('academic_ops_may_manage')
   if (allowed.error || allowed.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  const current = await db.from('enrollment_pause_requests').select('status').eq('id', requestId).maybeSingle()
+  if (current.error) {
+    query.set('error', 'Không tải được yêu cầu. Chưa ghi quyết định; hãy tải lại danh sách.')
+    redirect('/admin/academic/pause-requests?' + query)
+  }
+  if (!current.data || current.data.status !== 'REQUESTED') {
+    query.set('error', 'Yêu cầu không còn chờ duyệt. Không ghi thêm quyết định.')
+    redirect('/admin/academic/pause-requests?' + query)
+  }
   const result = await db.rpc('decide_enrollment_pause', {
     p_request_id: requestId,
     p_approve: decision === 'approve',
@@ -32,7 +41,11 @@ export async function decidePauseRequest(form: FormData) {
     query.set('error', 'Không thể ghi quyết định. Hãy tải lại danh sách trước khi bấm lại.')
     redirect('/admin/academic/pause-requests?' + query)
   }
-  const body = result.data as { ok?: boolean; blockers?: string[]; status?: string } | null
+  const body = result.data as { ok?: boolean; blockers?: string[]; status?: string; repeated?: boolean } | null
+  if (body?.repeated) {
+    query.set('error', 'Yêu cầu đã được quyết định. Không ghi thêm quyết định.')
+    redirect('/admin/academic/pause-requests?' + query)
+  }
   if (!body?.ok) {
     const blocker = body?.blockers?.[0] ?? 'Yêu cầu không còn ở trạng thái chờ duyệt.'
     query.set('error', blocker)
