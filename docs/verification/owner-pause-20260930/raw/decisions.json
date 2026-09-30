@@ -1,0 +1,42 @@
+[
+  {
+    "id": "66ff6ae9-e35a-4b5d-9b1e-a3dfe900e785",
+    "enrollment_id": "d7300000-0000-4000-8000-000000000021",
+    "starts_on": "2026-10-02",
+    "ends_on": "2026-10-03",
+    "reason": "TEST OWNER PAUSE 20260930 — APPROVE — synthetic only",
+    "status": "APPROVED",
+    "pause_id": "d39f6370-9e96-4a51-8553-f0901c4fd5a0",
+    "requested_by": "cfb68e9a-e108-48ad-99f0-288b1f362004",
+    "requested_at": "2026-09-30T08:40:16.617152+00:00",
+    "decided_by": "25073c07-90f9-415a-8862-8dbdadd9c8b0",
+    "decided_at": "2026-09-30T08:41:18.226566+00:00",
+    "decision_note": "TEST OWNER PAUSE 20260930 — Owner approved via UI",
+    "ended_by": null,
+    "ended_at": null,
+    "end_note": null,
+    "created_at": "2026-09-30T08:40:16.617152+00:00",
+    "retries_added_events": 0,
+    "unauthorized_denied": true
+  },
+  {
+    "id": "9c6a74f9-db6c-4abd-9815-ae1e3463d05d",
+    "enrollment_id": "d7300000-0000-4000-8000-000000000022",
+    "starts_on": "2026-10-02",
+    "ends_on": "2026-10-03",
+    "reason": "TEST OWNER PAUSE 20260930 — REJECT — synthetic only",
+    "status": "REJECTED",
+    "pause_id": null,
+    "requested_by": "cfb68e9a-e108-48ad-99f0-288b1f362004",
+    "requested_at": "2026-09-30T08:40:16.716558+00:00",
+    "decided_by": "25073c07-90f9-415a-8862-8dbdadd9c8b0",
+    "decided_at": "2026-09-30T08:41:37.418369+00:00",
+    "decision_note": "TEST OWNER PAUSE 20260930 — Owner rejected via UI",
+    "ended_by": null,
+    "ended_at": null,
+    "end_note": null,
+    "created_at": "2026-09-30T08:40:16.716558+00:00",
+    "retries_added_events": 0,
+    "unauthorized_denied": true
+  }
+]

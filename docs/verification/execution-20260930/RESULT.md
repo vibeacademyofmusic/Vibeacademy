@@ -1,5 +1,11 @@
 # Consolidated execution — 30 September 2026
 
+## Latest Owner browser continuation
+
+The Owner two-request pause workflow is now verified on localhost: both requests appeared, one was approved and one rejected through the UI, reload and database actor/timestamp checks passed, unauthorized STAFF access and repeat mutations were blocked, and exact synthetic cleanup returned every public table to its prior count/digest. See [actual results and evidence](../owner-pause-20260930/RESULT.md). This supersedes the sign-in/browser blockers below; it does not certify the full product or recovery.
+
+The remaining SQL failures are **not all fixture-only**: individual reruns show the full-class list/mutation inconsistency and paused legacy import/guard conflict. No permissions or assertions were weakened. Recovery remains incomplete and separate from this browser PASS.
+
 ## Continuation from `3193b84`
 
 Rechecked before this pass. Branch `codex/release-candidate-lint`, HEAD `3193b84`, app still `next-server` on port 3000, Supabase `127.0.0.1:54321`, ledger max `20260930153000` (189 rows). Recovery database `vibe_recovery_20260930` still exists and was not used as the app database. The controlled window `cb9062` is still `http://localhost:3000/login`. No password was requested and no session was bypassed, so pause-approval and cashier browser journeys are not accepted.

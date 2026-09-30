@@ -1,0 +1,15 @@
+✔ query failures render an alert rather than an empty-state success (52.036333ms)
+✔ a successful zero-row query renders the correct empty state (10.970375ms)
+✔ authorized REQUESTED decision preserves the RPC authorization boundary (12.462959ms)
+✔ stale approved and rejected forms cannot send another decision (8.276084ms)
+✔ unauthorized users are denied before loading or deciding the request (3.028875ms)
+✔ a raced idempotent RPC retry is shown as blocked, never a new decision (2.813792ms)
+✔ request-read failures stop mutation and do not pretend the request is absent (3.451917ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 311.180166

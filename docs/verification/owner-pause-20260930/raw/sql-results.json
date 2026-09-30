@@ -1,0 +1,26 @@
+[
+  {
+    "file": "academic_ops_security_foundation_test.sql",
+    "exit": 1,
+    "summary": [
+      "Files=0, Tests=0,  0 wallclock secs ( 0.00 usr +  0.01 sys =  0.01 CPU)",
+      "Result: NOTESTS"
+    ]
+  },
+  {
+    "file": "legacy_migration_review_test.sql",
+    "exit": 1,
+    "summary": [
+      "Files=1, Tests=77,  0 wallclock secs ( 0.01 usr  0.01 sys +  0.00 cusr  0.01 csys =  0.03 CPU)",
+      "Result: FAIL"
+    ]
+  },
+  {
+    "file": "student_ops_shell_test.sql",
+    "exit": 1,
+    "summary": [
+      "Files=1, Tests=98,  1 wallclock secs ( 0.02 usr +  0.01 sys =  0.03 CPU)",
+      "Result: FAIL"
+    ]
+  }
+]

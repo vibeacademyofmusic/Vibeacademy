@@ -1,0 +1,50 @@
+[
+  {
+    "id": "9c6a74f9-db6c-4abd-9815-ae1e3463d05d",
+    "starts_on": "2026-10-02",
+    "ends_on": "2026-10-03",
+    "reason": "TEST OWNER PAUSE 20260930 — REJECT — synthetic only",
+    "status": "REQUESTED",
+    "decided_at": null,
+    "decision_note": null,
+    "decided_by": null,
+    "enrollments": {
+      "id": "d7300000-0000-4000-8000-000000000022",
+      "classes": {
+        "code": "TEST_OWNER_PAUSE_20260930",
+        "name": "TEST OWNER PAUSE 20260930 class",
+        "branches": {
+          "name": "TEST OWNER PAUSE 20260930 branch"
+        }
+      },
+      "students": {
+        "full_name": "TEST OWNER PAUSE 20260930 — REJECT",
+        "student_code": "TEST_OWNER_PAUSE_1"
+      }
+    }
+  },
+  {
+    "id": "66ff6ae9-e35a-4b5d-9b1e-a3dfe900e785",
+    "starts_on": "2026-10-02",
+    "ends_on": "2026-10-03",
+    "reason": "TEST OWNER PAUSE 20260930 — APPROVE — synthetic only",
+    "status": "REQUESTED",
+    "decided_at": null,
+    "decision_note": null,
+    "decided_by": null,
+    "enrollments": {
+      "id": "d7300000-0000-4000-8000-000000000021",
+      "classes": {
+        "code": "TEST_OWNER_PAUSE_20260930",
+        "name": "TEST OWNER PAUSE 20260930 class",
+        "branches": {
+          "name": "TEST OWNER PAUSE 20260930 branch"
+        }
+      },
+      "students": {
+        "full_name": "TEST OWNER PAUSE 20260930 — APPROVE",
+        "student_code": "TEST_OWNER_PAUSE_0"
+      }
+    }
+  }
+]
