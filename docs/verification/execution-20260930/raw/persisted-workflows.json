@@ -1,0 +1,168 @@
+[
+  {
+    "name": "Authenticated intake draft persists; replay creates one application",
+    "status": "PASS",
+    "evidence": {
+      "id": "d9f814a9-2b9c-4295-82ce-1aa582d3fcc5",
+      "created_by": "6ce9e479-f6cd-4a9f-85dc-32fdbd2f5350",
+      "state": "COMPLETED"
+    }
+  },
+  {
+    "name": "Out-of-branch and ordinary staff registration mutation denied",
+    "status": "PASS",
+    "evidence": {
+      "BB": "REGISTRATION_UNAUTHORIZED",
+      "STAFF": "REGISTRATION_UNAUTHORIZED",
+      "TEACHER": "REGISTRATION_UNAUTHORIZED",
+      "PARENT": "REGISTRATION_UNAUTHORIZED",
+      "ANON": "permission denied for function transition_registration_application"
+    }
+  },
+  {
+    "name": "Submit, verify and agreed full-price quote persist",
+    "status": "PASS",
+    "evidence": {
+      "application": "d9f814a9-2b9c-4295-82ce-1aa582d3fcc5",
+      "quote": 12000000,
+      "no_discount": true
+    }
+  },
+  {
+    "name": "Unpaid completion denied; synthetic server payment completes once",
+    "status": "PASS",
+    "evidence": {
+      "student": "2aa35959-5998-480b-925e-22e1ee44b610",
+      "payment": "83f68a6f-50f6-4ee5-a298-932d8a34888c",
+      "student_owner": "2aa35959-5998-480b-925e-22e1ee44b610",
+      "branch_owner": "267ee65d-cb7d-4054-812c-305d305d916e",
+      "created_by": null,
+      "synthetic_server_event": true
+    }
+  },
+  {
+    "name": "Student, parent and academic path persist with expected relationships",
+    "status": "PASS",
+    "evidence": {
+      "student": "2aa35959-5998-480b-925e-22e1ee44b610",
+      "path": "b8a90c9a-c2fc-4b54-9b2c-253268b18867",
+      "parent": "835c936d-54cb-4d49-b44c-ef55a1234df4"
+    }
+  },
+  {
+    "name": "Placement creates exactly one correctly owned enrollment",
+    "status": "PASS",
+    "evidence": {
+      "placement": "519375a3-db10-4327-a43b-2b385bea5a16",
+      "enrollment": "08076840-6fc1-4a95-b0ee-33eaadfa307e",
+      "student": "2aa35959-5998-480b-925e-22e1ee44b610",
+      "class": "bf4919b3-4f06-49ef-80c7-a530eeedcdaf"
+    }
+  },
+  {
+    "name": "Tuition term, invoice and gateway receipt allocation persist",
+    "status": "PASS",
+    "evidence": {
+      "tuition": "ea720acd-4a06-4202-b266-4f9707f44e1e",
+      "invoice": "3dfbc2bb-be0b-41ba-b23a-8f8e704daf07",
+      "invoice_state": "ISSUED",
+      "allocated": 12000000,
+      "paid_by_receipt": "83f68a6f-50f6-4ee5-a298-932d8a34888c"
+    }
+  },
+  {
+    "name": "Reception STAFF, branch admin, finance, teacher, parent and anon cannot record counter cash",
+    "status": "PASS",
+    "evidence": {
+      "denials": {
+        "STAFF": "SUPER_ADMIN role required",
+        "BA": "SUPER_ADMIN role required",
+        "FIN": "SUPER_ADMIN role required",
+        "TEACHER": "SUPER_ADMIN role required",
+        "PARENT": "SUPER_ADMIN role required",
+        "ANON": "permission denied for function create_payment_once"
+      },
+      "rows_added": 0,
+      "operational_gap": "Reception requires an existing authorized SUPER_ADMIN for counter cash; roles unchanged"
+    }
+  },
+  {
+    "name": "Counter cash actor ownership and idempotency are enforced",
+    "status": "PASS",
+    "evidence": {
+      "payment": "8c0c40c5-9bc0-4c27-abda-bb2b917f9a33",
+      "actor_owner": "b8a18ecb-894e-4378-b10b-19a65e1e1fc7",
+      "student_owner": "2aa35959-5998-480b-925e-22e1ee44b610",
+      "branch_owner": "267ee65d-cb7d-4054-812c-305d305d916e",
+      "replay_same_receipt": true,
+      "changed_input_denied": "Payment request key reused with different input",
+      "different_actor_denied": "Payment request key reused with different input"
+    }
+  },
+  {
+    "name": "Teacher attendance persists; unrelated roles cannot forge attendance",
+    "status": "PASS",
+    "evidence": {
+      "attendance": "fe2f54b5-444b-4bf7-98db-c02f2a1f0b0a",
+      "marked_by": "1b879638-12f9-4554-9e9e-ccebae336823",
+      "status": "EXCUSED"
+    }
+  },
+  {
+    "name": "Completing excused regular session creates exactly one makeup entitlement",
+    "status": "PASS",
+    "evidence": {
+      "credit": "f1394041-73c1-4387-856c-58b2a5b48806",
+      "state": "USED",
+      "unique_source": true
+    }
+  },
+  {
+    "name": "Makeup reservation, attendance and credit consumption persist without money movement",
+    "status": "PASS",
+    "evidence": {
+      "session": "e738af8e-d7b8-4490-aaeb-5cdee003d293",
+      "credit": "f1394041-73c1-4387-856c-58b2a5b48806",
+      "state": "USED",
+      "no_new_money": true
+    }
+  },
+  {
+    "name": "Pause request, approval and cancellation preserve financial records",
+    "status": "FAIL",
+    "evidence": "{\"ok\":false,\"money\":\"Không hoàn tiền và không tạo khoản thu. effective_ends_on chỉ đổi sau khi bảo lưu được duyệt, theo hàm đang chạy.\",\"blockers\":[\"Khoảng này chồng lên một bảo lưu đang hiệu lực hoặc một yêu cầu đang chờ duyệt.\"],\"sessions\":[],\"decisions\":[\"Chưa có hạn báo vắng được duyệt.\",\"Chưa có hạn dùng quyền học bù được duyệt. Quyền hiện có không tự hết hạn.\",\"Chưa có số quyền học bù tối đa được duyệt.\",\"Chưa có quy định hủy muộn được duyệt. Hủy buổi bù còn lịch trả quyền theo sổ hiện tại.\",\"Chưa có thời lượng bảo lưu tối đa được duyệt.\",\"Tiền: chưa có quyết định hoàn hoặc thu thêm. Cơ chế đang chạy chỉ dời ngày kết thúc quyền học theo ngày bảo lưu giao với kỳ học phí. Xem trước không ghi sổ học phí.\"],\"request_id\":\"1219b01f-2075-4b7d-957d-79bceecae513\",\"policy_version\":1,\"tuition_preview\":[{\"status\":\"ACTIVE\",\"tuition_id\":\"ea720acd-4a06-4202-b266-4f9707f44e1e\",\"base_ends_on\":\"2027-09-29\",\"overlap_days\":3,\"effective_ends_on\":\"2027-09-29\"}],\"exception_recorded\":true,\"open_makeup_credits\":0}\n\nfalse !== true\n"
+  },
+  {
+    "name": "Blocked pause approval preserves request, payments and invoice; ordinary roles denied",
+    "status": "PASS",
+    "evidence": {
+      "request": "1219b01f-2075-4b7d-957d-79bceecae513",
+      "state": "REQUESTED",
+      "created_by": "b8a18ecb-894e-4378-b10b-19a65e1e1fc7",
+      "approval_blockers": [
+        "Khoảng này chồng lên một bảo lưu đang hiệu lực hoặc một yêu cầu đang chờ duyệt."
+      ],
+      "denials": {
+        "STAFF": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
+        "BA": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
+        "FIN": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
+        "TEACHER": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
+        "PARENT": "Không có quyền bảo lưu và học bù. Cần vai trò Quản trị hoặc Quản lý đào tạo.",
+        "ANON": "Không xác định được người thao tác"
+      },
+      "no_pause_inserted": true,
+      "financial_records_unchanged": true
+    }
+  },
+  {
+    "name": "Parent/student scope and final persisted ownership",
+    "status": "PASS",
+    "evidence": {
+      "persisted_student": "2aa35959-5998-480b-925e-22e1ee44b610",
+      "cash_payment": "8c0c40c5-9bc0-4c27-abda-bb2b917f9a33",
+      "actor_owner": "b8a18ecb-894e-4378-b10b-19a65e1e1fc7",
+      "queued_jobs": 4,
+      "attempted_sends": 0
+    }
+  }
+]
