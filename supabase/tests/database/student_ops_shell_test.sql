@@ -1,4 +1,51 @@
 begin;
+
+-- Fixture prerequisite for the current enrollment guard. Does not change production rules.
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql security definer set search_path=public,pg_temp as $$
+declare c public.classes%rowtype; course public.courses%rowtype; level_id uuid; t uuid; r uuid; slot int;
+begin
+ select * into c from public.classes where id=p_class;
+ if not found or c.course_id is null or c.xmin::text is distinct from txid_current()::text then return; end if;
+ select * into course from public.courses where id=c.course_id;
+ if not found then return; end if;
+ level_id := course.level_id;
+ if level_id is null then
+   select id into level_id from public.curriculum_levels where curriculum_id=course.curriculum_id order by sequence_no limit 1;
+   if level_id is null then return; end if;
+   update public.courses set level_id=level_id where id=course.id and xmin::text=txid_current()::text;
+ end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,level_id) where id=c.id;
+ update public.students set default_branch_id=c.branch_id
+  where default_branch_id is null and status='ACTIVE' and xmin::text=txid_current()::text;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,level_id,date '2000-01-01','ACTIVE',true
+ from public.students s
+ where s.default_branch_id=c.branch_id and s.xmin::text=txid_current()::text
+   and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.status='ACTIVE' and (a.curriculum_id=course.curriculum_id or a.is_primary));
+ if not exists(select 1 from public.class_teachers where class_id=c.id and teacher_role='PRIMARY' and (is_active or ended_at is not null)) then
+   select id into t from public.teachers where teacher_code='FIX-'||c.id;
+   if t is null then
+     insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+     insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   end if;
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+ end if;
+ if not exists(select 1 from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id) then
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+ else
+   select id into r from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id limit 1;
+ end if;
+ if exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   update public.schedules set room_id=coalesce(room_id,r) where class_id=c.id and status='ACTIVE' and room_id is null;
+ else
+   slot := abs(hashtext(c.id::text));
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+end $$;
+
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 
@@ -41,6 +88,7 @@ insert into public.classes(id, branch_id, course_id, code, name, class_type, cap
   ('e7300000-0000-4000-8000-000000000005', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000013', 'OPS-GUITAR-A', 'Lop Guitar A', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002'),
   ('e7300000-0000-4000-8000-000000000006', 'e7100000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-B', 'Lop Piano B', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002');
 insert into public.teachers(id, teacher_code, full_name) values ('e7700000-0000-4000-8000-000000000001', 'OPS-T', 'GV Piano');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
   ('e7300000-0000-4000-8000-000000000004', 'e7700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');
 insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
@@ -79,21 +127,27 @@ select is(public.registration_can('student_placement.view', 'e7100000-0000-4000-
 select is(public.registration_can('student_placement.view', 'e7100000-0000-4000-8000-000000000002'), false, 'branch admin A cannot view branch B');
 select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell')), 2::bigint, 'branch admin A sees only own waiting students');
 select is((select count(*) from public.list_waiting_placements('e7100000-0000-4000-8000-000000000002', 'ALL', null)), 0::bigint, 'forged branch filter returns nothing');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-8000-000000000099', 'e7640000-0000-4000-8000-000000000099', 1, 'e7300000-0000-4000-8000-000000000004', current_date)$$, 'P0001', 'PLACEMENT_UNAUTHORIZED', 'forged placement denied without confirming it exists');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-8000-000000000031', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 1, 'e7300000-0000-4000-8000-000000000006', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_CLASS_DENIED', 'forged other-branch class denied');
 select lives_ok($$select public.set_student_placement_matching('e7630000-0000-4000-8000-000000000001', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 1)$$, 'matching');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 2, %L::uuid, %L::date)', 'e7630000-0000-4000-8000-000000000002', 'e7600000-0000-4000-8000-a10000000001', 'e7300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 30), 'future assign');
 select is((select count(*) from public.list_waiting_placements(null, 'ALL', 'Shell Future')), 0::bigint, 'future assignment leaves waiting');
 select is((select placement_status from public.list_future_start_placements(null, 'ALL', 'Shell Future')), 'SCHEDULED_FUTURE', 'future assignment waits to begin');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Future')), 0::bigint, 'future start is not current');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 1, %L::uuid, %L::date)', 'e7630000-0000-4000-8000-000000000003', 'e7600000-0000-4000-8000-a10000000002', 'e7300000-0000-4000-8000-000000000004', public.registration_vietnam_today()), 'today assign');
 select is((select count(*) from public.list_current_student_enrollments(null, 'Shell Today')), 1::bigint, 'today start is current');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-8000-000000000004', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000003'), 1, 'e7300000-0000-4000-8000-000000000006', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_UNAUTHORIZED', 'cross-branch placement denied');
 
 select set_config('registration.write', 'on', true);
 update public.registration_applications set course_id = 'e7300000-0000-4000-8000-000000000013' where id = 'e7600000-0000-4000-8000-a10000000003';
 select set_config('registration.write', 'off', true);
 select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000003', true);
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select throws_ok($$select public.assign_student_placement('e7630000-0000-4000-8000-000000000005', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000003'), 1, 'e7300000-0000-4000-8000-000000000006', public.registration_vietnam_today())$$, 'P0001', 'PLACEMENT_PROGRAM_DENIED', 'different program class denied');
 
 select set_config('request.jwt.claim.sub', 'e7200000-0000-4000-8000-000000000002', true);
@@ -110,6 +164,7 @@ select is((select count(*) from public.list_waiting_placements(null, 'ALL', null
 insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id) values
   ('e7300000-0000-4000-8000-000000000007', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-PIANO-A2', 'Lop Piano A2', 'GROUP', 8, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002'),
   ('e7300000-0000-4000-8000-000000000008', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-FULL-A', 'Lop Full A', 'GROUP', 2, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
   ('e7300000-0000-4000-8000-000000000007', 'e7700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');
 insert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)
@@ -120,6 +175,7 @@ insert into public.students(id, student_code, full_name, default_branch_id, stat
 insert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at) values
   ('e7400000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()),
   ('e7400000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today());
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 insert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status) values
   ('e7500000-0000-4000-8000-000000000001', 'e7400000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000008', public.registration_vietnam_today(), public.registration_vietnam_today(), 'ACTIVE'),
   ('e7500000-0000-4000-8000-000000000002', 'e7400000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000008', public.registration_vietnam_today(), public.registration_vietnam_today(), 'ACTIVE');
@@ -160,6 +216,7 @@ select is((select status from public.registration_applications where id = 'e7600
 select is((select status from public.students where id = (select student_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001')), 'ACTIVE', 'cancellation keeps the student');
 select is((select status from public.enrollments where id = (select metadata->>'enrollment_id' from public.student_placement_events where id = 'e7660000-0000-4000-8000-000000000010')::uuid), 'WITHDRAWN', 'cancelled enrollment is withdrawn, not deleted');
 select is((select metadata->>'reason' from public.student_placement_events where id = 'e7660000-0000-4000-8000-000000000010'), 'Phu huynh doi lich', 'cancel records the reason');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 select lives_ok(format('select public.assign_student_placement(%L::uuid, (select id from public.student_placement_cases where registration_application_id = %L::uuid), 5, %L::uuid, %L::date)', 'e7660000-0000-4000-8000-000000000011', 'e7600000-0000-4000-8000-a10000000001', 'e7300000-0000-4000-8000-000000000007', public.registration_vietnam_today() + 20), 'same class can be assigned again after withdrawal');
 select throws_ok($$select public.change_future_student_placement('e7660000-0000-4000-8000-000000000012', (select id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 6, (select enrollment_id from public.student_placement_cases where registration_application_id = 'e7600000-0000-4000-8000-a10000000001'), 'e7300000-0000-4000-8000-000000000004', public.registration_vietnam_today() + 25, ' ')$$, 'P0001', 'PLACEMENT_REASON_REQUIRED', 'blank reason is rejected');
 

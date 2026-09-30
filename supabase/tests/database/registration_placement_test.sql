@@ -38,12 +38,14 @@ insert into public.classes(id, branch_id, course_id, code, name, class_type, cap
   ('d8300000-0000-4000-8000-000000000006', 'd8100000-0000-4000-8000-000000000002', 'd8300000-0000-4000-8000-000000000003', 'REG-OTHER', 'Lop chi nhanh khac', 'GROUP', 4, 'ACTIVE'),
   ('d8300000-0000-4000-8000-000000000007', 'd8100000-0000-4000-8000-000000000001', 'd8300000-0000-4000-8000-000000000013', 'REG-SONG', 'Lop dang hoc', 'GROUP', 4, 'ACTIVE');
 insert into public.teachers(id, teacher_code, full_name) values ('d8700000-0000-4000-8000-000000000001', 'REG-T', 'GV Piano');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
   ('d8300000-0000-4000-8000-000000000004', 'd8700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');
 
 -- Operational placement now checks the actual timetable on all enrollment writes.
 insert into public.rooms(id,branch_id,code,name,capacity)
 select ('d8900000-0000-4000-8000-'||lpad(row_number() over()::text,12,'0'))::uuid,id,'REG-ROOM','TEST room',20 from branches where code in ('REG-A','REG-B');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at)
 select id,'d8700000-0000-4000-8000-000000000001','PRIMARY','2020-01-01' from classes where code in ('REG-SOLO','REG-OTHER','REG-SONG');
 insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from)

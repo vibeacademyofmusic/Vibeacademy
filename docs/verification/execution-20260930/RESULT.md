@@ -1,5 +1,38 @@
 # Consolidated execution — 30 September 2026
 
+## Continuation from `3193b84`
+
+Rechecked before this pass. Branch `codex/release-candidate-lint`, HEAD `3193b84`, app still `next-server` on port 3000, Supabase `127.0.0.1:54321`, ledger max `20260930153000` (189 rows). Recovery database `vibe_recovery_20260930` still exists and was not used as the app database. The controlled window `cb9062` is still `http://localhost:3000/login`. No password was requested and no session was bypassed, so pause-approval and cashier browser journeys are not accepted.
+
+### SQL fixtures
+
+The previous 42 failures were rerun on the app database inside each file’s transaction and rolled back. They were not product-permission defects. The enrollment guard now requires a class level range, a student program, a primary teacher and a timetable before a new active enrollment. Twenty-one files now pass after adding that prerequisite only for rows created in the test transaction. The list is [sql-fixture-rerun.txt](raw/sql-fixture-rerun.txt).
+
+Twenty-one still fail. They were not marked pass and no grant was widened:
+
+- Missing local wrappers that the tests call after enrollment succeeds: `pg_temp.void_payment`, `pg_temp.create_refund`, `pg_temp.cancel_invoice`. Direct void remains closed by the approval workflow. These wrappers were not recreated as a bypass.
+- `PLACEMENT_CLASS_FULL` on makeup fixtures whose class capacity does not cover the rows the test inserts.
+- `PLACEMENT_START_DENIED` where the fixture start date is before the class start.
+- `PLACEMENT_CLASS_DENIED` in the branch-scope fixture.
+- A second academic-program insert collides with the fixture program in the parent-history and teacher-history files.
+- Later assertions still fail in learning reports, lesson feedback, learning observation, shadow mapping, legacy pause import, invoice cancellation, payment void, and the student-ops full-class option.
+
+### Recovery, still incomplete
+
+Database restore into `vibe_recovery_20260930` remains the earlier isolated restore: about 3.1 seconds for the database load, separate from any complete recovery time. `authenticated` can execute `create_payment_once` on both source and restored databases. Counts and the payment-amount checksum still match. Three restore errors are now classified:
+
+- `schema "public" already exists` is a collision with the schema created before restore. It is not a missing table.
+- Nine `permission denied to change default privileges` errors mean the local `postgres` role cannot replay default-privilege statements. Object grants were not broadened to hide that.
+- `vault.secrets` does not exist because the vault extension object was not part of the restored schemas. The secret rows were not loaded. No secret value was printed.
+
+Storage metadata is two `staff-portraits` objects, 8,347 bytes and 398,812 bytes. The bytes exist on the storage volume and were copied privately with SHA-256 `b484a6ecf3868f3abff5100993cdadaa82d09a93045f499c47b45e49450597cd` and `47736d803e97b4bd106b3937f330bd09795dee76cbac25b605cbe566619dfe53`. They were not restored through an isolated Storage API. A synthetic login through an isolated Auth service was not run, because the only Auth API on port 54321 serves the main database. Recovery stays incomplete.
+
+### Acceptance matrix and rehearsal
+
+The 105-case identities stay in [acceptance-source.md](../system-pilot-20260928T032001Z/acceptance-source.md) and the 28 September results in [SYSTEM_TEST_RESULTS.md](../system-pilot-20260928T032001Z/SYSTEM_TEST_RESULTS.md). Those statuses were not relabeled as current PASS. No 60-minute rehearsal and no human UAT were started, because browser sign-in, the remaining SQL failures and complete recovery have not passed.
+
+Decision for this local continuation: **NO-GO**.
+
 ## Continuation after the owner cashier decision
 
 Runtime checked again before this change. Branch `codex/release-candidate-lint`, HEAD `c9dd28e`, app `next-server` on port 3000, Supabase host `127.0.0.1:54321`, database container `supabase_db_vibe-academy-system`. The working tree already had unrelated observability and backup files; those were not reset. The previous report below remains the evidence for `963f427` / `c9dd28e`. It is not evidence for the cashier change.

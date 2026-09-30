@@ -9,6 +9,7 @@ insert into rooms(id,branch_id,code,name,capacity) select ('b9000000-0000-4000-8
 insert into teachers(id,teacher_code,full_name) select ('b9000000-0000-4000-8000-'||lpad((20+i)::text,12,'0'))::uuid,'TEST-TP-'||i,'TEST '||i from generate_series(1,3) i;
 insert into classes(id,branch_id,course_id,code,name,class_type,capacity,status,accepted_from_level_id,accepted_to_level_id)
 select ('b9000000-0000-4000-8000-'||lpad((30+i)::text,12,'0'))::uuid,'b9000000-0000-4000-8000-000000000001','b9000000-0000-4000-8000-000000000004','TEST-TP-'||i,'TEST '||i,case when i=1 then 'ONE_ON_ONE' else 'GROUP' end,case when i=1 then 1 else 2 end,'ACTIVE','b9000000-0000-4000-8000-000000000003','b9000000-0000-4000-8000-000000000003' from generate_series(1,3) i;
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into class_teachers(class_id,teacher_id,teacher_role,assigned_at)
 select ('b9000000-0000-4000-8000-'||lpad((30+i)::text,12,'0'))::uuid,('b9000000-0000-4000-8000-'||lpad((20+i)::text,12,'0'))::uuid,'PRIMARY','2020-01-01' from generate_series(1,3) i;
 insert into schedules(id,class_id,room_id,day_of_week,start_time,end_time,effective_from)

@@ -34,6 +34,7 @@ insert into public.classes(id, branch_id, course_id, code, name, class_type, cap
 select 'c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000010', 'c2100000-0000-4000-8000-000000000040', 'TEST_TSW_DB', 'Guitar Group Test DB', 'GROUP', 10, 'ACTIVE',
   (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'PRE'),
   (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'GRADE_5');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
   ('c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000021', 'PRIMARY', true, current_date - 30);
 

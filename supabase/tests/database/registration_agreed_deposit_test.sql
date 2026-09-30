@@ -31,6 +31,7 @@ insert into public.rooms(id,branch_id,code,name,capacity) values
 ('e9300000-0000-4000-8000-000000000025','e9300000-0000-4000-8000-000000000001','AGREE-ROOM','Agreed room',8);
 insert into public.teachers(id,teacher_code,full_name) values
 ('e9300000-0000-4000-8000-000000000026','AGREE-TEACHER','Agreed teacher');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values
 ('e9300000-0000-4000-8000-000000000024','e9300000-0000-4000-8000-000000000026','PRIMARY','2020-01-01');
 insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from) values
