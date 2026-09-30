@@ -107,6 +107,32 @@ values
 );
 
 
+-- Complete the academic scope and timetable now required for new active enrollments.
+-- Rollback-only prerequisites for older finance/pause fixtures. No guards or assertions disabled.
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql as $$
+declare c public.classes%rowtype; course public.courses%rowtype; t uuid; r uuid;
+begin
+ select * into strict c from public.classes where id=p_class;
+ select * into strict course from public.courses where id=c.course_id;
+ if course.level_id is null then raise exception 'Fixture course requires an explicit level'; end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,course.level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,course.level_id) where id=c.id;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,course.level_id,date '2000-01-01','ACTIVE',true
+ from public.students s where s.default_branch_id=c.branch_id
+ and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.curriculum_id=course.curriculum_id and a.status='ACTIVE');
+ if not exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+   insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,7,time '08:00',time '09:00',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+end $$;
+select pg_temp.prepare_enrollment_fixture('f1400000-0000-0000-0000-000000000001');
+
 insert into public.enrollments (
   id,
   student_id,

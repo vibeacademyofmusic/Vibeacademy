@@ -222,38 +222,39 @@ async function main() {
     const args = { p_enrollment_id: map.objects.enrollment, p_starts_on: '2026-10-02', p_ends_on: '2026-10-04', p_reason: RUN }
     for (const actor of ['STAFF', 'BA', 'FIN', 'TEACHER', 'PARENT', 'ANON']) {
       const denied = await c[actor].rpc('request_enrollment_pause', args)
-      assert.ok(denied.error || denied.data?.ok === false, actor + ' pause unexpectedly allowed')
+      assert.ok(denied.error, actor + ' pause request must fail authorization'); assert.notEqual(denied.error.code, 'PGRST202')
     }
     const requested = await rpc('ADMIN', 'request_enrollment_pause', args); assert.equal(requested.ok, true, JSON.stringify(requested))
     map.objects.pauseRequest = requested.request_id
+    const pendingBefore = await read('enrollment_pause_requests', requested.request_id)
+    assert.equal(pendingBefore.status, 'REQUESTED')
+    for (const actor of ['STAFF', 'BA', 'FIN', 'TEACHER', 'PARENT', 'ANON']) {
+      const denied = await c[actor].rpc('decide_enrollment_pause', { p_request_id: requested.request_id, p_approve: true, p_note: RUN })
+      assert.ok(denied.error, actor + ' must not approve a pending request'); assert.notEqual(denied.error.code, 'PGRST202')
+    }
+    assert.deepEqual(await read('enrollment_pause_requests', requested.request_id), pendingBefore)
+    const pendingOverlap = await rpc('ADMIN', 'preview_enrollment_pause', { p_enrollment_id: map.objects.enrollment, p_starts_on: args.p_starts_on, p_ends_on: args.p_ends_on })
+    assert.equal(pendingOverlap.ok, false); assert.ok(pendingOverlap.blockers.some(b => b.includes('chồng')))
     const approved = await rpc('ADMIN', 'decide_enrollment_pause', { p_request_id: requested.request_id, p_approve: true, p_note: RUN + ' synthetic approval' }); assert.equal(approved.ok, true, JSON.stringify(approved))
     map.objects.pause = approved.pause_id
     assert.equal((await read('enrollment_pauses', approved.pause_id)).status, 'ACTIVE')
+    const pauseBefore = await read('enrollment_pauses', approved.pause_id)
+    for (const actor of ['STAFF', 'BA', 'FIN', 'TEACHER', 'PARENT', 'ANON']) {
+      const denied = await c[actor].rpc('decide_enrollment_pause', { p_request_id: requested.request_id, p_approve: true, p_note: RUN })
+      assert.ok(denied.error, actor + ' must not approve even a repeated decision'); assert.notEqual(denied.error.code, 'PGRST202')
+    }
+    const repeated = await rpc('ADMIN', 'decide_enrollment_pause', { p_request_id: requested.request_id, p_approve: true, p_note: RUN + ' retry' })
+    assert.equal(repeated.ok, true); assert.equal(repeated.repeated, true); assert.equal(repeated.pause_id, approved.pause_id)
+    assert.deepEqual(await read('enrollment_pauses', approved.pause_id), pauseBefore)
+    const requestRow = await read('enrollment_pause_requests', requested.request_id)
+    assert.equal(requestRow.status, 'APPROVED'); assert.equal(requestRow.decided_by, accounts.ADMIN.id); assert.equal(requestRow.pause_id, approved.pause_id)
+    const overlap = await rpc('ADMIN', 'preview_enrollment_pause', { p_enrollment_id: map.objects.enrollment, p_starts_on: '2026-10-02', p_ends_on: '2026-10-04' })
+    assert.equal(overlap.ok, false); assert.ok(overlap.blockers.some(b => b.includes('chồng')))
     const ended = await rpc('ADMIN', 'cancel_active_pause', { p_pause_id: approved.pause_id, p_note: RUN + ' synthetic cancellation' }); assert.equal(ended.ok, true, JSON.stringify(ended))
     assert.equal((await read('enrollment_pauses', approved.pause_id)).status, 'CANCELLED')
     assert.deepEqual(ok(await root.from('payments').select('id,amount,created_by'), 'payment after pause'), before)
     assert.deepEqual(await read('invoices', map.objects.invoice), invoiceBefore)
-    return { request: requested.request_id, pause: approved.pause_id, state: 'CANCELLED', financial_records_unchanged: true }
-  })
-  await check('Blocked pause approval preserves request, payments and invoice; ordinary roles denied', async () => {
-    assert.ok(map.objects.pauseRequest, 'Pause request must persist before checking blocked approval')
-    const before = ok(await root.from('payments').select('id,amount,created_by'), 'pause payment baseline')
-    const invoiceBefore = await read('invoices', map.objects.invoice)
-    const denials = {}
-    for (const actor of ['STAFF', 'BA', 'FIN', 'TEACHER', 'PARENT', 'ANON']) {
-      const denied = await c[actor].rpc('request_enrollment_pause', { p_enrollment_id: map.objects.enrollment, p_starts_on: '2026-10-02', p_ends_on: '2026-10-04', p_reason: RUN })
-      assert.ok(denied.error, actor + ' pause must be denied'); assert.notEqual(denied.error.code, 'PGRST202')
-      denials[actor] = denied.error.message
-    }
-    const requested = await read('enrollment_pause_requests', map.objects.pauseRequest)
-    assert.equal(requested.status, 'REQUESTED'); assert.equal(requested.requested_by, accounts.ADMIN.id)
-    const decision = await rpc('ADMIN', 'decide_enrollment_pause', { p_request_id: requested.id, p_approve: true, p_note: RUN + ' reproduce self-overlap blocker' })
-    assert.equal(decision.ok, false); assert.ok(decision.blockers.some(b => b.includes('chồng')))
-    assert.equal((await read('enrollment_pause_requests', requested.id)).status, 'REQUESTED')
-    assert.equal(ok(await c.ADMIN.from('enrollment_pauses').select('id').eq('enrollment_id', map.objects.enrollment), 'no invented pause').length, 0)
-    assert.deepEqual(ok(await root.from('payments').select('id,amount,created_by'), 'pause payments preserved'), before)
-    assert.deepEqual(await read('invoices', map.objects.invoice), invoiceBefore)
-    return { request: requested.id, state: requested.status, created_by: requested.requested_by, approval_blockers: decision.blockers, denials, no_pause_inserted: true, financial_records_unchanged: true }
+    return { request: requested.request_id, pause: approved.pause_id, state: 'CANCELLED', approved_actor: requestRow.decided_by, repeated_approval_same_pause: true, unauthorized_approval_denied: true, ordinary_overlap_still_blocked: true, financial_records_unchanged: true }
   })
   await check('Parent/student scope and final persisted ownership', async () => {
     const parent = await rpc('PARENT', 'portal_students', {})

@@ -17,6 +17,11 @@ for (const p of new Set(files)) {
   manifest[p] = crypto.createHash('sha256').update(fs.readFileSync(path.join(root, p))).digest('hex')
 }
 if (!fs.existsSync(path.join(target, 'node_modules'))) fs.symlinkSync(path.join(root, 'node_modules'), path.join(target, 'node_modules'))
+// The synthetic browser uses 127.0.0.1 to keep its cookies separate from localhost.
+// Allow only that loopback origin for dev assets; production config is untouched.
+const testConfig = path.join(target, 'next.config.ts')
+fs.writeFileSync(testConfig, fs.readFileSync(testConfig, 'utf8').replace('const nextConfig: NextConfig = {', "const nextConfig: NextConfig = {\n  allowedDevOrigins: ['127.0.0.1'],"))
+manifest['next.config.ts'] = crypto.createHash('sha256').update(fs.readFileSync(testConfig)).digest('hex')
 fs.writeFileSync(path.join(root, 'docs/verification/execution-20260930/raw/isolated-app-source.json'), JSON.stringify(manifest, null, 2) + '\n')
 const status = execFileSync(path.join(root, 'node_modules/.bin/supabase'), ['status', '--workdir', '/private/tmp/vibe-execution-20260930', '-o', 'env'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
 const local = Object.fromEntries([...status.matchAll(/^([A-Z0-9_]+)="([^\"]*)"$/gm)].map(m => [m[1], m[2]]))
