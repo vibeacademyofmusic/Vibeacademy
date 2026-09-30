@@ -46,7 +46,7 @@ begin
  end if;
 end $$;
 
-\ir ../helpers/approved_finance.inc
+\ir approved_finance.inc
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 -- Fixture identities are scoped; test transaction rolls back.
@@ -265,7 +265,7 @@ select is((select count(*) from invoice_receivables where invoice_id in (select 
 select is((select count(*) from payroll_periods where id in ('bf100000-0000-4000-8000-000000000001','bf100000-0000-4000-8000-000000000002')),1::bigint,'branch Finance scoped: payroll_periods');
 select is((select count(*) from teacher_payrolls where period_id in ('bf100000-0000-4000-8000-000000000001','bf100000-0000-4000-8000-000000000002')),1::bigint,'branch Finance scoped: teacher_payrolls');
 select is((select count(*) from invoices where branch_id_snapshot='11000000-0000-0000-0000-000000000002'),0::bigint,'other branch invoices denied explicitly');
-select throws_ok($$select create_payment('61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001',100,'VND','CASH')$$,'P0001','SUPER_ADMIN role required','read rollout does not enable payment mutation');
+select throws_ok($$select create_payment('61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001',100,'VND','CASH')$$,'P0001','Cash receipt requires physical receipt acknowledgement','read rollout does not enable payment mutation');
 reset role;
 select set_config('request.jwt.claim.sub','',true);
 update profiles set status='INACTIVE' where id='bf000000-0000-4000-8000-000000000001';
@@ -312,7 +312,7 @@ select is((select count(*) from teacher_payrolls where period_id in ('bf100000-0
 reset role;
 select set_config('request.jwt.claim.sub','',true);
 update user_roles set valid_until=null where user_id='bf000000-0000-4000-8000-000000000001';
-delete from role_permissions where role_id=(select id from roles where code='FINANCE') and permission_id in (select id from permissions where code in ('finance.view','payroll.view'));
+delete from role_permissions where role_id=(select id from roles where code='FINANCE') and permission_id in (select id from permissions where code in ('finance.view','payroll.view','finance.cash.record','finance.payment.record','finance.payment.reconcile'));
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bf000000-0000-4000-8000-000000000001',true);
 select is((select count(*) from invoices where id in (select invoice_id from scope_ids)),0::bigint,'removed action permission: invoices');

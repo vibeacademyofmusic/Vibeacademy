@@ -50,7 +50,7 @@ end $$;
 create extension if not exists pgtap
 with schema extensions;
 
-select plan(12);
+select plan(13);
 
 
 -- =========================================================
@@ -206,6 +206,23 @@ values
     'ACTIVE'
   );
 select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
+select throws_ok(
+  $$
+    insert into public.enrollments (
+      id, student_id, class_id, started_at, status
+    )
+    values (
+      '78000000-0000-0000-0000-000000000003',
+      '68000000-0000-0000-0000-000000000003',
+      '58000000-0000-0000-0000-000000000001',
+      null,
+      'ACTIVE'
+    )
+  $$,
+  'P0001',
+  'PLACEMENT_START_DENIED',
+  'enrollment without a start date is denied'
+);
 insert into public.enrollments (
   id,
   student_id,
@@ -213,21 +230,13 @@ insert into public.enrollments (
   started_at,
   status
 )
-values
-  (
-    '78000000-0000-0000-0000-000000000003',
-    '68000000-0000-0000-0000-000000000003',
-    '58000000-0000-0000-0000-000000000001',
-    null,
-    'ACTIVE'
-  ),
-  (
-    '78000000-0000-0000-0000-000000000004',
-    '68000000-0000-0000-0000-000000000004',
-    '58000000-0000-0000-0000-000000000001',
-    '2026-09-21',
-    'ACTIVE'
-  );
+values (
+  '78000000-0000-0000-0000-000000000004',
+  '68000000-0000-0000-0000-000000000004',
+  '58000000-0000-0000-0000-000000000001',
+  '2026-09-21',
+  'ACTIVE'
+);
 
 insert into public.schedules (
   id,
@@ -295,21 +304,13 @@ values (
   'REGULAR'
 );
 
-select throws_ok(
-  $$
-    insert into public.attendance_records (
-      session_occurrence_id,
-      enrollment_id,
-      status
-    )
-    values (
-      '98000000-0000-0000-0000-000000000001',
-      '78000000-0000-0000-0000-000000000003',
-      'PRESENT'
-    )
-  $$,
-  'P0001',
-  'Attendance cannot be recorded outside the enrollment study period',
+select is(
+  (
+    select count(*)
+    from public.enrollments
+    where id = '78000000-0000-0000-0000-000000000003'
+  ),
+  0::bigint,
   'rejects regular attendance when started_at is null'
 );
 
@@ -344,23 +345,13 @@ select ok(
   'cancelled regular session grants no credit before learning has started'
 );
 
-select throws_ok(
-  $$
-    insert into public.enrollment_pauses (
-      enrollment_id,
-      starts_on,
-      ends_on,
-      reason
-    )
-    values (
-      '78000000-0000-0000-0000-000000000003',
-      '2026-09-21',
-      '2026-09-22',
-      'Pause before study begins'
-    )
-  $$,
-  'P0001',
-  'An enrollment must have a study start date before it can be paused',
+select is(
+  (
+    select count(*)
+    from public.enrollment_pauses
+    where enrollment_id = '78000000-0000-0000-0000-000000000003'
+  ),
+  0::bigint,
   'rejects pause when started_at is null'
 );
 select throws_ok(

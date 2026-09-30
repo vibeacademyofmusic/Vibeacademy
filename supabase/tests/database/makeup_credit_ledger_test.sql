@@ -45,6 +45,9 @@ begin
    insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
    values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
  end if;
+ if c.class_type = 'ONE_ON_ONE' and c.capacity < 20 then
+   update public.classes set class_type = 'GROUP', capacity = 20 where id = c.id;
+ end if;
 end $$;
 
 
@@ -720,12 +723,15 @@ begin
    insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
    values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
  end if;
+ if c.class_type = 'ONE_ON_ONE' and c.capacity < 20 then
+   update public.classes set class_type = 'GROUP', capacity = 20 where id = c.id;
+ end if;
 end $$;
 
 create extension if not exists pgtap
 with schema extensions;
 
-select plan(30);
+select plan(32);
 
 select has_table(
   'public',
@@ -1164,17 +1170,43 @@ select is(
   'makeup completes when every participant is marked'
 );
 
+-- 20260929220000 keeps a reserved credit when the makeup is completed without PRESENT attendance
+-- and records MAKEUP_COMPLETED_WITHOUT_PRESENT. Absence does not forfeit the credit.
 select is(
   (
     select count(*)::bigint
     from public.makeup_credits
     where reserved_occurrence_id =
         'b6000000-0000-0000-0000-000000000001'
-      and status = 'USED'
-      and used_at is not null
+      and status = 'RESERVED'
   ),
   2::bigint,
-  'completed makeup consumes RESERVED credits even when attendance is ABSENT'
+  'completed makeup keeps RESERVED credits when attendance is ABSENT'
+);
+select is(
+  (
+    select count(*)::bigint
+    from public.academic_operation_exceptions exception
+    join public.makeup_credits credit on credit.id = exception.source_id
+    where exception.kind = 'MAKEUP_COMPLETED_WITHOUT_PRESENT'
+      and credit.reserved_occurrence_id = 'b6000000-0000-0000-0000-000000000001'
+  ),
+  2::bigint,
+  'absent completion records one exception per reserved credit'
+);
+update public.session_occurrences
+set status = 'COMPLETED'
+where id = 'b6000000-0000-0000-0000-000000000001';
+select is(
+  (
+    select count(*)::bigint
+    from public.academic_operation_exceptions exception
+    join public.makeup_credits credit on credit.id = exception.source_id
+    where exception.kind = 'MAKEUP_COMPLETED_WITHOUT_PRESENT'
+      and credit.reserved_occurrence_id = 'b6000000-0000-0000-0000-000000000001'
+  ),
+  2::bigint,
+  'repeating completion does not duplicate the exception'
 );
 
 select throws_ok(

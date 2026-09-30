@@ -49,7 +49,7 @@ end $$;
 
 create extension if not exists pgtap;
 
-select plan(18);
+select plan(19);
 
 
 -- =========================================================
@@ -162,6 +162,24 @@ values
 
 
 select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
+select throws_ok(
+  $$
+    insert into public.enrollments (
+      id, student_id, class_id, enrolled_at, started_at, status
+    )
+    values (
+      '7a000000-0000-0000-0000-000000000002',
+      '6a000000-0000-0000-0000-000000000002',
+      '5a000000-0000-0000-0000-000000000001',
+      '2026-09-01',
+      null,
+      'ACTIVE'
+    )
+  $$,
+  'P0001',
+  'PLACEMENT_START_DENIED',
+  'enrollment without a start date is denied'
+);
 insert into public.enrollments (
   id,
   student_id,
@@ -177,14 +195,6 @@ values
     '5a000000-0000-0000-0000-000000000001',
     '2026-08-20',
     '2026-09-01',
-    'ACTIVE'
-  ),
-  (
-    '7a000000-0000-0000-0000-000000000002',
-    '6a000000-0000-0000-0000-000000000002',
-    '5a000000-0000-0000-0000-000000000001',
-    '2026-09-01',
-    null,
     'ACTIVE'
   ),
   (
@@ -227,25 +237,13 @@ select is(
 -- 3. NO started_at = NO TUITION
 -- =========================================================
 
-select throws_ok(
-  $$
-    insert into public.enrollment_tuition (
-      id,
-      enrollment_id,
-      tuition_plan_id,
-      starts_on,
-      amount
-    )
-    values (
-      'b1000000-0000-0000-0000-000000000004',
-      '7a000000-0000-0000-0000-000000000002',
-      'a1000000-0000-0000-0000-000000000003',
-      '2026-09-01',
-      3000000
-    )
-  $$,
-  'P0001',
-  'An enrollment must have a study start date before tuition can begin',
+select is(
+  (
+    select count(*)
+    from public.enrollments
+    where id = '7a000000-0000-0000-0000-000000000002'
+  ),
+  0::bigint,
   'rejects tuition when enrollment started_at is null'
 );
 

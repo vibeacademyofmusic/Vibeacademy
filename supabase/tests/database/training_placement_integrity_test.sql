@@ -86,6 +86,12 @@ insert into user_roles(user_id,role_id) select 'b9000000-0000-4000-8000-00000000
 select set_config('request.jwt.claim.sub','b9000000-0000-4000-8000-000000000099',true);
 insert into classes(branch_id,course_id,code,name,class_type,capacity,status)
 select 'b9000000-0000-4000-8000-000000000001','b9000000-0000-4000-8000-000000000004','TEST-PAGE-'||i,'TEST page '||lpad(i::text,3,'0'),'GROUP',4,'ACTIVE' from generate_series(1,105)i;
-select is((select count(*) from (select * from list_placement_class_options('b9000000-0000-4000-8000-000000000001') offset 100 limit 100) page),8::bigint,'all choices after first 100 remain reachable by pagination');
+-- Open-seat listing excludes TEST-TP-1 and TEST-TP-2 because each already has occupancy at capacity.
+-- TEST-TP-3 still has one open seat. The 105 page classes are empty, so 106 options remain and the tail is six classes.
+select ok((select count(*) from public.enrollments where class_id='b9000000-0000-4000-8000-000000000031' and status in ('ACTIVE','PAUSED'))>=(select capacity from public.classes where id='b9000000-0000-4000-8000-000000000031'),'TEST-TP-1 has no open seat');
+select ok((select count(*) from public.enrollments where class_id='b9000000-0000-4000-8000-000000000032' and status in ('ACTIVE','PAUSED'))>=(select capacity from public.classes where id='b9000000-0000-4000-8000-000000000032'),'TEST-TP-2 has no open seat');
+select ok(not exists(select 1 from public.list_placement_class_options('b9000000-0000-4000-8000-000000000001') where code in ('TEST-TP-1','TEST-TP-2')),'full classes are excluded from placement options');
+select is((select string_agg(code,',' order by name) from public.list_placement_class_options('b9000000-0000-4000-8000-000000000001') where code like 'TEST-TP-%'),'TEST-TP-3','only the open original class remains');
+select is((select string_agg(code,',' order by name) from (select code,name from public.list_placement_class_options('b9000000-0000-4000-8000-000000000001') offset 100) page),'TEST-PAGE-100,TEST-PAGE-101,TEST-PAGE-102,TEST-PAGE-103,TEST-PAGE-104,TEST-PAGE-105','pagination tail is the remaining open page classes');
 select * from finish();
 rollback;

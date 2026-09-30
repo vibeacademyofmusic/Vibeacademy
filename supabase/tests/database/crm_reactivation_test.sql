@@ -119,8 +119,8 @@ select throws_ok(
 );
 
 select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
-insert into public.enrollments(id, student_id, class_id, status) values
-  ('c6500000-0000-4000-8000-000000000004', 'c6400000-0000-4000-8000-000000000001', 'c6300000-0000-4000-8000-000000000005', 'ACTIVE');
+insert into public.enrollments(id, student_id, class_id, status, started_at) values
+  ('c6500000-0000-4000-8000-000000000004', 'c6400000-0000-4000-8000-000000000001', 'c6300000-0000-4000-8000-000000000005', 'ACTIVE', (now() at time zone 'Asia/Ho_Chi_Minh')::date);
 select lives_ok($$select public.refresh_crm_reactivation('c6100000-0000-4000-8000-000000000001')$$, 'refresh after return');
 select is((select status from public.crm_reactivation_cases where student_id = 'c6400000-0000-4000-8000-000000000001'), 'RETURNED', 'active enrollment closes the case as returned');
 select is((select count(*) from public.crm_reactivation_events where case_id = (select id from public.crm_reactivation_cases where student_id = 'c6400000-0000-4000-8000-000000000001') and event_type = 'RETURNED'), 1::bigint, 'one returned event');

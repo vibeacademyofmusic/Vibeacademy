@@ -227,6 +227,10 @@ update students set user_id='bc000000-0000-4000-8000-000000000004' where id='610
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005',true);
 insert into curriculum_subjects(id,level_id,family_code,code,name,completion_rule)
 values('bc300000-0000-4000-8000-000000000001','31000000-0000-0000-0000-000000000001','PORTAL','PORTAL','Portal direct subject','DIRECT_ASSESSMENT');
+delete from public.student_curriculum_enrollments existing
+where existing.student_id='61000000-0000-0000-0000-000000000001'
+  and existing.curriculum_id='21000000-0000-0000-0000-000000000001'
+  and not exists (select 1 from public.enrollments class_enrollment where class_enrollment.student_curriculum_enrollment_id=existing.id);
 select assign_student_academic_program('61000000-0000-0000-0000-000000000001','21000000-0000-0000-0000-000000000001','31000000-0000-0000-0000-000000000001','2026-08-01');
 update student_subject_progress set notes='PRIVATE-ACADEMIC' where subject_id='bc300000-0000-4000-8000-000000000001';
 update classes set class_type='GROUP',capacity=10 where id in ('51000000-0000-0000-0000-000000000001','51000000-0000-0000-0000-000000000002');
@@ -243,6 +247,7 @@ where student_id='61000000-0000-0000-0000-000000000001';
 select update_learning_report(id,version,'SAVE','{"general_comment":"Approved comment"}','PRIVATE-INTERNAL') from learning_reports where student_id='61000000-0000-0000-0000-000000000001' and report_type='MONTHLY';
 select update_learning_report(id,version,'READY') from learning_reports where student_id='61000000-0000-0000-0000-000000000001' and report_type='MONTHLY';
 select update_learning_report(id,version,'APPROVE') from learning_reports where student_id='61000000-0000-0000-0000-000000000001' and report_type='MONTHLY';
+select update_learning_report(id,version,'PUBLISH') from learning_reports where student_id='61000000-0000-0000-0000-000000000001' and report_type='MONTHLY';
 -- Capture the pricing/debt engine result before enrollment completion; inserting
 -- tuition applies the configured plan price, not the caller's legacy amount.
 create temp table history_expected_debt as select outstanding_balance from invoice_receivables where student_id_snapshot='61000000-0000-0000-0000-000000000001';
@@ -264,9 +269,38 @@ select is((select count(*) from portal_students(null,1)),0::bigint,'Family picke
 select is((select count(*) from portal_upcoming_sessions('61000000-0000-0000-0000-000000000001')),0::bigint,'Ended enrollment has no upcoming classes');
 reset role;
 select set_config('request.jwt.claim.sub','',true);
-insert into session_occurrences(id,schedule_id,occurrence_date,starts_at,ends_at,status)
-values('bc400000-0000-4000-8000-000000000001','81000000-0000-0000-0000-000000000001',
- (now() at time zone 'Asia/Ho_Chi_Minh')::date+7,now()+interval '7 days',now()+interval '7 days 1 hour','SCHEDULED');
+update public.students set status='ACTIVE' where id='61000000-0000-0000-0000-000000000001';
+update public.schedules
+set room_id=coalesce(room_id,(select id from public.rooms where branch_id=classes.branch_id order by code limit 1)),
+    timezone='Asia/Ho_Chi_Minh'
+from public.classes
+where schedules.class_id=classes.id
+  and schedules.status='ACTIVE'
+  and classes.branch_id in ('11000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000002');
+update public.class_teachers
+set is_active=true, ended_at=null, assigned_at=date '2026-01-01'
+where class_id in ('51000000-0000-0000-0000-000000000001','51000000-0000-0000-0000-000000000002')
+  and teacher_role='PRIMARY';
+insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at)
+select class_row.id, 'bc100000-0000-4000-8000-000000000001', 'PRIMARY', true, date '2026-01-01'
+from public.classes class_row
+where class_row.id in ('51000000-0000-0000-0000-000000000001','51000000-0000-0000-0000-000000000002')
+  and not exists (
+    select 1 from public.class_teachers existing
+    where existing.class_id=class_row.id and existing.teacher_role='PRIMARY' and existing.is_active
+  );
+update public.schedules set status='INACTIVE'
+where class_id='51000000-0000-0000-0000-000000000001'
+  and id<>'81000000-0000-0000-0000-000000000001'
+  and status='ACTIVE';
+update public.schedules
+set start_time='18:00', end_time='19:00', timezone='Asia/Ho_Chi_Minh',
+    room_id=coalesce(room_id,(select id from public.rooms where branch_id='11000000-0000-0000-0000-000000000001' order by code limit 1))
+where class_id='51000000-0000-0000-0000-000000000002' and status='ACTIVE';
+insert into session_occurrences(id,schedule_id,occurrence_date,starts_at,ends_at,room_id,status)
+select 'bc400000-0000-4000-8000-000000000001','81000000-0000-0000-0000-000000000001',
+ (now() at time zone 'Asia/Ho_Chi_Minh')::date+7,now()+interval '7 days',now()+interval '7 days 1 hour',room_id,'SCHEDULED'
+from public.schedules where id='81000000-0000-0000-0000-000000000001';
 update enrollments set status='ACTIVE',ended_at=null where id='71000000-0000-0000-0000-000000000001';
 set local role authenticated;
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000003',true);

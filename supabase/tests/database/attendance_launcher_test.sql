@@ -28,6 +28,7 @@ insert into public.teacher_branches(teacher_id, branch_id) values
   ('c2100000-0000-4000-8000-000000000022', 'c2100000-0000-4000-8000-000000000010');
 insert into public.rooms(id, branch_id, code, name, capacity) values
   ('c2100000-0000-4000-8000-000000000030', 'c2100000-0000-4000-8000-000000000010', 'TEST_TSW_R', 'Phòng TEST 2', 10);
+\ir test_guitar_program.inc
 insert into public.courses(id, curriculum_id, code, name, status)
 select 'c2100000-0000-4000-8000-000000000040', id, 'TEST_TSW_DB', 'Guitar Group Test DB', 'ACTIVE' from public.curriculums where code = 'TEST_GUITAR';
 insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id)

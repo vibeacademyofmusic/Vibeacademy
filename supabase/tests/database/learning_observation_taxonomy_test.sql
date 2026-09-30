@@ -152,6 +152,7 @@ select is((select count(*) from public.student_journal_observation_selections wh
 select throws_ok($$select public.submit_session_learning_journal('f9900000-0000-4000-8000-000000000099')$$, 'P0001', 'JOURNAL_UNAUTHORIZED', 'missing session is not writable');
 select lives_ok($$select public.save_student_learning_entry('f9a00000-0000-4000-8000-000000000001', 'PRACTICING', 'Em duy trì nhịp khá ổn định và độ chính xác đã cải thiện. Fingering/chuyển vị trí vẫn cần tiếp tục củng cố.', 'Rieng A', true, 'FOCUS_RHYTHM', true, 'ATTENTION_TECHNICAL', 'Ky thuat keo dai', '', array['RHYTHM_STABLE_PULSE','ACCURACY_IMPROVED','TECH_FINGERING_UNSTABLE'])$$, 'accept edited progress note');
 select throws_ok($$update public.session_learning_journals set content_covered = '' where session_occurrence_id = 'f9900000-0000-4000-8000-000000000001'$$, 'P0001', 'JOURNAL_DIRECT_WRITE_DENIED', 'direct journal write denied');
+select public.set_session_occurrence_status('f9900000-0000-4000-8000-000000000001', 'COMPLETED');
 select lives_ok($$select public.submit_session_learning_journal('f9900000-0000-4000-8000-000000000001')$$, 'group journal submits with an absent student');
 select is((select status from public.session_learning_journals where session_occurrence_id = 'f9900000-0000-4000-8000-000000000001'), 'SUBMITTED', 'submitted');
 select lives_ok($$select public.save_session_learning_context('f9900000-0000-4000-8000-000000000001', 'Luyện nhịp, fingering và đoạn chuyển', 'REPERTOIRE')$$, 'revise shared content');
@@ -161,6 +162,17 @@ select is((select count(*) from public.student_component_item_progress), (select
 
 select lives_ok($$select public.save_session_learning_context('f9900000-0000-4000-8000-000000000002', 'On lai nhip', 'TECHNIQUE')$$, 'second lesson');
 select lives_ok($$select public.save_student_learning_entry('f9a00000-0000-4000-8000-000000000005', 'ACHIEVED', 'Nhip on hon', '', false, 'FOCUS_RHYTHM', false, null, '', '', array['RHYTHM_STABLE_PULSE'])$$, 'repeat rhythm observation');
+insert into public.attendance_records(session_occurrence_id, enrollment_id, status)
+select 'f9900000-0000-4000-8000-000000000002', enrollment.id, 'ABSENT'
+from public.enrollments enrollment
+where enrollment.class_id = 'f9500000-0000-4000-8000-000000000001'
+  and enrollment.id <> 'f9700000-0000-4000-8000-000000000001'
+  and not exists (
+    select 1 from public.attendance_records attendance
+    where attendance.session_occurrence_id = 'f9900000-0000-4000-8000-000000000002'
+      and attendance.enrollment_id = enrollment.id
+  );
+select public.set_session_occurrence_status('f9900000-0000-4000-8000-000000000002', 'COMPLETED');
 select lives_ok($$select public.submit_session_learning_journal('f9900000-0000-4000-8000-000000000002')$$, 'submit second lesson');
 select is((select observation_count from public.aggregate_student_learning_observations('f9600000-0000-4000-8000-000000000001', '2026-09-01', '2026-09-30') where observation_code = 'RHYTHM_STABLE_PULSE'), 2, 'repeated observation is a count, not a score');
 select is((select first_observed_on from public.aggregate_student_learning_observations('f9600000-0000-4000-8000-000000000001', '2026-09-01', '2026-09-30') where observation_code = 'RHYTHM_STABLE_PULSE'), '2026-09-07'::date, 'first observed date');
@@ -172,6 +184,17 @@ insert into public.session_occurrences(id, schedule_id, occurrence_date, starts_
 insert into public.attendance_records(id, session_occurrence_id, enrollment_id, status) values
   ('f9a00000-0000-4000-8000-000000000006', 'f9900000-0000-4000-8000-000000000003', 'f9700000-0000-4000-8000-000000000001', 'PRESENT');
 select lives_ok($$select public.save_session_learning_context('f9900000-0000-4000-8000-000000000003', 'Buoi chua co nhan xet', 'THEORY')$$, 'lesson without a progress note');
+insert into public.attendance_records(session_occurrence_id, enrollment_id, status)
+select 'f9900000-0000-4000-8000-000000000003', enrollment.id, 'ABSENT'
+from public.enrollments enrollment
+where enrollment.class_id = 'f9500000-0000-4000-8000-000000000001'
+  and enrollment.id <> 'f9700000-0000-4000-8000-000000000001'
+  and not exists (
+    select 1 from public.attendance_records attendance
+    where attendance.session_occurrence_id = 'f9900000-0000-4000-8000-000000000003'
+      and attendance.enrollment_id = enrollment.id
+  );
+select public.set_session_occurrence_status('f9900000-0000-4000-8000-000000000003', 'COMPLETED');
 select throws_ok($$select public.submit_session_learning_journal('f9900000-0000-4000-8000-000000000003')$$, 'P0001', 'JOURNAL_PROGRESS_REQUIRED', 'present student still requires a progress note');
 
 select set_config('request.jwt.claim.sub', 'f9200000-0000-4000-8000-000000000003', true);

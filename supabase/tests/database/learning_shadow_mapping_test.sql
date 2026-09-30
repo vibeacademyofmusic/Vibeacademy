@@ -98,6 +98,9 @@ select lives_ok($$select map_learning_academic_shadow(current_setting('test.lear
 select lives_ok($$select map_learning_academic_shadow(current_setting('test.learning_version')::uuid,'de970000-0000-4000-8000-000000000050','Synthetic explicit same-Grade mapping')$$,'Exact mapping retry idempotent');
 select is((select count(*) from learning_audit where event='ACADEMIC_SHADOW_MAPPED' and entity_id=current_setting('test.learning_version')::uuid),1::bigint,'Mapping audit recorded once');
 select throws_ok($$select map_learning_academic_shadow(current_setting('test.learning_version')::uuid,'de970000-0000-4000-8000-000000000051','Different requirement')$$,'P0001','Mapping is immutable; create a new content version','Existing mapping cannot be silently redirected');
+delete from public.student_curriculum_enrollments existing
+where existing.student_id='de970000-0000-4000-8000-000000000016'
+  and not exists (select 1 from public.enrollments class_enrollment where class_enrollment.student_curriculum_enrollment_id=existing.id);
 select is((select reconciliation_status from learning_academic_reconciliation where attempt_id='de970000-0000-4000-8000-000000000030'),'NO_ACADEMIC_ENROLLMENT','No official enrollment is invented');
 select is((select count(*) from student_curriculum_enrollments where student_id='de970000-0000-4000-8000-000000000016'),0::bigint,'Mapping never creates enrollment');
 select set_config('request.jwt.claim.sub','de970000-0000-4000-8000-000000000003',true);

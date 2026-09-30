@@ -44,6 +44,9 @@ begin
    insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
    values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
  end if;
+ if c.class_type = 'ONE_ON_ONE' and c.capacity < 20 then
+   update public.classes set class_type = 'GROUP', capacity = 20 where id = c.id;
+ end if;
 end $$;
 
 

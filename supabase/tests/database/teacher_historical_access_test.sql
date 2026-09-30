@@ -228,6 +228,10 @@ update students set user_id='bc000000-0000-4000-8000-000000000004' where id='610
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005',true);
 insert into curriculum_subjects(level_id,family_code,code,name,completion_rule)
 values('31000000-0000-0000-0000-000000000001','TEACHER-PORTAL','TP','Teacher portal subject','DIRECT_ASSESSMENT');
+delete from public.student_curriculum_enrollments existing
+where existing.student_id='61000000-0000-0000-0000-000000000001'
+  and existing.curriculum_id='21000000-0000-0000-0000-000000000001'
+  and not exists (select 1 from public.enrollments class_enrollment where class_enrollment.student_curriculum_enrollment_id=existing.id);
 select assign_student_academic_program('61000000-0000-0000-0000-000000000001','21000000-0000-0000-0000-000000000001','31000000-0000-0000-0000-000000000001','2026-08-01');
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000002',true);
 insert into learning_journals(id,attendance_record_id,content)
@@ -235,6 +239,7 @@ values('bd000000-0000-4000-8000-000000000001','a1000000-0000-0000-0000-000000000
 select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005',true);
 insert into students(id,student_code,full_name) values('61000000-0000-0000-0000-000000000003','HISTORY-SECOND','Another learner');
 select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
+update public.classes set class_type='GROUP', capacity=10 where id='51000000-0000-0000-0000-000000000001';
 insert into enrollments(id,student_id,class_id,started_at)
 values('71000000-0000-0000-0000-000000000003','61000000-0000-0000-0000-000000000003','51000000-0000-0000-0000-000000000001','2026-08-01');
 insert into attendance_records(id,session_occurrence_id,enrollment_id,status)

@@ -46,7 +46,7 @@ begin
  end if;
 end $$;
 
-\ir ../helpers/approved_finance.inc
+\ir approved_finance.inc
 
 create extension if not exists pgtap;
 

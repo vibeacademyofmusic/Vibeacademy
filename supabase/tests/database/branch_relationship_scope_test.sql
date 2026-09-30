@@ -238,10 +238,12 @@ select is((select count(*)::integer from schedules where id='81000000-0000-0000-
 select is((select count(*)::integer from attendance_records where session_occurrence_id='91000000-0000-0000-0000-000000000001'),1,'attendance branch allow');
 reset role;
 select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
-insert into enrollments(student_id,class_id,started_at) values('61000000-0000-0000-0000-000000000001','51000000-0000-0000-0000-000000000002','2026-08-01');
+select throws_ok(
+  $$insert into enrollments(student_id,class_id,started_at) values('61000000-0000-0000-0000-000000000001','51000000-0000-0000-0000-000000000002','2026-08-01')$$,
+  'P0001', 'PLACEMENT_CLASS_DENIED', 'enrollment outside the student default branch is denied');
 update user_roles set branch_id='11000000-0000-0000-0000-000000000002' where user_id='bc000000-0000-4000-8000-000000000001';
 set local role authenticated;
-select is(can_access_student('61000000-0000-0000-0000-000000000001'),true,'multi branch with default mismatch');
+select is(can_access_student('61000000-0000-0000-0000-000000000001'),false,'branch B admin has no membership without an enrollment');
 reset role;
 update user_roles set branch_id=null where user_id='bc000000-0000-4000-8000-000000000001';
 set local role authenticated;
@@ -298,7 +300,15 @@ select set_config('request.jwt.claim.sub','bc000000-0000-4000-8000-000000000005'
 select is(student_belongs_to_branch('61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001'),false,'paused enrollment confers no active membership');
 reset role;
 update enrollment_pauses set status='CANCELLED',cancelled_at=now(),cancel_reason='test complete' where enrollment_id='71000000-0000-0000-0000-000000000001';
-update enrollments set status='ACTIVE',started_at=current_date+10 where id='71000000-0000-0000-0000-000000000001';
+update public.schedules
+set room_id=coalesce(room_id,(select id from public.rooms where branch_id='11000000-0000-0000-0000-000000000001' order by code limit 1)),
+    timezone='Asia/Ho_Chi_Minh'
+where id='81000000-0000-0000-0000-000000000001';
+update public.class_teachers
+set is_active=true, ended_at=null, assigned_at=(timezone('Asia/Ho_Chi_Minh', now()))::date
+where class_id='51000000-0000-0000-0000-000000000001'
+  and teacher_id='bc100000-0000-4000-8000-000000000001';
+update enrollments set status='ACTIVE',started_at=(timezone('Asia/Ho_Chi_Minh', now()))::date+10 where id='71000000-0000-0000-0000-000000000001';
 set local role authenticated;
 select is(student_belongs_to_branch('61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001'),false,'future enrollment confers no active membership');
 reset role;

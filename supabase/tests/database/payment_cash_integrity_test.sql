@@ -245,6 +245,7 @@ select public.create_tuition_invoice(
   null
 );
 
+-- Receivable overdue uses Asia/Ho_Chi_Minh. Issue and due dates must use that date, not the session date.
 select public.issue_invoice(
   (
     select id
@@ -252,8 +253,8 @@ select public.issue_invoice(
     where enrollment_tuition_id =
       'f4000000-0000-0000-0000-000000000001'
   ),
-  current_date,
-  (date_trunc('month', current_date) + interval '1 month - 1 day')::date
+  (timezone('Asia/Ho_Chi_Minh', now()))::date,
+  (date_trunc('month', timezone('Asia/Ho_Chi_Minh', now())) + interval '1 month - 1 day')::date
 );
 
 select public.issue_invoice(
@@ -263,15 +264,15 @@ select public.issue_invoice(
     where enrollment_tuition_id =
       'f4000000-0000-0000-0000-000000000002'
   ),
-  current_date,
-  (date_trunc('month', current_date) + interval '1 month - 1 day')::date
+  (timezone('Asia/Ho_Chi_Minh', now()))::date,
+  (date_trunc('month', timezone('Asia/Ho_Chi_Minh', now())) + interval '1 month - 1 day')::date
 );
 
 
 -- =========================================================
 
 create function pg_temp.receipt(k uuid, amt numeric) returns uuid language sql as $$
- select public.create_payment_once(k,'f2000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001',amt,'VND','CASH',current_date::timestamptz,'INTEGRITY',null,true)
+ select public.create_payment_once(k,'f2000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001',amt,'VND','CASH',((timezone('Asia/Ho_Chi_Minh', now()))::date::timestamp at time zone 'Asia/Ho_Chi_Minh'),'INTEGRITY',null,true)
 $$;
 create function pg_temp.inv(n integer) returns uuid language sql as $$
  select id from public.invoices where enrollment_tuition_id=('f4000000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid
@@ -284,7 +285,7 @@ select throws_ok($$select pg_temp.receipt('ff900000-0000-0000-0000-000000000001'
 create temp table before_forecast as select * from public.branch_monthly_revenue_forecast where branch_id='f1000000-0000-0000-0000-000000000001';
 select is((select sum(cash_in) from public.finance_cash_ledger where branch_id='f1000000-0000-0000-0000-000000000001'),3000000::numeric,'cash received once');
 select public.allocate_payment_to_invoice((select id from receipts),pg_temp.inv(1),2000000);
-select is((select receivable_status from public.invoice_receivables where invoice_id=pg_temp.inv(1)),'PARTIALLY_PAID','partial payment status');
+select is((select receivable_status from public.invoice_receivables where invoice_id=pg_temp.inv(1)),'PARTIALLY_PAID','not-yet-due partial payment stays partially paid');
 select is((select allocated_amount from public.invoice_receivables where invoice_id=pg_temp.inv(1)),2000000::numeric,'allocated increases');
 select is((select outstanding_balance from public.invoice_receivables where invoice_id=pg_temp.inv(1)),2500000::numeric,'outstanding decreases');
 select throws_ok($$select public.allocate_payment_to_invoice((select id from receipts),pg_temp.inv(1),1)$$,'P0001','This payment is already allocated to this invoice','duplicate allocation blocked');
@@ -304,8 +305,18 @@ select is((select outstanding_balance from public.invoice_receivables where invo
 select is((select sum(expected_cash_due) from public.branch_monthly_revenue_forecast where branch_id='f1000000-0000-0000-0000-000000000001'),0::numeric,'fully paid invoices no longer expected cash');
 select is((select sum(cash_in) from public.finance_cash_ledger where branch_id='f1000000-0000-0000-0000-000000000001'),9500000::numeric,'only actual payments increase cash');
 select is(pg_temp.receipt('ff900000-0000-0000-0000-000000000001',3000000),(select id from receipts),'replay after allocation still returns original');
+insert into public.enrollment_tuition(id,enrollment_id,tuition_plan_id,starts_on,list_price,amount)
+values ('f4000000-0000-0000-0000-000000000003','f3000000-0000-0000-0000-000000000002','a1000000-0000-0000-0000-000000000003','2026-09-01',1000000,1000000);
+select public.create_tuition_invoice('f4000000-0000-0000-0000-000000000003',null);
+select public.issue_invoice(pg_temp.inv(3),(timezone('Asia/Ho_Chi_Minh', now()))::date-1,(timezone('Asia/Ho_Chi_Minh', now()))::date-1);
+create temp table overdue_receipt as select public.create_payment_once('ff900000-0000-0000-0000-000000000003','f2000000-0000-0000-0000-000000000002','f1000000-0000-0000-0000-000000000001',400000,'VND','CASH',((timezone('Asia/Ho_Chi_Minh', now()))::date::timestamp at time zone 'Asia/Ho_Chi_Minh'),'INTEGRITY-OVERDUE',null,true) id;
+select public.allocate_payment_to_invoice((select id from overdue_receipt),pg_temp.inv(3),400000);
+select is((select receivable_status from public.invoice_receivables where invoice_id=pg_temp.inv(3)),'OVERDUE','overdue partial payment stays overdue');
+select is((select allocated_amount from public.invoice_receivables where invoice_id=pg_temp.inv(3)),400000::numeric,'overdue partial payment keeps its allocation');
+select is((select outstanding_balance from public.invoice_receivables where invoice_id=pg_temp.inv(3)),4100000::numeric,'overdue partial payment keeps its outstanding balance');
+select is((select sum(cash_in) from public.finance_cash_ledger where branch_id='f1000000-0000-0000-0000-000000000001'),9900000::numeric,'overdue partial payment is still recorded cash');
 select throws_ok($$select public.create_payment_once(null,'f2000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001',1,'VND','CASH',current_date::timestamptz)$$,'P0001','Payment request key required','key cannot be omitted');
 select set_config('request.jwt.claim.sub','f2000000-0000-0000-0000-000000000002',true);
-select throws_ok($$select pg_temp.receipt('ff900000-0000-0000-0000-000000000001',3000000)$$,'P0001','SUPER_ADMIN role required','replay still requires authorization');
+select throws_ok($$select pg_temp.receipt('ff900000-0000-0000-0000-000000000001',3000000)$$,'P0001','Cash receipt permission required','replay still requires cash receipt permission');
 select * from finish();
 rollback;
