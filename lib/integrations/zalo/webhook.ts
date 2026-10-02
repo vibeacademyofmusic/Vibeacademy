@@ -53,6 +53,25 @@ export type WebhookRecordResult = {
   id: string
   status: string
   duplicate: boolean
+  outcome?: string | null
+}
+
+// These outcomes mean the event is stored but not yet linked to a send.
+// HTTP must stay non-success so Zalo retries. Permanent mismatches are stored
+// and acknowledged, because another delivery of the same body cannot succeed.
+const ZALO_WEBHOOK_RETRYABLE = new Set([
+  'unknown_tracking',
+  'send_not_accepted',
+  'apply_failed',
+  'APPLY_FAILED',
+  'IGNORED',
+  'unreadable',
+])
+
+export function zaloWebhookAckStatus(storedStatus: number, outcome: string | null | undefined) {
+  if (storedStatus !== 200) return storedStatus
+  if (outcome && ZALO_WEBHOOK_RETRYABLE.has(outcome)) return 503
+  return 200
 }
 
 export type WebhookResponse = {
@@ -62,6 +81,7 @@ export type WebhookResponse = {
     error?: string
     duplicate?: boolean
     status?: string
+    outcome?: string
   }
 }
 
@@ -84,6 +104,66 @@ export function zaloSignatureMatches(header: string | null, macHex: string) {
   const expected = Buffer.from(macHex.toLowerCase(), 'utf8')
   if (provided.length !== expected.length) return false
   return timingSafeEqual(provided, expected)
+}
+
+export function summarizeZaloWebhookAttempt(input: {
+  rawBody: string
+  signature: string | null
+  headerNames: string[]
+  userAgent: string | null
+  env: ZaloWebhookEnv | null
+  appSecret?: string
+}) {
+  const signatureText = input.signature?.trim() ?? ''
+  const macMatch = signatureText.match(/^mac\s*=\s*([0-9a-f]{64})$/i)
+  let parsed: unknown = null
+  let parseError = false
+  if (input.rawBody) {
+    try {
+      parsed = JSON.parse(input.rawBody)
+    } catch {
+      parseError = true
+    }
+  }
+  const body = parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+    ? parsed as Record<string, unknown>
+    : null
+  const appId = typeof body?.app_id === 'string' ? body.app_id : null
+  const timestamp = typeof body?.timestamp === 'string'
+    ? body.timestamp
+    : typeof body?.timestamp === 'number' && Number.isSafeInteger(body.timestamp)
+      ? String(body.timestamp)
+      : null
+  const eventName = typeof body?.event_name === 'string' ? body.event_name : null
+  const message = body?.message && typeof body.message === 'object' ? body.message as Record<string, unknown> : null
+  const safeId = (value: unknown) => typeof value === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(value) ? value : null
+  const secretMatches = (secret: string | undefined) => Boolean(
+    secret && appId && timestamp && zaloSignatureMatches(input.signature, zaloEventMac(appId, input.rawBody, timestamp, secret)),
+  )
+  return {
+    component: 'zalo_webhook_probe',
+    bodyLength: input.rawBody.length,
+    parseError,
+    keys: body ? Object.keys(body).sort() : [],
+    eventName,
+    payloadDigest: createHash('sha256').update(input.rawBody, 'utf8').digest('hex'),
+    messageId: safeId(body?.msg_id ?? message?.msg_id),
+    trackingId: safeId(message?.tracking_id ?? body?.tracking_id),
+    appIdType: body ? typeof body.app_id : null,
+    timestampType: body ? typeof body.timestamp : null,
+    oaIdType: body && Object.prototype.hasOwnProperty.call(body, 'oa_id') ? typeof body.oa_id : null,
+    appIdMatches: Boolean(input.env && appId === input.env.appId),
+    oaIdMatches: Boolean(input.env && typeof body?.oa_id === 'string' && body.oa_id === input.env.oaId),
+    senderIsOa: Boolean(input.env && partyId(body?.sender) === input.env.oaId),
+    recipientIsOa: Boolean(input.env && partyId(body?.recipient) === input.env.oaId),
+    headerNames: input.headerNames.map((name) => name.toLowerCase()).sort(),
+    signaturePresent: signatureText.length > 0,
+    signatureMacPrefix: /^mac\s*=/i.test(signatureText),
+    signatureHexLength: macMatch ? macMatch[1].length : 0,
+    oaSecretMatch: secretMatches(input.env?.oaSecret),
+    appSecretMatch: secretMatches(input.appSecret?.trim()),
+    userAgent: (input.userAgent ?? '').slice(0, 80),
+  }
 }
 
 export function readZaloWebhookEnv(
@@ -146,13 +226,21 @@ export async function acceptZaloWebhook(input: {
   const mac = zaloEventMac(appId, input.rawBody, timestamp, input.env.oaSecret)
   const senderId = partyId(body.sender)
   const recipientId = partyId(body.recipient)
-  if (
-    !zaloSignatureMatches(input.signature, mac) ||
-    appId !== input.env.appId ||
-    (Object.prototype.hasOwnProperty.call(body, 'oa_id')
-      ? body.oa_id !== input.env.oaId
-      : senderId !== input.env.oaId && recipientId !== input.env.oaId)
-  ) {
+  if (!zaloSignatureMatches(input.signature, mac) || appId !== input.env.appId) {
+    return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
+  }
+  const hasOaField = Object.prototype.hasOwnProperty.call(body, 'oa_id')
+  if (hasOaField && body.oa_id !== input.env.oaId) {
+    return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
+  }
+  const addressedToOa = hasOaField || senderId === input.env.oaId || recipientId === input.env.oaId
+  // Zalo's console check signs a sample user_send_text with this OA secret.
+  // The sample parties are not this OA. Acknowledge it without storing a reply.
+  if (!addressedToOa) {
+    const sample = body.message as Record<string, unknown> | undefined
+    if (eventName === 'user_send_text' && sample?.msg_id === 'This is message id' && sample?.text === 'This is testing message') {
+      return { status: 200, body: { ok: true, status: 'VERIFICATION' } }
+    }
     return { status: 401, body: { ok: false, error: 'INVALID_SIGNATURE' } }
   }
 
@@ -164,7 +252,7 @@ export async function acceptZaloWebhook(input: {
   }
   if (message && typeof message === 'object' && !Array.isArray(message)) {
     const msgId = (message as { msg_id?: unknown }).msg_id
-    if (typeof msgId === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(msgId)) {
+    if (!externalEventId && typeof msgId === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(msgId)) {
       externalEventId = msgId
     }
   }
@@ -184,6 +272,7 @@ export async function acceptZaloWebhook(input: {
       ok: true,
       duplicate: recorded.duplicate,
       status: recorded.status,
+      ...(recorded.outcome ? { outcome: recorded.outcome } : {}),
     },
   }
 }

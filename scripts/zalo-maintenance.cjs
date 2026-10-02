@@ -22,6 +22,12 @@ async function main() {
     return
   }
   const { maintainZaloCredentials } = load(path.resolve(__dirname, '../lib/integrations/zalo/maintenance.ts'))
-  console.log(JSON.stringify({ component: 'zalo_maintenance', ...await maintainZaloCredentials(db) }))
+  const credentials = await maintainZaloCredentials(db)
+  let replies = { state: 'UNAVAILABLE' }
+  try {
+    const { maintainTuitionZaloResponses } = load(path.resolve(__dirname, '../lib/integrations/zalo/tuition-response-sync.ts'))
+    replies = await maintainTuitionZaloResponses(db)
+  } catch { replies = { state: 'UNAVAILABLE' } }
+  console.log(JSON.stringify({ component: 'zalo_maintenance', ...credentials, replies }))
 }
 main().catch(() => { console.error(JSON.stringify({ component: 'zalo_maintenance', result: 'MAINTENANCE_UNAVAILABLE' })); process.exitCode = 1 })

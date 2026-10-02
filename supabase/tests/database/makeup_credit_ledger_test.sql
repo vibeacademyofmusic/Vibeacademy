@@ -731,7 +731,7 @@ end $$;
 create extension if not exists pgtap
 with schema extensions;
 
-select plan(32);
+select plan(51);
 
 select has_table(
   'public',
@@ -1470,6 +1470,232 @@ select is(
   ),
   4::bigint,
   'reopening source revokes all still-AVAILABLE credits from that source'
+);
+
+-- Confirmed excused entitlement: one credit per regular source, same credit returned from an excused makeup.
+update public.session_occurrences
+set status = 'COMPLETED'
+where id = '96000000-0000-0000-0000-000000000001';
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000001'),
+  1::bigint,
+  'repeating completion of a regular excused session adds no credit'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status)
+values (
+  '96000000-0000-0000-0000-000000000006',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-02',
+  '2026-11-02 09:00:00+07',
+  '2026-11-02 10:00:00+07',
+  'SCHEDULED'
+);
+
+insert into public.attendance_records (id, session_occurrence_id, enrollment_id, status)
+values
+  ('a6000000-0000-0000-0000-000000000011', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000001', 'PRESENT'),
+  ('a6000000-0000-0000-0000-000000000012', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000002', 'PRESENT'),
+  ('a6000000-0000-0000-0000-000000000013', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000003', 'PRESENT'),
+  ('a6000000-0000-0000-0000-000000000014', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000004', 'EXCUSED');
+
+insert into public.absence_reports (id, attendance_record_id, enrollment_id, session_occurrence_id, reason)
+values (
+  'c6000000-0000-0000-0000-000000000001',
+  'a6000000-0000-0000-0000-000000000014',
+  '76000000-0000-0000-0000-000000000004',
+  '96000000-0000-0000-0000-000000000006',
+  'Cho xac nhan'
+);
+
+select is(
+  public.set_session_occurrence_status('96000000-0000-0000-0000-000000000006', 'COMPLETED'),
+  'COMPLETED',
+  'regular session completes while an excused mark still has a pending report'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006'),
+  0::bigint,
+  'pending absence report does not grant a makeup credit'
+);
+
+select is(
+  (public.confirm_absence('c6000000-0000-0000-0000-000000000001', true, 'Xac nhan co phep sau khi chot')->>'ok')::boolean,
+  true,
+  'confirming excused after completion records the entitlement'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006' and enrollment_id = '76000000-0000-0000-0000-000000000004' and source_reason = 'EXCUSED' and status = 'AVAILABLE'),
+  1::bigint,
+  'confirmed excused regular attendance grants exactly one available credit'
+);
+
+select is(
+  (public.confirm_absence('c6000000-0000-0000-0000-000000000001', true, 'Xac nhan lai')->>'repeated')::boolean,
+  true,
+  'repeating the same confirmation does not grant another credit'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where enrollment_id = '76000000-0000-0000-0000-000000000004' and source_occurrence_id in ('96000000-0000-0000-0000-000000000001', '96000000-0000-0000-0000-000000000006')),
+  2::bigint,
+  'confirmed excuse adds one credit beside the original source credit'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status, occurrence_type, source_occurrence_id)
+values (
+  'b6000000-0000-0000-0000-000000000004',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-09',
+  '2026-11-09 13:00:00+07',
+  '2026-11-09 14:00:00+07',
+  'SCHEDULED',
+  'MAKEUP',
+  '96000000-0000-0000-0000-000000000006'
+);
+
+insert into public.session_occurrence_participants (session_occurrence_id, enrollment_id, makeup_credit_id)
+values (
+  'b6000000-0000-0000-0000-000000000004',
+  '76000000-0000-0000-0000-000000000004',
+  (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')
+);
+
+insert into public.attendance_records (session_occurrence_id, enrollment_id, status)
+values ('b6000000-0000-0000-0000-000000000004', '76000000-0000-0000-0000-000000000004', 'EXCUSED');
+
+create temporary table excused_credit_snapshot as
+select count(*)::bigint as n
+from public.makeup_credits
+where enrollment_id = '76000000-0000-0000-0000-000000000004';
+
+select is(
+  public.set_session_occurrence_status('b6000000-0000-0000-0000-000000000004', 'COMPLETED'),
+  'COMPLETED',
+  'excused makeup session completes'
+);
+
+select is(
+  (select status from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006'),
+  'AVAILABLE',
+  'excused makeup returns the same credit to available'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where enrollment_id = '76000000-0000-0000-0000-000000000004'),
+  (select n from excused_credit_snapshot),
+  'excused makeup does not create or remove a credit'
+);
+
+select is(
+  (select booking_status || ':' || (select status from public.attendance_records where session_occurrence_id = 'b6000000-0000-0000-0000-000000000004')
+   from public.session_occurrence_participants
+   where session_occurrence_id = 'b6000000-0000-0000-0000-000000000004'),
+  'RELEASED:EXCUSED',
+  'excused makeup keeps the booking and attendance history'
+);
+
+select is(
+  (select count(*)::bigint from public.academic_operation_exceptions where kind = 'MAKEUP_CREDIT_RELEASED' and source_id = (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')),
+  1::bigint,
+  'excused release is audited once'
+);
+
+update public.session_occurrences set status = 'COMPLETED' where id = 'b6000000-0000-0000-0000-000000000004';
+
+select is(
+  (select count(*)::bigint from public.academic_operation_exceptions where kind = 'MAKEUP_CREDIT_RELEASED' and source_id = (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')),
+  1::bigint,
+  'repeating makeup completion does not release or audit again'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status, occurrence_type, source_occurrence_id)
+values (
+  'b6000000-0000-0000-0000-000000000005',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-10',
+  '2026-11-10 13:00:00+07',
+  '2026-11-10 14:00:00+07',
+  'SCHEDULED',
+  'MAKEUP',
+  '96000000-0000-0000-0000-000000000006'
+);
+
+insert into public.session_occurrence_participants (session_occurrence_id, enrollment_id, makeup_credit_id)
+values (
+  'b6000000-0000-0000-0000-000000000005',
+  '76000000-0000-0000-0000-000000000004',
+  (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')
+);
+
+select is(
+  (select status || ':' || reserved_occurrence_id::text from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006'),
+  'RESERVED:b6000000-0000-0000-0000-000000000005',
+  'rebooking reserves the same returned credit once'
+);
+
+select throws_ok(
+  $$
+    insert into public.session_occurrence_participants (session_occurrence_id, enrollment_id, makeup_credit_id)
+    values (
+      'b6000000-0000-0000-0000-000000000005',
+      '76000000-0000-0000-0000-000000000004',
+      (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')
+    )
+  $$,
+  'P0001',
+  'Quyền học bù không còn dùng được.',
+  'a second active reservation of the same credit is rejected'
+);
+
+select ok(
+  exists (
+    select 1 from pg_indexes
+    where schemaname = 'public'
+      and indexname = 'session_occurrence_participants_credit_idx'
+      and indexdef ilike '%UNIQUE%'
+      and indexdef ilike '%booking_status%'
+      and indexdef ilike '%ACTIVE%'
+  ),
+  'only one active booking can hold a makeup credit'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status)
+values (
+  '96000000-0000-0000-0000-000000000007',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-16',
+  '2026-11-16 09:00:00+07',
+  '2026-11-16 10:00:00+07',
+  'SCHEDULED'
+);
+
+insert into public.enrollment_pauses (enrollment_id, starts_on, ends_on, reason)
+values ('76000000-0000-0000-0000-000000000003', '2026-11-16', '2026-11-16', 'Bao luu dung ngay buoi nay');
+
+select throws_ok(
+  $$
+    insert into public.attendance_records (session_occurrence_id, enrollment_id, status)
+    values ('96000000-0000-0000-0000-000000000007', '76000000-0000-0000-0000-000000000003', 'EXCUSED')
+  $$,
+  'P0001',
+  'Attendance cannot be recorded while the enrollment is paused',
+  'an approved pause date cannot be marked excused'
+);
+
+select is(
+  public.set_session_occurrence_status('96000000-0000-0000-0000-000000000007', 'CANCELLED'),
+  'CANCELLED',
+  'paused regular date can be cancelled without attendance'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000007' and enrollment_id = '76000000-0000-0000-0000-000000000003'),
+  0::bigint,
+  'a paused date does not also grant a makeup credit'
 );
 
 select * from finish();

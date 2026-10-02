@@ -64,6 +64,13 @@ const CREDIT_STATUS_STYLES: Record<string, string> = {
   CANCELLED: 'bg-gray-100 text-gray-600',
 }
 
+const CREDIT_STATUS_LABELS: Record<string, string> = {
+  AVAILABLE: 'Còn dùng được',
+  RESERVED: 'Đã đặt',
+  USED: 'Đã học',
+  CANCELLED: 'Đã thu hồi',
+}
+
 function formatDateTime(
   value: string,
   timezone: string
@@ -659,10 +666,10 @@ if (
               Sổ điểm danh
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm leading-6 text-gray-500">
               {occurrence.occurrence_type === 'MAKEUP'
-                ? 'Học viên đã được chọn tham gia buổi học bù này.'
-                : 'Học viên đủ điều kiện tham gia vào ngày diễn ra buổi học.'}
+                ? 'Học viên đã được chọn tham gia buổi học bù này. Có phép đã xác nhận không thu quyền: hủy chỗ được phép hoặc chốt buổi sẽ trả lại chính quyền đã đặt. Không tạo quyền mới. Chỗ cũ, điểm danh và ghi nhận đối soát vẫn được giữ.'
+                : 'Học viên đủ điều kiện tham gia vào ngày diễn ra buổi học. Buổi thường đã chốt với Có phép đã xác nhận cấp đúng một quyền học bù cho buổi và ghi danh đó. Báo vắng đang chờ chưa cấp quyền. Ngày bảo lưu đã duyệt không có trong danh sách này và không được cấp thêm quyền.'}
             </p>
           </div>
 
@@ -755,7 +762,7 @@ if (
                                     'bg-gray-100 text-gray-600'
                                   }`}
                                 >
-                                  Credit {makeupCredit.status}
+                                  {CREDIT_STATUS_LABELS[makeupCredit.status] ?? makeupCredit.status}
                                 </span>
 
                                 <Link
@@ -764,8 +771,8 @@ if (
                                 >
                                   {makeupCredit.source_reason ===
                                   'EXCUSED'
-                                    ? 'Excused absence source'
-                                    : 'Cancelled session source'}{' '}
+                                    ? 'Nguồn: nghỉ có phép'
+                                    : 'Nguồn: buổi thường bị hủy'}{' '}
                                   →
                                 </Link>
                               </div>
@@ -1144,16 +1151,13 @@ if (
               </h2>
 
               <p className="mt-1 max-w-3xl text-sm leading-6 text-gray-500">
-                Create a separate dated session linked to this
-                regular source. Only the students selected below
-                will appear in its attendance roster.
+                Tạo một buổi học bù riêng, gắn với buổi thường này. Chỉ học viên được chọn mới vào sổ điểm danh. Mỗi chỗ đang hiệu lực giữ đúng một quyền. Nghỉ có phép của buổi bù trả lại chính quyền đó, không cấp quyền thứ hai.
               </p>
             </div>
 
             {makeupEligibleEnrollments.length === 0 ? (
               <div className="mt-5 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
-                No student in this class currently has an
-                available makeup credit.
+                Chưa có học viên nào trong lớp đang còn quyền học bù.
               </div>
             ) : (
               <form
@@ -1279,18 +1283,13 @@ if (
                             <span className="mt-1 block text-xs text-gray-500">
                               {student?.student_code ?? '—'}
                               {' · '}
-                              {creditCount}{' '}
-                              {creditCount === 1
-                                ? 'credit'
-                                : 'credits'}{' '}
-                              available
+                              {creditCount} quyền còn dùng được
                             </span>
 
                             <span className="mt-1 block text-xs text-gray-500">
                               {creditReasons.excused > 0 && (
                                 <>
-                                  {creditReasons.excused} from
-                                  excused absence
+                                  {creditReasons.excused} từ nghỉ có phép
                                 </>
                               )}
                               {creditReasons.excused > 0 &&
@@ -1298,8 +1297,7 @@ if (
                                 ' · '}
                               {creditReasons.sessionCancelled > 0 && (
                                 <>
-                                  {creditReasons.sessionCancelled} from
-                                  cancelled session
+                                  {creditReasons.sessionCancelled} từ buổi thường bị hủy
                                 </>
                               )}
                             </span>

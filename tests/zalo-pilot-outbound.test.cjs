@@ -177,8 +177,14 @@ test('explicitly enabled opens the direct send gate and still does not mark deli
   assert.equal(calls, 1)
 })
 
-test('tuition reminder action sends only through the blocked outbound adapter', () => {
+test('tuition reminder action sends only through the manual gate', () => {
   const source = fs.readFileSync('app/admin/tuition/reminders/actions.ts', 'utf8')
-  assert.match(source, /sendZaloTemplateMessage/)
+  const outbound = fs.readFileSync('lib/integrations/zalo/outbound.ts', 'utf8')
+  const sender = fs.readFileSync('lib/integrations/zalo/tuition-test-send.ts', 'utf8')
+  assert.match(source, /sendManualTuitionZalo/)
+  assert.equal(source.includes('sendAuthorizedTuitionTest'), false)
+  assert.match(sender, /zaloPilotOutboundBlocked\(env\)/)
   assert.equal(source.includes('fetch('), false)
+  assert.equal(outbound.includes('fetch('), false)
+  assert.match(outbound, /return \{ state: ZALO_OUTBOUND_STATE \}/)
 })

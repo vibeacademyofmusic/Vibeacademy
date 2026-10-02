@@ -11,6 +11,7 @@ function load(file, mocks, cache = new Map()) {
   const compiled = { exports: {} }
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 } }).outputText
   const localRequire = name => {
+    if (name === 'server-only') return {}
     if (name in mocks) return mocks[name]
     if (name.startsWith('@/')) {
       const target = path.resolve(name.slice(2))

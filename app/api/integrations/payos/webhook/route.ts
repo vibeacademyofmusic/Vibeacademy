@@ -64,7 +64,18 @@ export async function POST(request: Request) {
     await dispatchPreviewRegistrationZalo(admin, orderCode)
     return Response.json({ ok: true })
   }
-  const message = error.message ?? ''
+  let message = error.message ?? ''
+  if (message.includes('PAYOS_ORDER_UNKNOWN')) {
+    const tuition = await admin.rpc('record_verified_tuition_payos_webhook', {
+      p_order_code: orderCode,
+      p_payment_link_id: paymentLinkId,
+      p_reference: reference,
+      p_amount: amount,
+      p_currency: 'VND',
+    })
+    if (!tuition.error) return Response.json({ ok: true, tuition: true })
+    message = tuition.error.message ?? message
+  }
   console.info('payos-webhook', { orderCode, reason: message.slice(0, 80) })
   if (message.includes('PAYOS_ORDER_UNKNOWN')) return Response.json({ ok: false, error: 'PAYOS_ORDER_UNKNOWN' }, { status: 409 })
   if (message.includes('PAYOS_AMOUNT_MISMATCH') || message.includes('PAYOS_LINK_MISMATCH') || message.includes('PAYOS_REFERENCE_CONFLICT')) {

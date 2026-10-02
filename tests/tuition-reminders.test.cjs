@@ -22,7 +22,7 @@ test('queue renders distinct branches and currencies with no send button',async(
  const base={id:id(1),enrollment_tuition_id:id(10),window_start:'2026-10-01',window_end:'2026-10-07',status:'PENDING',starts_on:'2026-09-01',effective_ends_on:'2026-11-30',plan_name_snapshot:'3 tháng',branch_name_snapshot:'Cần Thơ',amount:4500000,currency:'VND',full_name:'Student A',student_code:'A'}
  const h=harness({tuition_reminder_operations:[base,{...base,id:id(2),branch_name_snapshot:'Hà Nội',amount:123.45,currency:'USD',status:'SKIPPED',reason:'Đã trao đổi'},{...base,id:id(3),window_start:'2026-08-01',window_end:'2026-08-20',status:'PENDING'}]})
  const html=renderToStaticMarkup(await h.load('../tuition/reminders/page.tsx').default({searchParams:Promise.resolve({})}))
- for(const text of ['Cần Thơ','Hà Nội','4.500.000','123,45','Đã trao đổi','Chưa có hóa đơn','Sắp đến hạn','Đã bỏ qua','Quá hạn nhắc','Cảnh báo','Gửi báo tự động qua Zalo','Gửi thật đang tắt','Nhắc gia hạn không phải nhắc nợ','Phản hồi Zalo','Chưa phản hồi']) assert.ok(html.includes(text),text)
+ for(const text of ['Cần Thơ','Hà Nội','4.500.000','123,45','Đã trao đổi','Chưa có hóa đơn','Sắp đến hạn','Đã bỏ qua','Quá hạn nhắc','Cảnh báo','Gửi báo tự động qua Zalo','Gửi thật đang tắt','Nhắc gia hạn không lấy số nợ','Phản hồi Zalo','Chưa phản hồi']) assert.ok(html.includes(text),text)
  assert.doesNotMatch(html,/PENDING/)
  assert.doesNotMatch(html,/>Gửi ngay</)
 })
