@@ -1,4 +1,4 @@
--- Teacher session workspace. Rolled back. Uses the existing TEST_GUITAR curriculum; does not copy student level onto the session.
+-- Teacher session workspace. Rolled back. Uses the transaction-local TEST_C210_GUITAR curriculum; does not copy student level onto the session.
 
 begin;
 create extension if not exists pgtap with schema extensions;
@@ -30,11 +30,11 @@ insert into public.rooms(id, branch_id, code, name, capacity) values
   ('c2100000-0000-4000-8000-000000000030', 'c2100000-0000-4000-8000-000000000010', 'TEST_TSW_R', 'Phòng TEST 2', 10);
 \ir test_guitar_program.inc
 insert into public.courses(id, curriculum_id, code, name, status)
-select 'c2100000-0000-4000-8000-000000000040', id, 'TEST_TSW_DB', 'Guitar Group Test DB', 'ACTIVE' from public.curriculums where code = 'TEST_GUITAR';
+select 'c2100000-0000-4000-8000-000000000040', id, 'TEST_TSW_DB', 'Guitar Group Test DB', 'ACTIVE' from public.curriculums where code = 'TEST_C210_GUITAR';
 insert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id)
 select 'c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000010', 'c2100000-0000-4000-8000-000000000040', 'TEST_TSW_DB', 'Guitar Group Test DB', 'GROUP', 10, 'ACTIVE',
-  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'PRE'),
-  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'GRADE_5');
+  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_C210_GUITAR' and l.code = 'PRE'),
+  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_C210_GUITAR' and l.code = 'GRADE_5');
 delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values
   ('c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000021', 'PRIMARY', true, current_date - 30);
@@ -48,7 +48,7 @@ insert into public.students(id, student_code, full_name, default_branch_id, stat
 
 select public.assign_student_academic_program(s.id, c.id, l.id, current_date - 30)
 from public.students s
-join public.curriculums c on c.code = 'TEST_GUITAR'
+join public.curriculums c on c.code = 'TEST_C210_GUITAR'
 join public.curriculum_levels l on l.curriculum_id = c.id
 where (s.id, l.code) in (
   ('c2100000-0000-4000-8000-000000000061', 'GRADE_1'),

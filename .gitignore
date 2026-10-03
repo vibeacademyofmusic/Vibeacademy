@@ -42,3 +42,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local page copies and one-off verification dumps. Keep them out of the source tree.
+.backups/
+*.bak
+*.backup
+*.broken-backup
+*.before-*

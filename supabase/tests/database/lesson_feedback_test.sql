@@ -265,8 +265,8 @@ select is((select average_overall_rating from lesson_feedback_teacher_monthly wh
 select is((select low_rating_count from lesson_feedback_branch_monthly where branch_id='11000000-0000-0000-0000-000000000001'),1::bigint,'branch low count');
 select throws_ok($$update lesson_feedback set overall_rating=5$$,'42501',null,'raw feedback cannot be edited');
 reset role;
-select is((select count(*) from lesson_feedback_reasons r join lesson_feedback f on f.id=r.feedback_id where f.respondent_type='STUDENT'),2::bigint,'student reasons stored');
-select is((select count(*) from lesson_feedback_reasons r join lesson_feedback f on f.id=r.feedback_id where f.respondent_type='PARENT'),2::bigint,'parent reasons stored');
+select is((select count(*) from lesson_feedback_reasons r join lesson_feedback f on f.id=r.feedback_id where f.respondent_type='STUDENT' and f.student_id='61000000-0000-0000-0000-000000000001'),2::bigint,'student reasons stored');
+select is((select count(*) from lesson_feedback_reasons r join lesson_feedback f on f.id=r.feedback_id where f.respondent_type='PARENT' and f.student_id='61000000-0000-0000-0000-000000000001'),2::bigint,'parent reasons stored');
 select throws_ok($$update lesson_feedback_reasons set reason_label='changed'$$,'P0001','Submitted feedback is immutable','reasons immutable');
 select throws_ok($$delete from lesson_feedback where student_id='61000000-0000-0000-0000-000000000001'$$,'P0001','Feedback history cannot be deleted','feedback history preserved');
 select * from finish();

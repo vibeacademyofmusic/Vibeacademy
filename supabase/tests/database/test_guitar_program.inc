@@ -1,7 +1,7 @@
 -- Self-contained Guitar program for database tests.
--- Clean migrations do not seed the local TEST_GUITAR demo.
+-- The code is transaction-local so a committed demo curriculum cannot collide.
 insert into public.curriculums(id, code, name)
-values ('c2100000-0000-4000-8000-0000000000b0', 'TEST_GUITAR', 'Guitar');
+values ('c2100000-0000-4000-8000-0000000000b0', 'TEST_C210_GUITAR', 'Guitar');
 
 insert into public.curriculum_levels(id, curriculum_id, code, name, sequence_no, level_number, level_type)
 values
