@@ -1,0 +1,776 @@
+BEGIN
+NOTICE:  extension "pgtap" already exists, skipping
+CREATE EXTENSION
+ no_plan 
+---------
+(0 rows)
+
+INSERT 0 2
+INSERT 0 5
+INSERT 0 5
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+INSERT 0 4
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+INSERT 0 3
+INSERT 0 4
+INSERT 0 7
+INSERT 0 1
+UPDATE 4
+INSERT 0 4
+INSERT 0 4
+INSERT 0 2
+INSERT 0 2
+INSERT 0 2
+                throws_ok                
+-----------------------------------------
+ ok 1 - direct registration write denied
+(1 row)
+
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000001
+(1 row)
+
+          lives_ok           
+-----------------------------
+ ok 2 - zero tuition invoice
+(1 row)
+
+           lives_ok            
+-------------------------------
+ ok 3 - unpaid tuition invoice
+(1 row)
+
+         lives_ok          
+---------------------------
+ ok 4 - issue zero invoice
+(1 row)
+
+          lives_ok           
+-----------------------------
+ ok 5 - issue unpaid invoice
+(1 row)
+
+          lives_ok          
+----------------------------
+ ok 6 - create registration
+(1 row)
+
+       lives_ok       
+----------------------
+ ok 7 - create replay
+(1 row)
+
+           is           
+------------------------
+ ok 8 - one application
+(1 row)
+
+         is          
+---------------------
+ ok 9 - draft status
+(1 row)
+
+      throws_ok       
+----------------------
+ ok 10 - stale submit
+(1 row)
+
+    lives_ok    
+----------------
+ ok 11 - submit
+(1 row)
+
+    lives_ok    
+----------------
+ ok 12 - verify
+(1 row)
+
+           lives_ok            
+-------------------------------
+ ok 13 - complete new identity
+(1 row)
+
+        lives_ok         
+-------------------------
+ ok 14 - complete replay
+(1 row)
+
+           is            
+-------------------------
+ ok 15 - one new student
+(1 row)
+
+           is            
+-------------------------
+ ok 16 - one parent link
+(1 row)
+
+                 is                 
+------------------------------------
+ ok 17 - completion does not enroll
+(1 row)
+
+                    is                    
+------------------------------------------
+ ok 18 - no invoice does not fake payment
+(1 row)
+
+                is                
+----------------------------------
+ ok 19 - waiting placement opened
+(1 row)
+
+              is               
+-------------------------------
+ ok 20 - unassigned is waiting
+(1 row)
+
+                 is                 
+------------------------------------
+ ok 21 - new student is not current
+(1 row)
+
+     lives_ok     
+------------------
+ ok 22 - matching
+(1 row)
+
+               is               
+--------------------------------
+ ok 23 - matching stays waiting
+(1 row)
+
+UPDATE 3
+INSERT 0 1
+ set_config 
+------------
+ on
+(1 row)
+
+UPDATE 1
+ set_config 
+------------
+ off
+(1 row)
+
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+UPDATE 2
+               throws_ok                
+----------------------------------------
+ ok 24 - inactive teaching shift denied
+(1 row)
+
+                    throws_ok                    
+-------------------------------------------------
+ ok 25 - teaching shift without a teacher denied
+(1 row)
+
+                 throws_ok                 
+-------------------------------------------
+ ok 26 - wrong registration program denied
+(1 row)
+
+       lives_ok        
+-----------------------
+ ok 27 - future assign
+(1 row)
+
+       lives_ok        
+-----------------------
+ ok 28 - assign replay
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 29 - one enrollment after assign
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 30 - future start leaves waiting
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 31 - future start waits to begin
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 32 - future start is not current
+(1 row)
+
+                lives_ok                
+----------------------------------------
+ ok 33 - future change checks and saves
+(1 row)
+
+                 lives_ok                  
+-------------------------------------------
+ ok 34 - future change retry is idempotent
+(1 row)
+
+          throws_ok          
+-----------------------------
+ ok 35 - stale form rejected
+(1 row)
+
+                  is                  
+--------------------------------------
+ ok 36 - one change event after retry
+(1 row)
+
+      lives_ok       
+---------------------
+ ok 37 - blank draft
+(1 row)
+
+         throws_ok         
+---------------------------
+ ok 38 - incomplete submit
+(1 row)
+
+      lives_ok       
+---------------------
+ ok 39 - reuse draft
+(1 row)
+
+           throws_ok            
+--------------------------------
+ ok 40 - complete before verify
+(1 row)
+
+       lives_ok       
+----------------------
+ ok 41 - reuse submit
+(1 row)
+
+       lives_ok       
+----------------------
+ ok 42 - reuse verify
+(1 row)
+
+               throws_ok                
+----------------------------------------
+ ok 43 - existing identity needs review
+(1 row)
+
+        lives_ok         
+-------------------------
+ ok 44 - confirmed reuse
+(1 row)
+
+                  is                   
+---------------------------------------
+ ok 45 - reused student not duplicated
+(1 row)
+
+                  is                  
+--------------------------------------
+ ok 46 - reused parent not duplicated
+(1 row)
+
+               is                
+---------------------------------
+ ok 47 - one student parent link
+(1 row)
+
+        lives_ok         
+-------------------------
+ ok 48 - ambiguous draft
+(1 row)
+
+         lives_ok         
+--------------------------
+ ok 49 - ambiguous submit
+(1 row)
+
+         lives_ok         
+--------------------------
+ ok 50 - ambiguous verify
+(1 row)
+
+             throws_ok              
+------------------------------------
+ ok 51 - ambiguous identity blocked
+(1 row)
+
+                   is                   
+----------------------------------------
+ ok 52 - ambiguous match creates nobody
+(1 row)
+
+       lives_ok       
+----------------------
+ ok 53 - unpaid draft
+(1 row)
+
+       lives_ok        
+-----------------------
+ ok 54 - unpaid submit
+(1 row)
+
+       lives_ok        
+-----------------------
+ ok 55 - unpaid verify
+(1 row)
+
+           lives_ok            
+-------------------------------
+ ok 56 - attach unpaid invoice
+(1 row)
+
+           is            
+-------------------------
+ ok 57 - payment pending
+(1 row)
+
+                  throws_ok                  
+---------------------------------------------
+ ok 58 - unsettled invoice blocks completion
+(1 row)
+
+      lives_ok      
+--------------------
+ ok 59 - paid draft
+(1 row)
+
+      lives_ok       
+---------------------
+ ok 60 - paid submit
+(1 row)
+
+      lives_ok       
+---------------------
+ ok 61 - paid verify
+(1 row)
+
+            lives_ok            
+--------------------------------
+ ok 62 - attach settled invoice
+(1 row)
+
+               is                
+---------------------------------
+ ok 63 - settled invoice is paid
+(1 row)
+
+             lives_ok              
+-----------------------------------
+ ok 64 - complete after settlement
+(1 row)
+
+                   is                    
+-----------------------------------------
+ ok 65 - settlement records payment time
+(1 row)
+
+      lives_ok       
+---------------------
+ ok 66 - today draft
+(1 row)
+
+       lives_ok       
+----------------------
+ ok 67 - today submit
+(1 row)
+
+       lives_ok       
+----------------------
+ ok 68 - today verify
+(1 row)
+
+        lives_ok        
+------------------------
+ ok 69 - today complete
+(1 row)
+
+ set_config 
+------------
+ on
+(1 row)
+
+UPDATE 1
+ set_config 
+------------
+ off
+(1 row)
+
+INSERT 0 1
+      lives_ok       
+---------------------
+ ok 70 - start today
+(1 row)
+
+                 is                 
+------------------------------------
+ ok 71 - today start leaves waiting
+(1 row)
+
+               is               
+--------------------------------
+ ok 72 - today start is current
+(1 row)
+
+           lives_ok           
+------------------------------
+ ok 73 - second program draft
+(1 row)
+
+           lives_ok            
+-------------------------------
+ ok 74 - second program submit
+(1 row)
+
+           lives_ok            
+-------------------------------
+ ok 75 - second program verify
+(1 row)
+
+                  throws_ok                  
+---------------------------------------------
+ ok 76 - studying student still needs review
+(1 row)
+
+            lives_ok             
+---------------------------------
+ ok 77 - second program complete
+(1 row)
+
+                    is                     
+-------------------------------------------
+ ok 78 - second program reuses the student
+(1 row)
+
+               is                
+---------------------------------
+ ok 79 - current program remains
+(1 row)
+
+            is             
+---------------------------
+ ok 80 - new program waits
+(1 row)
+
+ set_config 
+------------
+ on
+(1 row)
+
+UPDATE 1
+ set_config 
+------------
+ off
+(1 row)
+
+                 throws_ok                 
+-------------------------------------------
+ ok 81 - duplicate class enrollment denied
+(1 row)
+
+         lives_ok          
+---------------------------
+ ok 82 - cross class draft
+(1 row)
+
+          lives_ok          
+----------------------------
+ ok 83 - cross class submit
+(1 row)
+
+          lives_ok          
+----------------------------
+ ok 84 - cross class verify
+(1 row)
+
+           lives_ok           
+------------------------------
+ ok 85 - cross class complete
+(1 row)
+
+             throws_ok             
+-----------------------------------
+ ok 86 - other branch class denied
+(1 row)
+
+         lives_ok         
+--------------------------
+ ok 87 - full class draft
+(1 row)
+
+         lives_ok          
+---------------------------
+ ok 88 - full class submit
+(1 row)
+
+         lives_ok          
+---------------------------
+ ok 89 - full class verify
+(1 row)
+
+          lives_ok           
+-----------------------------
+ ok 90 - full class complete
+(1 row)
+
+ set_config 
+------------
+ on
+(1 row)
+
+UPDATE 1
+ set_config 
+------------
+ off
+(1 row)
+
+INSERT 0 1
+         throws_ok         
+---------------------------
+ ok 91 - full class denied
+(1 row)
+
+     lives_ok     
+------------------
+ ok 92 - crm lead
+(1 row)
+
+           throws_ok            
+--------------------------------
+ ok 93 - lead before won denied
+(1 row)
+
+        lives_ok        
+------------------------
+ ok 94 - lead contacted
+(1 row)
+
+        lives_ok        
+------------------------
+ ok 95 - lead qualified
+(1 row)
+
+         lives_ok          
+---------------------------
+ ok 96 - lead trial booked
+(1 row)
+
+        lives_ok         
+-------------------------
+ ok 97 - lead trial done
+(1 row)
+
+       lives_ok        
+-----------------------
+ ok 98 - lead proposal
+(1 row)
+
+         lives_ok         
+--------------------------
+ ok 99 - lead negotiating
+(1 row)
+
+     lives_ok      
+-------------------
+ ok 100 - lead won
+(1 row)
+
+              lives_ok               
+-------------------------------------
+ ok 101 - registration from won lead
+(1 row)
+
+                 is                 
+------------------------------------
+ ok 102 - won lead prefills student
+(1 row)
+
+                is                 
+-----------------------------------
+ ok 103 - won lead prefills parent
+(1 row)
+
+                 is                 
+------------------------------------
+ ok 104 - won lead is not a student
+(1 row)
+
+ set_config 
+------------
+ on
+(1 row)
+
+UPDATE 1
+ set_config 
+------------
+ off
+(1 row)
+
+                      is                       
+-----------------------------------------------
+ ok 105 - waiting over 7 days uses opened date
+(1 row)
+
+          is          
+----------------------
+ ok 106 - search miss
+(1 row)
+
+                   is                    
+-----------------------------------------
+ ok 107 - unassigned filter returns rows
+(1 row)
+
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000001
+(1 row)
+
+             lives_ok              
+-----------------------------------
+ ok 108 - other branch application
+(1 row)
+
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000003
+(1 row)
+
+                 throws_ok                 
+-------------------------------------------
+ ok 109 - cross branch registration denied
+(1 row)
+
+               throws_ok                
+----------------------------------------
+ ok 110 - cross branch placement denied
+(1 row)
+
+                     is                     
+--------------------------------------------
+ ok 111 - other branch cannot see placement
+(1 row)
+
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000002
+(1 row)
+
+                 lives_ok                 
+------------------------------------------
+ ok 112 - own branch registration allowed
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 113 - own branch can see waiting
+(1 row)
+
+                     is                     
+--------------------------------------------
+ ok 114 - own branch can see a future start
+(1 row)
+
+SET
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000002
+(1 row)
+
+                         is                         
+----------------------------------------------------
+ ok 115 - branch admin cannot read the other branch
+(1 row)
+
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000003
+(1 row)
+
+                    is                     
+-------------------------------------------
+ ok 116 - branch admin can read own branch
+(1 row)
+
+RESET
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000004
+(1 row)
+
+            throws_ok             
+----------------------------------
+ ok 117 - teacher cannot register
+(1 row)
+
+              set_config              
+--------------------------------------
+ d8200000-0000-4000-8000-000000000005
+(1 row)
+
+                  throws_ok                   
+----------------------------------------------
+ ok 118 - user without a role cannot register
+(1 row)
+
+ set_config 
+------------
+ on
+(1 row)
+
+                  throws_ok                  
+---------------------------------------------
+ ok 119 - duplicate open placement prevented
+(1 row)
+
+ set_config 
+------------
+ off
+(1 row)
+
+SET
+         throws_ok         
+---------------------------
+ ok 120 - anonymous denied
+(1 row)
+
+RESET
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+            throws_ok            
+---------------------------------
+ ok 121 - missing session denied
+(1 row)
+
+                 throws_ok                  
+--------------------------------------------
+ ok 122 - authenticated direct write denied
+(1 row)
+
+RESET
+                 is                 
+------------------------------------
+ ok 123 - no waiting students table
+(1 row)
+
+ finish 
+--------
+ 1..123
+(1 row)
+
+ROLLBACK

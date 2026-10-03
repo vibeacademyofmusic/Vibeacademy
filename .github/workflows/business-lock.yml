@@ -1,0 +1,28 @@
+name: Registration and Zalo business lock
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'codex/**']
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx --no-install next typegen
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run test:business-lock
+      - run: npx --no-install supabase start
+      - run: npx --no-install supabase db reset
+      - run: npm run test:business-lock:db
+        env:
+          SUPABASE_DISABLE_TELEMETRY: '1'

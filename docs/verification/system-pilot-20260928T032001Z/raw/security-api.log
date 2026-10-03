@@ -1,0 +1,1 @@
+{"pass":8,"fail":[{"name":"Scope change uses current DB scope, not stale JWT","actor":"BA","status":"FAIL","at":"2026-09-28T04:25:31.070Z","evidence":"Expected values to be strictly equal:\n\n0 !== 1\n"}]}

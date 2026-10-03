@@ -15,11 +15,13 @@ export default function AddAcademicProgramForm({ student, activeCurriculums, act
 return (            <div className="rounded-xl border border-gray-200 bg-white p-5">
   <div className="flex flex-col gap-1">
     <p className="text-sm font-semibold text-gray-950">
-      Thêm chương trình học
+      {academicProgramEnrollments.length ? 'Thêm chương trình khác' : 'Thêm chương trình học'}
     </p>
 
     <p className="text-sm text-gray-500">
-      Thêm chương trình đào tạo mới. Để lên bậc trong chương trình đang học, dùng Bắt đầu bậc tiếp theo.
+      {academicProgramEnrollments.length
+        ? 'Chương trình và trình độ đã chọn lúc đăng ký được hệ thống ghi nhận. Form này chỉ dùng khi thêm một chương trình khác. Để lên bậc trong chương trình đang học, dùng Bắt đầu bậc tiếp theo.'
+        : 'Dùng khi hồ sơ chưa có hành trình. Đăng ký mới ghi nhận chương trình và trình độ tự động.'}
     </p>
   </div>
 

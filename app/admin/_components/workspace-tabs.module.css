@@ -1,0 +1,22 @@
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  max-width: 100%;
+  padding: 8px 13px;
+  border: 1px solid var(--vibe-line);
+  border-radius: 9px;
+  background: white;
+  color: var(--vibe-navy);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: normal;
+}
+.tab[aria-current='page'] { border-color: var(--vibe-gold); background: #fffaf2; }
+.tab:focus-visible { outline: 2px solid var(--vibe-gold); outline-offset: 2px; }
+.scroll { position: relative; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; padding: 3px 2px 8px; }
+.scroll .tab { flex: 0 0 auto; white-space: nowrap; }

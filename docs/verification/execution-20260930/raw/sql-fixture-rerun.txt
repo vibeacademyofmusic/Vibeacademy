@@ -1,0 +1,42 @@
+PASS	attendance_records_test.sql	ok
+FAIL	branch_relationship_scope_test.sql	ERROR:  PLACEMENT_CLASS_DENIED
+FAIL	create_makeup_session_occurrence_test.sql	ERROR:  PLACEMENT_CLASS_FULL
+FAIL	crm_reactivation_test.sql	ERROR:  PLACEMENT_START_DENIED
+PASS	customer_credit_ledger_test.sql	ok
+FAIL	debt_engine_v1_test.sql	ERROR:  function pg_temp.void_payment(uuid, unknown) does not exist
+PASS	elearning_foundation_test.sql	ok
+FAIL	enrollment_pause_attendance_test.sql	ERROR:  PLACEMENT_START_DENIED
+PASS	feedback_authorization_test.sql	ok
+FAIL	finance_engine_v1_test.sql	ERROR:  function pg_temp.create_refund(uuid, integer, timestamp with time zone, unknown, unknown) does not exist
+FAIL	finance_read_scope_test.sql	ERROR:  function pg_temp.create_refund(uuid, integer, timestamp with time zone, unknown) does not exist
+PASS	financial_management_report_v1_test.sql	ok
+PASS	invoice_cancellation_approval_test.sql	ok
+FAIL	invoice_engine_v1_test.sql	not ok 11 - issued invoice can be cancelled with a reason                                                              +
+PASS	learning_analytics_test.sql	ok
+PASS	learning_assessment_test.sql	ok
+PASS	learning_journals_test.sql	ok
+FAIL	learning_observation_taxonomy_test.sql	not ok 24 - group journal submits with an absent student                                                           +
+PASS	learning_regrade_test.sql	ok
+FAIL	learning_reports_test.sql	not ok 5 - attendance present aggregated        +
+FAIL	learning_shadow_mapping_test.sql	not ok 16 - No official enrollment is invented        +
+FAIL	legacy_migration_review_test.sql	not ok 54 - Paused opening baseline imports current pause only                                                                     +
+FAIL	lesson_feedback_test.sql	not ok 31 - parent reasons stored        +
+FAIL	makeup_credit_ledger_test.sql	ERROR:  PLACEMENT_CLASS_FULL
+PASS	opening_balance_collections_test.sql	ok
+FAIL	payment_engine_v1_test.sql	not ok 12 - issued invoice with posted allocation cannot be cancelled               +
+FAIL	refund_engine_v1_test.sql	ERROR:  function pg_temp.create_refund(uuid, integer, timestamp with time zone, unknown, unknown) does not exist
+PASS	relationship_read_authorization_test.sql	ok
+FAIL	reschedule_makeup_foundation_test.sql	ERROR:  PLACEMENT_CLASS_FULL
+PASS	reschedule_session_occurrence_test.sql	ok
+PASS	revenue_forecast_v1_test.sql	ok
+PASS	session_status_workflow_test.sql	ok
+PASS	session_teacher_assignment_test.sql	ok
+FAIL	student_ops_shell_test.sql	not ok 42 - full class is not offered        +
+FAIL	student_parent_history_test.sql	ERROR:  Student already has an active enrollment in this curriculum
+FAIL	teacher_historical_access_test.sql	ERROR:  Student already has an active enrollment in this curriculum
+PASS	teacher_payroll_test.sql	ok
+PASS	tuition_branch_pricing_discounts_test.sql	ok
+PASS	tuition_discount_invoice_lock_test.sql	ok
+PASS	tuition_operations_rpc_test.sql	ok
+FAIL	tuition_phase1_test.sql	ERROR:  PLACEMENT_START_DENIED
+PASS	tuition_reminders_test.sql	ok

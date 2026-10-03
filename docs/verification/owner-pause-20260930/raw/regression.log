@@ -1,0 +1,28 @@
+✔ local test preload rejects provider fetch and raw TCP without network access (104.068375ms)
+✔ query failures render an alert rather than an empty-state success (59.020625ms)
+✔ a successful zero-row query renders the correct empty state (13.429792ms)
+✔ authorized REQUESTED decision preserves the RPC authorization boundary (14.167792ms)
+✔ stale approved and rejected forms cannot send another decision (7.404416ms)
+✔ unauthorized users are denied before loading or deciding the request (4.192833ms)
+✔ a raced idempotent RPC retry is shown as blocked, never a new decision (3.307958ms)
+✔ request-read failures stop mutation and do not pretend the request is absent (2.974208ms)
+✔ only the exact value enabled opens the pilot gate (0.526375ms)
+✔ pilot control missing makes zero provider calls (2.626917ms)
+✔ pilot control missing-preview makes zero provider calls (0.273042ms)
+✔ pilot control empty makes zero provider calls (0.202042ms)
+✔ pilot control false makes zero provider calls (2.053792ms)
+✔ pilot control malformed-true makes zero provider calls (0.210042ms)
+✔ pilot control malformed-yes makes zero provider calls (0.157417ms)
+✔ pilot control malformed-case makes zero provider calls (0.139209ms)
+✔ pilot control malformed-space makes zero provider calls (0.173541ms)
+✔ pilot control disabled makes zero provider calls (0.183458ms)
+✔ explicitly enabled opens the direct send gate and still does not mark delivered (0.767584ms)
+✔ tuition reminder action sends only through the blocked outbound adapter (0.343167ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 343.396917

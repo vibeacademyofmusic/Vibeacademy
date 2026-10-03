@@ -1,0 +1,11 @@
+{
+  "auth_password_sign_in": "PASS",
+  "storage_upload_download_bytes": "PASS",
+  "private_storage_access": "DENIED",
+  "bucket": "execution-byte-probe",
+  "object": "e286be8f-f5d7-4c4b-8294-b4f907e17fc8.txt",
+  "byte_count": 38,
+  "sha256": "232c1f20bc788c43d2f50af58c5d28e8a42e90c1ffd7f68feae69b3c37c19983",
+  "external_http": "blocked by exact local origin",
+  "source_recovery": "not tested; synthetic local platform only"
+}

@@ -1,0 +1,26 @@
+{
+  "listener_guard_environment_hidden_by_process_title": true,
+  "process_ancestry": [
+    {
+      "pid": "18366",
+      "network_preload": false,
+      "zalo_disabled": false
+    },
+    {
+      "pid": "18365",
+      "network_preload": true,
+      "zalo_disabled": true
+    },
+    {
+      "pid": "18353",
+      "network_preload": false,
+      "zalo_disabled": false
+    },
+    {
+      "pid": "1072",
+      "network_preload": false,
+      "zalo_disabled": false
+    }
+  ],
+  "guarded_parent": true
+}

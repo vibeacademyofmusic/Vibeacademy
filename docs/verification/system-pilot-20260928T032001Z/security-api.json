@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Seven technical roles authenticate independently",
+    "actor": "ADMIN BA ACA FIN T1 P1 S1",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.138Z",
+    "evidence": {
+      "ADMIN": "SUPER_ADMIN",
+      "BA": "BRANCH_ADMIN",
+      "ACA": "ACADEMIC_ADMIN",
+      "FIN": "FINANCE",
+      "T1": "TEACHER",
+      "P1": "PARENT",
+      "S1": "STUDENT"
+    }
+  },
+  {
+    "name": "Branch UUID filters cannot cross scope",
+    "actor": "BA",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.169Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Disabled account with existing JWT immediately loses read privilege",
+    "actor": "P1",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.437Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Expired role on existing JWT is enforced",
+    "actor": "BA",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.451Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Revoked parent relationship immediately hides that child",
+    "actor": "P1",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.898Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Scope change uses current DB scope, not stale JWT",
+    "actor": "BA",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.915Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Forged attendance actor and student from another branch are denied",
+    "actor": "T3",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:10.926Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Fixture dataset has exactly 500 students in three branches",
+    "actor": "ADMIN",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:11.206Z",
+    "evidence": {
+      "A": 169,
+      "B": 166,
+      "C": 165
+    }
+  },
+  {
+    "name": "No fixture has a provider recipient and no jobs were attempted",
+    "actor": "ADMIN",
+    "status": "PASS",
+    "at": "2026-09-28T04:58:11.213Z",
+    "evidence": {
+      "jobs": 6,
+      "attempted": 0
+    }
+  }
+]

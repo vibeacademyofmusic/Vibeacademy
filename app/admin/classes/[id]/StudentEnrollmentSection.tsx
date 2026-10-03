@@ -1,6 +1,9 @@
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/server'
+import { StatusBadge } from '@/app/admin/_components/vibe'
+import { compatibilityLabels, compatibilityTone } from '../_ops/model'
+import { loadClassRoster } from '../_ops/data'
 
 import {
   enrollStudent,
@@ -24,287 +27,80 @@ export default async function StudentEnrollmentSection({
     day: '2-digit',
   }).format(new Date())
 
-  const { data: classEnrollments } = await supabase
-    .from('enrollments')
-    .select(`
-      id,
-      student_id,
-      status,
-      enrolled_at,
-      started_at
-    `)
-    .eq('class_id', classId)
-    .in('status', ['ACTIVE', 'PAUSED'])
-    .order('enrolled_at', { ascending: true })
+  const roster = await loadClassRoster(supabase, classId)
 
   const { data: students } = await supabase
     .from('students')
-    .select(`
-      id,
-      student_code,
-      full_name,
-      status
-    `)
+    .select('id, student_code, full_name, status')
+    .eq('status', 'ACTIVE')
     .order('full_name', { ascending: true })
+    .limit(200)
 
-  const studentMap = new Map(
-    (students ?? []).map((student) => [
-      student.id,
-      student,
-    ])
-  )
-
-  const enrolledStudentIds = new Set(
-    (classEnrollments ?? []).map(
-      (enrollment) => enrollment.student_id
-    )
-  )
-
-  const availableStudents = (
-    students ?? []
-  ).filter(
-    (student) =>
-      student.status === 'ACTIVE' &&
-      !enrolledStudentIds.has(student.id)
-  )
-
-  const enrolledStudents =
-    classEnrollments?.length ?? 0
-
-  const remainingSeats = Math.max(
-    capacity - enrolledStudents,
-    0
-  )
-
-  const isClassFull = remainingSeats === 0
+  const enrolledStudentIds = new Set(roster.map(row => row.studentId))
+  const availableStudents = (students ?? []).filter(student => !enrolledStudentIds.has(student.id))
+  const remainingSeats = Math.max(capacity - roster.length, 0)
+  const distribution = new Map<string, number>()
+  for (const row of roster) {
+    distribution.set(row.currentLevel, (distribution.get(row.currentLevel) ?? 0) + 1)
+  }
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-950">
-            Students
-          </h2>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Students enrolled in this class.
-          </p>
+          <h2 className="text-lg font-semibold text-gray-950">Danh sách học viên</h2>
+          <p className="mt-1 text-sm text-gray-500">Trình độ hiện tại lấy từ Student Academic Program — không copy Course.level_id.</p>
         </div>
-
-        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-          {enrolledStudents} / {capacity}
-        </span>
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">{roster.length} / {capacity}</span>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-xs">
-        <span className="text-gray-500">
-          Remaining seats
-        </span>
-
-        <span
-          className={`font-semibold ${
-            isClassFull
-              ? 'text-red-600'
-              : 'text-green-700'
-          }`}
-        >
-          {remainingSeats}
-        </span>
+      <div className="mt-4">
+        <h3 className="text-sm font-semibold">PHÂN BỐ TRÌNH ĐỘ</h3>
+        <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
+          {[...distribution.entries()].map(([level, count]) => <li key={level}>{level}: {count}</li>)}
+          {!distribution.size && <li className="text-gray-500">Chưa có học viên.</li>}
+        </ul>
       </div>
 
-      {classEnrollments &&
-      classEnrollments.length > 0 ? (
-        <div className="mt-5 space-y-3">
-          {classEnrollments.map((enrollment) => {
-            const student = studentMap.get(
-              enrollment.student_id
-            )
-
-            return (
-              <div
-                key={enrollment.id}
-                className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 p-4"
-              >
-                <div>
-                  <Link
-                    href={`/admin/students/${enrollment.student_id}`}
-                    className="text-sm font-semibold text-gray-950 hover:underline"
-                  >
-                    {student?.full_name ??
-                      'Unknown Student'}
-                  </Link>
-
-                  <p className="mt-1 text-xs text-gray-500">
-                    {student?.student_code ?? '—'}
-                  </p>
-
-                  <div className="mt-2 flex items-center gap-2">
-                    <span
-                      className={`rounded-full px-2 py-1 text-[11px] font-semibold ${
-                        enrollment.status === 'ACTIVE'
-                          ? 'bg-green-50 text-green-700'
-                          : 'bg-amber-50 text-amber-700'
-                      }`}
-                    >
-                      {enrollment.status}
-                    </span>
-
-                    <div className="text-xs text-gray-400">
-  <p>
-    Ngày ghi danh:{' '}
-    <span className="font-medium text-gray-600">
-      {enrollment.enrolled_at}
-    </span>
-  </p>
-
-  <p className="mt-1">
-    Ngày bắt đầu học:{' '}
-    <span className="font-semibold text-gray-700">
-      {enrollment.started_at ?? 'Chưa bắt đầu'}
-    </span>
-  </p>
-</div>
-</div>
-</div>
-
-                <form action={withdrawStudent}>
-                  <input
-                    type="hidden"
-                    name="enrollment_id"
-                    value={enrollment.id}
-                  />
-
-                  <input
-                    type="hidden"
-                    name="class_id"
-                    value={classId}
-                  />
-
-                  <input
-                    type="hidden"
-                    name="student_id"
-                    value={enrollment.student_id}
-                  />
-
-                  <button
-                    type="submit"
-                    className="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
-                  >
-                    Withdraw
-                  </button>
-                </form>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="mt-5 rounded-xl border border-dashed border-gray-300 p-5 text-center">
-          <p className="text-sm font-medium text-gray-700">
-            No students enrolled
-          </p>
-        </div>
-      )}
-
-      <div className="mt-6 border-t border-gray-100 pt-5">
-        <h3 className="text-sm font-semibold text-gray-950">
-          Enroll Student
-        </h3>
-
-        {isClassFull ? (
-          <div className="mt-3 rounded-lg bg-red-50 px-3 py-3 text-sm text-red-700">
-            This class is full.
-          </div>
-        ) : availableStudents.length > 0 ? (
-          <form
-            action={enrollStudent}
-            className="mt-4 space-y-3"
-          >
-            <input
-              type="hidden"
-              name="class_id"
-              value={classId}
-            />
-
-            <select
-              name="student_id"
-              required
-              defaultValue=""
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
-            >
-              <option value="" disabled>
-                Select student
-              </option>
-
-              {availableStudents.map((student) => (
-                <option
-                  key={student.id}
-                  value={student.id}
-                >
-                  {student.full_name ??
-                    student.student_code}{' '}
-                  ({student.student_code})
-                </option>
-              ))}
-            </select>
-            <div className="grid gap-3 sm:grid-cols-2">
-  <div>
-    <label
-      htmlFor="enrolled_at"
-      className="mb-1.5 block text-sm font-medium text-gray-700"
-    >
-      Ngày ghi danh lớp *
-    </label>
-
-    <input
-      id="enrolled_at"
-      name="enrolled_at"
-      type="date"
-      required
-      defaultValue={todayInVietnam}
-      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
-    />
-
-    <p className="mt-1 text-xs text-gray-500">
-      Ngày học sinh được đăng ký vào lớp.
-    </p>
-  </div>
-
-  <div>
-    <label
-      htmlFor="started_at"
-      className="mb-1.5 block text-sm font-medium text-gray-700"
-    >
-      Ngày bắt đầu học *
-    </label>
-
-    <input
-      id="started_at"
-      name="started_at"
-      type="date"
-      required
-      defaultValue={todayInVietnam}
-      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
-    />
-
-    <p className="mt-1 text-xs text-gray-500">
-      Đây là mốc bắt đầu học và tính học phí.
-    </p>
-  </div>
-</div>
-
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-gray-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800"
-            >
-              Enroll Student
-            </button>
-          </form>
-        ) : (
-          <p className="mt-3 text-sm text-gray-400">
-            No additional active students are available.
-          </p>
-        )}
+      <div className="mt-4 overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="text-left text-gray-500"><tr><th className="py-2">Học viên</th><th>Trình độ hiện tại</th><th>Tương thích</th><th></th></tr></thead>
+          <tbody>
+            {roster.map(row => (
+              <tr key={row.enrollmentId} className="border-t">
+                <td className="py-2"><Link href={`/admin/students/${row.studentId}`}>{row.studentName}</Link><p className="text-xs text-gray-500">{row.studentCode}</p></td>
+                <td>{row.currentLevel}</td>
+                <td><StatusBadge tone={compatibilityTone(row.compatibility)}>{compatibilityLabels[row.compatibility] ?? row.compatibility}</StatusBadge></td>
+                <td>
+                  <form action={withdrawStudent}>
+                    <input type="hidden" name="class_id" value={classId} />
+                    <input type="hidden" name="enrollment_id" value={row.enrollmentId} />
+                    <input type="hidden" name="student_id" value={row.studentId} />
+                    <button className="rounded border px-2 py-1 text-xs">Rút</button>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      {!roster.length && <p className="mt-4 text-sm text-gray-500">Chưa có học viên trong lớp.</p>}
+
+      <form action={enrollStudent} className="mt-6 space-y-3 border-t pt-4">
+        <h3 className="font-medium">Ghi danh học viên mới</h3>
+        <p className="text-xs text-gray-500">Chỉ IN_SCOPE được phép. Lớp chưa cấu hình phạm vi sẽ bị chặn ghi danh mới.</p>
+        <input type="hidden" name="class_id" value={classId} />
+        <select name="student_id" required className="w-full rounded border px-3 py-2" disabled={remainingSeats === 0}>
+          <option value="">Chọn học viên</option>
+          {availableStudents.map(student => <option key={student.id} value={student.id}>{student.full_name} ({student.student_code})</option>)}
+        </select>
+        <div className="flex flex-wrap gap-3">
+          <label className="text-sm">Ngày ghi danh<input type="date" name="enrolled_at" required defaultValue={todayInVietnam} className="ml-2 rounded border px-2 py-1" /></label>
+          <label className="text-sm">Ngày bắt đầu<input type="date" name="started_at" required defaultValue={todayInVietnam} className="ml-2 rounded border px-2 py-1" /></label>
+        </div>
+        <button className="rounded bg-gray-950 px-4 py-2 text-sm text-white" disabled={remainingSeats === 0}>Ghi danh</button>
+      </form>
     </section>
   )
 }

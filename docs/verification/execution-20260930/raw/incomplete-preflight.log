@@ -1,0 +1,3 @@
+BEGIN
+ERROR:  UPGRADE_PLATFORM_COMPONENT_MISSING: auth.identities
+CONTEXT:  PL/pgSQL function inline_code_block line 8 at RAISE

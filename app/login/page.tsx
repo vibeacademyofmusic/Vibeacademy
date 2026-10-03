@@ -3,13 +3,14 @@ import { login } from './actions'
 type LoginPageProps = {
   searchParams: Promise<{
     error?: string
+    next?: string
   }>
 }
 
 export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
-  const { error } = await searchParams
+  const { error, next } = await searchParams
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -31,6 +32,7 @@ export default async function LoginPage({
         )}
 
         <form action={login} className="space-y-5">
+          <input type="hidden" name="next" value={next ?? ''}/>
           <div>
             <label
               htmlFor="email"

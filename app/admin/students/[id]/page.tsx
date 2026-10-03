@@ -10,6 +10,8 @@ import {
 } from '../actions'
 
 import { createClient } from '@/lib/supabase/server'
+import { businessDate } from '@/app/admin/_lib/business-date'
+import { placementLabel } from '@/app/admin/business/crm/model'
 
 type EditStudentPageProps = {
   params: Promise<{
@@ -42,6 +44,7 @@ export default async function EditStudentPage({
       phone,
       email,
       address,
+      declares_over_18,
       admission_date,
       notes,
       status
@@ -52,6 +55,7 @@ export default async function EditStudentPage({
   if (!student) {
     notFound()
   }
+  const { data: intake } = await supabase.from('registration_applications').select('application_code, student_over_18, parent_name, parent_phone, zalo_phone, home_address').eq('linked_student_id', student.id).order('completed_at', { ascending: false }).limit(1).maybeSingle()
   const { data: branches } = await supabase.from('branches').select('id, name, status').order('name')
       return (
         <div className="max-w-6xl">
@@ -91,7 +95,17 @@ export default async function EditStudentPage({
               </div>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <nav className="mt-6 flex gap-2 overflow-x-auto text-sm" aria-label="Hồ sơ học viên">
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#overview">Tổng quan</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#learning">Học tập</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#shifts">Ca dạy và lịch học</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href={`/admin/students?tab=attendance`}>Điểm danh</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href={`/admin/students?tab=reports&search=${encodeURIComponent(student.student_code)}`}>Báo cáo học tập</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href={`/admin/students?tab=feedback&q=${encodeURIComponent(student.student_code)}`}>Phản hồi</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="/admin/tuition">Học phí</a>
+              <a className="shrink-0 rounded-full border px-3 py-1" href="#history">Lịch sử</a>
+            </nav>
+            <div id="overview" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl border border-gray-200 bg-white p-4">
   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
     Ngày đăng ký tại Vibe
@@ -107,11 +121,19 @@ export default async function EditStudentPage({
 </div>
 
             </div>
-            <AcademicPrograms studentId={student.id} />
+            <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 text-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Thông tin tiếp nhận{intake?.application_code ? ` ${intake.application_code}` : ''}</p>
+              <p className="mt-2">Tuổi: {(student.declares_over_18 ?? intake?.student_over_18) ? 'Trên 18 tuổi' : 'Chưa đánh dấu trên 18 tuổi'}</p>
+              <p>Phụ huynh: {intake?.parent_name || 'Không có'}{intake?.parent_phone ? ` · ${intake.parent_phone}` : ''}</p>
+              <p>Số Zalo: {student.phone || intake?.zalo_phone || 'Chưa có'}</p>
+              <p>Địa chỉ nhà: {student.address || intake?.home_address || 'Chưa có'}</p>
             </div>
-            <ClassEnrollments studentId={student.id} />
+            <StudentPlacement studentId={student.id} studentCode={student.student_code} />
+            <div id="learning"><AcademicPrograms studentId={student.id} /></div>
+            </div>
+            <div id="shifts"><ClassEnrollments studentId={student.id} /></div>
 
-            <StudentJournals studentId={student.id} />
+            <div id="history"><StudentJournals studentId={student.id} /></div>
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-950">
                 Chỉnh sửa hồ sơ
@@ -124,7 +146,9 @@ export default async function EditStudentPage({
 
       {error && (
         <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
+          {error === 'Academic progress cannot be updated before the scheduled start date'
+            ? 'Hành trình đã được ghi nhận. Kết quả học chỉ được cập nhật từ ngày bắt đầu đã chốt.'
+            : error}
         </div>
       )}
 
@@ -324,5 +348,34 @@ export default async function EditStudentPage({
         </div>
       </form>
     </div>
+  )
+}
+
+async function StudentPlacement({ studentId, studentCode }: { studentId: string; studentCode: string }) {
+  const db = await createClient()
+  const [{ data: applications }, { data: placements }] = await Promise.all([
+    db.from('registration_applications').select('id, application_code, status, curriculum_id, level_id, desired_start_date').eq('linked_student_id', studentId).order('completed_at', { ascending: false }).limit(5),
+    db.from('student_placement_cases').select('id, status, scheduled_start_date, desired_start_date, assigned_class_id, curriculum_id, level_id').eq('student_id', studentId).order('opened_at', { ascending: false }).limit(5),
+  ])
+  if (!applications?.length && !placements?.length) return null
+  const curriculumIds = [...new Set([...(applications ?? []), ...(placements ?? [])].map(item => item.curriculum_id).filter((id): id is string => Boolean(id)))]
+  const levelIds = [...new Set([...(applications ?? []), ...(placements ?? [])].map(item => item.level_id).filter((id): id is string => Boolean(id)))]
+  const [{ data: curriculums }, { data: levels }] = await Promise.all([
+    curriculumIds.length ? db.from('curriculums').select('id, name').in('id', curriculumIds) : Promise.resolve({ data: [] }),
+    levelIds.length ? db.from('curriculum_levels').select('id, name').in('id', levelIds) : Promise.resolve({ data: [] }),
+  ])
+  const curriculumName = new Map((curriculums ?? []).map(item => [item.id, item.name]))
+  const levelName = new Map((levels ?? []).map(item => [item.id, item.name]))
+  const today = businessDate()
+  const waiting = (placements ?? []).some(placement => placement.status === 'UNASSIGNED' || placement.status === 'MATCHING')
+  return (
+    <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4 text-sm">
+      <h2 className="font-semibold text-gray-950">Hành trình và ca dạy</h2>
+      <ul className="mt-3 space-y-2">
+        {(placements ?? []).map(placement => <li key={placement.id}>{curriculumName.get(placement.curriculum_id ?? '') || 'Chương trình'} · {levelName.get(placement.level_id ?? '') || 'Trình độ'} · {placementLabel(placement.status, placement.scheduled_start_date, today)}{placement.desired_start_date ? ` · ngày vào ca ${placement.desired_start_date}` : ''}</li>)}
+        {(applications ?? []).map(application => <li key={application.id}>Hồ sơ {application.application_code} · {application.status === 'COMPLETED' ? 'đã hoàn tất đăng ký' : application.status}</li>)}
+      </ul>
+      {waiting && <p className="mt-3"><Link className="inline-flex rounded-lg bg-gray-950 px-3 py-2 text-sm font-semibold text-white" href={`/admin/students?tab=waiting&q=${encodeURIComponent(studentCode)}`}>Sắp vào ca dạy</Link></p>}
+    </section>
   )
 }

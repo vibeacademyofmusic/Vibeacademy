@@ -1,0 +1,1459 @@
+{
+  "routes": [
+    "/admin/academic/[id]/edit",
+    "/admin/academic/[id]/levels/[levelId]/edit",
+    "/admin/academic/[id]/levels/[levelId]",
+    "/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/components/[componentId]/edit",
+    "/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/edit",
+    "/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/lessons/[itemId]",
+    "/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]",
+    "/admin/academic/[id]",
+    "/admin/academic",
+    "/admin/attendance/[id]",
+    "/admin/attendance",
+    "/admin/attendance/retention",
+    "/admin/branches/[id]",
+    "/admin/branches",
+    "/admin/business/after-sales",
+    "/admin/business/campaigns",
+    "/admin/business/crm/[id]",
+    "/admin/business/crm",
+    "/admin/business/instrument-customers",
+    "/admin/business/marketing",
+    "/admin/business",
+    "/admin/business/reactivation",
+    "/admin/business/registrations/[id]",
+    "/admin/business/registrations/new",
+    "/admin/business/registrations",
+    "/admin/business/reports",
+    "/admin/classes/[id]",
+    "/admin/classes",
+    "/admin/courses/[id]/edit",
+    "/admin/courses",
+    "/admin/elearning/[id]",
+    "/admin/elearning/analytics",
+    "/admin/elearning/assessments",
+    "/admin/elearning/notation",
+    "/admin/elearning",
+    "/admin/elearning/reconciliation",
+    "/admin/elearning/theory",
+    "/admin/employees/[id]/compensation",
+    "/admin/employees/attendance",
+    "/admin/employees/leave-policies",
+    "/admin/employees/leave-requests",
+    "/admin/employees",
+    "/admin/enrollments/[id]/pauses",
+    "/admin/enrollments/[id]/tuition",
+    "/admin/feedback/[id]",
+    "/admin/feedback",
+    "/admin/finance/credits",
+    "/admin/finance/invoices",
+    "/admin/finance/operating-expenses",
+    "/admin/finance",
+    "/admin/finance/payments",
+    "/admin/finance/receivables",
+    "/admin/finance/refunds",
+    "/admin/hr/attendance",
+    "/admin/hr/expenses",
+    "/admin/hr",
+    "/admin/hr/payslips",
+    "/admin/hr/retroactive-pay",
+    "/admin/hr/teaching",
+    "/admin/hr/templates",
+    "/admin/instruments",
+    "/admin/inventory",
+    "/admin/migration",
+    "/admin/notifications",
+    "/admin",
+    "/admin/payroll/[period]/[teacher]",
+    "/admin/payroll/[period]",
+    "/admin/payroll",
+    "/admin/programs",
+    "/admin/reports/learning/[id]",
+    "/admin/reports/learning/demo",
+    "/admin/reports/learning",
+    "/admin/rooms",
+    "/admin/schedule",
+    "/admin/session-teachers",
+    "/admin/students/[id]",
+    "/admin/students",
+    "/admin/system/integrations",
+    "/admin/system/integrations/zalo",
+    "/admin/teachers/[id]",
+    "/admin/teachers",
+    "/admin/tuition",
+    "/admin/tuition/reminders",
+    "/attendance/scan",
+    "/documents/finance/[kind]/[id]",
+    "/documents/finance/management-report",
+    "/documents/payslips/[id]",
+    "/documents/staff-cards/[id]",
+    "/finance",
+    "/finance/payroll/[period]",
+    "/learn/assessments/[id]",
+    "/learn",
+    "/login",
+    "/my-attendance",
+    "/my-expenses",
+    "/my-learning/conversations/[kind]/[id]",
+    "/my-learning",
+    "/my-payroll",
+    "/notifications",
+    "/operations",
+    "/operations/teacher",
+    "/operations/teacher/sessions/[id]",
+    "/operations/teacher/students/[id]",
+    "/"
+  ],
+  "server_actions": [
+    {
+      "file": "app/admin/academic/actions.ts",
+      "exports": [
+        "createCurriculum",
+        "setCurriculumStatus",
+        "createCurriculumLevel",
+        "createCurriculumSubject",
+        "createCurriculumSubjectComponent",
+        "setCurriculumLevelStatus",
+        "setCurriculumSubjectStatus",
+        "setCurriculumSubjectComponentStatus",
+        "updateCurriculum",
+        "updateCurriculumLevel",
+        "updateCurriculumSubject",
+        "updateCurriculumSubjectComponent",
+        "createCurriculumLesson",
+        "updateCurriculumLesson",
+        "reorderCurriculumLesson",
+        "retireCurriculumLesson"
+      ]
+    },
+    {
+      "file": "app/admin/attendance/actions.ts",
+      "exports": [
+        "generateSessions",
+        "saveAttendance",
+        "setSessionStatus",
+        "rescheduleSession",
+        "createMakeupSession"
+      ]
+    },
+    {
+      "file": "app/admin/attendance/retention/actions.ts",
+      "exports": [
+        "refreshRetentionAlerts",
+        "updateRetentionAlert"
+      ]
+    },
+    {
+      "file": "app/admin/branches/actions.ts",
+      "exports": [
+        "createBranch",
+        "updateBranch",
+        "setBranchStatus"
+      ]
+    },
+    {
+      "file": "app/admin/business/campaigns/actions.ts",
+      "exports": [
+        "createCrmCampaign",
+        "updateCrmCampaign",
+        "setCrmCampaignStatus"
+      ]
+    },
+    {
+      "file": "app/admin/business/crm/actions.ts",
+      "exports": [
+        "createCrmLead",
+        "transitionCrmLead",
+        "noteCrmLead",
+        "followUpCrmLead",
+        "assignCrmLead",
+        "attributeCrmLead",
+        "reviewCrmLead",
+        "setCrmLeadInterest"
+      ]
+    },
+    {
+      "file": "app/admin/business/instrument-customers/actions.ts",
+      "exports": [
+        "linkInstrumentCustomer",
+        "openWarrantyCase",
+        "transitionWarrantyCase",
+        "addInstrumentFollowup"
+      ]
+    },
+    {
+      "file": "app/admin/business/reactivation/actions.ts",
+      "exports": [
+        "refreshReactivation",
+        "transitionReactivation"
+      ]
+    },
+    {
+      "file": "app/admin/business/registrations/actions.ts",
+      "exports": [
+        "createRegistration",
+        "transitionRegistration",
+        "completeRegistration",
+        "setRegistrationDepositQuote",
+        "allocateRegistrationDeposits",
+        "createRegistrationMomoCheckout",
+        "createRegistrationPayosCheckout",
+        "requestRegistrationZaloLink",
+        "recordRegistrationZaloPhoneConsent",
+        "refreshRegistrationZaloLink",
+        "reevaluateRegistrationZaloChannel"
+      ]
+    },
+    {
+      "file": "app/admin/classes/[id]/actions.ts",
+      "exports": [
+        "assignTeacher",
+        "removeTeacher",
+        "enrollStudent",
+        "withdrawStudent"
+      ]
+    },
+    {
+      "file": "app/admin/classes/actions.ts",
+      "exports": [
+        "createClass",
+        "setClassLevelScope",
+        "setClassStatus",
+        "deleteClass"
+      ]
+    },
+    {
+      "file": "app/admin/courses/actions.ts",
+      "exports": [
+        "createCourse",
+        "setCourseStatus",
+        "updateCourse",
+        "deleteCourse"
+      ]
+    },
+    {
+      "file": "app/admin/elearning/actions.ts",
+      "exports": [
+        "learningAdminAction"
+      ]
+    },
+    {
+      "file": "app/admin/elearning/assessments/actions.ts",
+      "exports": [
+        "assessmentAdminAction"
+      ]
+    },
+    {
+      "file": "app/admin/elearning/reconciliation/actions.ts",
+      "exports": [
+        "mapAcademicShadow"
+      ]
+    },
+    {
+      "file": "app/admin/elearning/theory/actions.ts",
+      "exports": [
+        "createTheoryPilot"
+      ]
+    },
+    {
+      "file": "app/admin/employees/[id]/compensation/actions.ts",
+      "exports": [
+        "configureCompensation",
+        "configureStaffCompensation"
+      ]
+    },
+    {
+      "file": "app/admin/employees/actions.ts",
+      "exports": [
+        "createEmployee",
+        "updateEmployment",
+        "linkIdentity",
+        "configureUnit",
+        "updatePrivateProfile"
+      ]
+    },
+    {
+      "file": "app/admin/employees/attendance/actions.ts",
+      "exports": [
+        "requestAttendance",
+        "reviewAttendance",
+        "requestTrip",
+        "reviewTrip",
+        "configureLeave",
+        "requestLeave",
+        "reviewLeave"
+      ]
+    },
+    {
+      "file": "app/admin/employees/staff-actions.ts",
+      "exports": [
+        "assignTeaching",
+        "endTeaching",
+        "assignPosition",
+        "endPosition",
+        "replacePortrait",
+        "removePortrait"
+      ]
+    },
+    {
+      "file": "app/admin/enrollments/[id]/pauses/actions.ts",
+      "exports": [
+        "savePause"
+      ]
+    },
+    {
+      "file": "app/admin/enrollments/[id]/tuition/actions.ts",
+      "exports": [
+        "createTuitionTerm"
+      ]
+    },
+    {
+      "file": "app/admin/feedback/actions.ts",
+      "exports": [
+        "resolveFeedback"
+      ]
+    },
+    {
+      "file": "app/admin/finance/credits/actions.ts",
+      "exports": [
+        "applyCredit",
+        "refundCredit"
+      ]
+    },
+    {
+      "file": "app/admin/finance/invoices/actions.ts",
+      "exports": [
+        "createInvoice",
+        "issueInvoice",
+        "cancelInvoice"
+      ]
+    },
+    {
+      "file": "app/admin/finance/operating-expenses/actions.ts",
+      "exports": [
+        "operatingExpenseAction"
+      ]
+    },
+    {
+      "file": "app/admin/finance/payments/actions.ts",
+      "exports": [
+        "createPayment",
+        "allocatePayment",
+        "voidPayment",
+        "allocateOpeningPayment",
+        "createInvoicePayment"
+      ]
+    },
+    {
+      "file": "app/admin/finance/receivables/actions.ts",
+      "exports": [
+        "correctOpening"
+      ]
+    },
+    {
+      "file": "app/admin/finance/refunds/actions.ts",
+      "exports": [
+        "createRefund",
+        "allocateRefund",
+        "voidRefund"
+      ]
+    },
+    {
+      "file": "app/admin/hr/attendance/qr-actions.ts",
+      "exports": [
+        "getQrBranchesAction",
+        "getQrStatusAction",
+        "startQrSessionAction",
+        "mintQrTokenAction",
+        "stopQrSessionAction",
+        "getQrRecentScansAction"
+      ]
+    },
+    {
+      "file": "app/admin/hr/expenses/actions.ts",
+      "exports": [
+        "expenseAction"
+      ]
+    },
+    {
+      "file": "app/admin/hr/payslips/actions.ts",
+      "exports": [
+        "payslipDisbursementAction"
+      ]
+    },
+    {
+      "file": "app/admin/hr/retroactive-pay/actions.ts",
+      "exports": [
+        "retroactiveAction"
+      ]
+    },
+    {
+      "file": "app/admin/instruments/actions.ts",
+      "exports": [
+        "instrumentAction"
+      ]
+    },
+    {
+      "file": "app/admin/inventory/actions.ts",
+      "exports": [
+        "inventoryAction"
+      ]
+    },
+    {
+      "file": "app/admin/learning-journals/actions.ts",
+      "exports": [
+        "saveJournal"
+      ]
+    },
+    {
+      "file": "app/admin/learning-journals/quick-actions.ts",
+      "exports": [
+        "saveQuickEntry"
+      ]
+    },
+    {
+      "file": "app/admin/migration/actions.ts",
+      "exports": [
+        "uploadLegacy",
+        "reviewLegacy",
+        "batchLegacy"
+      ]
+    },
+    {
+      "file": "app/admin/notifications/actions.ts",
+      "exports": [
+        "notificationAction"
+      ]
+    },
+    {
+      "file": "app/admin/payroll/_ux/preview-actions.ts",
+      "exports": [
+        "previewPayroll",
+        "confirmPayroll"
+      ]
+    },
+    {
+      "file": "app/admin/payroll/actions.ts",
+      "exports": [
+        "payrollAction"
+      ]
+    },
+    {
+      "file": "app/admin/reports/learning/actions.ts",
+      "exports": [
+        "generateReport",
+        "updateReport"
+      ]
+    },
+    {
+      "file": "app/admin/rooms/actions.ts",
+      "exports": [
+        "createRoom",
+        "setRoomStatus"
+      ]
+    },
+    {
+      "file": "app/admin/schedule/actions.ts",
+      "exports": [
+        "createSchedule",
+        "setScheduleStatus",
+        "deleteSchedule"
+      ]
+    },
+    {
+      "file": "app/admin/session-teachers/actions.ts",
+      "exports": [
+        "assignSessionTeacher"
+      ]
+    },
+    {
+      "file": "app/admin/students/actions.ts",
+      "exports": [
+        "createStudent",
+        "updateStudent",
+        "setStudentStatus",
+        "updateComponentProgressStatus",
+        "updateDirectSubjectProgressStatus",
+        "assignStudentAcademicProgram",
+        "startStudentAcademicLevel",
+        "updateStudentAcademicEnrollmentStartDate",
+        "updateStudentBasic"
+      ]
+    },
+    {
+      "file": "app/admin/students/placement-actions.ts",
+      "exports": [
+        "matchPlacement",
+        "assignPlacement",
+        "changePlacement",
+        "cancelPlacement"
+      ]
+    },
+    {
+      "file": "app/admin/system/integrations/zalo/actions.ts",
+      "exports": [
+        "checkConnection",
+        "importServerCredentials",
+        "retryNotification",
+        "confirmOwnerReceipt",
+        "connectZalo"
+      ]
+    },
+    {
+      "file": "app/admin/system/integrations/zalo/recovery-actions.ts",
+      "exports": [
+        "recoverNotificationAction"
+      ]
+    },
+    {
+      "file": "app/admin/teachers/actions.ts",
+      "exports": [
+        "createTeacher",
+        "setTeacherStatus"
+      ]
+    },
+    {
+      "file": "app/admin/tuition/actions.ts",
+      "exports": [
+        "createTerm",
+        "editDiscount"
+      ]
+    },
+    {
+      "file": "app/admin/tuition/reminders/actions.ts",
+      "exports": [
+        "generateReminders",
+        "resolveReminder"
+      ]
+    },
+    {
+      "file": "app/feedback/actions.ts",
+      "exports": [
+        "submitLessonFeedback"
+      ]
+    },
+    {
+      "file": "app/finance/actions.ts",
+      "exports": [
+        "requestAction",
+        "reviewAction"
+      ]
+    },
+    {
+      "file": "app/learn/actions.ts",
+      "exports": [
+        "learningActivity"
+      ]
+    },
+    {
+      "file": "app/learn/assessments/actions.ts",
+      "exports": [
+        "startAssessment",
+        "submitAssessment"
+      ]
+    },
+    {
+      "file": "app/login/actions.ts",
+      "exports": [
+        "login",
+        "logout"
+      ]
+    },
+    {
+      "file": "app/my-learning/actions.ts",
+      "exports": [
+        "submitFeedback"
+      ]
+    },
+    {
+      "file": "app/my-learning/conversations/actions.ts",
+      "exports": [
+        "postLearningMessage"
+      ]
+    },
+    {
+      "file": "app/operations/teacher/sessions/[id]/actions.ts",
+      "exports": [
+        "saveTeaching"
+      ]
+    }
+  ],
+  "api": [
+    "app/api/health/supabase/route.ts",
+    "app/api/integrations/momo/ipn/route.ts",
+    "app/api/integrations/payos/webhook/route.ts",
+    "app/api/integrations/zalo/oauth/callback/route.ts",
+    "app/api/integrations/zalo/oauth/start/route.ts",
+    "app/api/integrations/zalo/webhook/route.ts",
+    "app/api/internal/zalo/maintenance/route.ts",
+    "app/my-learning/reports/[id]/pdf/route.ts"
+  ],
+  "rpc_calls": {
+    "count_current_student_enrollments": [
+      "app/admin/_lib/dashboard-data.ts",
+      "app/admin/students/hub.tsx",
+      "app/admin/students/page.tsx"
+    ],
+    "count_paused_student_enrollments": [
+      "app/admin/_lib/dashboard-data.ts",
+      "app/admin/students/hub.tsx",
+      "app/admin/students/page.tsx"
+    ],
+    "crm_business_snapshot": [
+      "app/admin/_lib/dashboard-data.ts",
+      "app/admin/business/page.tsx"
+    ],
+    "has_role": [
+      "app/admin/academic/actions.ts",
+      "app/admin/attendance/actions.ts",
+      "app/admin/business/access.ts",
+      "app/admin/classes/[id]/actions.ts",
+      "app/admin/classes/actions.ts",
+      "app/admin/courses/actions.ts",
+      "app/admin/employees/[id]/compensation/page.tsx",
+      "app/admin/employees/actions.ts",
+      "app/admin/employees/attendance/actions.ts",
+      "app/admin/employees/staff-actions.ts",
+      "app/admin/enrollments/[id]/pauses/actions.ts",
+      "app/admin/enrollments/[id]/tuition/actions.ts",
+      "app/admin/finance/operations.ts",
+      "app/admin/hr/expenses/page.tsx",
+      "app/admin/hr/expenses/page.tsx",
+      "app/admin/hr/expenses/page.tsx",
+      "app/admin/layout.tsx",
+      "app/admin/learning-journals/actions.ts",
+      "app/admin/rooms/actions.ts",
+      "app/admin/schedule/actions.ts",
+      "app/admin/students/actions.ts",
+      "app/admin/students/hub.tsx",
+      "app/admin/students/hub.tsx",
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx",
+      "app/admin/system/integrations/access.ts",
+      "app/admin/teachers/actions.ts",
+      "app/documents/staff-cards/[id]/page.tsx",
+      "app/finance/authorization.ts",
+      "app/login/actions.ts",
+      "app/login/actions.ts",
+      "app/login/actions.ts",
+      "app/login/actions.ts",
+      "app/my-learning/page.tsx",
+      "app/operations/page.tsx",
+      "app/operations/teacher/page.tsx",
+      "app/operations/teacher/students/[id]/page.tsx",
+      "lib/authorization.ts",
+      "lib/authorization.ts"
+    ],
+    "create_curriculum_lesson": [
+      "app/admin/academic/actions.ts"
+    ],
+    "update_curriculum_lesson": [
+      "app/admin/academic/actions.ts"
+    ],
+    "reorder_curriculum_lesson": [
+      "app/admin/academic/actions.ts"
+    ],
+    "retire_curriculum_lesson": [
+      "app/admin/academic/actions.ts"
+    ],
+    "attendance_session_search": [
+      "app/admin/attendance/Launcher.tsx"
+    ],
+    "class_student_current_level": [
+      "app/admin/attendance/[id]/page.tsx",
+      "app/admin/classes/_ops/data.ts"
+    ],
+    "generate_session_occurrences": [
+      "app/admin/attendance/actions.ts"
+    ],
+    "set_session_occurrence_status": [
+      "app/admin/attendance/actions.ts"
+    ],
+    "reschedule_session_occurrence": [
+      "app/admin/attendance/actions.ts"
+    ],
+    "create_makeup_session_occurrence": [
+      "app/admin/attendance/actions.ts"
+    ],
+    "refresh_attendance_retention_alerts": [
+      "app/admin/attendance/retention/actions.ts"
+    ],
+    "update_attendance_retention_alert": [
+      "app/admin/attendance/retention/actions.ts"
+    ],
+    "has_permission": [
+      "app/admin/business/access.ts",
+      "lib/authorization.ts"
+    ],
+    "list_instrument_customer_care": [
+      "app/admin/business/after-sales/instruments-panel.tsx"
+    ],
+    "crm_reactivation_report": [
+      "app/admin/business/after-sales/returning-panel.tsx"
+    ],
+    "create_crm_campaign": [
+      "app/admin/business/campaigns/actions.ts"
+    ],
+    "update_crm_campaign": [
+      "app/admin/business/campaigns/actions.ts"
+    ],
+    "set_crm_campaign_status": [
+      "app/admin/business/campaigns/actions.ts"
+    ],
+    "crm_lead_match_candidates": [
+      "app/admin/business/crm/[id]/page.tsx"
+    ],
+    "crm_lead_channel_state": [
+      "app/admin/business/crm/[id]/page.tsx"
+    ],
+    "create_crm_lead_with_interest": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "transition_crm_lead": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "add_crm_lead_note": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "set_crm_lead_follow_up": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "assign_crm_lead": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "set_crm_lead_campaign": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "review_crm_lead_conversion": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "set_crm_lead_interest": [
+      "app/admin/business/crm/actions.ts"
+    ],
+    "link_instrument_sale_customer": [
+      "app/admin/business/instrument-customers/actions.ts"
+    ],
+    "open_instrument_warranty_case": [
+      "app/admin/business/instrument-customers/actions.ts"
+    ],
+    "transition_instrument_warranty": [
+      "app/admin/business/instrument-customers/actions.ts"
+    ],
+    "add_instrument_customer_followup": [
+      "app/admin/business/instrument-customers/actions.ts"
+    ],
+    "crm_campaign_summary": [
+      "app/admin/business/marketing/campaigns-panel.tsx"
+    ],
+    "crm_cohort_funnel": [
+      "app/admin/business/marketing/reports-panel.tsx"
+    ],
+    "crm_activity_funnel": [
+      "app/admin/business/marketing/reports-panel.tsx"
+    ],
+    "refresh_crm_reactivation": [
+      "app/admin/business/reactivation/actions.ts"
+    ],
+    "transition_crm_reactivation": [
+      "app/admin/business/reactivation/actions.ts"
+    ],
+    "registration_zalo_connection": [
+      "app/admin/business/registrations/[id]/page.tsx"
+    ],
+    "preview_registration_zalo_payload": [
+      "app/admin/business/registrations/[id]/page.tsx"
+    ],
+    "registration_zalo_phone_status": [
+      "app/admin/business/registrations/[id]/page.tsx"
+    ],
+    "create_registration_application_with_academics": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "transition_registration_application": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "complete_registration_application": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "set_registration_deposit_quote": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "allocate_registration_deposits_to_invoice": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "reserve_registration_momo_order": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "activate_registration_momo_order": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "reserve_registration_payos_order": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "activate_registration_payos_order": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "request_registration_zalo_link": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "record_registration_zalo_phone_consent": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "reevaluate_registration_zalo_channel": [
+      "app/admin/business/registrations/actions.ts"
+    ],
+    "class_enrollment_compatibility": [
+      "app/admin/classes/[id]/actions.ts",
+      "app/admin/classes/_ops/data.ts",
+      "app/admin/classes/_ops/data.ts"
+    ],
+    "set_class_level_scope": [
+      "app/admin/classes/actions.ts"
+    ],
+    "create_learning_version": [
+      "app/admin/elearning/actions.ts",
+      "app/admin/elearning/theory/actions.ts"
+    ],
+    "grant_learning_access": [
+      "app/admin/elearning/actions.ts"
+    ],
+    "revoke_learning_access": [
+      "app/admin/elearning/actions.ts"
+    ],
+    "transition_learning_version": [
+      "app/admin/elearning/actions.ts"
+    ],
+    "learning_version_analytics": [
+      "app/admin/elearning/analytics/page.tsx"
+    ],
+    "create_learning_assessment": [
+      "app/admin/elearning/assessments/actions.ts"
+    ],
+    "approve_learning_assessment": [
+      "app/admin/elearning/assessments/actions.ts"
+    ],
+    "regrade_learning_assessment": [
+      "app/admin/elearning/assessments/actions.ts"
+    ],
+    "review_learning_assessment": [
+      "app/admin/elearning/assessments/actions.ts"
+    ],
+    "override_learning_assessment": [
+      "app/admin/elearning/assessments/actions.ts"
+    ],
+    "map_learning_academic_shadow": [
+      "app/admin/elearning/reconciliation/actions.ts"
+    ],
+    "configure_employee_compensation": [
+      "app/admin/employees/[id]/compensation/actions.ts"
+    ],
+    "configure_staff_compensation_component": [
+      "app/admin/employees/[id]/compensation/actions.ts"
+    ],
+    "create_employee_with_private_profile": [
+      "app/admin/employees/actions.ts"
+    ],
+    "set_employee_version": [
+      "app/admin/employees/actions.ts"
+    ],
+    "link_employee_identity": [
+      "app/admin/employees/actions.ts"
+    ],
+    "configure_employee_unit": [
+      "app/admin/employees/actions.ts"
+    ],
+    "update_employee_private_profile": [
+      "app/admin/employees/actions.ts"
+    ],
+    "request_employee_attendance": [
+      "app/admin/employees/attendance/actions.ts"
+    ],
+    "review_employee_attendance": [
+      "app/admin/employees/attendance/actions.ts"
+    ],
+    "request_employee_trip": [
+      "app/admin/employees/attendance/actions.ts"
+    ],
+    "review_employee_trip": [
+      "app/admin/employees/attendance/actions.ts"
+    ],
+    "configure_employee_leave": [
+      "app/admin/employees/attendance/actions.ts"
+    ],
+    "employee_schedule": [
+      "app/admin/employees/attendance/data.ts"
+    ],
+    "get_employee_attendance_qr_verified_entries": [
+      "app/admin/employees/attendance/data.ts"
+    ],
+    "employee_private_profile_summary": [
+      "app/admin/employees/data.ts"
+    ],
+    "record_staff_portrait": [
+      "app/admin/employees/portrait.ts"
+    ],
+    "assign_staff_teaching": [
+      "app/admin/employees/staff-actions.ts"
+    ],
+    "end_staff_teaching": [
+      "app/admin/employees/staff-actions.ts"
+    ],
+    "assign_staff_position": [
+      "app/admin/employees/staff-actions.ts"
+    ],
+    "end_staff_position": [
+      "app/admin/employees/staff-actions.ts"
+    ],
+    "remove_staff_portrait": [
+      "app/admin/employees/staff-actions.ts"
+    ],
+    "staff_name_card": [
+      "app/admin/employees/staff-data.ts"
+    ],
+    "resolve_lesson_feedback": [
+      "app/admin/feedback/actions.ts"
+    ],
+    "get_financial_management_report": [
+      "app/admin/finance/management-report/data.ts"
+    ],
+    "is_global_super_admin": [
+      "app/admin/finance/management-report/data.ts",
+      "app/admin/payroll/[period]/page.tsx",
+      "app/finance/authorization.ts"
+    ],
+    "list_operating_expenses": [
+      "app/admin/finance/operating-expenses/data.ts"
+    ],
+    "list_operating_expense_context": [
+      "app/admin/finance/operating-expenses/data.ts"
+    ],
+    "get_operating_expense": [
+      "app/admin/finance/operating-expenses/data.ts"
+    ],
+    "create_payment_once": [
+      "app/admin/finance/payments/actions.ts"
+    ],
+    "get_attendance_qr_manageable_branches": [
+      "app/admin/hr/attendance/QrAttendanceShell.tsx"
+    ],
+    "list_employee_expense_claims_v2": [
+      "app/admin/hr/expenses/data.ts"
+    ],
+    "get_expense_claim_v2_create_context": [
+      "app/admin/hr/expenses/data.ts",
+      "app/admin/hr/expenses/page.tsx",
+      "app/my-expenses/page.tsx"
+    ],
+    "get_employee_expense_claim": [
+      "app/admin/hr/expenses/data.ts"
+    ],
+    "list_payroll_disbursements_v2": [
+      "app/admin/hr/payslips/data.ts"
+    ],
+    "get_payroll_disbursement_detail": [
+      "app/admin/hr/payslips/data.ts"
+    ],
+    "create_payroll_retroactive_claim": [
+      "app/admin/hr/retroactive-pay/actions.ts"
+    ],
+    "submit_payroll_retroactive_claim": [
+      "app/admin/hr/retroactive-pay/actions.ts"
+    ],
+    "approve_payroll_retroactive_claim": [
+      "app/admin/hr/retroactive-pay/actions.ts"
+    ],
+    "retarget_payroll_retroactive_claim": [
+      "app/admin/hr/retroactive-pay/actions.ts"
+    ],
+    "post_payroll_retroactive_claim": [
+      "app/admin/hr/retroactive-pay/actions.ts"
+    ],
+    "cancel_payroll_retroactive_claim": [
+      "app/admin/hr/retroactive-pay/actions.ts"
+    ],
+    "create_instrument_model": [
+      "app/admin/instruments/actions.ts"
+    ],
+    "receive_instrument": [
+      "app/admin/instruments/actions.ts"
+    ],
+    "move_instrument": [
+      "app/admin/instruments/actions.ts"
+    ],
+    "create_inventory_item": [
+      "app/admin/inventory/actions.ts"
+    ],
+    "post_inventory_movement": [
+      "app/admin/inventory/actions.ts"
+    ],
+    "inventory_monthly_report": [
+      "app/admin/inventory/page.tsx"
+    ],
+    "crm_shell_may_enter": [
+      "app/admin/layout.tsx",
+      "app/login/actions.ts"
+    ],
+    "student_ops_may_enter": [
+      "app/admin/layout.tsx",
+      "app/login/actions.ts"
+    ],
+    "save_session_learning_context": [
+      "app/admin/learning-journals/quick-actions.ts",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "save_student_learning_entry": [
+      "app/admin/learning-journals/quick-actions.ts",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "apply_shared_journal_practice": [
+      "app/admin/learning-journals/quick-actions.ts"
+    ],
+    "submit_session_learning_journal": [
+      "app/admin/learning-journals/quick-actions.ts",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "stage_legacy_batch": [
+      "app/admin/migration/actions.ts"
+    ],
+    "validate_legacy_batch": [
+      "app/admin/migration/actions.ts",
+      "app/admin/migration/actions.ts"
+    ],
+    "rollback_legacy_row": [
+      "app/admin/migration/actions.ts"
+    ],
+    "import_legacy_row": [
+      "app/admin/migration/actions.ts",
+      "app/admin/migration/actions.ts"
+    ],
+    "review_legacy_row": [
+      "app/admin/migration/actions.ts"
+    ],
+    "record_legacy_import_failure": [
+      "app/admin/migration/actions.ts",
+      "app/admin/migration/actions.ts"
+    ],
+    "sign_off_legacy_batch": [
+      "app/admin/migration/actions.ts"
+    ],
+    "enqueue_notification_event": [
+      "app/admin/notifications/actions.ts"
+    ],
+    "deliver_in_app_notification": [
+      "app/admin/notifications/actions.ts"
+    ],
+    "manage_notification": [
+      "app/admin/notifications/actions.ts"
+    ],
+    "preview_staff_payroll_v2": [
+      "app/admin/payroll/_ux/preview-actions.ts"
+    ],
+    "confirm_staff_payroll_v2": [
+      "app/admin/payroll/_ux/preview-actions.ts"
+    ],
+    "generate_learning_report": [
+      "app/admin/reports/learning/actions.ts",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "update_learning_report": [
+      "app/admin/reports/learning/actions.ts"
+    ],
+    "set_session_teacher": [
+      "app/admin/session-teachers/actions.ts",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "assign_student_academic_program": [
+      "app/admin/students/actions.ts",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "start_student_academic_level": [
+      "app/admin/students/actions.ts"
+    ],
+    "update_student_academic_enrollment_start_date": [
+      "app/admin/students/actions.ts"
+    ],
+    "update_student_basic": [
+      "app/admin/students/actions.ts"
+    ],
+    "count_waiting_placements": [
+      "app/admin/students/hub.tsx",
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx"
+    ],
+    "count_future_start_placements": [
+      "app/admin/students/hub.tsx",
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx"
+    ],
+    "list_placement_class_options": [
+      "app/admin/students/page.tsx"
+    ],
+    "list_waiting_placements": [
+      "app/admin/students/page.tsx"
+    ],
+    "waiting_placement_summary": [
+      "app/admin/students/page.tsx"
+    ],
+    "placement_compatible_classes": [
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx"
+    ],
+    "registration_can": [
+      "app/admin/students/page.tsx",
+      "app/admin/students/page.tsx"
+    ],
+    "list_future_start_placements": [
+      "app/admin/students/page.tsx"
+    ],
+    "set_student_placement_matching": [
+      "app/admin/students/placement-actions.ts"
+    ],
+    "assign_student_placement": [
+      "app/admin/students/placement-actions.ts"
+    ],
+    "change_future_student_placement": [
+      "app/admin/students/placement-actions.ts"
+    ],
+    "cancel_future_student_placement": [
+      "app/admin/students/placement-actions.ts"
+    ],
+    "confirm_zalo_owner_receipt": [
+      "app/admin/system/integrations/zalo/actions.ts"
+    ],
+    "zalo_integration_overview": [
+      "app/admin/system/integrations/zalo/page.tsx"
+    ],
+    "zalo_recent_events": [
+      "app/admin/system/integrations/zalo/page.tsx"
+    ],
+    "zalo_linked_customers": [
+      "app/admin/system/integrations/zalo/page.tsx"
+    ],
+    "generate_tuition_reminders": [
+      "app/admin/tuition/reminders/actions.ts"
+    ],
+    "resolve_tuition_reminder": [
+      "app/admin/tuition/reminders/actions.ts"
+    ],
+    "tuition_reminder_kpis": [
+      "app/admin/tuition/reminders/data.ts"
+    ],
+    "record_verified_momo_ipn": [
+      "app/api/integrations/momo/ipn/route.ts"
+    ],
+    "record_verified_payos_webhook": [
+      "app/api/integrations/payos/webhook/route.ts",
+      "lib/integrations/payos/sync.ts"
+    ],
+    "record_integration_webhook_event": [
+      "app/api/integrations/zalo/webhook/route.ts"
+    ],
+    "apply_zalo_interaction_event": [
+      "app/api/integrations/zalo/webhook/route.ts"
+    ],
+    "record_zalo_phone_delivery": [
+      "app/api/integrations/zalo/webhook/route.ts"
+    ],
+    "scan_employee_attendance_qr": [
+      "app/attendance/scan/page.tsx"
+    ],
+    "payroll_payslip": [
+      "app/documents/payslips/[id]/page.tsx"
+    ],
+    "submit_lesson_feedback": [
+      "app/feedback/actions.ts",
+      "app/my-learning/actions.ts",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "approve_financial_action": [
+      "app/finance/actions.ts"
+    ],
+    "cancel_financial_action": [
+      "app/finance/actions.ts"
+    ],
+    "request_financial_action": [
+      "app/finance/requests.ts"
+    ],
+    "record_learning_activity": [
+      "app/learn/actions.ts"
+    ],
+    "start_learning_assessment": [
+      "app/learn/assessments/actions.ts"
+    ],
+    "submit_learning_assessment": [
+      "app/learn/assessments/actions.ts"
+    ],
+    "available_learning_assessments": [
+      "app/learn/page.tsx"
+    ],
+    "learning_assessment_history": [
+      "app/learn/page.tsx"
+    ],
+    "get_my_attendance_today": [
+      "app/my-attendance/page.tsx"
+    ],
+    "learning_conversation_read": [
+      "app/my-learning/conversations/[kind]/[id]/page.tsx",
+      "scripts/local-student-academic-zalo-check.cjs"
+    ],
+    "learning_conversation_write": [
+      "app/my-learning/conversations/actions.ts",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-check.cjs",
+      "scripts/local-student-academic-zalo-check.cjs"
+    ],
+    "portal_students": [
+      "app/my-learning/page.tsx"
+    ],
+    "learning_report_document": [
+      "app/my-learning/reports/[id]/pdf/route.ts"
+    ],
+    "own_payroll_off_cycle_corrections": [
+      "app/my-payroll/page.tsx"
+    ],
+    "own_payrolls": [
+      "app/my-payroll/page.tsx"
+    ],
+    "own_notifications": [
+      "app/notifications/page.tsx"
+    ],
+    "scoped_students": [
+      "app/operations/page.tsx",
+      "app/operations/teacher/students/[id]/page.tsx"
+    ],
+    "student_branch_permission": [
+      "app/operations/page.tsx"
+    ],
+    "teacher_session_write": [
+      "app/operations/teacher/sessions/[id]/actions.ts",
+      "scripts/local-student-academic-zalo-e2e.cjs"
+    ],
+    "teacher_session_workspace": [
+      "app/operations/teacher/sessions/[id]/page.tsx"
+    ],
+    "portal_academic_journey": [
+      "app/operations/teacher/students/[id]/page.tsx"
+    ],
+    "zalo_oauth_state": [
+      "lib/integrations/zalo/authorization.ts",
+      "lib/integrations/zalo/authorization.ts"
+    ],
+    "zalo_connection_evidence": [
+      "lib/integrations/zalo/connection-check.ts",
+      "lib/integrations/zalo/service.ts"
+    ],
+    "zalo_scheduler_health": [
+      "lib/integrations/zalo/maintenance.ts",
+      "lib/integrations/zalo/service.ts",
+      "scripts/zalo-maintenance.cjs"
+    ],
+    "zalo_credential_command": [
+      "lib/integrations/zalo/oauth.ts"
+    ],
+    "preview_zalo_dispatch_decision": [
+      "lib/integrations/zalo/preview-dispatch.ts"
+    ],
+    "block_zalo_registration_job": [
+      "lib/integrations/zalo/preview-dispatch.ts"
+    ],
+    "start_zalo_recovery_outbound": [
+      "lib/integrations/zalo/preview-dispatch.ts"
+    ],
+    "finish_zalo_registration_attempt": [
+      "lib/integrations/zalo/preview-dispatch.ts"
+    ],
+    "zalo_registration_recovery": [
+      "lib/integrations/zalo/registration-recovery.ts"
+    ]
+  },
+  "migration_files": [
+    "supabase/migrations/20260830000000_baseline.sql",
+    "supabase/migrations/20260901030500_academic_progress_engine.sql",
+    "supabase/migrations/20260901101225_class_enrollment_management.sql",
+    "supabase/migrations/20260901111514_teacher_profile_fields.sql",
+    "supabase/migrations/20260901122330_schedule_management.sql",
+    "supabase/migrations/20260902090000_session_occurrences.sql",
+    "supabase/migrations/20260902100000_generate_session_occurrences.sql",
+    "supabase/migrations/20260902110000_attendance_records.sql",
+    "supabase/migrations/20260902120000_session_status_workflow.sql",
+    "supabase/migrations/20260902130000_reschedule_makeup_foundation.sql",
+    "supabase/migrations/20260902140000_reschedule_session_occurrence.sql",
+    "supabase/migrations/20260902150000_create_makeup_session_occurrence.sql",
+    "supabase/migrations/20260902160000_makeup_credit_ledger.sql",
+    "supabase/migrations/20260907020106_enrollment_pause_engine.sql",
+    "supabase/migrations/20260907090000_learning_journals.sql",
+    "supabase/migrations/20260907170500_normalize_enrollment_status.sql",
+    "supabase/migrations/20260907173000_require_started_at_for_learning.sql",
+    "supabase/migrations/20260908125034_tuition_phase1.sql",
+    "supabase/migrations/20260909100000_seed_can_tho_branch.sql",
+    "supabase/migrations/20260909101443_tuition_branch_pricing_and_discounts.sql",
+    "supabase/migrations/20260910171110_academic_assignment_engine.sql",
+    "supabase/migrations/20260910172909_academic_progress_integrity.sql",
+    "supabase/migrations/20260910192947_academic_level_progression.sql",
+    "supabase/migrations/20260910201008_fix_academic_level_start_date_timezone.sql",
+    "supabase/migrations/20260910202237_fix_academic_level_vietnam_date_v2.sql",
+    "supabase/migrations/20260913153338_fix_academic_starting_grade_scope.sql",
+    "supabase/migrations/20260914160000_harden_academic_engine.sql",
+    "supabase/migrations/20260914170000_seed_system_roles.sql",
+    "supabase/migrations/20260914201223_future_academic_start_scheduling.sql",
+    "supabase/migrations/20260915050000_edit_academic_program_start_date.sql",
+    "supabase/migrations/20260915060000_pause_tuition_effective_end.sql",
+    "supabase/migrations/20260915070000_invoice_engine_v1.sql",
+    "supabase/migrations/20260915080000_payment_engine_v1.sql",
+    "supabase/migrations/20260915090000_debt_engine_v1.sql",
+    "supabase/migrations/20260915100000_lock_tuition_discount_after_invoice.sql",
+    "supabase/migrations/20260915110000_refund_engine_v1.sql",
+    "supabase/migrations/20260915120000_finance_engine_v1.sql",
+    "supabase/migrations/20260915130000_revenue_forecast_v1.sql",
+    "supabase/migrations/20260915140000_tuition_operations_rpc.sql",
+    "supabase/migrations/20260915141000_tuition_reminder_engine_v1.sql",
+    "supabase/migrations/20260915150000_learning_reports_v1.sql",
+    "supabase/migrations/20260915160000_lesson_feedback_v1.sql",
+    "supabase/migrations/20260915170000_session_teacher_assignment_v1.sql",
+    "supabase/migrations/20260915180000_teacher_payroll_v1.sql",
+    "supabase/migrations/20260915181000_payroll_history_guards.sql",
+    "supabase/migrations/20260915190000_security_rpc_surface.sql",
+    "supabase/migrations/20260915191000_authorization_foundation.sql",
+    "supabase/migrations/20260915192000_security_unused_grants.sql",
+    "supabase/migrations/20260915200000_branch_relationship_scope.sql",
+    "supabase/migrations/20260916090000_harden_payroll_self_read.sql",
+    "supabase/migrations/20260916091000_harden_feedback_respondent_authorization.sql",
+    "supabase/migrations/20260916092000_align_relationship_read_authorization.sql",
+    "supabase/migrations/20260916093000_bound_teacher_historical_access.sql",
+    "supabase/migrations/20260916094000_student_parent_history_reads.sql",
+    "supabase/migrations/20260916095000_scoped_finance_payroll_reads.sql",
+    "supabase/migrations/20260916100000_payroll_maker_checker.sql",
+    "supabase/migrations/20260916110000_financial_approval_workflows.sql",
+    "supabase/migrations/20260916111000_invoice_cancellation_approval.sql",
+    "supabase/migrations/20260916120000_security_consistency_hardening.sql",
+    "supabase/migrations/20260916130000_legacy_migration_review.sql",
+    "supabase/migrations/20260916140000_opening_balance_collections.sql",
+    "supabase/migrations/20260916150000_customer_credit_ledger.sql",
+    "supabase/migrations/20260916160000_employee_master.sql",
+    "supabase/migrations/20260916170000_employee_attendance.sql",
+    "supabase/migrations/20260916180000_payroll_scheduled_minutes.sql",
+    "supabase/migrations/20260916181000_payroll_employee_recipients.sql",
+    "supabase/migrations/20260916182000_payroll_evidence_adjustments.sql",
+    "supabase/migrations/20260916183000_payroll_employee_self_read.sql",
+    "supabase/migrations/20260916184000_payroll_trip_cost_breakdown.sql",
+    "supabase/migrations/20260916190000_parent_finance_visibility.sql",
+    "supabase/migrations/20260916191000_family_portal_projections.sql",
+    "supabase/migrations/20260916192000_family_academic_permission.sql",
+    "supabase/migrations/20260916193000_teacher_portal_reads.sql",
+    "supabase/migrations/20260916194000_family_opening_credit_reads.sql",
+    "supabase/migrations/20260916195000_teacher_current_academic_reads.sql",
+    "supabase/migrations/20260916200000_payroll_effective_employee_self_read.sql",
+    "supabase/migrations/20260916201000_teacher_attendance_projection.sql",
+    "supabase/migrations/20260916210000_notification_infrastructure.sql",
+    "supabase/migrations/20260916211000_notification_delivery_revalidation.sql",
+    "supabase/migrations/20260916212000_notification_source_contracts.sql",
+    "supabase/migrations/20260916213000_notification_recipient_idempotency.sql",
+    "supabase/migrations/20260916220000_inventory_ledger.sql",
+    "supabase/migrations/20260916221000_inventory_catalogue_scope.sql",
+    "supabase/migrations/20260916223000_serialized_instruments.sql",
+    "supabase/migrations/20260916230000_elearning_foundation.sql",
+    "supabase/migrations/20260916231000_learning_course_delivery_window.sql",
+    "supabase/migrations/20260916233000_learning_assessment_policies.sql",
+    "supabase/migrations/20260916234000_learning_assessment_policy_guards.sql",
+    "supabase/migrations/20260916235000_learning_manual_review_queue.sql",
+    "supabase/migrations/20260917000000_learning_assessment_regrades.sql",
+    "supabase/migrations/20260917003000_learning_academic_shadow_mapping.sql",
+    "supabase/migrations/20260917010000_learning_theory_contents_contract.sql",
+    "supabase/migrations/20260917013000_learning_progress_analytics.sql",
+    "supabase/migrations/20260917020000_revoke_anonymous_business_grants.sql",
+    "supabase/migrations/20260917100000_operational_payroll_documents.sql",
+    "supabase/migrations/20260917173000_learning_reports_v2.sql",
+    "supabase/migrations/20260917232000_learning_reports_publish_workflow.sql",
+    "supabase/migrations/20260918003000_fix_direct_assessment_subjects.sql",
+    "supabase/migrations/20260918010000_learning_report_first_period_rule.sql",
+    "supabase/migrations/20260918060000_academic_award_results.sql",
+    "supabase/migrations/20260918070000_academic_component_items.sql",
+    "supabase/migrations/20260918073000_payment_entry_idempotency.sql",
+    "supabase/migrations/20260918074500_component_completion_rule.sql",
+    "supabase/migrations/20260918080000_item_progress_engine.sql",
+    "supabase/migrations/20260918081500_seed_component_item_progress.sql",
+    "supabase/migrations/20260918152200_employee_expense_claims_v1.sql",
+    "supabase/migrations/20260918202526_staff_foundation_v1.sql",
+    "supabase/migrations/20260918205719_staff_compensation_rpc_v1.sql",
+    "supabase/migrations/20260918211436_payroll_v2_generator_v1.sql",
+    "supabase/migrations/20260918221109_payroll_v2_period_actions_v1.sql",
+    "supabase/migrations/20260919044014_retire_fixed_pay_component.sql",
+    "supabase/migrations/20260919115041_attendance_retention_risk_v1.sql",
+    "supabase/migrations/20260919120145_attendance_retention_risk_v1.sql",
+    "supabase/migrations/20260919141114_staff_combined_insurance_foundation.sql",
+    "supabase/migrations/20260920090000_payroll_v2_preview.sql",
+    "supabase/migrations/20260920221500_payroll_payslip_v2.sql",
+    "supabase/migrations/20260921001000_fix_payroll_payslip_v2_rpc.sql",
+    "supabase/migrations/20260921013000_employee_private_profile_v1.sql",
+    "supabase/migrations/20260921020000_expense_claim_v2_itemized.sql",
+    "supabase/migrations/20260921021000_expense_claim_v2_security_hardening.sql",
+    "supabase/migrations/20260921022000_expense_claim_v2_snapshot_breakdown.sql",
+    "supabase/migrations/20260921145500_payroll_period_create_guard.sql",
+    "supabase/migrations/20260921173000_payroll_retroactive_v1.sql",
+    "supabase/migrations/20260921190000_payroll_disbursements_v2.sql",
+    "supabase/migrations/20260921191000_payroll_disbursement_history_guard.sql",
+    "supabase/migrations/20260921192000_retroactive_trigger_security_hardening.sql",
+    "supabase/migrations/20260921193000_retroactive_close_guard_and_retarget.sql",
+    "supabase/migrations/20260921200000_operating_expenses_v1.sql",
+    "supabase/migrations/20260922013000_financial_management_report_v1.sql",
+    "supabase/migrations/20260922013100_financial_management_report_v1_qualify_month.sql",
+    "supabase/migrations/20260922013200_financial_management_report_v1_validation_gate.sql",
+    "supabase/migrations/20260922030000_attendance_qr_phase1_foundation.sql",
+    "supabase/migrations/20260922040000_attendance_qr_verification_payroll.sql",
+    "supabase/migrations/20260922153000_lesson_feedback_reasons.sql",
+    "supabase/migrations/20260922180000_crm_lead_foundation_v1.sql",
+    "supabase/migrations/20260922200000_crm_lead_conversion_v1.sql",
+    "supabase/migrations/20260922210000_crm_campaigns_v1.sql",
+    "supabase/migrations/20260922220000_crm_reactivation_v1.sql",
+    "supabase/migrations/20260922230000_instrument_customer_care_v1.sql",
+    "supabase/migrations/20260922240000_business_command_center_v1.sql",
+    "supabase/migrations/20260922250000_crm_shell_access_v1.sql",
+    "supabase/migrations/20260922260000_registration_placement_v1.sql",
+    "supabase/migrations/20260922270000_learning_observation_taxonomy_v1.sql",
+    "supabase/migrations/20260922280000_student_ops_shell_v1.sql",
+    "supabase/migrations/20260922290000_student_placement_correction_v1.sql",
+    "supabase/migrations/20260922300000_zalo_webhook_foundation_v1.sql",
+    "supabase/migrations/20260922310000_zalo_admin_read_v1.sql",
+    "supabase/migrations/20260922320000_crm_channel_state_v1.sql",
+    "supabase/migrations/20260923031500_lesson_operator_writes_v1.sql",
+    "supabase/migrations/20260923040000_zalo_interaction_link_v1.sql",
+    "supabase/migrations/20260923050000_notification_zalo_outbound_v1.sql",
+    "supabase/migrations/20260923051000_zalo_registration_template_copy_v1.sql",
+    "supabase/migrations/20260923052000_zalo_registration_template_mapping_v1.sql",
+    "supabase/migrations/20260923170000_zalo_payment_notification_z1.sql",
+    "supabase/migrations/20260924120000_student_operations_ux_v1.sql",
+    "supabase/migrations/20260924130000_mixed_level_class_ops_v1.sql",
+    "supabase/migrations/20260924160000_teacher_session_workspace_v1.sql",
+    "supabase/migrations/20260925230000_teaching_shift_assignment_v1.sql",
+    "supabase/migrations/20260926120000_student_lifecycle_segmentation_v1.sql",
+    "supabase/migrations/20260926183000_staff_profile_badges_v1.sql",
+    "supabase/migrations/20260926190000_staff_teaching_curriculum_v1.sql",
+    "supabase/migrations/20260928010000_consolidate_counter_registration.sql",
+    "supabase/migrations/20260928020000_consolidate_registration_payments.sql",
+    "supabase/migrations/20260928030000_consolidate_zalo_durable_outbox.sql",
+    "supabase/migrations/20260928040000_consolidation_rpc_grants.sql",
+    "supabase/migrations/20260928050000_preserve_main_registration_contract.sql",
+    "supabase/migrations/20260928060000_zalo_automatic_renewal.sql",
+    "supabase/migrations/20260928070000_zalo_channel_recovery.sql",
+    "supabase/migrations/20260928080000_zalo_registration_recovery_action.sql",
+    "supabase/migrations/20260928090000_zalo_connection_evidence.sql",
+    "supabase/migrations/20260928190000_training_placement_integrity.sql",
+    "supabase/migrations/20260928200000_academic_family_communications.sql",
+    "supabase/migrations/20260928201000_academic_feedback_portal.sql",
+    "supabase/migrations/20260928210000_attendance_launcher.sql"
+  ],
+  "jobs": [
+    "lib/notifications/worker.ts",
+    "scripts/zalo-scheduler.cjs",
+    "tests/notification-worker.test.cjs"
+  ]
+}

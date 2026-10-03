@@ -1,0 +1,41 @@
+BEGIN
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ set_config 
+------------
+ on
+(1 row)
+
+  set_config  
+--------------
+ service_role
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 1
+      below      
+-----------------
+ PARTIAL_DEPOSIT
+(1 row)
+
+INSERT 0 1
+  reached  
+-----------
+ COMPLETED
+(1 row)
+
+    replay    
+--------------
+ ALREADY_PAID
+(1 row)
+
+COMMIT

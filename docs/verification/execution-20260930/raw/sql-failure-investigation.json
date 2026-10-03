@@ -1,0 +1,380 @@
+[
+  {
+    "file": "database/attendance_records_test.sql",
+    "line": 161,
+    "error": "PLACEMENT_SCHEDULE_REQUIRED",
+    "classification": "Incorrect fixture: active enrollment/placement requires an effective timetable; supplied test setup has none for this class/start.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-09-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/branch_relationship_scope_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/create_makeup_session_occurrence_test.sql",
+    "line": 248,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "    '65000000-0000-0000-0000-000000000013',\n    '55000000-0000-0000-0000-000000000011',\n    '2026-09-01',\n    '2026-09-06',\n    'WITHDRAWN'\n  ),\n  (\n    '75000000-0000-0000-0000-000000000024',\n    '65000000-0000-0000-0000-000000000014',\n    '55000000-0000-0000-0000-000000000012',\n    '2026-09-01',\n    null,\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/crm_reactivation_test.sql",
+    "line": 39,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  ('c6300000-0000-4000-8000-000000000005', 'c6100000-0000-4000-8000-000000000001', 'c6300000-0000-4000-8000-000000000003', 'CRM-REACT-CLASS-2', 'Return class 2', 'ACTIVE'),\n  ('c6300000-0000-4000-8000-000000000006', 'c6100000-0000-4000-8000-000000000001', 'c6300000-0000-4000-8000-000000000003', 'CRM-REACT-CLASS-3', 'Future class', 'ACTIVE'),\n  ('c6300000-0000-4000-8000-000000000007', 'c6100000-0000-4000-8000-000000000001', 'c6300000-0000-4000-8000-000000000003', 'CRM-REACT-CLASS-4', 'Active class', 'ACTIVE');\n\ninsert into public.students(id, student_code, full_name, default_branch_id, status) values\n  ('c6400000-0000-4000-8000-000000000001', 'CRM-REACT-PAUSE', 'Pause Student', 'c6100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('c6400000-0000-4000-8000-000000000002', 'CRM-REACT-FUTURE', 'Future Pause', 'c6100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('c6400000-0000-4000-8000-000000000003', 'CRM-REACT-STILL', 'Still Active', 'c6100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('c6400000-0000-4000-8000-000000000004', 'CRM-REACT-INACTIVE', 'Inactive Student', 'c6100000-0000-4000-8000-000000000001', 'INACTIVE');\n\ninsert into public.enrollments(id, student_id, class_id, status, started_at) values\n  ('c6500000-0000-4000-8000-000000000001', 'c6400000-0000-4000-8000-000000000001', 'c6300000-0000-4000-8000-000000000004', 'ACTIVE', (now() at time zone 'Asia/Ho_Chi_Minh')::date - 30),\n  ('c6500000-0000-4000-8000-000000000002', 'c6400000-0000-4000-8000-000000000002', 'c6300000-0000-4000-8000-000000000006', 'ACTIVE', (now() at time zone 'Asia/Ho_Chi_Minh')::date - 30),\n  ('c6500000-0000-4000-8000-000000000003', 'c6400000-0000-4000-8000-000000000003', 'c6300000-0000-4000-8000-000000000007', 'ACTIVE', (now() at time zone 'Asia/Ho_Chi_Minh')::date - 30);\n\ninsert into public.enrollment_pauses(enrollment_id, starts_on, ends_on, reason) values",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/customer_credit_ledger_test.sql",
+    "line": 33,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": " 'started_at',(now() at time zone 'Asia/Ho_Chi_Minh')::date::text,\n 'tuition_starts_on',(now() at time zone 'Asia/Ho_Chi_Minh')::date::text,\n 'tuition_plan_code','LEGACY-PLAN','student_status','ACTIVE','tuition_status','ACTIVE',\n 'currency','VND','discount_type','NONE','discount_value','0','final_amount','5500000','opening_paid_amount','0','opening_outstanding','5500000'));\nset local role authenticated;\nselect set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000001',true);\ninsert into fixture(name,id) select 'batch',public.stage_legacy_batch('LEGACY-TEST','synthetic.csv',repeat('a',64),(now() at time zone 'Asia/Ho_Chi_Minh')::date,'ee100000-0000-0000-0000-000000000001',jsonb_build_array(payload)) from fixture where name='source';\ninsert into fixture(name,id) select 'row',id from public.migration_batch_rows where batch_id=(select id from fixture where name='batch');\nselect public.review_legacy_row((select id from fixture where name='row'),1,'MAP','Exact mapping',(select payload||'{\"class_code\":\"LEGACY-CLASS\"}'::jsonb from fixture where name='source'));\nselect public.review_legacy_row((select id from fixture where name='row'),2,'IDENTITY','Checked');\nselect public.review_legacy_row((select id from fixture where name='row'),2,'ACADEMIC','Checked');\nselect set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000002',true);\nselect public.review_legacy_row((select id from fixture where name='row'),2,'FINANCE','Independent check');\nselect public.import_legacy_row((select id from fixture where name='row'),2);\ninsert into fixture(name,id) select 'opening',id from public.opening_receivables where migration_row_id=(select id from fixture where name='row');\ncreate function pg_temp.balance() returns numeric language sql as $$select outstanding_balance from public.opening_receivable_balances where id=(select id from fixture where name='opening')$$;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/debt_engine_v1_test.sql",
+    "line": 136,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'd6000000-0000-0000-0000-000000000001',\n  'd5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n),\n(\n  'd7000000-0000-0000-0000-000000000002',\n  'd6000000-0000-0000-0000-000000000002',\n  'd5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/elearning_foundation_test.sql",
+    "line": 14,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "begin;\ncreate extension if not exists pgtap with schema extensions;\nselect no_plan();\ninsert into auth.users(id) values('de930000-0000-4000-8000-000000000001'),('de930000-0000-4000-8000-000000000002'),('de930000-0000-4000-8000-000000000003'),('de930000-0000-4000-8000-000000000004');\ninsert into profiles(id) select id from auth.users where id::text like 'de930000-%';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de930000-0000-4000-8000-000000000001','de930000-0000-4000-8000-000000000002') and r.code='SUPER_ADMIN';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de930000-0000-4000-8000-000000000003','de930000-0000-4000-8000-000000000004') and r.code='STUDENT';\ninsert into branches(id,code,name) values('de930000-0000-4000-8000-000000000011','LEARN-B','Learning branch');\ninsert into curriculums(id,code,name) values('de930000-0000-4000-8000-000000000012','LEARN-C','Learning curriculum');\ninsert into curriculum_levels(id,curriculum_id,code,name,sequence_no) values('de930000-0000-4000-8000-000000000013','de930000-0000-4000-8000-000000000012','LEARN-G1','Grade 1',1);\ninsert into courses(id,curriculum_id,level_id,code,name) values('de930000-0000-4000-8000-000000000014','de930000-0000-4000-8000-000000000012','de930000-0000-4000-8000-000000000013','LEARN-COURSE','Learning course');\ninsert into classes(id,branch_id,course_id,code,name,status) values('de930000-0000-4000-8000-000000000015','de930000-0000-4000-8000-000000000011','de930000-0000-4000-8000-000000000014','LEARN-CLASS','Learning class','ACTIVE');\ninsert into students(id,user_id,student_code,full_name) values('de930000-0000-4000-8000-000000000016','de930000-0000-4000-8000-000000000003','LEARN-S1','Learning student'),('de930000-0000-4000-8000-000000000017','de930000-0000-4000-8000-000000000004','LEARN-S2','Other student');\ninsert into enrollments(id,student_id,class_id,started_at,enrolled_at) values('de930000-0000-4000-8000-000000000018','de930000-0000-4000-8000-000000000016','de930000-0000-4000-8000-000000000015',current_date-1,current_date-1);\nselect set_config('request.jwt.claim.sub','de930000-0000-4000-8000-000000000001',true);\nset local role authenticated;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/enrollment_pause_attendance_test.sql",
+    "line": 159,
+    "error": "PLACEMENT_SCHEDULE_REQUIRED",
+    "classification": "Incorrect fixture: active enrollment/placement requires an effective timetable; supplied test setup has none for this class/start.",
+    "setup_excerpt": "  (\n    '78000000-0000-0000-0000-000000000001',\n    '68000000-0000-0000-0000-000000000001',\n    '58000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    '78000000-0000-0000-0000-000000000002',\n    '68000000-0000-0000-0000-000000000002',\n    '58000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  );\ninsert into public.enrollments (\n  id,",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/feedback_authorization_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/finance_engine_v1_test.sql",
+    "line": 113,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  student_id,\n  class_id,\n  enrolled_at,\n  started_at,\n  status\n)\nvalues (\n  'aa700000-0000-0000-0000-000000000001',\n  'aa600000-0000-0000-0000-000000000001',\n  'aa500000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\ninsert into public.enrollment_tuition (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/finance_read_scope_test.sql",
+    "line": 125,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/financial_management_report_v1_test.sql",
+    "line": 50,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": " ('0f130000-0000-4000-8000-000000000001','0f110000-0000-4000-8000-000000000001','0f120000-0000-4000-8000-000000000001','FM-COURSE','FM Course');\ninsert into public.classes(id,branch_id,course_id,code,name,class_type,capacity,status) values\n ('0f140000-0000-4000-8000-000000000001','0f100000-0000-4000-8000-000000000001','0f130000-0000-4000-8000-000000000001','FM-CLASS-A','FM Class A','GROUP',8,'ACTIVE'),\n ('0f140000-0000-4000-8000-000000000002','0f100000-0000-4000-8000-000000000002','0f130000-0000-4000-8000-000000000001','FM-CLASS-B','FM Class B','GROUP',8,'ACTIVE');\ninsert into public.students(id,student_code,default_branch_id,full_name) values\n ('0f150000-0000-4000-8000-000000000001','FM-STU-1','0f100000-0000-4000-8000-000000000001','FM Student 1'),\n ('0f150000-0000-4000-8000-000000000002','FM-STU-2','0f100000-0000-4000-8000-000000000001','FM Student 2'),\n ('0f150000-0000-4000-8000-000000000003','FM-STU-3','0f100000-0000-4000-8000-000000000002','FM Student 3'),\n ('0f150000-0000-4000-8000-000000000004','FM-STU-4','0f100000-0000-4000-8000-000000000001','FM Student 4');\ninsert into public.enrollments(id,student_id,class_id,enrolled_at,started_at,status) values\n ('0f160000-0000-4000-8000-000000000001','0f150000-0000-4000-8000-000000000001','0f140000-0000-4000-8000-000000000001','2026-08-01','2026-09-01','ACTIVE'),\n ('0f160000-0000-4000-8000-000000000002','0f150000-0000-4000-8000-000000000002','0f140000-0000-4000-8000-000000000001','2025-12-01','2026-01-01','ACTIVE'),\n ('0f160000-0000-4000-8000-000000000003','0f150000-0000-4000-8000-000000000003','0f140000-0000-4000-8000-000000000002','2026-08-01','2026-09-01','ACTIVE'),\n ('0f160000-0000-4000-8000-000000000004','0f150000-0000-4000-8000-000000000004','0f140000-0000-4000-8000-000000000001','2026-08-01','2026-09-01','ACTIVE');\n\ninsert into public.tuition_plans(id,code,name,duration_months,status) values",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/invoice_cancellation_approval_test.sql",
+    "line": 136,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "    'e6000000-0000-0000-0000-000000000001',\n    'e5000000-0000-0000-0000-000000000001',\n    '2026-08-20',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    'e7000000-0000-0000-0000-000000000002',\n    'e6000000-0000-0000-0000-000000000002',\n    'e5000000-0000-0000-0000-000000000001',\n    '2026-08-20',\n    '2026-09-01',\n    'ACTIVE'\n  );\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/invoice_engine_v1_test.sql",
+    "line": 136,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "    'e6000000-0000-0000-0000-000000000001',\n    'e5000000-0000-0000-0000-000000000001',\n    '2026-08-20',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    'e7000000-0000-0000-0000-000000000002',\n    'e6000000-0000-0000-0000-000000000002',\n    'e5000000-0000-0000-0000-000000000001',\n    '2026-08-20',\n    '2026-09-01',\n    'ACTIVE'\n  );\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_analytics_test.sql",
+    "line": 14,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "begin;\ncreate extension if not exists pgtap with schema extensions;\nselect no_plan();\ninsert into auth.users(id) values('de990000-0000-4000-8000-000000000001'),('de990000-0000-4000-8000-000000000002'),('de990000-0000-4000-8000-000000000003'),('de990000-0000-4000-8000-000000000004');\ninsert into profiles(id) select id from auth.users where id::text like 'de990000-%';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de990000-0000-4000-8000-000000000001','de990000-0000-4000-8000-000000000002') and r.code='SUPER_ADMIN';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de990000-0000-4000-8000-000000000003','de990000-0000-4000-8000-000000000004') and r.code='STUDENT';\ninsert into branches(id,code,name) values('de990000-0000-4000-8000-000000000011','ANALYTICS-B','Learning branch');\ninsert into curriculums(id,code,name) values('de990000-0000-4000-8000-000000000012','ANALYTICS-C','Learning curriculum');\ninsert into curriculum_levels(id,curriculum_id,code,name,sequence_no) values('de990000-0000-4000-8000-000000000013','de990000-0000-4000-8000-000000000012','ANALYTICS-G1','Grade 1',1);\ninsert into courses(id,curriculum_id,level_id,code,name) values('de990000-0000-4000-8000-000000000014','de990000-0000-4000-8000-000000000012','de990000-0000-4000-8000-000000000013','ANALYTICS-COURSE','Learning course');\ninsert into classes(id,branch_id,course_id,code,name,status) values('de990000-0000-4000-8000-000000000015','de990000-0000-4000-8000-000000000011','de990000-0000-4000-8000-000000000014','ANALYTICS-CLASS','Learning class','ACTIVE');\ninsert into students(id,user_id,student_code,full_name) values('de990000-0000-4000-8000-000000000016','de990000-0000-4000-8000-000000000003','ANALYTICS-S1','Learning student'),('de990000-0000-4000-8000-000000000017','de990000-0000-4000-8000-000000000004','ANALYTICS-S2','Other student');\ninsert into enrollments(id,student_id,class_id,started_at,enrolled_at) values('de990000-0000-4000-8000-000000000018','de990000-0000-4000-8000-000000000016','de990000-0000-4000-8000-000000000015',current_date-1,current_date-1);\nselect set_config('request.jwt.claim.sub','de990000-0000-4000-8000-000000000001',true);\nset local role authenticated;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_assessment_test.sql",
+    "line": 14,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "begin;\ncreate extension if not exists pgtap with schema extensions;\nselect no_plan();\ninsert into auth.users(id) values('de940000-0000-4000-8000-000000000001'),('de940000-0000-4000-8000-000000000002'),('de940000-0000-4000-8000-000000000003'),('de940000-0000-4000-8000-000000000004');\ninsert into profiles(id) select id from auth.users where id::text like 'de940000-%';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de940000-0000-4000-8000-000000000001','de940000-0000-4000-8000-000000000002') and r.code='SUPER_ADMIN';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de940000-0000-4000-8000-000000000003','de940000-0000-4000-8000-000000000004') and r.code='STUDENT';\ninsert into branches(id,code,name) values('de940000-0000-4000-8000-000000000011','ASSESS-B','Learning branch');\ninsert into curriculums(id,code,name) values('de940000-0000-4000-8000-000000000012','ASSESS-C','Learning curriculum');\ninsert into curriculum_levels(id,curriculum_id,code,name,sequence_no) values('de940000-0000-4000-8000-000000000013','de940000-0000-4000-8000-000000000012','ASSESS-G1','Grade 1',1);\ninsert into courses(id,curriculum_id,level_id,code,name) values('de940000-0000-4000-8000-000000000014','de940000-0000-4000-8000-000000000012','de940000-0000-4000-8000-000000000013','ASSESS-COURSE','Learning course');\ninsert into classes(id,branch_id,course_id,code,name,status) values('de940000-0000-4000-8000-000000000015','de940000-0000-4000-8000-000000000011','de940000-0000-4000-8000-000000000014','ASSESS-CLASS','Learning class','ACTIVE');\ninsert into students(id,user_id,student_code,full_name) values('de940000-0000-4000-8000-000000000016','de940000-0000-4000-8000-000000000003','ASSESS-S1','Learning student'),('de940000-0000-4000-8000-000000000017','de940000-0000-4000-8000-000000000004','ASSESS-S2','Other student');\ninsert into enrollments(id,student_id,class_id,started_at,enrolled_at) values('de940000-0000-4000-8000-000000000018','de940000-0000-4000-8000-000000000016','de940000-0000-4000-8000-000000000015',current_date-1,current_date-1);\nselect set_config('request.jwt.claim.sub','de940000-0000-4000-8000-000000000001',true);\nset local role authenticated;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_journals_test.sql",
+    "line": 123,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-09-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_observation_taxonomy_test.sql",
+    "line": 57,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "insert into public.students(id, student_code, full_name, default_branch_id, status) values\n  ('f9600000-0000-4000-8000-000000000001', 'TAX-A', 'Tax Student A', 'f9100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('f9600000-0000-4000-8000-000000000002', 'TAX-B', 'Tax Student B', 'f9100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('f9600000-0000-4000-8000-000000000003', 'TAX-C', 'Tax Student C', 'f9100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('f9600000-0000-4000-8000-000000000004', 'TAX-D', 'Tax Student D', 'f9100000-0000-4000-8000-000000000001', 'ACTIVE');\ninsert into public.parents(id, parent_code, user_id, status) values\n  ('f9600000-0000-4000-8000-000000000005', 'TAX-P', 'f9200000-0000-4000-8000-000000000005', 'ACTIVE');\ninsert into public.student_parents(student_id, parent_id, relationship, is_primary) values\n  ('f9600000-0000-4000-8000-000000000001', 'f9600000-0000-4000-8000-000000000005', 'GUARDIAN', true);\ninsert into public.enrollments(id, student_id, class_id, started_at, status) values\n  ('f9700000-0000-4000-8000-000000000001', 'f9600000-0000-4000-8000-000000000001', 'f9500000-0000-4000-8000-000000000001', '2026-09-01', 'ACTIVE'),\n  ('f9700000-0000-4000-8000-000000000002', 'f9600000-0000-4000-8000-000000000002', 'f9500000-0000-4000-8000-000000000001', '2026-09-01', 'ACTIVE'),\n  ('f9700000-0000-4000-8000-000000000003', 'f9600000-0000-4000-8000-000000000003', 'f9500000-0000-4000-8000-000000000001', '2026-09-01', 'ACTIVE'),\n  ('f9700000-0000-4000-8000-000000000004', 'f9600000-0000-4000-8000-000000000004', 'f9500000-0000-4000-8000-000000000001', '2026-09-01', 'ACTIVE');\ninsert into public.schedules(id, class_id, day_of_week, start_time, end_time, effective_from, status) values\n  ('f9800000-0000-4000-8000-000000000001', 'f9500000-0000-4000-8000-000000000001', 1, '09:00', '10:00', '2026-09-01', 'ACTIVE'),",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_regrade_test.sql",
+    "line": 14,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "begin;\ncreate extension if not exists pgtap with schema extensions;\nselect no_plan();\ninsert into auth.users(id) values('de960000-0000-4000-8000-000000000001'),('de960000-0000-4000-8000-000000000002'),('de960000-0000-4000-8000-000000000003'),('de960000-0000-4000-8000-000000000004');\ninsert into profiles(id) select id from auth.users where id::text like 'de960000-%';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de960000-0000-4000-8000-000000000001','de960000-0000-4000-8000-000000000002') and r.code='SUPER_ADMIN';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de960000-0000-4000-8000-000000000003','de960000-0000-4000-8000-000000000004') and r.code='STUDENT';\ninsert into branches(id,code,name) values('de960000-0000-4000-8000-000000000011','REGRADE-B','Learning branch');\ninsert into curriculums(id,code,name) values('de960000-0000-4000-8000-000000000012','REGRADE-C','Learning curriculum');\ninsert into curriculum_levels(id,curriculum_id,code,name,sequence_no) values('de960000-0000-4000-8000-000000000013','de960000-0000-4000-8000-000000000012','REGRADE-G1','Grade 1',1);\ninsert into courses(id,curriculum_id,level_id,code,name) values('de960000-0000-4000-8000-000000000014','de960000-0000-4000-8000-000000000012','de960000-0000-4000-8000-000000000013','REGRADE-COURSE','Learning course');\ninsert into classes(id,branch_id,course_id,code,name,status) values('de960000-0000-4000-8000-000000000015','de960000-0000-4000-8000-000000000011','de960000-0000-4000-8000-000000000014','REGRADE-CLASS','Learning class','ACTIVE');\ninsert into students(id,user_id,student_code,full_name) values('de960000-0000-4000-8000-000000000016','de960000-0000-4000-8000-000000000003','REGRADE-S1','Learning student'),('de960000-0000-4000-8000-000000000017','de960000-0000-4000-8000-000000000004','REGRADE-S2','Other student');\ninsert into enrollments(id,student_id,class_id,started_at,enrolled_at) values('de960000-0000-4000-8000-000000000018','de960000-0000-4000-8000-000000000016','de960000-0000-4000-8000-000000000015',current_date-1,current_date-1);\nselect set_config('request.jwt.claim.sub','de960000-0000-4000-8000-000000000001',true);\nset local role authenticated;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_reports_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/learning_shadow_mapping_test.sql",
+    "line": 14,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "begin;\ncreate extension if not exists pgtap with schema extensions;\nselect no_plan();\ninsert into auth.users(id) values('de970000-0000-4000-8000-000000000001'),('de970000-0000-4000-8000-000000000002'),('de970000-0000-4000-8000-000000000003'),('de970000-0000-4000-8000-000000000004');\ninsert into profiles(id) select id from auth.users where id::text like 'de970000-%';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de970000-0000-4000-8000-000000000001','de970000-0000-4000-8000-000000000002') and r.code='SUPER_ADMIN';\ninsert into user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join roles r where u.id in('de970000-0000-4000-8000-000000000003','de970000-0000-4000-8000-000000000004') and r.code='STUDENT';\ninsert into branches(id,code,name) values('de970000-0000-4000-8000-000000000011','SHADOW-B','Learning branch');\ninsert into curriculums(id,code,name) values('de970000-0000-4000-8000-000000000012','SHADOW-C','Learning curriculum');\ninsert into curriculum_levels(id,curriculum_id,code,name,sequence_no) values('de970000-0000-4000-8000-000000000013','de970000-0000-4000-8000-000000000012','SHADOW-G1','Grade 1',1);\ninsert into courses(id,curriculum_id,level_id,code,name) values('de970000-0000-4000-8000-000000000014','de970000-0000-4000-8000-000000000012','de970000-0000-4000-8000-000000000013','SHADOW-COURSE','Learning course');\ninsert into classes(id,branch_id,course_id,code,name,status) values('de970000-0000-4000-8000-000000000015','de970000-0000-4000-8000-000000000011','de970000-0000-4000-8000-000000000014','SHADOW-CLASS','Learning class','ACTIVE');\ninsert into students(id,user_id,student_code,full_name) values('de970000-0000-4000-8000-000000000016','de970000-0000-4000-8000-000000000003','SHADOW-S1','Learning student'),('de970000-0000-4000-8000-000000000017','de970000-0000-4000-8000-000000000004','SHADOW-S2','Other student');\ninsert into enrollments(id,student_id,class_id,started_at,enrolled_at) values('de970000-0000-4000-8000-000000000018','de970000-0000-4000-8000-000000000016','de970000-0000-4000-8000-000000000015',current_date-1,current_date-1);\nselect set_config('request.jwt.claim.sub','de970000-0000-4000-8000-000000000001',true);\nset local role authenticated;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/legacy_migration_review_test.sql",
+    "line": 127,
+    "error": "Source batch requires correction, not rollback",
+    "classification": "Incorrect fixture with cascading failures: the first import assertion (23) raises CLASS_SCOPE_UNCONFIGURED from guard_enrollment_class_scope, because LEGACY-CLASS omits accepted level scope. The final rollback error is downstream. Import behavior after valid scope/timetable setup is not yet certified.",
+    "setup_excerpt": "insert into fixture(name,id) select 'historical',pg_temp.approved_legacy(payload||jsonb_build_object('legacy_reference','history','student_code','LEGACY-HISTORY','full_name','Historical start learner','class_code','LEGACY-CLASS','started_at',((now() at time zone 'Asia/Ho_Chi_Minh')::date-365)::text),'d') from fixture where name='source';\nselect lives_ok($$select public.import_legacy_row((select id from fixture where name='historical'),1)$$,'Current term may start after original activation anchor');\nselect is((select e.started_at from public.enrollments e join public.students s on s.id=e.student_id where s.student_code='LEGACY-HISTORY'),(now() at time zone 'Asia/Ho_Chi_Minh')::date-365,'Original started_at preserved');\ninsert into fixture(name,id) select 'paused',pg_temp.approved_legacy(payload||jsonb_build_object('legacy_reference','paused','student_code','LEGACY-PAUSED','full_name','Paused legacy learner','class_code','LEGACY-CLASS','student_status','PAUSED','tuition_status','PAUSED','started_at',((now() at time zone 'Asia/Ho_Chi_Minh')::date-365)::text,'tuition_starts_on',((now() at time zone 'Asia/Ho_Chi_Minh')::date-10)::text,'pause_starts_on',((now() at time zone 'Asia/Ho_Chi_Minh')::date-2)::text,'pause_ends_on',((now() at time zone 'Asia/Ho_Chi_Minh')::date+2)::text,'effective_ends_on',(public.calculate_tuition_base_end((now() at time zone 'Asia/Ho_Chi_Minh')::date-10,1)+12)::text),'e') from fixture where name='source';\nselect lives_ok($$select public.import_legacy_row((select id from fixture where name='paused'),1)$$,'Paused opening baseline imports current pause only');\nselect is((select t.legacy_extension_days from public.enrollment_tuition t join public.migration_batch_rows r on r.target_tuition_id=t.id where r.id=(select id from fixture where name='paused')),7,'Historical extension excludes current pause contribution');\nselect is((select count(*) from public.enrollment_pauses ep join public.migration_batch_rows r on r.target_enrollment_id=ep.enrollment_id where r.id=(select id from fixture where name='paused')),1::bigint,'No fabricated historical pause events');\nselect is((select t.effective_ends_on from public.enrollment_tuition t join public.migration_batch_rows r on r.target_tuition_id=t.id where r.id=(select id from fixture where name='paused')),public.calculate_tuition_base_end((now() at time zone 'Asia/Ho_Chi_Minh')::date-10,1)+12,'Accepted effective end reconciles exactly');\ninsert into fixture(name,id) select 'expired',pg_temp.approved_legacy(payload||jsonb_build_object('legacy_reference','expired','student_code','LEGACY-EXPIRED','full_name','Expired legacy learner','class_code','LEGACY-CLASS','tuition_status','EXPIRED','started_at',((now() at time zone 'Asia/Ho_Chi_Minh')::date-365)::text,'tuition_starts_on',((now() at time zone 'Asia/Ho_Chi_Minh')::date-90)::text),'f') from fixture where name='source';\nselect lives_ok($$select public.import_legacy_row((select id from fixture where name='expired'),1)$$,'Expired tuition retains opening debt without renewal');\nselect is((select t.status from public.enrollment_tuition t join public.migration_batch_rows r on r.target_tuition_id=t.id where r.id=(select id from fixture where name='expired')),'COMPLETED','Expired source maps to existing completed term state');\n\n\nselect is(public.rollback_legacy_row((select id from fixture where name='row'),false,'Discard synthetic pilot'),'REQUESTED','Rollback requires separate approval');\nselect throws_ok($$select public.rollback_legacy_row((select id from fixture where name='row'),true,'Self')$$,'P0001','Rollback maker cannot approve own request','Rollback self approval denied');\nselect set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000002',true);",
+    "status": "REMAINING_FIXTURE_BLOCKER",
+    "root_error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED"
+  },
+  {
+    "file": "database/lesson_feedback_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/makeup_credit_ledger_test.sql",
+    "line": 801,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '76000000-0000-0000-0000-000000000003',\n    '66000000-0000-0000-0000-000000000003',\n    '56000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    '76000000-0000-0000-0000-000000000004',\n    '66000000-0000-0000-0000-000000000004',\n    '56000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/opening_balance_collections_test.sql",
+    "line": 33,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": " 'started_at',(now() at time zone 'Asia/Ho_Chi_Minh')::date::text,\n 'tuition_starts_on',(now() at time zone 'Asia/Ho_Chi_Minh')::date::text,\n 'tuition_plan_code','LEGACY-PLAN','student_status','ACTIVE','tuition_status','ACTIVE',\n 'currency','VND','discount_type','NONE','discount_value','0','final_amount','5500000','opening_paid_amount','3000000','opening_outstanding','2500000'));\nset local role authenticated;\nselect set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000001',true);\ninsert into fixture(name,id) select 'batch',public.stage_legacy_batch('LEGACY-TEST','synthetic.csv',repeat('a',64),(now() at time zone 'Asia/Ho_Chi_Minh')::date,'ee100000-0000-0000-0000-000000000001',jsonb_build_array(payload)) from fixture where name='source';\ninsert into fixture(name,id) select 'row',id from public.migration_batch_rows where batch_id=(select id from fixture where name='batch');\nselect public.review_legacy_row((select id from fixture where name='row'),1,'MAP','Exact mapping',(select payload||'{\"class_code\":\"LEGACY-CLASS\"}'::jsonb from fixture where name='source'));\nselect public.review_legacy_row((select id from fixture where name='row'),2,'IDENTITY','Checked');\nselect public.review_legacy_row((select id from fixture where name='row'),2,'ACADEMIC','Checked');\nselect set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000002',true);\nselect public.review_legacy_row((select id from fixture where name='row'),2,'FINANCE','Independent check');\nselect public.import_legacy_row((select id from fixture where name='row'),2);\ninsert into fixture(name,id) select 'opening',id from public.opening_receivables where migration_row_id=(select id from fixture where name='row');\ncreate function pg_temp.balance() returns numeric language sql as $$select outstanding_balance from public.opening_receivable_balances where id=(select id from fixture where name='opening')$$;",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/payment_engine_v1_test.sql",
+    "line": 135,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'f2000000-0000-0000-0000-000000000001',\n  'f1400000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n),\n(\n  'f3000000-0000-0000-0000-000000000002',\n  'f2000000-0000-0000-0000-000000000002',\n  'f1400000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/refund_engine_v1_test.sql",
+    "line": 136,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'b6000000-0000-0000-0000-000000000001',\n  'b5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n),\n(\n  'b7000000-0000-0000-0000-000000000002',\n  'b6000000-0000-0000-0000-000000000002',\n  'b5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/relationship_read_authorization_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/reschedule_makeup_foundation_test.sql",
+    "line": 176,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '73000000-0000-0000-0000-000000000003',\n    '63000000-0000-0000-0000-000000000003',\n    '53000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    'ACTIVE'\n  ),\n  (\n    '73000000-0000-0000-0000-000000000004',\n    '63000000-0000-0000-0000-000000000004',\n    '53000000-0000-0000-0000-000000000002',\n    '2026-09-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/reschedule_session_occurrence_test.sql",
+    "line": 202,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "insert into public.enrollments (\n  id,\n  student_id,\n  class_id,\n  started_at,\n  status\n)\nvalues (\n  '74000000-0000-0000-0000-000000000021',\n  '64000000-0000-0000-0000-000000000002',\n  '54000000-0000-0000-0000-000000000011',\n  '2026-09-01',\n  'ACTIVE'\n);\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/revenue_forecast_v1_test.sql",
+    "line": 128,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'ab600000-0000-0000-0000-000000000001',\n  'ab500000-0000-0000-0000-000000000001',\n  '2026-06-01',\n  '2026-06-01',\n  'ACTIVE'\n),\n(\n  'ab700000-0000-0000-0000-000000000002',\n  'ab600000-0000-0000-0000-000000000002',\n  'ab500000-0000-0000-0000-000000000001',\n  '2026-07-01',\n  '2026-07-01',\n  'ACTIVE'\n);\n\ninsert into public.enrollment_tuition (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/session_status_workflow_test.sql",
+    "line": 103,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "insert into public.enrollments (\n  id,\n  student_id,\n  class_id,\n  started_at,\n  status\n)\nvalues (\n  '72000000-0000-0000-0000-000000000001',\n  '62000000-0000-0000-0000-000000000001',\n  '52000000-0000-0000-0000-000000000001',\n  '2026-09-01',\n  'ACTIVE'\n);\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/session_teacher_assignment_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/student_ops_shell_test.sql",
+    "line": 125,
+    "error": "PLACEMENT_SCHEDULE_REQUIRED",
+    "classification": "Incorrect fixture with cascading failures: initial assign assertions (25 and 29) raise PLACEMENT_SCHEDULE_UNKNOWN; the schedule has no room and incomplete teacher branch prerequisites. Later unscheduled class inserts raise PLACEMENT_SCHEDULE_REQUIRED. Queue/KPI failures follow the denied assignments; passing behavior after complete prerequisites remains unverified.",
+    "setup_excerpt": "  ('e7300000-0000-4000-8000-000000000008', 'e7100000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000003', 'OPS-FULL-A', 'Lop Full A', 'GROUP', 2, 'ACTIVE', 'e7300000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000002');\ninsert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values\n  ('e7300000-0000-4000-8000-000000000007', 'e7700000-0000-4000-8000-000000000001', 'PRIMARY', true, '2020-01-01');\ninsert into public.schedules(class_id, day_of_week, start_time, end_time, effective_from, status)\nvalues ('e7300000-0000-4000-8000-000000000007', 4, '18:00', '19:00', '2020-01-01', 'ACTIVE');\ninsert into public.students(id, student_code, full_name, default_branch_id, status) values\n  ('e7400000-0000-4000-8000-000000000001', 'OPS-FILL-1', 'Ops Fill 1', 'e7100000-0000-4000-8000-000000000001', 'ACTIVE'),\n  ('e7400000-0000-4000-8000-000000000002', 'OPS-FILL-2', 'Ops Fill 2', 'e7100000-0000-4000-8000-000000000001', 'ACTIVE');\ninsert into public.student_curriculum_enrollments(student_id, curriculum_id, current_level_id, is_primary, status, started_at) values\n  ('e7400000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today()),\n  ('e7400000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000002', true, 'ACTIVE', public.registration_vietnam_today());\ninsert into public.enrollments(id, student_id, class_id, enrolled_at, started_at, status) values\n  ('e7500000-0000-4000-8000-000000000001', 'e7400000-0000-4000-8000-000000000001', 'e7300000-0000-4000-8000-000000000008', public.registration_vietnam_today(), public.registration_vietnam_today(), 'ACTIVE'),\n  ('e7500000-0000-4000-8000-000000000002', 'e7400000-0000-4000-8000-000000000002', 'e7300000-0000-4000-8000-000000000008', public.registration_vietnam_today(), public.registration_vietnam_today(), 'ACTIVE');\nselect is((select count(*) from public.list_placement_class_options('e7100000-0000-4000-8000-000000000001') where id = 'e7300000-0000-4000-8000-000000000008'), 0::bigint, 'full class is not offered');\nselect is((select count(*) from public.list_placement_class_options('e7100000-0000-4000-8000-000000000002')), 0::bigint, 'class options hide the other branch');",
+    "status": "REMAINING_FIXTURE_BLOCKER",
+    "root_error": "PLACEMENT_SCHEDULE_UNKNOWN"
+  },
+  {
+    "file": "database/student_parent_history_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/teacher_historical_access_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/teacher_payroll_test.sql",
+    "line": 124,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  (\n    '71000000-0000-0000-0000-000000000001',\n    '61000000-0000-0000-0000-000000000001',\n    '51000000-0000-0000-0000-000000000001',\n    '2026-08-01',\n    'ACTIVE'\n  ),\n  (\n    '71000000-0000-0000-0000-000000000002',\n    '61000000-0000-0000-0000-000000000002',\n    '51000000-0000-0000-0000-000000000002',\n    '2026-08-01',\n    'ACTIVE'\n  );\n\ninsert into public.schedules (",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/tuition_branch_pricing_discounts_test.sql",
+    "line": 222,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'c6000000-0000-0000-0000-000000000004',\n  'c5000000-0000-0000-0000-000000000002',\n  '2026-09-01',\n  '2026-09-10',\n  'ACTIVE'\n),\n(\n  'c7000000-0000-0000-0000-000000000005',\n  'c6000000-0000-0000-0000-000000000005',\n  'c5000000-0000-0000-0000-000000000002',\n  '2026-09-01',\n  '2026-09-10',\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/tuition_discount_invoice_lock_test.sql",
+    "line": 119,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  student_id,\n  class_id,\n  enrolled_at,\n  started_at,\n  status\n)\nvalues (\n  'c7000000-0000-0000-0000-000000000001',\n  'c6000000-0000-0000-0000-000000000001',\n  'c5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/tuition_operations_rpc_test.sql",
+    "line": 119,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  student_id,\n  class_id,\n  enrolled_at,\n  started_at,\n  status\n)\nvalues (\n  'c7000000-0000-0000-0000-000000000001',\n  'c6000000-0000-0000-0000-000000000001',\n  'c5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/tuition_phase1_test.sql",
+    "line": 149,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "    '6a000000-0000-0000-0000-000000000002',\n    '5a000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    null,\n    'ACTIVE'\n  ),\n  (\n    '7a000000-0000-0000-0000-000000000003',\n    '6a000000-0000-0000-0000-000000000003',\n    '5a000000-0000-0000-0000-000000000001',\n    '2026-09-01',\n    '2026-09-15',\n    'ACTIVE'\n  );\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/tuition_reminders_test.sql",
+    "line": 119,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  student_id,\n  class_id,\n  enrolled_at,\n  started_at,\n  status\n)\nvalues (\n  'c7000000-0000-0000-0000-000000000001',\n  'c6000000-0000-0000-0000-000000000001',\n  'c5000000-0000-0000-0000-000000000001',\n  (now() at time zone 'Asia/Ho_Chi_Minh')::date-60,\n  (now() at time zone 'Asia/Ho_Chi_Minh')::date-40,\n  'ACTIVE'\n);\n\n",
+    "status": "REMAINING_FIXTURE_BLOCKER"
+  },
+  {
+    "file": "database/attendance_launcher_test.sql",
+    "line": 36,
+    "error": "insert or update on table \"classes\" violates foreign key constraint \"classes_course_id_fkey\"",
+    "classification": "Test-environment dependency: fixture selects curriculum TEST_GUITAR, absent from clean migrations and seed, so no course is inserted before the class FK.",
+    "setup_excerpt": "insert into public.teachers(id, user_id, teacher_code, full_name, status) values\n  ('c2100000-0000-4000-8000-000000000021', 'c2100000-0000-4000-8000-000000000001', 'TEST_TSW_A', 'TEST Minh', 'ACTIVE'),\n  ('c2100000-0000-4000-8000-000000000022', 'c2100000-0000-4000-8000-000000000002', 'TEST_TSW_B', 'TEST Other', 'ACTIVE');\ninsert into public.teacher_branches(teacher_id, branch_id) values\n  ('c2100000-0000-4000-8000-000000000021', 'c2100000-0000-4000-8000-000000000010'),\n  ('c2100000-0000-4000-8000-000000000022', 'c2100000-0000-4000-8000-000000000010');\ninsert into public.rooms(id, branch_id, code, name, capacity) values\n  ('c2100000-0000-4000-8000-000000000030', 'c2100000-0000-4000-8000-000000000010', 'TEST_TSW_R', 'Phòng TEST 2', 10);\ninsert into public.courses(id, curriculum_id, code, name, status)\nselect 'c2100000-0000-4000-8000-000000000040', id, 'TEST_TSW_DB', 'Guitar Group Test DB', 'ACTIVE' from public.curriculums where code = 'TEST_GUITAR';\ninsert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id)\nselect 'c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000010', 'c2100000-0000-4000-8000-000000000040', 'TEST_TSW_DB', 'Guitar Group Test DB', 'GROUP', 10, 'ACTIVE',\n  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'PRE'),\n  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'GRADE_5');\ninsert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values\n  ('c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000021', 'PRIMARY', true, current_date - 30);",
+    "status": "RESOLVED_IN_FINAL_RUN"
+  },
+  {
+    "file": "database/enrollment_pause_engine_test.sql",
+    "line": 132,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "insert into public.enrollments (\n  id,\n  student_id,\n  class_id,\n  started_at,\n  status\n)\nvalues (\n  '77000000-0000-0000-0000-000000000001',\n  '67000000-0000-0000-0000-000000000001',\n  '57000000-0000-0000-0000-000000000001',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "RESOLVED_IN_FINAL_RUN"
+  },
+  {
+    "file": "database/pause_tuition_effective_end_test.sql",
+    "line": 135,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'd6000000-0000-0000-0000-000000000001',\n  'd5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n),\n(\n  'd7000000-0000-0000-0000-000000000002',\n  'd6000000-0000-0000-0000-000000000002',\n  'd5000000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "RESOLVED_IN_FINAL_RUN"
+  },
+  {
+    "file": "database/payment_cash_integrity_test.sql",
+    "line": 134,
+    "error": "Enrollment blocked: CLASS_SCOPE_UNCONFIGURED",
+    "classification": "Incorrect legacy fixture: classes omit required accepted level scope; subsequent academic-program/timetable requirements also need valid foundation, not disabled guards.",
+    "setup_excerpt": "  'f2000000-0000-0000-0000-000000000001',\n  'f1400000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n),\n(\n  'f3000000-0000-0000-0000-000000000002',\n  'f2000000-0000-0000-0000-000000000002',\n  'f1400000-0000-0000-0000-000000000001',\n  '2026-08-20',\n  '2026-09-01',\n  'ACTIVE'\n);\n\n",
+    "status": "RESOLVED_IN_FINAL_RUN"
+  },
+  {
+    "file": "database/teacher_session_workspace_test.sql",
+    "line": 36,
+    "error": "insert or update on table \"classes\" violates foreign key constraint \"classes_course_id_fkey\"",
+    "classification": "Test-environment dependency: fixture selects curriculum TEST_GUITAR, absent from clean migrations and seed, so no course is inserted before the class FK.",
+    "setup_excerpt": "insert into public.teachers(id, user_id, teacher_code, full_name, status) values\n  ('c2100000-0000-4000-8000-000000000021', 'c2100000-0000-4000-8000-000000000001', 'TEST_TSW_A', 'TEST Minh', 'ACTIVE'),\n  ('c2100000-0000-4000-8000-000000000022', 'c2100000-0000-4000-8000-000000000002', 'TEST_TSW_B', 'TEST Other', 'ACTIVE');\ninsert into public.teacher_branches(teacher_id, branch_id) values\n  ('c2100000-0000-4000-8000-000000000021', 'c2100000-0000-4000-8000-000000000010'),\n  ('c2100000-0000-4000-8000-000000000022', 'c2100000-0000-4000-8000-000000000010');\ninsert into public.rooms(id, branch_id, code, name, capacity) values\n  ('c2100000-0000-4000-8000-000000000030', 'c2100000-0000-4000-8000-000000000010', 'TEST_TSW_R', 'Phòng TEST 2', 10);\ninsert into public.courses(id, curriculum_id, code, name, status)\nselect 'c2100000-0000-4000-8000-000000000040', id, 'TEST_TSW_DB', 'Guitar Group Test DB', 'ACTIVE' from public.curriculums where code = 'TEST_GUITAR';\ninsert into public.classes(id, branch_id, course_id, code, name, class_type, capacity, status, accepted_from_level_id, accepted_to_level_id)\nselect 'c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000010', 'c2100000-0000-4000-8000-000000000040', 'TEST_TSW_DB', 'Guitar Group Test DB', 'GROUP', 10, 'ACTIVE',\n  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'PRE'),\n  (select l.id from public.curriculum_levels l join public.curriculums c on c.id = l.curriculum_id where c.code = 'TEST_GUITAR' and l.code = 'GRADE_5');\ninsert into public.class_teachers(class_id, teacher_id, teacher_role, is_active, assigned_at) values\n  ('c2100000-0000-4000-8000-000000000050', 'c2100000-0000-4000-8000-000000000021', 'PRIMARY', true, current_date - 30);",
+    "status": "RESOLVED_IN_FINAL_RUN"
+  }
+]

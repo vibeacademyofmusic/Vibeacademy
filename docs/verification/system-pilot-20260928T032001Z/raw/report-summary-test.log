@@ -1,0 +1,88 @@
+generate_learning_report RPC error: {
+  message: 'Invalid closed report period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Enrollment does not overlap period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'First monthly report must cover the enrollment start calendar month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'First monthly report must start on the enrollment start date and end on the last day of the following month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report must cover a full calendar month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report must stay within enrollment dates; use END_OF_COURSE for a shortened final period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report overlaps an existing report',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'private SQL detail',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+✔ report list filters branch status type month and bounded pagination (53.856041ms)
+✔ report list renders multiple branches and empty state (117.679ms)
+✔ report ops dashboard exposes KPI tabs and needs view by default (36.386125ms)
+✔ report metrics use head counts without loading full payloads (16.125084ms)
+✔ generate sends only validated report context to RPC (22.874833ms)
+✔ invalid generation and unauthorized requests do not reach engine (33.197875ms)
+✔ ready and approval pass expected version; approval requires confirmation (37.071625ms)
+✔ reject fake SENT and safely surface engine lock (25.055375ms)
+✔ draft detail shows missing input attendance and editable summary (45.860084ms)
+✔ approved detail reads snapshot and hides editing actions (33.957417ms)
+✔ approved legacy V1 summary remains readable after V2 (39.466708ms)
+✔ review detail offers approve and return but no inline edit (28.755875ms)
+✔ print preview keeps the approved snapshot and marks controls for exclusion (38.345583ms)
+✔ first monthly suggestions handle day one, mid-month, leap day and year rollover (0.213375ms)
+✔ selected enrollment prefills first-period dates and enrollment lower bound (27.892125ms)
+✔ existing monthly history suggests following calendar month including cancelled (142.639791ms)
+✔ other enrollment or END_OF_COURSE history does not replace first monthly default (39.285166ms)
+✔ early-ended and future enrollments explain why suggested monthly report is unavailable (49.203917ms)
+✔ first extended period action forwards validated inputs without calendar-month-only rejection (10.65075ms)
+✔ known generation errors have Vietnamese explanations and unknown errors stay private (105.398833ms)
+✔ approved official document exposes confirmed publish only and never refreshes snapshot (28.167292ms)
+✔ publish action requires confirmation and forwards version to existing engine (27.382416ms)
+✔ published report has disabled delivery controls with real student and active parent contacts (28.881ms)
+✔ draft and review do not expose delivery controls (68.413125ms)
+✔ missing recipients and missing snapshot fail safely (68.011416ms)
+✔ repeated delivery page loads cannot enqueue, send, or mutate frozen content (64.539792ms)
+✔ delivery history uses actual records, preserves mock and queued distinctions, filters other reports (37.264084ms)
+✔ V2 academic document renders all seven summaries, maps enums, and handles direct assessment (29.152791ms)
+✔ official print content excludes internal notes, delivery and administration (36.197875ms)
+✔ official layout loads screen stylesheet and paper separates toolbar from content (28.537125ms)
+✔ academic award labels retain Pass Merit Distinction and legacy safety (35.223792ms)
+✔ published portal renders V2 and legacy public summaries without internal notes (3.719833ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1560.15

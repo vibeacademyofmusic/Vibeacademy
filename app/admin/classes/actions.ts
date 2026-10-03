@@ -74,6 +74,14 @@ export async function createClass(formData: FormData) {
     formData.get('notes') ?? ''
   ).trim()
 
+  const acceptedFrom = String(formData.get('accepted_from_level_id') ?? '').trim()
+  const acceptedTo = String(formData.get('accepted_to_level_id') ?? '').trim()
+  const fromLevel = UUID_PATTERN.test(acceptedFrom) ? acceptedFrom : null
+  const toLevel = UUID_PATTERN.test(acceptedTo) ? acceptedTo : null
+  if ((fromLevel && !toLevel) || (!fromLevel && toLevel)) {
+    redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Phạm vi trình độ cần cả Từ và Đến, hoặc để trống'))
+  }
+
   if (
     !branchId ||
     !courseId ||
@@ -82,7 +90,7 @@ export async function createClass(formData: FormData) {
     !classType
   ) {
     redirect(
-      '/admin/classes?error=Branch%2C%20course%2C%20code%2C%20name%20and%20class%20type%20are%20required'
+      '/admin/classes?view=classes&error=Branch%2C%20course%2C%20code%2C%20name%20and%20class%20type%20are%20required'
     )
   }
 
@@ -176,17 +184,19 @@ export async function createClass(formData: FormData) {
       end_date: endDateValue || null,
       notes: notes || null,
       status: 'DRAFT',
+      accepted_from_level_id: fromLevel,
+      accepted_to_level_id: toLevel,
     })
 
   if (error) {
     if (error.code === '23505') {
       redirect(
-        '/admin/classes?error=This%20class%20code%20already%20exists%20at%20this%20branch'
+        '/admin/classes?view=classes&error=This%20class%20code%20already%20exists%20at%20this%20branch'
       )
     }
 
     redirect(
-      '/admin/classes?error=Could%20not%20create%20class'
+      '/admin/classes?view=classes&error=' + encodeURIComponent(error.message || 'Could not create class')
     )
   }
 
@@ -194,8 +204,34 @@ export async function createClass(formData: FormData) {
   revalidatePath('/admin/classes')
 
   redirect(
-    '/admin/classes?success=Class%20created%20successfully'
+    '/admin/classes?view=classes&success=Class%20created%20successfully'
   )
+}
+
+export async function setClassLevelScope(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const classId = String(formData.get('class_id') ?? '').trim()
+  const fromRaw = String(formData.get('accepted_from_level_id') ?? '').trim()
+  const toRaw = String(formData.get('accepted_to_level_id') ?? '').trim()
+  const fromLevel = fromRaw === '' ? null : fromRaw
+  const toLevel = toRaw === '' ? null : toRaw
+  if (!UUID_PATTERN.test(classId)) {
+    redirect('/admin/classes?error=Invalid%20class')
+  }
+  if ((fromLevel && !UUID_PATTERN.test(fromLevel)) || (toLevel && !UUID_PATTERN.test(toLevel))) {
+    redirect(`/admin/classes/${classId}?error=` + encodeURIComponent('Level không hợp lệ'))
+  }
+  const { error } = await supabase.rpc('set_class_level_scope', {
+    p_class: classId,
+    p_from: fromLevel,
+    p_to: toLevel,
+  })
+  if (error) {
+    redirect(`/admin/classes/${classId}?error=` + encodeURIComponent(error.message || 'Không lưu được phạm vi'))
+  }
+  revalidatePath(`/admin/classes/${classId}`)
+  revalidatePath('/admin/classes')
+  redirect(`/admin/classes/${classId}?success=` + encodeURIComponent('Đã cập nhật phạm vi trình độ'))
 }
 
 export async function setClassStatus(

@@ -1,0 +1,13 @@
+- main:
+  - heading "Vibe Academy" [level=1]
+  - paragraph: Management System
+  - generic: Bạn không có quyền truy cập
+  - generic: Email
+  - textbox "Email":
+    - /placeholder: admin@vibeacademy...
+  - generic: Password
+  - textbox "Password":
+    - /placeholder: ••••••••
+  - button "Sign in"
+  - paragraph: Vibe Academy of Music & Cinema
+URL: http://127.0.0.1:3000/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp

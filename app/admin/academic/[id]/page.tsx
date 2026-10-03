@@ -1,405 +1,138 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { createClient } from '@/lib/supabase/server'
-import {
-  createCurriculumLevel,
-  setCurriculumLevelStatus,
-} from '../actions'
-
-type CurriculumDetailPageProps = {
-  params: Promise<{
-    id: string
-  }>
-  searchParams: Promise<{
-    error?: string
-    success?: string
-  }>
-}
+import { AppPage, DataTable, EmptyState, FormField, InlineNotice, MetricCard, PageHeader, SectionCard, SelectField, StatusBadge } from '@/app/admin/_components/vibe'
+import { createCurriculumLevel, setCurriculumLevelStatus } from '@/app/admin/academic/actions'
+import { loadWorkspace } from '@/app/admin/programs/data'
+import { levelTypeLabel, statusLabel, statusTone, subjectCompletionLabel } from '@/app/admin/programs/model'
+import { AcademicTrail } from '@/app/admin/programs/trail'
 
 export default async function CurriculumDetailPage({
   params,
   searchParams,
-}: CurriculumDetailPageProps) {
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ error?: string; success?: string }>
+}) {
   const { id } = await params
   const { error, success } = await searchParams
-
-  const supabase = await createClient()
-
-  const {
-    data: curriculum,
-    error: curriculumError,
-  } = await supabase
-    .from('curriculums')
-    .select('id, code, name, description, status')
-    .eq('id', id)
-    .maybeSingle()
-
-  if (curriculumError || !curriculum) {
-    notFound()
-  }
-
-  const {
-    data: levels,
-    error: levelsError,
-  } = await supabase
-    .from('curriculum_levels')
-    .select(
-      'id, code, name, sequence_no, level_number, level_type, completion_rule, status'
-    )
-    .eq('curriculum_id', curriculum.id)
-    .order('sequence_no', { ascending: true })
-
-  const nextSequence = (levels?.length ?? 0) + 1
+  const workspace = await loadWorkspace()
+  const program = workspace.programs.find(row => row.id === id)
+  if (!program) notFound()
+  const courses = workspace.courses.filter(course => course.curriculumId === program.id)
+  const structureGaps = program.attention.filter(row => row.kind === 'structure')
+  const contentGaps = program.attention.filter(row => row.kind === 'content')
+  const nextSequence = program.levels.length + 1
 
   return (
-    <div>
-      <div className="mb-6">
-        <Link
-          href="/admin/academic"
-          className="text-sm font-medium text-gray-500 hover:text-gray-900"
-        >
-          ← Back to Academic
-        </Link>
+    <AppPage>
+      <AcademicTrail items={[{ label: program.name }]} />
+      <PageHeader
+        title={program.name}
+        description={program.description ?? `${program.code} · Chương trình đào tạo`}
+        actions={<Link className="vibe-button" href={`/admin/academic/${program.id}/edit`}>Chỉnh sửa chương trình</Link>}
+      />
+      {error ? <InlineNotice tone="error">{error}</InlineNotice> : null}
+      {success ? <InlineNotice>{success}</InlineNotice> : null}
+      {program.levels.length > 0 ? (
+        <nav className="vibe-tabs" aria-label="Cấp độ">
+          {program.levels.map(level => (
+            <Link key={level.id} href={`/admin/academic/${program.id}/levels/${level.id}`}>{level.name}</Link>
+          ))}
+        </nav>
+      ) : null}
+      <div className="vibe-metrics">
+        <MetricCard title="Cấp độ" value={String(program.levelCount)} />
+        <MetricCard title="Môn học" value={String(program.subjectCount)} />
+        <MetricCard title="Nhóm đánh giá" value={String(program.componentCount)} />
+        <MetricCard title="Lesson đang hoạt động" value={String(program.lessonCount)} />
       </div>
-
-      <div className="mb-8">
-        <p className="text-sm font-medium text-gray-500">
-          {curriculum.code}
-        </p>
-
-        <div className="mt-1 flex flex-wrap items-center gap-3">
-  <h1 className="text-3xl font-bold tracking-tight text-gray-950">
-    {curriculum.name}
-  </h1>
-
-  <span
-    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-      curriculum.status === 'ACTIVE'
-        ? 'bg-green-50 text-green-700'
-        : 'bg-gray-100 text-gray-600'
-    }`}
-  >
-    {curriculum.status}
-  </span>
-
-  <Link
-    href={`/admin/academic/${curriculum.id}/edit`}
-    className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-  >
-    Edit Curriculum
-  </Link>
-</div>
-
-        {curriculum.description && (
-          <p className="mt-3 max-w-2xl text-sm text-gray-500">
-            {curriculum.description}
-          </p>
+      <SectionCard title="Cấu trúc học thuật">
+        <p><StatusBadge tone={program.health === 'incomplete' ? 'warning' : 'success'}>{program.healthLabel}</StatusBadge></p>
+        <p className="mt-3 text-sm text-gray-500">{program.path}</p>
+        {structureGaps.length === 0 ? <p className="mt-3 text-sm">Không có môn học nào thiếu cấu trúc bắt buộc.</p> : (
+          <ul className="mt-3 space-y-2 text-sm">
+            {structureGaps.map(gap => (
+              <li key={`${gap.subjectId}-structure`}>
+                <Link href={`/admin/academic/${program.id}/levels/${gap.levelId}/subjects/${gap.subjectId}`}>{gap.levelName} · {gap.subjectName}</Link>
+                <span className="text-gray-500"> · cần bổ sung cấu trúc học thuật</span>
+              </li>
+            ))}
+          </ul>
         )}
-      </div>
-
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-          {success}
-        </div>
-      )}
-
-      <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-        <section className="rounded-2xl border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-950">
-            Add Grade / Level
-          </h2>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Add a new level to {curriculum.name}.
-          </p>
-
-          <form
-            action={createCurriculumLevel}
-            className="mt-6 space-y-5"
-          >
-            <input
-              type="hidden"
-              name="curriculum_id"
-              value={curriculum.id}
-            />
-
-            <div>
-              <label
-                htmlFor="code"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                Level Code *
-              </label>
-
-              <input
-                id="code"
-                name="code"
-                required
-                placeholder="GRADE_1"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-              />
-
-              <p className="mt-1 text-xs text-gray-400">
-                Example: FOUNDATION, GRADE_1, GRADE_2
-              </p>
-            </div>
-
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                Level Name *
-              </label>
-
-              <input
-                id="name"
-                name="name"
-                required
-                placeholder="Grade 1"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="level_type"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                Level Type *
-              </label>
-
-              <select
-                id="level_type"
-                name="level_type"
-                defaultValue="GRADE"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-              >
-                <option value="FOUNDATION">
-                  Foundation
-                </option>
-
-                <option value="GRADE">
-                  Grade
-                </option>
-
-                <option value="DIPLOMA">
-                  Diploma
-                </option>
-
-                <option value="OTHER">
-                  Other
-                </option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="sequence_no"
-                  className="mb-2 block text-sm font-medium text-gray-700"
-                >
-                  Sequence *
-                </label>
-
-                <input
-                  id="sequence_no"
-                  name="sequence_no"
-                  type="number"
-                  min="1"
-                  required
-                  defaultValue={nextSequence}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="level_number"
-                  className="mb-2 block text-sm font-medium text-gray-700"
-                >
-                  Grade No.
-                </label>
-
-                <input
-                  id="level_number"
-                  name="level_number"
-                  type="number"
-                  min="0"
-                  placeholder="1"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="completion_rule"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                Completion Rule
-              </label>
-
-              <select
-                id="completion_rule"
-                name="completion_rule"
-                defaultValue="ALL_REQUIRED_SUBJECTS"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-              >
-                <option value="ALL_REQUIRED_SUBJECTS">
-                  All Required Subjects
-                </option>
-
-                <option value="MANUAL">
-                  Manual
-                </option>
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-gray-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
-            >
-              Create Level
-            </button>
-          </form>
-        </section>
-
-        <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-          <div className="border-b border-gray-200 px-6 py-5">
-            <h2 className="text-lg font-semibold text-gray-950">
-              Grade / Level Structure
-            </h2>
-
-            <p className="mt-1 text-sm text-gray-500">
-              {levels?.length ?? 0} levels in this curriculum
-            </p>
-          </div>
-
-          {levelsError ? (
-            <div className="p-6 text-sm text-red-600">
-              Could not load curriculum levels.
-            </div>
-          ) : !levels || levels.length === 0 ? (
-            <div className="p-10 text-center">
-              <p className="text-sm font-medium text-gray-700">
-                No levels yet
-              </p>
-
-              <p className="mt-1 text-sm text-gray-400">
-                Create the first grade or level using the form.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {levels.map((level) => (
-                <div
-                  key={level.id}
-                  className="flex items-center justify-between gap-6 px-6 py-5"
-                >
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <p className="font-semibold text-gray-950">
-                        {level.name}
-                      </p>
-
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                          level.status === 'ACTIVE'
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {level.status}
-                      </span>
-                    </div>
-
-                    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-                      <span>
-                        Code: {level.code}
-                      </span>
-
-                      <span>
-                        Type: {level.level_type}
-                      </span>
-
-                      <span>
-                        Sequence: {level.sequence_no}
-                      </span>
-
-                      {level.level_number !== null && (
-                        <span>
-                          Grade: {level.level_number}
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="mt-2 text-xs text-gray-400">
-                      Completion: {level.completion_rule}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-  <Link
-    href={`/admin/academic/${curriculum.id}/levels/${level.id}`}
-    className="rounded-lg bg-gray-950 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800"
-  >
-    Manage
-  </Link>
-
-  <Link
-    href={`/admin/academic/${curriculum.id}/levels/${level.id}/edit`}
-    className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-  >
-    Edit
-  </Link>
-
-  <form action={setCurriculumLevelStatus}>
-    <input
-      type="hidden"
-      name="curriculum_id"
-      value={curriculum.id}
-    />
-
-    <input
-      type="hidden"
-      name="level_id"
-      value={level.id}
-    />
-
-    <input
-      type="hidden"
-      name="status"
-      value={
-        level.status === 'ACTIVE'
-          ? 'INACTIVE'
-          : 'ACTIVE'
-      }
-    />
-
-    <button
-      type="submit"
-      className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-    >
-      {level.status === 'ACTIVE'
-        ? 'Deactivate'
-        : 'Activate'}
-    </button>
-  </form>
-</div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-    </div>
+      </SectionCard>
+      <SectionCard title="Sẵn sàng nội dung">
+        <p className="text-sm">{program.contentLabel ?? 'Đủ nội dung Lesson'}</p>
+        {contentGaps.length > 0 ? (
+          <ul className="mt-3 space-y-2 text-sm">
+            {contentGaps.map(gap => (
+              <li key={`${gap.subjectId}-content`}>
+                <Link href={`/admin/academic/${program.id}/levels/${gap.levelId}/subjects/${gap.subjectId}`}>{gap.levelName} · {gap.subjectName}</Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </SectionCard>
+      <SectionCard title="Cấp độ">
+        {program.levels.length === 0 ? <EmptyState>Chưa có cấp độ.</EmptyState> : (
+          <DataTable
+            headers={['Cấp độ', 'Trạng thái', 'Môn học', 'Nhóm đánh giá', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Tác vụ']}
+            rows={program.levels.map(level => [
+              <div key="name"><strong>{level.name}</strong><p className="text-xs text-gray-500">{level.code} · {levelTypeLabel(level.levelType)} · {subjectCompletionLabel(level.completionRule)}</p></div>,
+              <StatusBadge key="status" tone={statusTone(level.status)}>{statusLabel(level.status)}</StatusBadge>,
+              String(level.subjectCount),
+              String(level.componentCount),
+              String(level.activeLessonCount),
+              <StatusBadge key="health" tone={level.health === 'incomplete' ? 'warning' : 'success'}>{level.health === 'incomplete' ? 'Cần bổ sung cấu trúc học thuật' : 'Đủ cấu trúc học thuật'}</StatusBadge>,
+              <span key="actions" className="flex flex-wrap gap-2">
+                <Link href={`/admin/academic/${program.id}/levels/${level.id}`}>Mở cấp độ</Link>
+                <Link href={`/admin/academic/${program.id}/levels/${level.id}/edit`}>Chỉnh sửa</Link>
+                <form action={setCurriculumLevelStatus}>
+                  <input type="hidden" name="curriculum_id" value={program.id} />
+                  <input type="hidden" name="level_id" value={level.id} />
+                  <input type="hidden" name="status" value={level.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
+                  <button className="vibe-button" type="submit">{level.status === 'ACTIVE' ? 'Ngừng hoạt động' : 'Kích hoạt'}</button>
+                </form>
+              </span>,
+            ])}
+          />
+        )}
+      </SectionCard>
+      <SectionCard title="Hồ sơ khóa học cũ">
+        <p className="mb-3 text-sm text-gray-500">Đây là dữ liệu cũ, không phải bước trên lộ trình Chương trình → Trình độ → Môn học → Bài học. Ca dạy là lớp.</p>
+        {courses.length === 0 ? <EmptyState>Chưa có khóa học liên kết.</EmptyState> : (
+          <DataTable
+            headers={['Khóa học', 'Cấp độ liên kết', 'Trạng thái', 'Lớp / học viên', 'Tác vụ']}
+            rows={courses.map(course => [
+              <div key="name"><strong>{course.name}</strong><p className="text-xs text-gray-500">{course.code}</p></div>,
+              course.levelName ?? '—',
+              <StatusBadge key="status" tone={statusTone(course.status)}>{statusLabel(course.status)}</StatusBadge>,
+              `${course.classCount} lớp · ${course.enrollmentCount} học viên`,
+              <span key="edit">Giữ nguyên hồ sơ cũ</span>,
+            ])}
+          />
+        )}
+      </SectionCard>
+      <SectionCard title="Thêm cấp độ">
+        <form action={createCurriculumLevel} className="grid gap-3 md:grid-cols-2">
+          <input type="hidden" name="curriculum_id" value={program.id} />
+          <FormField label="Mã cấp độ" name="code" required placeholder="GRADE_1" />
+          <FormField label="Tên cấp độ" name="name" required placeholder="Grade 1" />
+          <SelectField label="Loại cấp độ" name="level_type" defaultValue="GRADE">
+            <option value="FOUNDATION">Nền tảng</option>
+            <option value="GRADE">Cấp độ</option>
+            <option value="DIPLOMA">Văn bằng</option>
+            <option value="OTHER">Khác</option>
+          </SelectField>
+          <FormField label="Thứ tự" name="sequence_no" type="number" min={1} required defaultValue={nextSequence} />
+          <FormField label="Số cấp" name="level_number" type="number" min={0} placeholder="1" />
+          <SelectField label="Cách hoàn thành" name="completion_rule" defaultValue="ALL_REQUIRED_SUBJECTS">
+            <option value="ALL_REQUIRED_SUBJECTS">Hoàn thành mọi môn bắt buộc</option>
+            <option value="MANUAL">Thủ công</option>
+          </SelectField>
+          <button className="vibe-button-primary" type="submit">Tạo cấp độ</button>
+        </form>
+      </SectionCard>
+    </AppPage>
   )
 }
