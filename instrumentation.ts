@@ -9,12 +9,6 @@ export async function register() {
         p_oa_id: process.env.ZALO_OA_ID?.trim() ?? '', p_limit: 20,
       })
     } catch { /* Durable pending events remain available for the independent scheduler. */ }
-    if (process.env.ZALO_GATEWAY_SSH_HOST?.trim()) {
-      try {
-        const { applyGatewayClicks } = await import('./scripts/zalo/apply-gateway-clicks.cjs')
-        await applyGatewayClicks(process.env)
-      } catch { /* The Vietnam gateway keeps the event until a later apply succeeds. */ }
-    }
   }
 
   if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NEXT_PHASE !== 'phase-production-build' && process.env.ZALO_TOKEN_RENEWAL_ENABLED === 'true') {
