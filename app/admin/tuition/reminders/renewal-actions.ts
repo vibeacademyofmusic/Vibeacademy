@@ -116,6 +116,8 @@ export async function createTuitionRenewal(form: FormData) {
     return back('Hãy chọn gói, cách thanh toán và ngày hợp lệ.')
   }
   const db = await signedInClient()
+  const allowed = await db.rpc('tuition_reminder_prepare_allowed', { p_reminder: reminderId })
+  if (allowed.error || allowed.data !== true) return back('Bạn không có quyền tạo gia hạn tại chi nhánh này.')
   const begun = await db.rpc('begin_tuition_renewal', {
     p_reminder: reminderId,
     p_plan_code: plan,
@@ -134,6 +136,10 @@ export async function createTuitionRenewal(form: FormData) {
     return back('Không tạo được gia hạn. Hãy tải lại và kiểm tra hồ sơ.')
   }
   if (payload.result === 'open_renewal') return back('Đã có gia hạn hoặc hóa đơn mở cho học viên này. Chưa tạo bản ghi mới.')
+  const admin = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  if (admin.data !== true) {
+    return back(payload.result === 'duplicate' ? 'Đã có gia hạn này. Chưa tạo bản ghi mới.' : 'Đã tạo gia hạn học phí. Chưa tạo thanh toán payOS.', 'success')
+  }
   const checkoutError = await activateCheckout(payload.case_id)
   if (checkoutError) return back(`Đã tạo hóa đơn gia hạn. ${checkoutError}`)
   return back(`Đã tạo gia hạn và hóa đơn. ${PAYMENT_TEMPLATE_REQUEST}`, 'success')
@@ -142,6 +148,9 @@ export async function createTuitionRenewal(form: FormData) {
 export async function retryTuitionPayos(form: FormData) {
   const caseId = String(form.get('case_id') ?? '')
   if (!uuidPattern.test(caseId)) return back('Không xác định được hồ sơ gia hạn.')
+  const db = await signedInClient()
+  const admin = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  if (admin.data !== true) return back('Bạn không có quyền tạo thanh toán.')
   const checkoutError = await activateCheckout(caseId)
   if (checkoutError) return back(checkoutError)
   return back('Đã dùng lại hóa đơn và đơn payOS hiện có.', 'success')
@@ -150,6 +159,9 @@ export async function retryTuitionPayos(form: FormData) {
 export async function retryTuitionNotice(form: FormData) {
   const caseId = String(form.get('case_id') ?? '')
   if (!uuidPattern.test(caseId)) return back('Không xác định được hồ sơ gia hạn.')
+  const db = await signedInClient()
+  const admin = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  if (admin.data !== true) return back('Bạn không có quyền gửi thông báo.')
   await markNotice(caseId)
   return back(PAYMENT_TEMPLATE_REQUEST)
 }

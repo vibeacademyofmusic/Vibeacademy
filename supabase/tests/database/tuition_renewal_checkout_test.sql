@@ -10,6 +10,7 @@ insert into public.profiles(id, full_name, status) values
   ('c0e1b100-0000-4000-8000-000000000001', 'Renewal Admin', 'ACTIVE'),
   ('c0e1b100-0000-4000-8000-000000000002', 'Renewal Finance', 'ACTIVE'),
   ('c0e1b100-0000-4000-8000-000000000003', 'Renewal Cashier', 'ACTIVE');
+insert into public.branches(id, code, name) values ('c0e1b100-0000-4000-8000-000000000010', 'REN-B', 'Chi nhánh gia hạn');
 insert into public.user_roles(user_id, role_id, branch_id)
 select 'c0e1b100-0000-4000-8000-000000000001', id, null from public.roles where code = 'SUPER_ADMIN';
 insert into public.user_roles(user_id, role_id, branch_id)
@@ -28,7 +29,6 @@ select is(public.tuition_branch_list_price((select id from public.branches where
 select ok(16500000 <> 5500000 * 4 and 13500000 <> 4500000 * 4, 'annual price is not four three-month prices');
 select ok(position('begin_tuition_renewal' in pg_get_functiondef('public.record_tuition_zalo_reply(text,text,text,text,text,text)'::regprocedure)) = 0, 'customer reply does not open a renewal');
 
-insert into public.branches(id, code, name) values ('c0e1b100-0000-4000-8000-000000000010', 'REN-B', 'Chi nhánh gia hạn');
 insert into public.curriculums(id, code, name) values ('c0e1b100-0000-4000-8000-000000000011', 'REN-CUR', 'Renewal curriculum');
 insert into public.curriculum_levels(id, curriculum_id, code, name, sequence_no) values ('c0e1b100-0000-4000-8000-000000000012', 'c0e1b100-0000-4000-8000-000000000011', 'REN-L1', 'Renewal level', 1);
 insert into public.courses(id, curriculum_id, level_id, code, name) values ('c0e1b100-0000-4000-8000-000000000013', 'c0e1b100-0000-4000-8000-000000000011', 'c0e1b100-0000-4000-8000-000000000012', 'REN-COURSE', 'Renewal course');

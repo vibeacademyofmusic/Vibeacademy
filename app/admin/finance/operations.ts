@@ -27,6 +27,16 @@ export async function adminClient() {
   if (role.error || role.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
   return db
 }
+export async function reminderReader() {
+  const db = await createClient()
+  const { data, error } = await db.auth.getClaims()
+  if (error || !data?.claims) redirect('/login')
+  const role = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  if (role.data === true) return { db, superAdmin: true }
+  const enter = await db.rpc('tuition_care_may_enter')
+  if (enter.error || enter.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  return { db, superAdmin: false }
+}
 export async function signedInClient() {
   const db = await createClient()
   const { data, error } = await db.auth.getClaims()

@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { adminClient, uuidPattern, type Params } from '../../finance/operations'
-import { branches, rows } from '../../finance/query'
+import { reminderReader, uuidPattern, type Params } from '../../finance/operations'
+import { rows } from '../../finance/query'
 import { money } from '../../finance/data'
 import { Field, Select, Table, Pager, Notice, LoadError, dateText, timeText } from '../../finance/_components/ui'
 import SubmitButton from '../../finance/_components/SubmitButton'
 import { AppPage, PageHeader, MetricCard, StatusBadge, FilterBar, SectionCard } from '../../_components/vibe'
 import { plans, debts } from '../data'
-import { reminders, kpis, timing, filters, replyFilters, type Reminder } from './data'
+import { reminders, kpis, timing, filters, replyFilters, visibleBranches, prepareBranches, type Reminder } from './data'
 import { generateReminders, resolveReminder, confirmTuitionZalo, recordTuitionNoticeConsent, recordTuitionContactNote } from './actions'
 import { createTuitionRenewal, retryTuitionPayos, retryTuitionNotice } from './renewal-actions'
 import { PAYMENT_TEMPLATE_REQUEST, renewalPaymentLabel, renewalProcessingLabel } from '@/lib/integrations/tuition/renewal-status'
@@ -71,13 +71,15 @@ function zaloHref(params: Params, id?: string) {
 }
 
 export default async function ReminderPage({ searchParams }: { searchParams: Promise<Params> }) {
-  const params = await searchParams, db = await adminClient()
+  const params = await searchParams
+  const { db, superAdmin } = await reminderReader()
   let loaded
   try {
-    const base = await Promise.all([reminders(db, params), kpis(db), branches(db), plans(db)])
+    const base = await Promise.all([reminders(db, params), kpis(db), visibleBranches(db), plans(db), prepareBranches(db)])
     loaded = { base, debtRows: await debts(db, base[0].data.map(r => r.enrollment_tuition_id)) }
   } catch { return <LoadError /> }
-  const { base: [list, counts, branchRows, planRows], debtRows } = loaded
+  const { base: [list, counts, branchRows, planRows, prepareIds], debtRows } = loaded
+  const canPrepare = new Set(prepareIds)
   const debtMap = new Map(debtRows.map(d => [d.enrollment_tuition_id, d]))
   const attemptRows = list.data.length ? await rows(db.from('notification_jobs').select('entity_id,status,created_at').eq('entity_type', 'TUITION_REMINDER').eq('template_key', 'ZALO_TUITION_REMINDER').in('entity_id', list.data.map(row => row.id)).order('created_at', { ascending: false }).returns<{ entity_id: string; status: string; created_at: string }[]>()) : []
   const attemptByReminder = new Map<string, string>()
@@ -102,12 +104,12 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   const syncFailing = tuitionResponseSyncFailing(sync)
   const selectedId = uuidPattern.test(params.zalo ?? '') ? params.zalo! : ''
   let notice = null
-  if (selectedId) {
+  if (superAdmin && selectedId) {
     try { notice = await loadTuitionNotice(db, selectedId, uuidPattern.test(params.parent ?? '') ? params.parent! : null) }
     catch { notice = null }
   }
   return <AppPage>
-    <PageHeader title="Nhắc học phí" description="Gói 3 tháng: tuần đầu của tháng thứ ba hệ thống cập nhật lịch báo. Từ tuần thứ ba của tháng đó đến hết kỳ vẫn trong hạn và cảnh báo đỏ. Qua ngày cuối kỳ là quá hạn, cảnh báo đỏ và vàng. Gói 3 tháng đã thanh toán 50%: phần còn lại đến hạn thanh toán trong tuần đầu của tháng thứ hai; qua tuần đó là quá hạn thanh toán nợ. Học phí năm đã thanh toán 50%: phần còn lại đến hạn ở tuần thứ tư của tháng thứ ba, và qua tuần đầu của tháng thứ tư thì quá hạn thanh toán nợ. Bảo lưu không dịch các mốc này. Gói năm thanh toán đủ vẫn nhắc gia hạn ở tháng thứ mười. Chưa gửi tin cho phụ huynh." actions={<a href="#zalo-auto">Gửi báo tự động qua Zalo</a>} />
+    <PageHeader title="Nhắc học phí" description="Gói 3 tháng: tuần đầu của tháng thứ ba hệ thống cập nhật lịch báo. Từ tuần thứ ba của tháng đó đến hết kỳ vẫn trong hạn và cảnh báo đỏ. Qua ngày cuối kỳ là quá hạn, cảnh báo đỏ và vàng. Gói 3 tháng đã thanh toán 50%: phần còn lại đến hạn thanh toán trong tuần đầu của tháng thứ hai; qua tuần đó là quá hạn thanh toán nợ. Học phí năm đã thanh toán 50%: phần còn lại đến hạn ở tuần thứ tư của tháng thứ ba, và qua tuần đầu của tháng thứ tư thì quá hạn thanh toán nợ. Bảo lưu không dịch các mốc này. Gói năm thanh toán đủ vẫn nhắc gia hạn ở tháng thứ mười. Chưa gửi tin cho phụ huynh." actions={superAdmin ? <a href="#zalo-auto">Gửi báo tự động qua Zalo</a> : undefined} />
     <Notice params={params} />
     <div className="vibe-metrics">
       <MetricCard title="Sắp đến hạn" value={counts.upcoming} note="Chưa tới tuần cập nhật lịch" />
@@ -116,7 +118,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
       <MetricCard title="Trong hạn, cảnh báo đỏ" value={counts.red} note="Từ tuần thứ ba, hoặc phần còn lại học phí năm" />
       <MetricCard title="Quá hạn" value={counts.overdue} note="Đỏ và vàng. Nợ gói 3 tháng tính sau tuần đầu tháng thứ hai" />
     </div>
-    <form action={generateReminders}><SubmitButton className="vibe-button vibe-button-primary">Tạo nhắc học phí còn thiếu</SubmitButton></form>
+    {superAdmin && <form action={generateReminders}><SubmitButton className="vibe-button vibe-button-primary">Tạo nhắc học phí còn thiếu</SubmitButton></form>}
     <form><FilterBar>
       <Select name="state" label="Thời điểm / trạng thái" options={filters} value={params.state} />
       <Select name="branch" label="Chi nhánh" options={branchRows} value={params.branch} />
@@ -127,12 +129,12 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
     <Table headers={['Học viên', 'Chi nhánh / gói', 'Kỳ học hiện tại', 'Khoảng nhắc', 'Trạng thái', 'Học phí hiện tại', 'Hóa đơn / công nợ', 'Zalo', 'Phản hồi', 'Xử lý']} rows={list.data.map(r => {
       const debt = debtMap.get(r.enrollment_tuition_id)
       return [r.full_name + ' (' + r.student_code + ')', r.branch_name_snapshot + ' / ' + r.plan_name_snapshot,
-        <Link prefetch={false} key="term" href={'/admin/tuition?selected=' + r.enrollment_tuition_id}>{dateText(r.starts_on)} → {dateText(r.effective_ends_on)}</Link>,
+        superAdmin ? <Link prefetch={false} key="term" href={'/admin/tuition?selected=' + r.enrollment_tuition_id}>{dateText(r.starts_on)} → {dateText(r.effective_ends_on)}</Link> : <span key="term">{dateText(r.starts_on)} → {dateText(r.effective_ends_on)}</span>,
         dateText(r.window_start) + ' → ' + dateText(r.window_end), <StatusCell key="status" row={r} />, money(r.amount, r.currency),
-        debt ? <Link prefetch={false} key="invoice" href={'/admin/finance/invoices?selected=' + debt.invoice_id}>{debt.invoice_number} • {debt.receivable_status} • {debt.invoice_status === 'ISSUED' ? 'Còn nợ' : 'Số dư hóa đơn (chưa ghi nhận công nợ)'}{' '}{money(debt.outstanding_balance, debt.currency)}</Link> : 'Chưa có hóa đơn',
-        <span key="zalo" className="grid min-w-36 gap-1 text-sm"><SendMark label={sendByReminder.has(r.id) ? tuitionSendLabel(sendByReminder.get(r.id)) : zaloAttemptLabel(attemptByReminder.get(r.id))} /><Link className="vibe-button" prefetch={false} href={zaloHref(params, r.id)} aria-label={'Gửi Zalo cho ' + r.full_name}>Gửi Zalo</Link><Link className="text-sm underline" prefetch={false} href={zaloHref(params, r.id) + '#lich-su'}>Lịch sử</Link></span>,
+        debt ? (superAdmin ? <Link prefetch={false} key="invoice" href={'/admin/finance/invoices?selected=' + debt.invoice_id}>{debt.invoice_number} • {debt.receivable_status} • {debt.invoice_status === 'ISSUED' ? 'Còn nợ' : 'Số dư hóa đơn (chưa ghi nhận công nợ)'}{' '}{money(debt.outstanding_balance, debt.currency)}</Link> : <span key="invoice">{debt.invoice_number} • {debt.receivable_status}</span>) : 'Chưa có hóa đơn',
+        <span key="zalo" className="grid min-w-36 gap-1 text-sm"><SendMark label={sendByReminder.has(r.id) ? tuitionSendLabel(sendByReminder.get(r.id)) : zaloAttemptLabel(attemptByReminder.get(r.id))} />{superAdmin && <Link className="vibe-button" prefetch={false} href={zaloHref(params, r.id)} aria-label={'Gửi Zalo cho ' + r.full_name}>Gửi Zalo</Link>}{superAdmin && <Link className="text-sm underline" prefetch={false} href={zaloHref(params, r.id) + '#lich-su'}>Lịch sử</Link>}</span>,
         <span key="reply" className="grid min-w-28 gap-1 text-sm"><ReplyMark label={tuitionNoticeReplyLabel(sendByReminder.get(r.id), r.reply_choice)} />{r.reply_choice === 'CONTACT' && <StatusBadge tone="warning">{TUITION_CONTACT_STATUS}</StatusBadge>}{r.reply_submit_time && <small>{timeText(r.reply_submit_time)}</small>}{r.contact_note && <small>Xử lý: {r.contact_note}{r.contact_noted_at ? ` · ${timeText(r.contact_noted_at)}` : ''}{r.contact_noted_by_name ? ` · ${r.contact_noted_by_name}` : ''}</small>}{r.reply_needs_review && <StatusBadge tone="warning">Cần xác minh</StatusBadge>}</span>,
-        <span key="process" className="grid min-w-52 gap-2 text-sm"><span>Xử lý nội bộ: {renewalProcessingLabel(renewalByReminder.get(r.id)?.state, Boolean(r.reply_choice))}</span><span>Thanh toán: {renewalPaymentLabel(renewalByReminder.get(r.id)?.state)}</span>{renewalByReminder.get(r.id) && <span>{renewalByReminder.get(r.id)!.plan_code === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng'} · {money(renewalByReminder.get(r.id)!.list_price, 'VND')} · đến hạn {money(renewalByReminder.get(r.id)!.amount_due, 'VND')}</span>}{invoiceById.get(renewalByReminder.get(r.id)?.invoice_id ?? '') && <span>{invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.invoice_number} · {invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.status}</span>}{orderByCase.get(renewalByReminder.get(r.id)?.id ?? '')?.checkout_url && <a className="underline" href={orderByCase.get(renewalByReminder.get(r.id)!.id)!.checkout_url!}>Thanh toán học phí</a>}<Link className="vibe-button" prefetch={false} href={renewHref(params, r.id)}>Gia hạn</Link><button type="button" className="vibe-button" disabled aria-disabled="true" title="Chưa mở">Nghỉ học</button><button type="button" className="vibe-button" disabled aria-disabled="true" title="Chưa mở">Tạm ngừng</button>{r.status === 'PENDING' && <form action={resolveReminder} className="space-y-2"><input type="hidden" name="reminder_id" value={r.id} /><Select name="status" label="Xử lý nhắc" required options={[{ id: 'SKIPPED', name: 'Bỏ qua' }, { id: 'CANCELLED', name: 'Hủy do không hợp lệ' }]} /><Field name="reason" label="Lý do" /><SubmitButton className="vibe-button">Lưu xử lý</SubmitButton></form>}{r.status !== 'PENDING' && <span>{r.reason}{r.marked_at && <small className="block">{timeText(r.marked_at)}</small>}</span>}</span>]
+        <span key="process" className="grid min-w-52 gap-2 text-sm"><span>Xử lý nội bộ: {renewalProcessingLabel(renewalByReminder.get(r.id)?.state, Boolean(r.reply_choice))}</span><span>Thanh toán: {renewalPaymentLabel(renewalByReminder.get(r.id)?.state)}</span>{renewalByReminder.get(r.id) && <span>{renewalByReminder.get(r.id)!.plan_code === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng'} · {money(renewalByReminder.get(r.id)!.list_price, 'VND')} · đến hạn {money(renewalByReminder.get(r.id)!.amount_due, 'VND')}</span>}{invoiceById.get(renewalByReminder.get(r.id)?.invoice_id ?? '') && <span>{invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.invoice_number} · {invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.status}</span>}{superAdmin && orderByCase.get(renewalByReminder.get(r.id)?.id ?? '')?.checkout_url && <a className="underline" href={orderByCase.get(renewalByReminder.get(r.id)!.id)!.checkout_url!}>Thanh toán học phí</a>}{canPrepare.has(r.branch_id_snapshot) && <Link className="vibe-button" prefetch={false} href={renewHref(params, r.id)}>Gia hạn</Link>}<button type="button" className="vibe-button" disabled aria-disabled="true" title="Chưa mở">Nghỉ học</button><button type="button" className="vibe-button" disabled aria-disabled="true" title="Chưa mở">Tạm ngừng</button>{superAdmin && r.status === 'PENDING' && <form action={resolveReminder} className="space-y-2"><input type="hidden" name="reminder_id" value={r.id} /><Select name="status" label="Xử lý nhắc" required options={[{ id: 'SKIPPED', name: 'Bỏ qua' }, { id: 'CANCELLED', name: 'Hủy do không hợp lệ' }]} /><Field name="reason" label="Lý do" /><SubmitButton className="vibe-button">Lưu xử lý</SubmitButton></form>}{r.status !== 'PENDING' && <span>{r.reason}{r.marked_at && <small className="block">{timeText(r.marked_at)}</small>}</span>}</span>]
     })} />
     <Pager path="/admin/tuition/reminders" params={params} {...list} />
     {uuidPattern.test(params.renew ?? '') && await (async () => {
@@ -153,7 +155,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
           <p>Phản hồi khách hàng: {tuitionNoticeReplyLabel(sendByReminder.get(renewRow.id), renewRow.reply_choice)}. Xử lý nội bộ do nhân viên chọn, không tự lấy từ nút Tiếp tục học.</p>
           {renewal && <p>Đã có gia hạn mở: {renewalProcessingLabel(renewal.state, true)}. Hóa đơn {invoiceById.get(renewal.invoice_id)?.invoice_number ?? 'đã tạo'}. Đã thu {money(renewal.paid_amount, 'VND')}. Còn lại {money(Number(renewal.list_price) - Number(renewal.paid_amount), 'VND')}.</p>}
           <ul className="grid gap-1 text-sm">{quotes.map(quote => <li key={quote.plan + quote.option}>{quote.plan === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng'} · {quote.option === 'DEPOSIT_50' ? 'Đặt cọc 50%' : 'Thanh toán 100%'}: {quote.data ? `${money(quote.data.list_price ?? 0, 'VND')} · đến hạn ${money(quote.data.amount_due ?? 0, 'VND')}` : 'Không đọc được giá chi nhánh'}</li>)}</ul>
-          <form action={createTuitionRenewal} className="grid max-w-xl gap-3">
+          {canPrepare.has(renewRow.branch_id_snapshot) && <form action={createTuitionRenewal} className="grid max-w-xl gap-3">
             <input type="hidden" name="reminder_id" value={renewRow.id} />
             <label className="vibe-field"><span>Gói học phí</span><select name="plan_code" required defaultValue="VIBE_3_MONTHS"><option value="VIBE_3_MONTHS">3 tháng</option><option value="VIBE_12_MONTHS">1 năm</option></select></label>
             <label className="vibe-field"><span>Cách thanh toán</span><select name="payment_option" required defaultValue="DEPOSIT_50"><option value="DEPOSIT_50">Đặt cọc 50%</option><option value="FULL">Thanh toán 100%</option></select></label>
@@ -161,15 +163,15 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
             <label className="vibe-field"><span>Hạn thanh toán</span><input name="due_on" type="date" required defaultValue={renewRow.window_end} /></label>
             <label className="vibe-field"><span>Ghi chú nội bộ</span><textarea name="note" maxLength={2000} rows={3} /></label>
             <SubmitButton className="vibe-button vibe-button-primary" pendingLabel="Đang tạo gia hạn">Tạo gia hạn học phí</SubmitButton>
-          </form>
-          {renewal && <div className="flex flex-wrap gap-2"><form action={retryTuitionPayos}><input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Tạo lại link payOS</SubmitButton></form><form action={retryTuitionNotice}><input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Gửi lại ZBS</SubmitButton></form></div>}
-          {order?.checkout_url && <p><a className="vibe-button" href={order.checkout_url}>Thanh toán học phí</a></p>}
+          </form>}
+          {superAdmin && renewal && <div className="flex flex-wrap gap-2"><form action={retryTuitionPayos}><input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Tạo lại link payOS</SubmitButton></form><form action={retryTuitionNotice}><input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Gửi lại ZBS</SubmitButton></form></div>}
+          {superAdmin && order?.checkout_url && <p><a className="vibe-button" href={order.checkout_url}>Thanh toán học phí</a></p>}
           {renewal && <p>ZBS thanh toán: {renewal.zbs_status}. Xác nhận sau thu: {renewal.confirmation_status}. Bắt đầu kỳ mới: {dateText(renewal.starts_on)}. Sự kiện gần nhất: {renewal.last_event ?? 'chưa có'}.</p>}
           {renewal?.zbs_status === 'AWAITING_TEMPLATE' && <p>{PAYMENT_TEMPLATE_REQUEST}</p>}
         </div>
       </SectionCard>
     })()}
-    {notice && <SectionCard title="Gửi thông báo học phí">
+    {superAdmin && notice && <SectionCard title="Gửi thông báo học phí">
       <div className="space-y-3" id="gui-zalo">
         <p>{notice.studentName} ({notice.studentCode}) · {notice.branchName} · {noticeDate(notice.periodStart)} → {noticeDate(notice.periodEnd)}</p>
         <p>Người nhận: {notice.recipient?.name ?? 'Chưa chọn'} · {notice.maskedPhone}</p>
@@ -207,8 +209,8 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         </div>
       </div>
     </SectionCard>}
-    <ReplySyncRefresh />
-    <SectionCard title="Đồng bộ phản hồi Zalo">
+    {superAdmin && <ReplySyncRefresh />}
+    {superAdmin && <SectionCard title="Đồng bộ phản hồi Zalo">
       <div className="space-y-2 text-sm">
         <p>Trang này tự làm mới phản hồi khi đang mở. Tiếp tục học chỉ là nội dung nút, không phải đã thanh toán. Cần liên hệ là yêu cầu nhân viên gọi lại. Cần xác minh là hai phản hồi khác nhau trên cùng tin, phải rà soát.</p>
         <p>Lần đồng bộ API thành công gần nhất: {sync?.lastSuccessAt ? timeText(sync.lastSuccessAt) : 'Chưa có.'}</p>
@@ -226,8 +228,8 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         </ol>}
         {sync?.intervalSeconds == null && <p>Chu kỳ gọi API phản hồi chưa bật vì Zalo chưa công bố giới hạn tần suất đã xác minh, và lần gọi gần nhất chưa thành công.</p>}
       </div>
-    </SectionCard>
-    <SectionCard title="Zalo tự động">
+    </SectionCard>}
+    {superAdmin && <SectionCard title="Zalo tự động">
       <div id="zalo-auto" className="space-y-2">
         <p>{manualLive ? 'Chế độ hiện tại: Gửi thật thủ công đã bật. Gửi theo lịch đang tắt. Chưa gửi tồn đọng.' : 'Chế độ hiện tại: xem trước. Gửi thật đang tắt. Chưa bật lịch gửi tự động và chưa gửi tồn đọng.'}</p>
         <p>Mẫu đang gửi vẫn là ZALO_TUITION_REMINDER, mã Zalo 643118, trạng thái đã duyệt. Nút trên tin thật của mẫu này vẫn là Tiếp tục học và Dừng học. Chưa chuyển mã mẫu. Tham số: tên phụ huynh, kỳ học, tên học viên, học phí gói, hạn cuối khoảng nhắc, mã học viên. Không có đường dẫn. Gửi theo lịch đang tắt. Mẫu đăng ký 640377 giữ nguyên. Nhắc gia hạn không lấy số nợ.</p>
@@ -236,6 +238,6 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         <p>Phạm vi: chi nhánh đang lọc trên trang này. Mốc nhắc vẫn là lịch học phí đã duyệt. Lần chạy gần nhất: chưa có vì lịch gửi chưa được bật.</p>
         <p>Tạm dừng nhắc từng học viên chưa mở, vì gửi tự động chưa chạy. Không có nút gửi hàng loạt.</p>
       </div>
-    </SectionCard>
+    </SectionCard>}
   </AppPage>
 }
