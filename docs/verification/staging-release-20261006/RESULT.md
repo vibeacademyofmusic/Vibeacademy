@@ -50,7 +50,7 @@ Reused the existing Safari Owner session, displayed as **Lê Đăng / Quản tr�
 
 ## Remaining work and boundaries
 
-The curriculum upgrade requested here is complete. Broader acceptance remains limited by the five regression failures and incomplete staging end-to-end coverage above. Existing Guitar levels still contain 49 subjects without lesson content and one missing subject structure; Trống has no level. These gaps are not caused by losing the imported books and are not labeled complete.
+Correction after a complete local/staging Guitar comparison: the 15-migration transaction completed, but the full requested curriculum rollout is NOT complete. Guitar Grade 1–8 were omitted; the earlier report incorrectly treated this as an existing content gap. Broader acceptance remains limited by the five regression failures and incomplete staging end-to-end coverage above. Existing Guitar levels still contain 49 subjects without lesson content and one missing subject structure; Trống has no level. These gaps are not caused by losing the imported books and are not labeled complete.
 
 No real Zalo messages, new payOS orders, fabricated callbacks, paid updates, enrollment activation, reception payment permission changes, credential resets or production changes. No user action is required to finish this approved upgrade.
 
@@ -61,3 +61,13 @@ The protected files are under `/private/tmp/vibe-staging-release-20261006`. The 
 For another environment: explicitly identify/authorize its target, compare its actual migration ledger and source hashes, preserve application schema/data/ACL, restore a new isolated clone with the real Auth/Storage definitions, and rehearse the complete missing migrations with original-record guards before committing. Reconcile every drift explicitly; do not omit functions or forge ledger entries. Verify persistence and authenticated UI before switching the environment's alias.
 
 Backups here cover application schema/data/ACL/ledger and Auth/Storage definitions. They do **not** include Auth credentials, identities/sessions or Storage object bytes. These are limited application backups, not full platform recovery. Recovering Storage requires separately preserved object bytes and ownership/permission metadata.
+
+## Guitar follow-up correction
+
+Local Guitar has Pre Grade (130 active lessons) plus Grade 1–8 (40 each; 320 total). Staging has the updated Pre Grade only, while Grade 1–8 still use the legacy subjects and have zero lessons. The foundation migration deliberately skipped existing levels, so its successful transaction did not establish full catalog parity. No browser refresh can repair this database difference.
+
+The local Grade 1–8 lessons are numbered Lesson 01–Lesson 10 slots in four core subjects, not authored book content comparable to the Werner books. Their exact catalog is saved in `guitar-grade-local-catalog.json`; `guitar-reconciliation-diagnosis.json` records all level counts and conflicts.
+
+The legacy staging curriculum has 2 enrollments, 9 level-progress rows (including one COMPLETED Grade 1), 15 subject-progress rows and 18 component-progress rows with PASS results. Replacing three legacy repertoire/technique groups with one new CORE group, removing Music Theory requirements and changing direct-assessment subjects into lesson groups would alter the meaning of that history even if row IDs or row hashes stayed unchanged. No such replacement or progress reset has been performed.
+
+Reconciliation therefore needs a decision on those existing staging learning records: preserve their original curriculum through a supported versioned path, or explicitly authorize a narrowly scoped reset/recreation if the owner confirms these are disposable synthetic academic records. Never infer that staging records are disposable; do not reset the database, student identities, financial records, Auth, roles or branches. An empty generated migration was removed rather than committing a misleading migration.
