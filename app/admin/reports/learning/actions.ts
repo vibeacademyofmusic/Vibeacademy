@@ -1,6 +1,9 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
+import { zaloServiceClient } from '@/lib/integrations/zalo/service'
+import { prepareLearningReportPdf } from '@/lib/reports/public-pdf'
 import { adminClient, uuidPattern, validDate } from '../../finance/operations'
 import { summaryFields, types } from './data'
 import { generationErrors } from './periods'
@@ -44,9 +47,27 @@ export async function updateReport(form: FormData) {
     try {
       const result = await db.rpc('update_learning_report', { p_id: id, p_version: version, p_action: action, p_summary: summary, p_note: note })
       if (result.error) error = 'Không thể cập nhật. Báo cáo có thể đã thay đổi hoặc đã khóa; hãy tải lại.'
+      else if (action === 'PUBLISH') after(async () => {
+        try { await prepareLearningReportPdf(zaloServiceClient(), id) } catch { /* The durable PDF queue remains pending/failed for maintenance. */ }
+      })
     } catch { error = 'Chưa xác nhận được kết quả. Hãy tải lại trước khi thử lại.' }
   }
   revalidatePath(path)
   if (uuidPattern.test(id)) revalidatePath(path + '/' + id)
   redirect((uuidPattern.test(id) ? path + '/' + id : path) + '?' + new URLSearchParams(error ? { error } : { success: 'Đã cập nhật báo cáo.' }))
+}
+
+export async function manageReportLink(form: FormData) {
+  const db = await adminClient()
+  const id = String(form.get('id') ?? ''), action = String(form.get('action') ?? '')
+  let error = ''
+  if (!uuidPattern.test(id) || !['CREATE', 'REVOKE', 'PREPARE'].includes(action)
+      || (action !== 'PREPARE' && form.get('confirm') !== 'yes')) error = 'Vui lòng kiểm tra và xác nhận thao tác.'
+  else try {
+    const result = await db.rpc('learning_report_link_manage', { p_report: id, p_action: action === 'PREPARE' ? 'READ' : action })
+    if (result.error || !result.data || (action === 'PREPARE' && !result.data.path)) error = 'Không thể cập nhật đường dẫn báo cáo. Vui lòng tải lại.'
+    else if (action !== 'REVOKE') await prepareLearningReportPdf(zaloServiceClient(), id)
+  } catch { error = 'Chưa chuẩn bị được PDF. Hệ thống sẽ thử lại; vui lòng tải lại trạng thái.' }
+  revalidatePath(path + '/' + id)
+  redirect((uuidPattern.test(id) ? path + '/' + id : path) + '?' + new URLSearchParams(error ? { error } : { success: action === 'REVOKE' ? 'Đã thu hồi đường dẫn PDF.' : 'Đã chuẩn bị đường dẫn PDF.' }))
 }

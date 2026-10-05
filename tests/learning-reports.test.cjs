@@ -173,8 +173,9 @@ test('publish action requires confirmation and forwards version to existing engi
  assert.ok(!h.calls.some(c=>c.rpc==='update_learning_report'))
  await redirected(h.load(base+'actions.ts').updateReport,{id:id(1),version:4,action:'PUBLISH',confirm:'yes'})
  assert.equal(h.calls.at(-1).args.p_action,'PUBLISH'); assert.equal(h.calls.at(-1).args.p_version,4)
+ assert.equal(h.afters.length,1)
 })
-test('published report has disabled delivery controls with real student and active parent contacts',async()=>{
+test('published report shows gated ZBS delivery and actual student and active parent contacts',async()=>{
  const {html,h}=await officialReport('PUBLISHED',{sent_at:'2026-09-16T00:00:00Z'},{
   students:[{id:id(20),user_id:id(22),full_name:'Real Student',email:'student@example.test',phone:'0900000000'}],
   student_parents:[{student_id:id(20),parent_id:id(23),is_active:true,valid_from:null,valid_until:null},{student_id:id(20),parent_id:id(24),is_active:false}],
@@ -182,9 +183,9 @@ test('published report has disabled delivery controls with real student and acti
   profiles:[{id:id(25),full_name:'Real Parent',phone:'0911111111',status:'ACTIVE'},{id:id(26),full_name:'Inactive relation',status:'ACTIVE'}],
  })
  assert.match(html,/Real Student/);assert.match(html,/student@example.test/);assert.match(html,/Real Parent/);assert.doesNotMatch(html,/Inactive relation/)
- assert.match(html,/<button[^>]*disabled=""[^>]*>SEND EMAIL/);assert.match(html,/<button[^>]*disabled=""[^>]*>SEND ZALO/)
- assert.match(html,/EMAIL PROVIDER NOT CONFIGURED/);assert.match(html,/ZALO PROVIDER NOT CONFIGURED/)
- assert.match(html,/NOT_SENT/);assert.doesNotMatch(html,/PUBLISH REPORT|textarea/)
+ assert.match(html,/Gửi ZBS đang tắt/);assert.match(html,/Email chưa được cấu hình/)
+ assert.match(html,/Tạo đường dẫn PDF/);assert.match(html,/không cần đăng nhập/)
+ assert.match(html,/Chưa có bản ghi gửi/);assert.doesNotMatch(html,/PUBLISH REPORT|textarea/)
  assert.ok(!h.calls.some(c=>c.rpc==='enqueue_notification_event'||c.rpc==='update_learning_report'))
 })
 test('draft and review do not expose delivery controls',async()=>{
@@ -195,7 +196,7 @@ test('draft and review do not expose delivery controls',async()=>{
 })
 test('missing recipients and missing snapshot fail safely',async()=>{
  const {html}=await officialReport('PUBLISHED')
- assert.match(html,/Không có thông tin người nhận/);assert.match(html,/No eligible email recipient/)
+ assert.match(html,/Không có thông tin người nhận/);assert.match(html,/không tự chứng minh có kết nối Zalo/)
  const missing=await officialReport('APPROVED',{snapshot_data:null,draft_data:{...snapshot,student:{name:'DO NOT PRINT DRAFT',code:'X'}}})
  assert.match(missing.html,/Approved snapshot unavailable/);assert.doesNotMatch(missing.html,/DO NOT PRINT DRAFT/)
 })
@@ -203,16 +204,17 @@ test('repeated delivery page loads cannot enqueue, send, or mutate frozen conten
  const frozen=structuredClone(snapshot), original=JSON.stringify(frozen)
  for(let n=0;n<2;n++) {
   const {h}=await officialReport('PUBLISHED',{snapshot_data:frozen})
-  assert.deepEqual(h.calls.filter(c=>c.rpc).map(c=>c.rpc),['has_role'])
+  assert.deepEqual(h.calls.filter(c=>c.rpc).map(c=>c.rpc),['has_role','learning_report_link_manage'])
+  assert.equal(h.calls.find(c=>c.rpc==='learning_report_link_manage').args.p_action,'READ')
  }
  assert.equal(JSON.stringify(frozen),original)
 })
 test('delivery history uses actual records, preserves mock and queued distinctions, filters other reports',async()=>{
  const jobs=[{id:id(30),entity_type:'LEARNING_REPORT',entity_id:id(1),recipient_id:id(25),channel:'EMAIL',delivery_mode:'MOCK',status:'SENT',created_at:snapshot.as_of,sent_at:snapshot.as_of,provider_receipt:'mock-receipt'},
- {id:id(31),entity_type:'LEARNING_REPORT',entity_id:id(1),recipient_id:id(25),channel:'ZALO',delivery_mode:'LIVE',status:'PENDING',created_at:snapshot.as_of,sent_at:null,provider_receipt:null},
+ {id:id(31),entity_type:'LEARNING_REPORT_PUBLISHED',entity_id:id(1),recipient_id:null,channel:'ZALO',delivery_mode:'LIVE',status:'QUEUED',error_code:'REPORT_TEMPLATE_NOT_READY',created_at:snapshot.as_of,sent_at:null,provider_receipt:null},
  {id:id(32),entity_type:'LEARNING_REPORT',entity_id:id(90),recipient_id:id(25),channel:'EMAIL',status:'SENT',provider_receipt:'OTHER REPORT'}]
  const {html}=await officialReport('PUBLISHED',{}, {notification_jobs:jobs})
- assert.match(html,/DELIVERY HISTORY/);assert.match(html,/mock-receipt/);assert.match(html,/EMAIL · MOCK/);assert.match(html,/PENDING/);assert.doesNotMatch(html,/OTHER REPORT/)
+ assert.match(html,/DELIVERY HISTORY/);assert.match(html,/mock-receipt/);assert.match(html,/EMAIL · MOCK/);assert.match(html,/Chờ mẫu ZBS được duyệt và bật/);assert.doesNotMatch(html,/OTHER REPORT/)
 })
 test('V2 academic document renders all seven summaries, maps enums, and handles direct assessment',async()=>{
  const teacher_summary=Object.fromEntries(['achievement','difficulty','intervention','next_month_plan','practice_consistency','lesson_preparation','learning_attitude'].map(k=>[k,`V2-${k}`]))
