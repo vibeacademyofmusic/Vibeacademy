@@ -1,5 +1,15 @@
 const STAGING_HOST = 'owpfqwdrmyzcmjahehek.supabase.co'
 const PRODUCTION_REF = 'qhznfywwrhmcwbkujclm'
+const PILOT_EMAILS = new Set([
+  'ledang.gudi@gmail.com',
+  'nguyenthitramy990@gmail.com',
+  'thachthihuynh25@gmail.com',
+  'tranhuyphuong28@gmail.com',
+])
+
+export function pilotRecoveryEmail(email: string) {
+  return PILOT_EMAILS.has(email.trim().toLowerCase())
+}
 
 export function previewRecoveryRedirect(supabaseUrl: string, appOrigin: string) {
   const supabase = new URL(supabaseUrl)
