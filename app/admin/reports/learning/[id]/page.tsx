@@ -6,6 +6,9 @@ import { reportDetail, history, statuses, types, summaryFields, legacySummaryFal
 import { updateReport } from '../actions'
 import ReportDocument from './ReportDocument'
 import PrintReportButton from './PrintReportButton'
+import PublicReportDelivery, { type PublicReportLink } from './PublicReportDelivery'
+import { reportPublicOrigin, reportDeliveryLabel } from '@/lib/reports/public-link'
+import { zaloPilotOutboundBlocked } from '@/lib/integrations/zalo/pilot-outbound'
 export default async function LearningReportDetail({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Params> }) {
   const { id } = await params, query = await searchParams, db = await adminClient()
   let report, events
@@ -25,8 +28,13 @@ export default async function LearningReportDetail({ params, searchParams }: { p
   const action = (value: string, label: string, confirm = false) => <form action={updateReport} className="space-y-2"><input type="hidden" name="id" value={r.id} /><input type="hidden" name="version" value={r.version} /><input type="hidden" name="action" value={value} />{confirm && <Confirm text={'Xác nhận ' + label.toLowerCase()} />}<SubmitButton>{label}</SubmitButton></form>
   if (['APPROVED', 'PUBLISHED'].includes(r.status)) {
     let delivery: Awaited<ReturnType<typeof reportDelivery>> | null = null
+    let publicLink: PublicReportLink | null = null, publicLinkError = false
     if (r.status === 'PUBLISHED') {
       try { delivery = await reportDelivery(db, r) } catch { /* Delivery failure must not hide the frozen document. */ }
+      try {
+        const result = await db.rpc('learning_report_link_manage', { p_report: r.id, p_action: 'READ' })
+        publicLinkError = Boolean(result.error); publicLink = result.data
+      } catch { publicLinkError = true }
     }
     return <div className={`learning-report official-learning-report learning-report-page${query.print === '1' ? ' report-print-preview' : ''}`}>
       <div className="report-controls learning-report-toolbar space-y-4">
@@ -35,24 +43,20 @@ export default async function LearningReportDetail({ params, searchParams }: { p
         <p>Nội dung đã duyệt được khóa. Phát hành không đồng nghĩa với gửi email hoặc Zalo.</p>
       </div>
       <ReportDocument report={r} />
-      {r.status === 'PUBLISHED' && <div className="report-controls flex flex-wrap gap-4"><Link href={`/my-learning/reports/${r.id}/pdf`}>Mở / tải PDF dành cho gia đình</Link><Link href={`/my-learning/conversations/report/${r.id}`}>Trao đổi và xử lý yêu cầu</Link></div>}
+      {r.status === 'PUBLISHED' && <div className="report-controls flex flex-wrap gap-4"><Link href={`/my-learning/reports/${r.id}/pdf`}>PDF trong cổng gia đình (cần đăng nhập)</Link><Link href={`/my-learning/conversations/report/${r.id}`}>Trao đổi và xử lý yêu cầu</Link></div>}
       <div className="report-controls learning-report-admin space-y-6">
-        {r.status === 'PUBLISHED' && <Panel title="DELIVERY">
+        {r.status === 'PUBLISHED' && <PublicReportDelivery reportId={r.id} link={publicLink} loadError={publicLinkError} origin={reportPublicOrigin(process.env.LEARNING_REPORT_PUBLIC_ORIGIN)} sendEnabled={!zaloPilotOutboundBlocked() && process.env.ZALO_LEARNING_REPORT_SEND_ENABLED === 'true'} />}
+        {r.status === 'PUBLISHED' && <Panel title="Thông tin liên hệ">
           <p>Thông tin liên hệ hiện tại; không thay đổi bản báo cáo đã duyệt.</p>
           {!delivery ? <p role="alert">Không tải được thông tin người nhận và lịch sử gửi. Vui lòng tải lại.</p> : <>
             {delivery.contacts.length ? <Table headers={['RECIPIENT', 'EMAIL', 'PHONE']} rows={delivery.contacts.map(c => [c.name, c.email || 'Not provided.', c.phone || 'Not provided.'])} /> : <p>Không có thông tin người nhận phù hợp.</p>}
-            {!delivery.contacts.some(c => c.email) && <p>No eligible email recipient.</p>}
-            {!delivery.contacts.some(c => c.phone) && <p>No eligible Zalo recipient.</p>}
+            <p>Số điện thoại trong hồ sơ không tự chứng minh có kết nối Zalo. Luồng hiện tại gửi qua UID của phụ huynh đã kết nối và đồng ý nhận tin.</p>
           </>}
-          <div className="flex flex-wrap gap-6">
-            <div><button type="button" disabled aria-describedby="email-unavailable" className="rounded border px-4 py-2 opacity-50">SEND EMAIL</button><p id="email-unavailable">EMAIL PROVIDER NOT CONFIGURED</p></div>
-            <div><button type="button" disabled aria-describedby="zalo-unavailable" className="rounded border px-4 py-2 opacity-50">SEND ZALO</button><p id="zalo-unavailable">ZALO PROVIDER NOT CONFIGURED</p></div>
-          </div>
-          <p>Chưa thể gửi báo cáo. Không tạo hàng đợi hoặc ghi nhận đã gửi khi chưa kết nối nhà cung cấp.</p>
+          <p>Hàng đợi Zalo được tạo khi phát hành. Chỉ ghi nhận đã gửi sau khi Zalo trả mã tin hợp lệ. Email chưa được cấu hình.</p>
         </Panel>}
         {r.status === 'PUBLISHED' && delivery && <Panel title="DELIVERY HISTORY">
           <p>Tối đa 100 bản ghi gần nhất. MOCK là kiểm thử, không phải gửi thật.</p>
-          {delivery.jobs.length ? <Table headers={['DATE', 'CHANNEL', 'RECIPIENT', 'STATUS', 'REFERENCE']} rows={delivery.jobs.map(j => [timeText(j.sent_at ?? j.created_at), `${j.channel} · ${j.delivery_mode}`, delivery.names.get(j.recipient_id) ?? delivery.contacts.find(c => c.id === j.recipient_id)?.name ?? j.recipient_id, j.status, j.provider_receipt ?? j.id])} /> : <p>NOT_SENT — No delivery records.</p>}
+          {delivery.jobs.length ? <Table headers={['Thời gian', 'Kênh', 'Người nhận', 'Trạng thái', 'Mã tham chiếu']} rows={delivery.jobs.map(j => [timeText(j.sent_at ?? j.created_at), `${j.channel} · ${j.delivery_mode}`, delivery.names.get(j.recipient_id ?? '') ?? delivery.contacts.find(c => c.id === j.recipient_id)?.name ?? (j.channel === 'ZALO' ? 'Phụ huynh qua Zalo' : '—'), reportDeliveryLabel(j.status, j.error_code), j.provider_receipt ?? j.id])} /> : <p>Chưa có bản ghi gửi.</p>}
         </Panel>}
         {(s.admin_note ?? r.admin_note) && <Panel title="Ghi chú quản trị (không in)"><p className="whitespace-pre-wrap">{s.admin_note ?? r.admin_note}</p></Panel>}
         <Panel title="Lịch sử xử lý"><Table headers={['Thao tác', 'Phiên bản', 'Thời gian', 'Người xử lý']} rows={events.map(e => [e.event, e.version, timeText(e.created_at), e.actor_id])} /></Panel>

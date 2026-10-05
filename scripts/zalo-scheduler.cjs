@@ -24,7 +24,7 @@ if (action === 'start') {
     const result = cp.spawnSync('launchctl', ['bootstrap', `gui/${process.getuid()}`, file], { encoding: 'utf8' })
     if (result.status !== 0) throw Error('Scheduler install failed')
   }
-  console.log(`Scheduler installed: ${label}; interval ${interval}s; no notification dispatch`)
+  console.log(`Scheduler installed: ${label}; interval ${interval}s; report dispatch requires its separate send gate`)
 } else if (action === 'status') {
   const p = cp.spawnSync('launchctl', ['print', target], { encoding: 'utf8' })
   console.log(JSON.stringify({ scheduler: label, installed: p.status === 0, state: p.stdout?.match(/state = ([^\n]+)/)?.[1], runs: p.stdout?.match(/runs = (\d+)/)?.[1], intervalSeconds: p.stdout?.match(/run interval = (\d+)/)?.[1], lastExit: p.stdout?.match(/last exit code = (\d+)/)?.[1] }))

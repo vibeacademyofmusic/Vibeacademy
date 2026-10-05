@@ -35,10 +35,10 @@ function load(file, mocks, cache = new Map()) {
 }
 const id = n => `a0000000-0000-0000-0000-${String(n).padStart(12, '0')}`
 function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
-  const calls = [], invalidated = []
+  const calls = [], invalidated = [], afters = []
   const db = {
     auth: { getClaims: async () => ({ data: signedIn ? { claims: { sub: id(1) } } : null, error: null }) },
-    rpc: async (name, args) => { calls.push({ rpc: name, args }); return ['has_role','is_global_super_admin','has_permission'].includes(name) ? { data: role, error: null } : { data: id(99), error: rpcError } },
+    rpc: async (name, args) => { calls.push({ rpc: name, args }); return ['has_role','is_global_super_admin','has_permission'].includes(name) ? { data: role, error: null } : { data: name === 'learning_report_link_manage' ? fixtures['rpc:learning_report_link_manage'] ?? null : id(99), error: rpcError } },
     from(table) {
       const call = { table, filters: [], orders: [] }; calls.push(call)
       const query = {
@@ -69,9 +69,10 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
     '@/lib/supabase/server': { createClient: async () => db },
     'next/navigation': { notFound: () => { throw Object.assign(new Error('Not found'), { code: 'NOT_FOUND' }) }, useRouter: () => ({ refresh() {}, push() {} }), usePathname: () => '/admin/payroll', redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
     'next/cache': { revalidatePath: p => invalidated.push(p) },
+    'next/server': { ...require('next/server'), after: fn => afters.push(fn) },
     'next/link': { default: ({ children, href }) => React.createElement('a', { href }, children) },
   }
-  return { db, calls, invalidated, load: name => load(path.join(base, name), mocks) }
+  return { db, calls, invalidated, afters, load: name => load(path.join(base, name), mocks) }
 }
 function form(values) { const f = new FormData(); for (const [k, v] of Object.entries(values)) f.set(k, String(v)); return f }
 async function redirected(action, values) {

@@ -207,12 +207,12 @@ export async function latestMonthlyReport(db: DB, enrollmentId: string) {
 }
 
 export type ReportContact = { id: string; name: string; email: string | null; phone: string | null }
-export type DeliveryJob = { id: string; recipient_id: string; channel: string; status: string; delivery_mode: string; created_at: string; sent_at: string | null; provider_receipt: string | null }
+export type DeliveryJob = { id: string; recipient_id: string | null; channel: string; status: string; error_code: string | null; delivery_mode: string; created_at: string; sent_at: string | null; provider_receipt: string | null }
 export async function reportDelivery(db: DB, report: Report) {
   const [students, links, jobs] = await Promise.all([
     rows(db.from('students').select('id,user_id,full_name,email,phone').eq('id', report.student_id).returns<{ id: string; user_id: string | null; full_name: string; email: string | null; phone: string | null }[]>()),
     rows(db.from('student_parents').select('parent_id,valid_from,valid_until').eq('student_id', report.student_id).eq('is_active', true).returns<{ parent_id: string; valid_from: string | null; valid_until: string | null }[]>()),
-    rows(db.from('notification_jobs').select('id,recipient_id,channel,status,delivery_mode,created_at,sent_at,provider_receipt').eq('entity_type', 'LEARNING_REPORT').eq('entity_id', report.id).order('created_at', { ascending: false }).order('id').limit(100).returns<DeliveryJob[]>()),
+    rows(db.from('notification_jobs').select('id,recipient_id,channel,status,error_code,delivery_mode,created_at,sent_at,provider_receipt').in('entity_type', ['LEARNING_REPORT', 'LEARNING_REPORT_PUBLISHED', 'END_OF_COURSE_REPORT_PUBLISHED']).eq('entity_id', report.id).order('created_at', { ascending: false }).order('id').limit(100).returns<DeliveryJob[]>()),
   ])
   const now = Date.now()
   const ids = links.filter(l => (!l.valid_from || Date.parse(l.valid_from) <= now) && (!l.valid_until || Date.parse(l.valid_until) > now)).map(l => l.parent_id)
