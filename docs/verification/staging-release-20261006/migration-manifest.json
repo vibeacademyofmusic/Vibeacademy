@@ -1,0 +1,77 @@
+[
+  {
+    "file": "20261004170000_curriculum_authoring_foundations.sql",
+    "version": "20261004170000",
+    "sha256": "1e9f8a9b8af5f3ca4d70c13a049a72bd91e51fc7e08dd8896c5b0466c085e4e0"
+  },
+  {
+    "file": "20261004183000_academic_video_links.sql",
+    "version": "20261004183000",
+    "sha256": "ad26e3cb4a815b745c683283494aefd0d2ce1f346782ef2424e6ede15d2809b7"
+  },
+  {
+    "file": "20261005003000_staff_videographer_position.sql",
+    "version": "20261005003000",
+    "sha256": "23af33cc1457c25d9f915c5ae2966cb71545fc4a95012eb805e1d84afa137302"
+  },
+  {
+    "file": "20261005020000_academic_video_lesson_required.sql",
+    "version": "20261005020000",
+    "sha256": "9129809a2b602d23607c062c73d62a38d8b8c23005512300d5e46c3e889f5e4f"
+  },
+  {
+    "file": "20261005210000_tuition_reuse_matching_scheduled_term.sql",
+    "version": "20261005210000",
+    "sha256": "be1e3947939e98634ade577da763bfe3a522f7eb9ef9d67ede8bdf8d2fe1afc7"
+  },
+  {
+    "file": "20261005223000_canonical_operational_programs.sql",
+    "version": "20261005223000",
+    "sha256": "475ba34a2b78b9094d9255f2b7a97a60aba84ed402b6eb61c49a2f6572fd22f8"
+  },
+  {
+    "file": "20261005234500_piano_pre_pa1_lesson_book.sql",
+    "version": "20261005234500",
+    "sha256": "c841c68b5182cd91d12f2af294f4e73dfca120582432c83e2271cb7dbfc51e91"
+  },
+  {
+    "file": "20261006003000_piano_pre_step_book_b.sql",
+    "version": "20261006003000",
+    "sha256": "6be826db8cf8b13d6d314198ec4ea1b4f83fa53a2539dcf6f9cb4e5478dff5c5"
+  },
+  {
+    "file": "20261006013000_teaching_shift_without_legacy_course.sql",
+    "version": "20261006013000",
+    "sha256": "ef8fef6d6561d15c2cffdd1868467fc3bf50d60f321ab3b3404d4144b40f55bb"
+  },
+  {
+    "file": "20261006021000_piano_pre_grade_repertoire_books.sql",
+    "version": "20261006021000",
+    "sha256": "48dc0b344f3b2b25f9ca7c830b08315b9a749e2d128e2ab44d6c8a7be8bba186"
+  },
+  {
+    "file": "20261006040000_guitar_pre_grade_werner_volumes.sql",
+    "version": "20261006040000",
+    "sha256": "a140469422729a2b0db0b9d084d73bc051e28de24252f1ae24064105fa35ae68"
+  },
+  {
+    "file": "20261006051000_piano_pre_repertoire_books_required.sql",
+    "version": "20261006051000",
+    "sha256": "1e3e3e520a142d8e565468d1e6adfd6e26c29d0a347e9da16c6d1a1f90e1d362"
+  },
+  {
+    "file": "20261006060000_remove_piano_pre_repertoire_placeholder.sql",
+    "version": "20261006060000",
+    "sha256": "ed04d906f7dade52f6cffc197fed533fefb729e4a7fb4cd45b6ee64529cf3876"
+  },
+  {
+    "file": "20261006070000_learning_report_shared_videos.sql",
+    "version": "20261006070000",
+    "sha256": "950980aa925c35ed51ee792df558161aeb8fe3d85f47b35d79284a49543c62bb"
+  },
+  {
+    "file": "20261006071000_piano_pre_book_order.sql",
+    "version": "20261006071000",
+    "sha256": "4331ca0662506d203f4775c5a6a5b4d6184159aeb179fff1bf8112eb7a811061"
+  }
+]
