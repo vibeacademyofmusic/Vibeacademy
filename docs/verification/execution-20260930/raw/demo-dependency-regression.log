@@ -1,0 +1,10 @@
+Connecting to local database...
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/attendance_launcher_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/attendance_launcher_test.sql ........ ok
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/teacher_session_workspace_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/teacher_session_workspace_test.sql .. ok
+All tests successful.
+Files=2, Tests=60,  0 wallclock secs ( 0.01 usr  0.01 sys +  0.00 cusr  0.01 csys =  0.03 CPU)
+Result: PASS
+A new version of Supabase CLI is available: v2.118.0 (currently installed v2.116.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

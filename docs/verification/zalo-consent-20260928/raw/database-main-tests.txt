@@ -1,0 +1,269 @@
+BEGIN
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 1
+ set_config 
+------------
+ on
+(1 row)
+
+  set_config  
+--------------
+ service_role
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 1
+      below      
+-----------------
+ PARTIAL_DEPOSIT
+(1 row)
+
+INSERT 0 1
+  reached  
+-----------
+ COMPLETED
+(1 row)
+
+    replay    
+--------------
+ ALREADY_PAID
+(1 row)
+
+CREATE EXTENSION
+SET
+ no_plan 
+---------
+(0 rows)
+
+              set_config              
+--------------------------------------
+ aa920000-0000-4000-8000-000000000002
+(1 row)
+
+SELECT 1
+SELECT 1
+                        is                        
+--------------------------------------------------
+ ok 1 - no consent blocks despite paid completion
+(1 row)
+
+               throws_ok               
+---------------------------------------
+ ok 2 - unchecked cannot grant consent
+(1 row)
+
+                throws_ok                 
+------------------------------------------
+ ok 3 - letters are not silently stripped
+(1 row)
+
+            throws_ok            
+---------------------------------
+ ok 4 - explicit source required
+(1 row)
+
+                           is                           
+--------------------------------------------------------
+ ok 5 - late consent immediately evaluates existing job
+(1 row)
+
+                  is                   
+---------------------------------------
+ ok 6 - international phone normalized
+(1 row)
+
+                    is                     
+-------------------------------------------
+ ok 7 - recipient snapshot matches consent
+(1 row)
+
+                is                 
+-----------------------------------
+ ok 8 - source survives fresh read
+(1 row)
+
+           is           
+------------------------
+ ok 9 - actor persisted
+(1 row)
+
+             ok              
+-----------------------------
+ ok 10 - timestamp persisted
+(1 row)
+
+                        throws_ok                         
+----------------------------------------------------------
+ ok 11 - stale form/double submit cannot override consent
+(1 row)
+
+                                 is                                 
+--------------------------------------------------------------------
+ ok 12 - explicit new consent safely replaces unattempted recipient
+(1 row)
+
+                        is                         
+---------------------------------------------------
+ ok 13 - domestic replacement normalized and bound
+(1 row)
+
+              is              
+------------------------------
+ ok 14 - withdrawal supported
+(1 row)
+
+                    is                    
+------------------------------------------
+ ok 15 - withdrawal blocks fresh recovery
+(1 row)
+
+                   is                   
+----------------------------------------
+ ok 16 - stored skip reason is specific
+(1 row)
+
+                   is                   
+----------------------------------------
+ ok 17 - existing status enum preserved
+(1 row)
+
+                           is                            
+---------------------------------------------------------
+ ok 18 - replacement and withdrawal retain actor history
+(1 row)
+
+                           is                           
+--------------------------------------------------------
+ ok 19 - fresh explicit consent can recover skipped job
+(1 row)
+
+                       is                       
+------------------------------------------------
+ ok 20 - repeated check reads fresh eligibility
+(1 row)
+
+                    is                     
+-------------------------------------------
+ ok 21 - save/check never increments sends
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 22 - no outbound attempt created
+(1 row)
+
+                      is                      
+----------------------------------------------
+ ok 23 - one durable job throughout lifecycle
+(1 row)
+
+SAVEPOINT
+ set_config 
+------------
+ 
+(1 row)
+
+               throws_ok                
+----------------------------------------
+ ok 24 - unauthenticated request denied
+(1 row)
+
+ROLLBACK
+SAVEPOINT
+DELETE 1
+                   throws_ok                    
+------------------------------------------------
+ ok 25 - authenticated user without role denied
+(1 row)
+
+               throws_ok                
+----------------------------------------
+ ok 26 - audit read permission enforced
+(1 row)
+
+ROLLBACK
+                      is                      
+----------------------------------------------
+ ok 27 - registration business data unchanged
+(1 row)
+
+             is             
+----------------------------
+ ok 28 - payments unchanged
+(1 row)
+
+                  is                   
+---------------------------------------
+ ok 29 - academic placements unchanged
+(1 row)
+
+ set_config 
+------------
+ on
+(1 row)
+
+INSERT 0 1
+UPDATE 1
+ update_registration_zalo_consent 
+----------------------------------
+ CONSENT_REVOKED
+(1 row)
+
+                              is                               
+---------------------------------------------------------------
+ ok 30 - withdrawal after claim stops actual outbound boundary
+(1 row)
+
+                              is                              
+--------------------------------------------------------------
+ ok 31 - locally blocked reservation does not count as a send
+(1 row)
+
+                   is                    
+-----------------------------------------
+ ok 32 - no fabricated provider response
+(1 row)
+
+                     is                      
+---------------------------------------------
+ ok 33 - same reservation cannot be replayed
+(1 row)
+
+                      throws_ok                       
+------------------------------------------------------
+ ok 34 - invalid consent rolls back complete creation
+(1 row)
+
+                   is                   
+----------------------------------------
+ ok 35 - no partial draft after failure
+(1 row)
+
+SELECT 1
+                          is                           
+-------------------------------------------------------
+ ok 36 - new form persists explicit consent atomically
+(1 row)
+
+SELECT 1
+                        is                        
+--------------------------------------------------
+ ok 37 - unchecked new form never invents consent
+(1 row)
+
+ finish 
+--------
+ 1..37
+(1 row)
+
+ROLLBACK

@@ -1,0 +1,15 @@
+.root { --ink:#162233; --muted:#687386; --line:#e4e8ed; --soft:#f7f8fa; --gold:#b88b33; color:var(--ink); display:grid; gap:16px; }
+.card { border:1px solid var(--line); border-radius:16px; background:white; padding:16px; display:grid; gap:12px; }
+.eyebrow { color:var(--gold); font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+.quiet { color:var(--muted); font-size:12px; font-weight:700; }
+.card summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:700; }
+.row { display:flex; flex-wrap:wrap; gap:8px; }
+.chip, .segment { min-height:44px; border:1px solid var(--line); border-radius:999px; background:white; padding:8px 12px; color:var(--ink); }
+.chip[aria-pressed="true"], .segment[aria-pressed="true"] { background:#24384f; color:white; border-color:#24384f; }
+.field, .note { width:100%; border:1px solid var(--line); border-radius:12px; padding:12px; }
+.actions { display:flex; flex-wrap:wrap; gap:8px; }
+.primary, .secondary { min-height:44px; border-radius:12px; padding:10px 14px; }
+.primary { background:#24384f; color:white; }
+.secondary { background:white; border:1px solid var(--line); }
+.absent { background:var(--soft); }
+@media (max-width: 700px) { .card { padding:12px; } }

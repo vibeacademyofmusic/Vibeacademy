@@ -3,13 +3,15 @@ import { login } from './actions'
 type LoginPageProps = {
   searchParams: Promise<{
     error?: string
+    next?: string
+    notice?: string
   }>
 }
 
 export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
-  const { error } = await searchParams
+  const { error, next, notice } = await searchParams
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -24,6 +26,12 @@ export default async function LoginPage({
           </p>
         </div>
 
+        {notice && (
+          <div className="mb-5 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">
+            {notice}
+          </div>
+        )}
+
         {error && (
           <div className="mb-5 rounded-lg bg-red-50 p-3 text-sm text-red-700">
             {error}
@@ -31,6 +39,7 @@ export default async function LoginPage({
         )}
 
         <form action={login} className="space-y-5">
+          <input type="hidden" name="next" value={next ?? ''}/>
           <div>
             <label
               htmlFor="email"
@@ -76,6 +85,9 @@ export default async function LoginPage({
             Sign in
           </button>
         </form>
+        <p className="mt-4 text-center text-sm">
+          <a className="underline" href="/login/recover">Thiết lập hoặc đặt lại mật khẩu</a>
+        </p>
 
         <p className="mt-8 text-center text-xs text-gray-400">
           Vibe Academy of Music & Cinema

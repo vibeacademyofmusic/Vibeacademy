@@ -1,0 +1,75 @@
+- complementary:
+  - link "VIBE Academy":
+    - /url: /admin
+    - img "VIBE Academy"
+  - paragraph: Hệ thống quản lý
+  - navigation "Điều hướng quản trị":
+    - region "TỔNG QUAN":
+      - heading "TỔNG QUAN" [level=2]
+      - list:
+        - link "Bảng điều khiển":
+          - /url: /admin
+    - region "VẬN HÀNH":
+      - heading "VẬN HÀNH" [level=2]
+      - list:
+        - link "Đào tạo":
+          - /url: /admin/students
+        - link "Tổng quan tài chính":
+          - /url: /admin/finance
+        - link "Học phí & Thanh toán":
+          - /url: /admin/finance/invoices
+        - link "Số dư khách hàng":
+          - /url: /admin/finance/credits
+        - link "Chi phí vận hành":
+          - /url: /admin/finance/operating-expenses
+    - region "HR":
+      - heading "HR" [level=2]
+      - list:
+        - link "Tổng quan HR":
+          - /url: /admin/hr
+        - link "Nhân sự & nghỉ phép":
+          - /url: /admin/employees
+        - link "Lương & chi trả":
+          - /url: /admin/payroll
+        - link "Phân công và đối soát":
+          - /url: /admin/session-teachers
+    - region "KINH DOANH":
+      - heading "KINH DOANH" [level=2]
+      - list:
+        - link "Điều hành kinh doanh":
+          - /url: /admin/business
+        - link "CRM & Tuyển sinh":
+          - /url: /admin/business/registrations
+        - link "Báo cáo marketing":
+          - /url: /admin/business/marketing
+        - link "Sau bán hàng":
+          - /url: /admin/business/after-sales
+    - region "HỆ THỐNG":
+      - heading "HỆ THỐNG" [level=2]
+      - list:
+        - link "Kho sách và vật tư":
+          - /url: /admin/inventory
+        - link "Nhạc cụ theo serial":
+          - /url: /admin/instruments
+        - link "Hệ thống":
+          - /url: /admin/branches
+  - paragraph: Đăng nhập với tài khoản
+  - paragraph: Local Developer Admin
+  - paragraph: Quản trị viên cấp cao
+  - button "Đăng xuất"
+- banner:
+  - paragraph: Hệ thống Vibe Academy
+  - paragraph: Quản trị
+  - generic: Local Developer Admin
+- main:
+  - heading "Duyệt bảo lưu" [level=1]
+  - paragraph: Chỉ các yêu cầu trong phạm vi được xem. Duyệt hoặc từ chối dùng quy trình hiện có, không tự tạo học phí, hoàn tiền hay điểm danh.
+  - navigation "Lọc trạng thái":
+    - link "Cần quyết định":
+      - /url: /admin/academic/pause-requests?status=REQUESTED
+    - link "Đã duyệt":
+      - /url: /admin/academic/pause-requests?status=APPROVED
+    - link "Đã từ chối":
+      - /url: /admin/academic/pause-requests?status=REJECTED
+  - paragraph: Không có yêu cầu ở trạng thái này.
+- button "Open Next.js Dev Tools":

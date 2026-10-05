@@ -1,38 +1,62 @@
 import SessionTeacher from '../session-teachers/SessionTeacher'
 import { createClient } from '@/lib/supabase/server'
-import { displayLabel } from '@/lib/display'
-import JournalForm from './JournalForm'
-import type { Journal } from './types'
+import QuickEntry from './QuickEntry'
+import type { ObservationOption } from './priority'
 
 export default async function SessionJournals({ occurrenceId }: { occurrenceId: string }) {
-  const supabase = await createClient()
-  const { data: attendance, error } = await supabase.from('attendance_records')
-    .select('id, status, enrollments!inner(students!inner(full_name, student_code))')
+  const db = await createClient()
+  const { data: attendance, error } = await db.from('attendance_records')
+    .select('id, status, enrollments!inner(students!inner(full_name))')
     .eq('session_occurrence_id', occurrenceId).order('created_at')
-  if (error) return <p role="alert" className="rounded-xl bg-red-50 p-5 text-red-700">Không thể tải học viên để ghi nhật ký.</p>
-  const { data: journals, error: journalError } = attendance?.length
-    ? await supabase.from('learning_journals').select('*').in('attendance_record_id', attendance.map(row => row.id))
-    : { data: [], error: null }
+  if (error) return <p role="alert">Không thể tải học viên để ghi nhật ký.</p>
+  const [options, focuses, reasons, homework, journal, entries] = await Promise.all([
+    db.from('learning_observation_options').select('code, dimension, signal, label_vi, draft_clause_vi, sort_order, active').eq('active', true).order('sort_order'),
+    db.from('learning_focus_options').select('code, label_vi').eq('active', true).order('sort_order'),
+    db.from('learning_attention_reasons').select('code, label_vi').eq('active', true).order('sort_order'),
+    db.from('learning_homework_parts').select('code, part_group, label_vi, sort_order').eq('active', true).order('sort_order'),
+    db.from('session_learning_journals').select('content_covered, curriculum_context, status').eq('session_occurrence_id', occurrenceId).maybeSingle(),
+    db.from('student_learning_journal_entries').select('attendance_record_id, observation, progress_note, individual_homework, homework_custom, next_focus_code, attention_required, attention_reason_code, attention_detail, family_note, student_journal_observation_selections(option_code)').order('created_at'),
+  ])
+  if (options.error || focuses.error || reasons.error || homework.error || entries.error) return <p role="alert">Bảng quan sát học tập chưa sẵn sàng.</p>
+  const entryRows = entries.data ?? []
+  const students = (attendance ?? []).map(row => {
+    const enrollment = Array.isArray(row.enrollments) ? row.enrollments[0] : row.enrollments
+    const student = Array.isArray(enrollment.students) ? enrollment.students[0] : enrollment.students
+    const entry = entryRows.find(item => item.attendance_record_id === row.id)
+    const selections = entry?.student_journal_observation_selections
+    const codes = Array.isArray(selections) ? selections.map(selection => selection.option_code) : []
+    return {
+      attendanceId: row.id,
+      name: student.full_name,
+      status: row.status,
+      observation: entry?.observation ?? 'NOT_RECORDED',
+      progressNote: entry?.progress_note ?? '',
+      homework: entry?.individual_homework ?? '',
+      homeworkCustom: entry?.homework_custom ?? false,
+      focus: entry?.next_focus_code ?? '',
+      attention: entry?.attention_required ?? false,
+      attentionReason: entry?.attention_reason_code ?? '',
+      attentionDetail: entry?.attention_detail ?? '',
+      familyNote: entry?.family_note ?? '',
+      codes,
+    }
+  })
   return (
-    <section id="learning-journals" className="rounded-2xl border border-gray-200 bg-white p-6">
-      <h2 className="text-xl font-semibold">Nhật ký học tập</h2>
+    <section id="learning-journals">
       <SessionTeacher id={occurrenceId} readOnly />
-      <p className="mt-2 text-sm text-gray-600">Ghi nội dung theo từng học viên sau khi lưu điểm danh. Với học viên vắng, chỉ ghi nhận hướng dẫn hoặc bài tập gửi về, không ghi nhận như đã tham gia học.</p>
-      {journalError ? <p role="alert" className="mt-4 text-red-700">Nhật ký chưa khả dụng. Vui lòng liên hệ quản trị viên để kiểm tra hệ thống.</p>
-        : !attendance?.length ? <p className="mt-4 text-sm text-gray-500">Hãy lưu điểm danh để bắt đầu ghi nhật ký cho buổi học này.</p>
-          : attendance.map(row => {
-            const enrollment = Array.isArray(row.enrollments) ? row.enrollments[0] : row.enrollments
-            const student = Array.isArray(enrollment.students) ? enrollment.students[0] : enrollment.students
-            const journal = (journals as Journal[]).find(item => item.attendance_record_id === row.id)
-            return (
-              <details key={row.id} className="mt-4 rounded-xl border border-gray-200 p-4">
-                <summary className="cursor-pointer font-medium">{student.full_name} · {student.student_code} · {displayLabel(row.status)}
-                  <span className={`ml-2 text-sm ${journal ? 'text-green-700' : 'text-gray-500'}`}>{journal ? 'Đã có nhật ký' : 'Chưa ghi nhật ký'}</span>
-                </summary>
-                <JournalForm attendanceId={row.id} journal={journal} />
-              </details>
-            )
-          })}
+      <QuickEntry
+        sessionId={occurrenceId}
+        content={journal.data?.content_covered ?? ''}
+        context={journal.data?.curriculum_context ?? ''}
+        status={journal.data?.status ?? 'DRAFT'}
+        students={students}
+        catalogue={{
+          options: (options.data ?? []) as ObservationOption[],
+          focuses: focuses.data ?? [],
+          reasons: reasons.data ?? [],
+          homework: homework.data ?? [],
+        }}
+      />
     </section>
   )
 }

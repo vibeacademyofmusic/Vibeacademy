@@ -5,23 +5,22 @@ const path = require('node:path')
 const ts = require('typescript')
 const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 const base = path.resolve('app/admin/students/[id]')
 // Execute actual server components with a read-only fixture query adapter.
 function load(file, mocks = {}) {
   const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 },
   }).outputText
-  const module = { exports: {} }
+  const loadedModule = { exports: {} }
   const localRequire = name => {
     if (name in mocks) return mocks[name]
-    if (name.startsWith('.')) {
-      const target = path.resolve(path.dirname(file), name)
-      return load(fs.existsSync(target + '.tsx') ? target + '.tsx' : target + '.ts', mocks)
-    }
+    if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
+    if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name), mocks)
     return require(name)
   }
-  new Function('require', 'module', 'exports', output)(localRequire, module, module.exports)
-  return module.exports
+  new Function('require', 'module', 'exports', output)(localRequire, loadedModule, loadedModule.exports)
+  return loadedModule.exports
 }
 const { gradeProgressPercent, subjectProgressValue } = load(path.join(base, 'academic-progress.ts'))
 const component = (progressStatus, extra = {}) => ({ status: 'ACTIVE', is_required: true, progressStatus, ...extra })
@@ -43,6 +42,21 @@ test('missing required progress remains incomplete', () => {
   assert.equal(gradeProgressPercent('IN_PROGRESS', [subject('PASS'), subject('NOT_STARTED')]), 50)
   assert.equal(subjectProgressValue('ALL_REQUIRED_COMPONENTS', 'PASS', []), 0)
 })
+test('passed and in-progress lessons move the grade before the component is complete', () => {
+  const lessons = (passed, inProgress = 0, total = 10) => Array.from({ length: total }, (_, index) => ({
+    status: index < passed ? 'PASS' : index < passed + inProgress ? 'IN_PROGRESS' : 'NOT_STARTED',
+    isRequired: true,
+  }))
+  const lessonSubject = (passed, inProgress = 0) => subject('IN_PROGRESS', {
+    completion_rule: 'ALL_REQUIRED_COMPONENTS',
+    components: [component('IN_PROGRESS', { completion_rule: 'ALL_REQUIRED_ITEMS', lessons: lessons(passed, inProgress) })],
+  })
+  assert.equal(gradeProgressPercent('IN_PROGRESS', [lessonSubject(8), lessonSubject(1), lessonSubject(0), lessonSubject(0)]), 22)
+  assert.equal(subjectProgressValue('ALL_REQUIRED_COMPONENTS', 'IN_PROGRESS', [{
+    status: 'IN_PROGRESS', completion_rule: 'ALL_REQUIRED_ITEMS',
+    lessons: [{ status: 'IN_PROGRESS', isRequired: true }, { status: 'PASS', isRequired: false }, { status: 'NOT_STARTED', isRequired: true }],
+  }]), 0.25)
+})
 test('completed grade is 100%; passing manual grade awaits database confirmation', () => {
   assert.equal(gradeProgressPercent('COMPLETED', [subject('NOT_STARTED')]), 100)
   assert.equal(gradeProgressPercent('IN_PROGRESS', [subject('PASS')]), null)
@@ -62,6 +76,8 @@ function fixtures() {
     student_subject_progress: [{ id: 'sp1', level_progress_id: 'lp1', subject_id: 's1', status: 'PASS' }],
     curriculum_subject_components: [{ id: 'c1', subject_id: 's1', name: 'Historical component', status: 'ACTIVE', is_required: true, sort_order: 1 }],
     student_component_progress: [{ id: 'cp1', subject_progress_id: 'sp1', component_id: 'c1', status: 'PASS' }],
+    curriculum_component_items: [],
+    student_component_item_progress: [],
   }
 }
 function client(data) {
@@ -87,7 +103,7 @@ async function render(data, studentId = 'A') {
   const { default: Component } = load(path.join(base, 'AcademicPrograms.tsx'), {
     '@/lib/supabase/server': { createClient: async () => client(data) },
     '@/lib/display': { displayLabel: status => status },
-    '../actions': { assignStudentAcademicProgram: noop, startStudentAcademicLevel: noop, updateComponentProgressStatus: noop, updateDirectSubjectProgressStatus: noop },
+    '../actions': { assignStudentAcademicProgram: noop, startStudentAcademicLevel: noop, updateComponentProgressStatus: noop, updateDirectSubjectProgressStatus: noop, updateLessonProgressStatus: noop, updateStudentAcademicEnrollmentStartDate: noop },
   })
   async function resolve(node) {
     if (Array.isArray(node)) return Promise.all(node.map(resolve))
@@ -110,7 +126,7 @@ test('renders both programs, primary first; completed history read-only, next gr
   assert.match(html, /Historical component/)
   assert.doesNotMatch(html, /name="progress_id"/)
   for (const record of html.split('Hồ sơ học tập').slice(1))
-    assert.doesNotMatch(record.split('Lộ trình học tập')[0], /<form/)
+    assert.doesNotMatch(record.split('Lộ trình học tập')[0].split('Thêm chương trình')[0], /<form/)
   assert.match(html, /value="piano" disabled=""/)
   assert.match(html, /value="guitar" disabled=""/)
 })
@@ -127,4 +143,64 @@ test('completed enrollment remains visible; no programs produces a safe empty st
   data.student_curriculum_enrollments[1].status = 'COMPLETED'
   assert.match(await render(data), /Lộ trình học tập — Piano/)
   assert.match(await render(data, 'empty'), /Chưa có chương trình học/)
+})
+
+test('all three awards are equally complete and preserve their display value', () => {
+ const {academicStatusLabel}=load(path.join(base,'academic-progress.ts'))
+ for(const award of ['PASS','MERIT','DISTINCTION']) {
+  assert.equal(subjectProgressValue('DIRECT_ASSESSMENT',award,[]),1)
+  assert.equal(subjectProgressValue('ALL_REQUIRED_COMPONENTS','NOT_STARTED',[{status:award}]),1)
+  assert.equal(gradeProgressPercent('IN_PROGRESS',[subject(award),subject('NOT_STARTED')]),50)
+ }
+ assert.equal(academicStatusLabel('MERIT'),'Merit');assert.equal(academicStatusLabel('DISTINCTION'),'Distinction')
+})
+test('editable direct subjects expose precisely five choices and Save; record preserves Merit',async()=>{
+ const d=fixtures();d.student_level_progress[0].status='IN_PROGRESS';d.student_level_progress[0].started_at='2020-01-01T00:00:00Z'
+ d.curriculum_subjects[0].completion_rule='DIRECT_ASSESSMENT';d.student_subject_progress[0].status='MERIT'
+ const html=await render(d)
+ const choice=html.match(/<select[^>]*name="status"[\s\S]*?<\/select>/)[0]
+ assert.equal((choice.match(/<option/g)||[]).length,5)
+ for(const s of ['NOT_STARTED','IN_PROGRESS','PASS','MERIT','DISTINCTION']) assert.ok(choice.includes(`value="${s}"`))
+ assert.doesNotMatch(choice,/NOT_PASSED|EXEMPT/);assert.match(html,/Lưu/)
+ assert.match(html.split('Hồ sơ học tập')[1],/>Merit</)
+})
+test('component subject exposes only component editor and future grade stays locked',async()=>{
+ const d=fixtures();d.student_level_progress[0].status='IN_PROGRESS';d.student_level_progress[0].started_at='2020-01-01T00:00:00Z'
+ let html=await render(d)
+ assert.match(html,/name="progress_id" value="cp1"/);assert.doesNotMatch(html,/name="progress_id" value="sp1"/)
+ d.student_level_progress[0].started_at='2099-01-01T00:00:00Z';html=await render(d)
+ assert.doesNotMatch(html,/name="progress_id"/);assert.match(html,/Chưa đến ngày bắt đầu trình độ/)
+})
+test('lesson component records Đang học and Đạt on each lesson and stays locked before the start', async () => {
+  const d = fixtures()
+  d.student_level_progress[0].status = 'IN_PROGRESS'
+  d.student_level_progress[0].started_at = '2020-01-01T00:00:00Z'
+  d.curriculum_subject_components[0].completion_rule = 'ALL_REQUIRED_ITEMS'
+  d.curriculum_component_items = [{ id: 'i1', component_id: 'c1', name: 'Lesson 01', code: 'L01', sort_order: 1, is_required: true, status: 'ACTIVE' }]
+  d.student_component_item_progress = [{ id: 'ip1', component_progress_id: 'cp1', item_id: 'i1', status: 'NOT_STARTED' }]
+  let html = await render(d)
+  assert.match(html, /L01 · Lesson 01/)
+  assert.match(html, /name="progress_id" value="ip1"/)
+  assert.match(html, />Đang học</)
+  assert.match(html, />Đạt</)
+  assert.doesNotMatch(html, /name="progress_id" value="cp1"/)
+  d.student_component_progress = []
+  d.student_component_item_progress = []
+  html = await render(d)
+  assert.match(html, /name="item_id" value="i1"/)
+  assert.match(html, /name="component_id" value="c1"/)
+  assert.match(html, />Đang học</)
+  assert.doesNotMatch(html, /name="progress_id"/)
+  d.student_level_progress[0].started_at = '2099-01-01T00:00:00Z'
+  html = await render(d)
+  assert.match(html, /L01 · Lesson 01/)
+  assert.match(html, /Chưa học/)
+  assert.doesNotMatch(html, /name="progress_id"/)
+  assert.match(html, /Đang học và Đạt của từng bài học sẽ mở khi đến thời điểm bắt đầu/)
+})
+test('scheduled edit gate compares timestamps instead of timestamp versus calendar string',()=>{
+ const {isAcademicScheduled}=load(path.join(base,'academic-progress.ts'))
+ const now=Date.parse('2026-09-18T03:00:00Z')
+ assert.equal(isAcademicScheduled('2026-09-18T00:00:00Z',now),false)
+ assert.equal(isAcademicScheduled('2026-09-18T17:00:00Z',now),true)
 })

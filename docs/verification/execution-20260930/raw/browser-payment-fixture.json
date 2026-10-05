@@ -1,0 +1,10 @@
+{
+  "application": "45702ffd-c2d7-4909-a2ff-b2e81697939c",
+  "student": "a697e932-e33c-4513-a610-0d9adaaf665e",
+  "payment": "0f13c3f6-1a25-4592-b2b7-525beb43c93c",
+  "amount": 12000000,
+  "created_by": null,
+  "branch": "267ee65d-cb7d-4054-812c-305d305d916e",
+  "event_replay": "ALREADY_PAID",
+  "boundary": "Synthetic trusted-server event; no provider networking or signature test"
+}

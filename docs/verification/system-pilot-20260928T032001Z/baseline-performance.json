@@ -1,0 +1,132 @@
+{
+  "started_at": "2026-09-28T04:54:59.790Z",
+  "finished_at": "2026-09-28T04:56:00.626Z",
+  "rehearsal_seconds": 0,
+  "mode": "verified Next production build, local port 3000",
+  "measurement": "HTTP page plus scoped read RPC roundtrip; not browser paint; first-touch is not a guaranteed cold OS/DB cache",
+  "fingerprint": "325f80a585240c4a9895dcbc6f43832a1fcb46a9c4c772fc827b918c051caeb6",
+  "source_unchanged": true,
+  "checkpoints": [],
+  "metrics": {
+    "first-touch/1/ADMIN": {
+      "n": 1,
+      "p50": 175,
+      "p95": 175,
+      "max": 175,
+      "errors": 0,
+      "max_bytes": 40087
+    },
+    "first-touch/1/BA": {
+      "n": 1,
+      "p50": 83,
+      "p95": 83,
+      "max": 83,
+      "errors": 0,
+      "max_bytes": 27778
+    },
+    "first-touch/1/T1": {
+      "n": 1,
+      "p50": 82,
+      "p95": 82,
+      "max": 82,
+      "errors": 0,
+      "max_bytes": 10697
+    },
+    "first-touch/1/P1": {
+      "n": 1,
+      "p50": 932,
+      "p95": 932,
+      "max": 932,
+      "errors": 0,
+      "max_bytes": 7818
+    },
+    "first-touch/1/FIN": {
+      "n": 1,
+      "p50": 31,
+      "p95": 31,
+      "max": 31,
+      "errors": 0,
+      "max_bytes": 22366
+    },
+    "warm/2/ADMIN": {
+      "n": 30,
+      "p50": 30,
+      "p95": 34,
+      "max": 40,
+      "errors": 0,
+      "max_bytes": 40087
+    },
+    "warm/2/BA": {
+      "n": 30,
+      "p50": 56,
+      "p95": 64,
+      "max": 66,
+      "errors": 0,
+      "max_bytes": 27778
+    },
+    "warm/2/T1": {
+      "n": 30,
+      "p50": 71,
+      "p95": 80,
+      "max": 103,
+      "errors": 0,
+      "max_bytes": 10697
+    },
+    "warm/2/P1": {
+      "n": 30,
+      "p50": 936,
+      "p95": 997,
+      "max": 1020,
+      "errors": 0,
+      "max_bytes": 7818
+    },
+    "warm/2/FIN": {
+      "n": 30,
+      "p50": 29,
+      "p95": 44,
+      "max": 44,
+      "errors": 0,
+      "max_bytes": 22366
+    },
+    "warm/5/ADMIN": {
+      "n": 30,
+      "p50": 49,
+      "p95": 58,
+      "max": 60,
+      "errors": 0,
+      "max_bytes": 40087
+    },
+    "warm/5/FIN": {
+      "n": 30,
+      "p50": 48,
+      "p95": 58,
+      "max": 60,
+      "errors": 0,
+      "max_bytes": 22366
+    },
+    "warm/5/BA": {
+      "n": 30,
+      "p50": 77,
+      "p95": 88,
+      "max": 92,
+      "errors": 0,
+      "max_bytes": 27778
+    },
+    "warm/5/T1": {
+      "n": 30,
+      "p50": 92,
+      "p95": 104,
+      "max": 114,
+      "errors": 0,
+      "max_bytes": 10697
+    },
+    "warm/5/P1": {
+      "n": 30,
+      "p50": 956,
+      "p95": 985,
+      "max": 1009,
+      "errors": 0,
+      "max_bytes": 7818
+    }
+  }
+}

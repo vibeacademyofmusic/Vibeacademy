@@ -1,0 +1,56 @@
+[
+  {
+    "actor": "P1",
+    "type": "MONTHLY",
+    "status": 200,
+    "bytes": 16537,
+    "contentType": "application/pdf",
+    "cacheControl": "private, no-store",
+    "at": "2026-09-28T04:58:13.690Z"
+  },
+  {
+    "actor": "P1",
+    "type": "END_OF_COURSE",
+    "status": 200,
+    "bytes": 16561,
+    "contentType": "application/pdf",
+    "cacheControl": "private, no-store",
+    "at": "2026-09-28T04:58:13.732Z"
+  },
+  {
+    "actor": "P2",
+    "type": "MONTHLY",
+    "status": 404,
+    "bytes": 59,
+    "contentType": "text/plain;charset=UTF-8",
+    "cacheControl": "private, no-store",
+    "at": "2026-09-28T04:58:13.838Z"
+  },
+  {
+    "actor": "P2",
+    "type": "END_OF_COURSE",
+    "status": 404,
+    "bytes": 59,
+    "contentType": "text/plain;charset=UTF-8",
+    "cacheControl": "private, no-store",
+    "at": "2026-09-28T04:58:13.849Z"
+  },
+  {
+    "actor": "S1",
+    "type": "MONTHLY",
+    "status": 200,
+    "bytes": 16537,
+    "contentType": "application/pdf",
+    "cacheControl": "private, no-store",
+    "at": "2026-09-28T04:58:13.982Z"
+  },
+  {
+    "actor": "S1",
+    "type": "END_OF_COURSE",
+    "status": 200,
+    "bytes": 16561,
+    "contentType": "application/pdf",
+    "cacheControl": "private, no-store",
+    "at": "2026-09-28T04:58:14.023Z"
+  }
+]

@@ -1,0 +1,1273 @@
+[
+  {
+    "id": "ENV-01",
+    "priority": "P0",
+    "title": "Đúng runtime",
+    "expected": "Xác minh repo/CWD/branch/commit, dirty diff fingerprint, PID/mode của 3000 và DB đang phục vụ; UI/API/SQL phải cùng môi trường.",
+    "status": "PASS",
+    "actual": "Đã xác định repo/branch/commit và các đích local 3000, 54321/54322; fixture HTTP có origin guard, không gửi provider thật.",
+    "evidence": [
+      "TEST_RUN_MANIFEST.json",
+      "raw/environment-targets.json",
+      "security-api.json"
+    ]
+  },
+  {
+    "id": "ENV-02",
+    "priority": "P0",
+    "title": "Không nhầm cloud",
+    "expected": "Xác minh read/write targets và secret source mà không in secrets; fixture không đi vào production hoặc provider thật ngoài phạm vi cho phép.",
+    "status": "PASS",
+    "actual": "Đã xác định repo/branch/commit và các đích local 3000, 54321/54322; fixture HTTP có origin guard, không gửi provider thật.",
+    "evidence": [
+      "TEST_RUN_MANIFEST.json",
+      "raw/environment-targets.json",
+      "security-api.json"
+    ]
+  },
+  {
+    "id": "ENV-03",
+    "priority": "P1",
+    "title": "Khả năng tái lập",
+    "expected": "Ghi Node/package manager/lockfile, migration head thực tế, scripts; cài và chạy theo repo, không tự nâng dependency trong đợt nghiệm thu.",
+    "status": "BLOCKED",
+    "actual": "Đã ghi runtime/lockfile; còn 5 migration lịch sử thiếu ledger dù catalogue so khớp. Cần đối chiếu seed/constraint/index/trigger trước repair ledger.",
+    "evidence": [
+      "raw/schema-drift-final.json",
+      "TEST_RUN_MANIFEST.json"
+    ]
+  },
+  {
+    "id": "ENV-04",
+    "priority": "P0",
+    "title": "Migration và recovery",
+    "expected": "Kiểm thử migration/restore trên DB local dùng riêng được nhận diện rõ; không reset hay khôi phục đè MAIN. So sánh schema/dữ liệu sau phục hồi.",
+    "status": "PASS",
+    "actual": "Restore riêng: 200 bảng khớp số dòng/digest baseline. Fresh riêng: 177 migration thành công. Giới hạn phục hồi dịch vụ/key/storage nằm ở REC-01.",
+    "evidence": [
+      "RECOVERY_EVIDENCE.md",
+      "raw/restore-row-comparison.json",
+      "raw/fresh-migrations.json"
+    ]
+  },
+  {
+    "id": "ENV-05",
+    "priority": "P1",
+    "title": "Không che lỗi",
+    "expected": "Chạy required lint/typecheck/build/unit/integration/DB gates từ repo; không skip, xfail hoặc đổi expectation để che bug; ghi cả lỗi cũ còn tồn tại.",
+    "status": "FAIL",
+    "actual": "Lint, typecheck, Node và build đạt. Gate DB tổng thể FAIL, không bỏ test hoặc tắt trigger để lấy PASS.",
+    "evidence": [
+      "gates.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "ENV-06",
+    "priority": "P1",
+    "title": "Một runtime thống nhất",
+    "expected": "Kết thúc kiểm thử giao diện tại 3000 với đúng bản đã sửa; không lấy PASS từ cổng khác hoặc bản build cũ.",
+    "status": "PASS",
+    "actual": "Bản build hiện tại chạy tại cổng 3000; giao diện điểm danh và báo cáo được kiểm tra trên cùng local runtime.",
+    "evidence": [
+      "raw/preview.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "SEC-01",
+    "priority": "P0",
+    "title": "Ma trận quyền",
+    "expected": "Với 7 vai trò, kiểm tra view/create/update/approve/export/download/delete theo permission thực; cho phép và từ chối đều có bằng chứng UI/API/DB.",
+    "status": "BLOCKED",
+    "actual": "Đã có kiểm tra JWT hiện hành, 7 vai trò, branch/parent/teacher scope và forged write. Chưa đủ toàn bộ ma trận UI/API/DB view/create/update/approve/export/download/delete; các suite quan hệ cũ còn lỗi fixture.",
+    "evidence": [
+      "security-api.json",
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "SEC-02",
+    "priority": "P0",
+    "title": "Branch scope",
+    "expected": "Branch Admin A không đọc/ghi/export/report aggregate dữ liệu branch B; đổi query/body/UUID không vượt scope.",
+    "status": "BLOCKED",
+    "actual": "Đã có kiểm tra JWT hiện hành, 7 vai trò, branch/parent/teacher scope và forged write. Chưa đủ toàn bộ ma trận UI/API/DB view/create/update/approve/export/download/delete; các suite quan hệ cũ còn lỗi fixture.",
+    "evidence": [
+      "security-api.json",
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "SEC-03",
+    "priority": "P0",
+    "title": "Teacher relationship",
+    "expected": "Teacher chỉ thao tác lớp/ca/học sinh đúng quan hệ; cùng chi nhánh nhưng không được phân công vẫn bị chặn; actual/substitute teacher đúng ngày nghiệp vụ.",
+    "status": "BLOCKED",
+    "actual": "Đã có kiểm tra JWT hiện hành, 7 vai trò, branch/parent/teacher scope và forged write. Chưa đủ toàn bộ ma trận UI/API/DB view/create/update/approve/export/download/delete; các suite quan hệ cũ còn lỗi fixture.",
+    "evidence": [
+      "security-api.json",
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "SEC-04",
+    "priority": "P0",
+    "title": "Parent/Student relationship",
+    "expected": "Parent thấy đúng con; Student chỉ thấy mình; đổi child/report/feedback IDs và direct storage URL không đọc được người khác.",
+    "status": "BLOCKED",
+    "actual": "Đã có kiểm tra JWT hiện hành, 7 vai trò, branch/parent/teacher scope và forged write. Chưa đủ toàn bộ ma trận UI/API/DB view/create/update/approve/export/download/delete; các suite quan hệ cũ còn lỗi fixture.",
+    "evidence": [
+      "security-api.json",
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "SEC-05",
+    "priority": "P0",
+    "title": "Thu hồi quyền",
+    "expected": "Disable user, đổi role/scope, gỡ Parent↔Child hoặc teacher assignment: backend áp quyền hiện tại, không chỉ ẩn menu; session cũ không giữ đặc quyền trái policy.",
+    "status": "BLOCKED",
+    "actual": "Đã có kiểm tra JWT hiện hành, 7 vai trò, branch/parent/teacher scope và forged write. Chưa đủ toàn bộ ma trận UI/API/DB view/create/update/approve/export/download/delete; các suite quan hệ cũ còn lỗi fixture.",
+    "evidence": [
+      "security-api.json",
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "SEC-06",
+    "priority": "P0",
+    "title": "Anonymous và RPC",
+    "expected": "Audit grants, RLS, SECURITY DEFINER/search_path/function execute và views; chạy lại authorization_foundation/security_catalogue nếu có, sửa root cause thay vì chỉ test fixture.",
+    "status": "BLOCKED",
+    "actual": "authorization_foundation và security_catalogue đạt; catalogue 516 hàm/172 bảng/192 policies khớp fresh. Chưa audit đầy đủ tất cả views và đường export mới để kết luận toàn ca.",
+    "evidence": [
+      "raw/db-final.log",
+      "raw/schema-drift-final.json"
+    ]
+  },
+  {
+    "id": "SEC-07",
+    "priority": "P0",
+    "title": "Giả dữ liệu actor",
+    "expected": "Không tin created_by/branch_id/teacher_id/approver_id từ client; server lấy actor đúng session và validate relation.",
+    "status": "BLOCKED",
+    "actual": "Đã có kiểm tra JWT hiện hành, 7 vai trò, branch/parent/teacher scope và forged write. Chưa đủ toàn bộ ma trận UI/API/DB view/create/update/approve/export/download/delete; các suite quan hệ cũ còn lỗi fixture.",
+    "evidence": [
+      "security-api.json",
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "SEC-08",
+    "priority": "P0",
+    "title": "Tài liệu và cache",
+    "expected": "PDF, export, signed URL, cache keys và response serialization không rò thông tin giữa tài khoản; chưa phát hành không tải được.",
+    "status": "BLOCKED",
+    "actual": "6 HTTP PDF checks đạt: P1/S1 200, P2 404; private,no-store. Chưa thử đủ draft/cache signed URL/storage bypass trên mọi loại tài liệu.",
+    "evidence": [
+      "pdf-evidence.json"
+    ]
+  },
+  {
+    "id": "SEC-09",
+    "priority": "P0",
+    "title": "Input và secrets",
+    "expected": "XSS/injection, unsafe redirect, CSRF theo framework thật; credentials/service-role/token không có trong client bundle, URL, logs hoặc evidence.",
+    "status": "BLOCKED",
+    "actual": "Đăng nhập/đăng xuất các actor riêng và unsafe return URL có bằng chứng; chưa đủ reset/expiry/CSRF/XSS toàn bề mặt.",
+    "evidence": [
+      "security-api.json",
+      "raw/node-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "SEC-10",
+    "priority": "P1",
+    "title": "Auth thực tế",
+    "expected": "Đăng nhập/đăng xuất/reset/hết phiên theo cơ chế hiện có; tài khoản riêng cho từng actor, lỗi không lộ thông tin quá mức.",
+    "status": "BLOCKED",
+    "actual": "Đăng nhập/đăng xuất các actor riêng và unsafe return URL có bằng chứng; chưa đủ reset/expiry/CSRF/XSS toàn bề mặt.",
+    "evidence": [
+      "security-api.json",
+      "raw/node-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "NAV-01",
+    "priority": "P1",
+    "title": "Menu mới",
+    "expected": "Đối chiếu yêu cầu mới: Vận hành chứa Đào tạo và Tài chính; Đào tạo một thanh menu con; HR một mục chính theo mẫu CRM; Hệ thống cuối menu tích hợp các mục đã yêu cầu.",
+    "status": "FAIL",
+    "actual": "Menu HR vẫn có nhiều mục cấp chính. Chưa phù hợp yêu cầu một mục chính theo mẫu CRM trong tài liệu nghiệm thu.",
+    "evidence": [
+      "qr-stopped.png"
+    ]
+  },
+  {
+    "id": "NAV-02",
+    "priority": "P1",
+    "title": "Route thật",
+    "expected": "Kiểm tra mọi route đang được phép trong menu, direct link, refresh/deep link, back/forward và permission; không chỉ thử trang dashboard.",
+    "status": "BLOCKED",
+    "actual": "Đã kiểm tra điểm danh desktop/390px, parent report, teacher draft save/reload, QR start/stop/switch. Chưa duyệt mọi route/form và đối soát dashboard toàn hệ thống.",
+    "evidence": [
+      "VISUAL_VERIFICATION.md",
+      "inventory.json"
+    ]
+  },
+  {
+    "id": "NAV-03",
+    "priority": "P1",
+    "title": "E-learning ngoài scope",
+    "expected": "Menu E-learning đã gỡ theo yêu cầu; kiểm tra quyền truy cập URL/backend riêng. Ẩn menu không đồng nghĩa authorization hoặc xóa dữ liệu.",
+    "status": "BLOCKED",
+    "actual": "Menu admin không có E-learning; portal phụ huynh còn liên kết Học trực tuyến. Chưa xác minh đầy đủ direct backend access và phạm vi yêu cầu gỡ menu.",
+    "evidence": [
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "NAV-04",
+    "priority": "P1",
+    "title": "Form lifecycle",
+    "expected": "Create/edit/save/reload, validation, empty/error/loading states; double click, bỏ trang khi đang sửa và lỗi server không mất/ghi đôi dữ liệu.",
+    "status": "BLOCKED",
+    "actual": "Đã kiểm tra điểm danh desktop/390px, parent report, teacher draft save/reload, QR start/stop/switch. Chưa duyệt mọi route/form và đối soát dashboard toàn hệ thống.",
+    "evidence": [
+      "VISUAL_VERIFICATION.md",
+      "inventory.json"
+    ]
+  },
+  {
+    "id": "NAV-05",
+    "priority": "P1",
+    "title": "Desktop/mobile",
+    "expected": "Desktop và màn hình hẹp khoảng 390px: core action dùng được, bảng/modal không che nút, bàn phím/focus/nhãn form đủ dùng.",
+    "status": "BLOCKED",
+    "actual": "Đã kiểm tra điểm danh desktop/390px, parent report, teacher draft save/reload, QR start/stop/switch. Chưa duyệt mọi route/form và đối soát dashboard toàn hệ thống.",
+    "evidence": [
+      "VISUAL_VERIFICATION.md",
+      "inventory.json"
+    ]
+  },
+  {
+    "id": "NAV-06",
+    "priority": "P1",
+    "title": "Dashboard và bộ lọc",
+    "expected": "KPI theo ngày Việt Nam/branch khớp DB và ledger; filter/search/pagination giữ đúng scope; không lấy tổng trang làm tổng toàn bộ.",
+    "status": "BLOCKED",
+    "actual": "Đã kiểm tra điểm danh desktop/390px, parent report, teacher draft save/reload, QR start/stop/switch. Chưa duyệt mọi route/form và đối soát dashboard toàn hệ thống.",
+    "evidence": [
+      "VISUAL_VERIFICATION.md",
+      "inventory.json"
+    ]
+  },
+  {
+    "id": "NAV-07",
+    "priority": "P2",
+    "title": "Ngôn ngữ thiết kế",
+    "expected": "Kiểm tra navy/gold/warm shell và component thống nhất cho phần thay đổi; lỗi thẩm mỹ không được ưu tiên hơn lỗi dữ liệu/quyền.",
+    "status": "BLOCKED",
+    "actual": "Đã kiểm tra điểm danh desktop/390px, parent report, teacher draft save/reload, QR start/stop/switch. Chưa duyệt mọi route/form và đối soát dashboard toàn hệ thống.",
+    "evidence": [
+      "VISUAL_VERIFICATION.md",
+      "inventory.json"
+    ]
+  },
+  {
+    "id": "CRM-01",
+    "priority": "P1",
+    "title": "Lead lifecycle",
+    "expected": "Tạo/cập nhật lead, người phụ trách, tag/trạng thái và lịch sử follow-up; chuyển đổi không làm mất nguồn hoặc tạo lead trùng trái rule.",
+    "status": "BLOCKED",
+    "actual": "Các regression liên quan đã được gọi nhưng chuỗi registration/placement đầy đủ chưa đạt; thiếu prerequisites trong fixture và chưa hoàn tất browser end-to-end.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "CRM-02",
+    "priority": "P1",
+    "title": "Registration end-to-end",
+    "expected": "Từ form đăng ký đến application, hồ sơ học sinh và academic assignment theo workflow; lỗi ở một bước có rollback hoặc trạng thái phục hồi rõ.",
+    "status": "BLOCKED",
+    "actual": "Các regression liên quan đã được gọi nhưng chuỗi registration/placement đầy đủ chưa đạt; thiếu prerequisites trong fixture và chưa hoàn tất browser end-to-end.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "CRM-03",
+    "priority": "P1",
+    "title": "Kiểm tra trùng",
+    "expected": "Kiểm tra cùng tên, cùng SĐT gia đình, đăng ký lặp, hai học sinh dùng chung phụ huynh; không tự merge người khác nhau.",
+    "status": "BLOCKED",
+    "actual": "Các regression liên quan đã được gọi nhưng chuỗi registration/placement đầy đủ chưa đạt; thiếu prerequisites trong fixture và chưa hoàn tất browser end-to-end.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "CRM-04",
+    "priority": "P1",
+    "title": "Retry và concurrency",
+    "expected": "Hai lần submit cùng registration không tạo hai enrollment/invoice/event; lần hợp lệ độc lập vẫn được nhận.",
+    "status": "BLOCKED",
+    "actual": "Các regression liên quan đã được gọi nhưng chuỗi registration/placement đầy đủ chưa đạt; thiếu prerequisites trong fixture và chưa hoàn tất browser end-to-end.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "CRM-05",
+    "priority": "P0",
+    "title": "Registration notification",
+    "expected": "Consent/recipient/template/allowlist được kiểm tra; đăng ký mới không tự gửi tin đến khách thật trong fixture; retry không nhân bản.",
+    "status": "BLOCKED",
+    "actual": "Fixture đợt này không gửi tin thật; chưa có registration journey mới đủ consent/template/retry để kết luận toàn ca.",
+    "evidence": [
+      "security-api.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "CRM-06",
+    "priority": "P1",
+    "title": "Queue và tìm kiếm",
+    "expected": "Lead/registration/student sau chuyển đổi xuất hiện đúng tab và branch; lỗi từng record không bị lấp bằng nhãn thành công chung.",
+    "status": "BLOCKED",
+    "actual": "Các regression liên quan đã được gọi nhưng chuỗi registration/placement đầy đủ chưa đạt; thiếu prerequisites trong fixture và chưa hoàn tất browser end-to-end.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "STU-01",
+    "priority": "P1",
+    "title": "Identity đầy đủ",
+    "expected": "Tạo/update học sinh, Parent, role, branch và relationship đúng; reload và search ra cùng ID, không orphan.",
+    "status": "BLOCKED",
+    "actual": "500 hồ sơ tổng hợp và các quan hệ dùng thử đã tạo; chưa đủ create/update/academic future-date UI journey.",
+    "evidence": [
+      "mapping.json",
+      "api-evidence.json"
+    ]
+  },
+  {
+    "id": "STU-02",
+    "priority": "P0",
+    "title": "Trang placement giới hạn",
+    "expected": "Nhân sự chỉ có student_placement.view không vào được chi tiết tài chính/payroll/HR hoặc tự tăng quyền qua API.",
+    "status": "FAIL",
+    "actual": "Các suite student_ops, pause hoặc legacy import bị lỗi/thất bại. Chưa được dùng các kết quả khác để thay thế.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "STU-03",
+    "priority": "P1",
+    "title": "Program và ngày bắt đầu",
+    "expected": "Gán chương trình, bắt đầu/nâng grade với ngày tương lai; trạng thái UI Đã lên lịch và backend chặn tiến độ trước ngày bắt đầu đúng rule.",
+    "status": "BLOCKED",
+    "actual": "500 hồ sơ tổng hợp và các quan hệ dùng thử đã tạo; chưa đủ create/update/academic future-date UI journey.",
+    "evidence": [
+      "mapping.json",
+      "api-evidence.json"
+    ]
+  },
+  {
+    "id": "STU-04",
+    "priority": "P1",
+    "title": "Bảo lưu và kết thúc",
+    "expected": "Khoảng bảo lưu inclusive, gia hạn, kết thúc/chuyển trạng thái ảnh hưởng lịch/tuition/journal theo rule; giữ lịch sử cũ.",
+    "status": "FAIL",
+    "actual": "Các suite student_ops, pause hoặc legacy import bị lỗi/thất bại. Chưa được dùng các kết quả khác để thay thế.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "STU-05",
+    "priority": "P1",
+    "title": "Dữ liệu mở đầu",
+    "expected": "Nếu có import/baseline: dry-run, validate, duplicate detection và đối soát nguồn→DB; lỗi giữa chừng không import nửa phần mà báo hoàn tất.",
+    "status": "FAIL",
+    "actual": "Các suite student_ops, pause hoặc legacy import bị lỗi/thất bại. Chưa được dùng các kết quả khác để thay thế.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "OPS-01",
+    "priority": "P1",
+    "title": "Định nghĩa ca dạy",
+    "expected": "Làm rõ class/ca dạy lặp và session/buổi cụ thể trong code; đổi nhãn không làm gộp hoặc nhân đôi các đối tượng/khóa dữ liệu.",
+    "status": "PASS",
+    "actual": "Ca dạy là class lặp, buổi học là occurrence; launcher đi thẳng roster theo session UUID, không đổi identity dữ liệu.",
+    "evidence": [
+      "raw/node-final.log",
+      "branch-roster-desktop.png"
+    ]
+  },
+  {
+    "id": "OPS-02",
+    "priority": "P1",
+    "title": "Xếp lịch hợp lệ",
+    "expected": "Private/group, capacity, room, teacher, student enrollment, branch, effective dates; lịch hiển thị đúng từng ngày Asia/Ho_Chi_Minh.",
+    "status": "BLOCKED",
+    "actual": "Placement 25 checks, launcher 31 và teacher workspace 29 checks đạt trong scope đã chạy. Chưa đủ toàn chuỗi concurrent scheduling/lifecycle/UI/audit; session fixture còn thiếu room_id.",
+    "evidence": [
+      "raw/placement-regression-after.log",
+      "raw/roster-clone-test-v2.log",
+      "raw/teacher-fixture-v3.log"
+    ]
+  },
+  {
+    "id": "OPS-03",
+    "priority": "P1",
+    "title": "Xung đột lịch",
+    "expected": "Chặn trùng giáo viên/phòng/học sinh, kể cả khác lớp và hai request đồng thời; buổi liền kề không chặn sai; kiểm tra buffer nếu policy có.",
+    "status": "BLOCKED",
+    "actual": "Placement 25 checks, launcher 31 và teacher workspace 29 checks đạt trong scope đã chạy. Chưa đủ toàn chuỗi concurrent scheduling/lifecycle/UI/audit; session fixture còn thiếu room_id.",
+    "evidence": [
+      "raw/placement-regression-after.log",
+      "raw/roster-clone-test-v2.log",
+      "raw/teacher-fixture-v3.log"
+    ]
+  },
+  {
+    "id": "OPS-04",
+    "priority": "P1",
+    "title": "Dạy thay và bàn giao",
+    "expected": "PRIMARY theo ngày và session-specific override đúng precedence; handoff kết thúc/bắt đầu đúng ngày; ghi rõ hạn chế tái phân công cùng teacher sau gap nếu còn.",
+    "status": "BLOCKED",
+    "actual": "Placement 25 checks, launcher 31 và teacher workspace 29 checks đạt trong scope đã chạy. Chưa đủ toàn chuỗi concurrent scheduling/lifecycle/UI/audit; session fixture còn thiếu room_id.",
+    "evidence": [
+      "raw/placement-regression-after.log",
+      "raw/roster-clone-test-v2.log",
+      "raw/teacher-fixture-v3.log"
+    ]
+  },
+  {
+    "id": "OPS-05",
+    "priority": "P1",
+    "title": "Lifecycle",
+    "expected": "Reschedule/cancel/complete/lock/reopen theo quyền; lịch lặp sửa một buổi so với cả chuỗi; lịch sử attendance/journal/payroll không đổi nhầm.",
+    "status": "FAIL",
+    "actual": "Các suite session lifecycle/reschedule/makeup chưa chạy hết do fixture không đủ placement prerequisites.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "OPS-06",
+    "priority": "P1",
+    "title": "Điểm danh",
+    "expected": "PRESENT/LATE/ABSENT/EXCUSED theo policy; đổi trạng thái có audit; không điểm danh học sinh ngoài enrollment hiệu lực.",
+    "status": "BLOCKED",
+    "actual": "Placement 25 checks, launcher 31 và teacher workspace 29 checks đạt trong scope đã chạy. Chưa đủ toàn chuỗi concurrent scheduling/lifecycle/UI/audit; session fixture còn thiếu room_id.",
+    "evidence": [
+      "raw/placement-regression-after.log",
+      "raw/roster-clone-test-v2.log",
+      "raw/teacher-fixture-v3.log"
+    ]
+  },
+  {
+    "id": "OPS-07",
+    "priority": "P1",
+    "title": "Học bù",
+    "expected": "Tạo/đặt/hoàn tất/hủy buổi bù không tính hai lần buổi học/học phí/giờ dạy; gắn được buổi gốc.",
+    "status": "FAIL",
+    "actual": "Các suite session lifecycle/reschedule/makeup chưa chạy hết do fixture không đủ placement prerequisites.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "OPS-08",
+    "priority": "P1",
+    "title": "Thiếu dữ liệu",
+    "expected": "Unassigned teacher null khác với thiếu view row; thiếu assignment không crash hoặc lấy nhầm teacher mặc định.",
+    "status": "BLOCKED",
+    "actual": "Placement 25 checks, launcher 31 và teacher workspace 29 checks đạt trong scope đã chạy. Chưa đủ toàn chuỗi concurrent scheduling/lifecycle/UI/audit; session fixture còn thiếu room_id.",
+    "evidence": [
+      "raw/placement-regression-after.log",
+      "raw/roster-clone-test-v2.log",
+      "raw/teacher-fixture-v3.log"
+    ]
+  },
+  {
+    "id": "ACA-01",
+    "priority": "P1",
+    "title": "Tree",
+    "expected": "Curriculum→Level→Subject→Component→Lesson đúng parent, sort và identity; rerun không trùng; không làm phẳng Component.",
+    "status": "BLOCKED",
+    "actual": "Có academic assignment và snapshot checks; chưa đối soát đủ khung 4/37/184/2640 và chưa xác minh đầy đủ gate D01–D14. Không kích hoạt academic writeback.",
+    "evidence": [
+      "mapping.json",
+      "api-evidence.json",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "ACA-02",
+    "priority": "P1",
+    "title": "Khung 4 nhạc cụ",
+    "expected": "Đối soát mục tiêu 4 chương trình/37 level/184 subject/2.640 Lesson khung với số thật; báo missing/conflict thay vì xóa dữ liệu để ép số.",
+    "status": "FAIL",
+    "actual": "Mục tiêu 4/37/184/2640; DB thực tế 4/37/188/1440. Không tự sửa nội dung để ép số.",
+    "evidence": [
+      "raw/academic-counts.json",
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "ACA-03",
+    "priority": "P1",
+    "title": "Pre Step",
+    "expected": "Theo báo cáo Owner, mới có Piano Pre Step + 4 môn; kiểm tra lại số Component/Lesson thật. Mapping 1 nhóm/môn ở trao đổi trước là đề xuất, chưa tự gọi là duyệt.",
+    "status": "FAIL",
+    "actual": "Piano Pre Step chưa sẵn sàng: S2 không gán học thuật; không tự tạo nội dung để ép PASS.",
+    "evidence": [
+      "mapping.json"
+    ]
+  },
+  {
+    "id": "ACA-04",
+    "priority": "P1",
+    "title": "Academic evidence",
+    "expected": "Component→Subject→Grade theo required rules có thật; placeholder 10/50 Lesson không tự là session hoặc bằng chứng PASS.",
+    "status": "BLOCKED",
+    "actual": "Có academic assignment và snapshot checks; chưa đối soát đủ khung 4/37/184/2640 và chưa xác minh đầy đủ gate D01–D14. Không kích hoạt academic writeback.",
+    "evidence": [
+      "mapping.json",
+      "api-evidence.json",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "ACA-05",
+    "priority": "P1",
+    "title": "Correction",
+    "expected": "Sửa đánh giá/miễn môn theo quyền và audit, không cập nhật grade ngoài phạm vi; kiểm tra report lịch sử giữ snapshot.",
+    "status": "BLOCKED",
+    "actual": "Có academic assignment và snapshot checks; chưa đối soát đủ khung 4/37/184/2640 và chưa xác minh đầy đủ gate D01–D14. Không kích hoạt academic writeback.",
+    "evidence": [
+      "mapping.json",
+      "api-evidence.json",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "ACA-06",
+    "priority": "P0",
+    "title": "E-learning writeback",
+    "expected": "D01–D14 chưa có bản duyệt được xác minh: không kích hoạt Final Test chính thức hay auto subject completion; test shadow/blocked gate riêng, không chặn module độc lập.",
+    "status": "BLOCKED",
+    "actual": "Có academic assignment và snapshot checks; chưa đối soát đủ khung 4/37/184/2640 và chưa xác minh đầy đủ gate D01–D14. Không kích hoạt academic writeback.",
+    "evidence": [
+      "mapping.json",
+      "api-evidence.json",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "JNL-01",
+    "priority": "P1",
+    "title": "Nộp đúng lúc",
+    "expected": "DRAFT→SUBMITTED chỉ khi session COMPLETED; PRESENT/LATE cần observation + progress_note; ABSENT/EXCUSED theo rule tùy chọn.",
+    "status": "PASS",
+    "actual": "Teacher workspace 29 checks: chặn submit trước COMPLETED; bắt buộc progress cho present/late; absent optional; không bỏ assertion.",
+    "evidence": [
+      "raw/teacher-fixture-v3.log",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "JNL-02",
+    "priority": "P0",
+    "title": "Actor chính xác",
+    "expected": "Actual teacher/SUPER_ADMIN tạo hoặc sửa; Branch Admin không sửa journal, chỉ đọc/resolve attention theo quyền.",
+    "status": "BLOCKED",
+    "actual": "Các actor/write/revision có bằng chứng API; suite journal/authorization rộng hơn chưa qua fixture, attention/missing queue chưa đủ end-to-end.",
+    "evidence": [
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "JNL-03",
+    "priority": "P1",
+    "title": "Revision",
+    "expected": "submitted_at/by giữ nguyên từ lần nộp đầu; revised_at/by và revision_count đúng, không quay lại DRAFT.",
+    "status": "BLOCKED",
+    "actual": "Các actor/write/revision có bằng chứng API; suite journal/authorization rộng hơn chưa qua fixture, attention/missing queue chưa đủ end-to-end.",
+    "evidence": [
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "JNL-04",
+    "priority": "P0",
+    "title": "Attention nội bộ",
+    "expected": "Giáo viên flag, admin resolve đúng scope; resolution không sửa revision/status; trường nội bộ không lọt vào portal/PDF/Zalo.",
+    "status": "BLOCKED",
+    "actual": "Các actor/write/revision có bằng chứng API; suite journal/authorization rộng hơn chưa qua fixture, attention/missing queue chưa đủ end-to-end.",
+    "evidence": [
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "JNL-05",
+    "priority": "P1",
+    "title": "Missing journal queue",
+    "expected": "COMPLETED chưa có journal xuất hiện đúng; CANCELLED, paused/not-started/ended được loại theo rule.",
+    "status": "BLOCKED",
+    "actual": "Các actor/write/revision có bằng chứng API; suite journal/authorization rộng hơn chưa qua fixture, attention/missing queue chưa đủ end-to-end.",
+    "evidence": [
+      "api-evidence.json",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "JNL-06",
+    "priority": "P1",
+    "title": "Nguồn báo cáo",
+    "expected": "Nhật ký đã nộp đóng góp đúng kỳ/học sinh; revision sau phát hành không âm thầm viết lại report snapshot.",
+    "status": "PASS",
+    "actual": "Hai báo cáo tháng 8 có 6 nhật ký đúng S1; sửa nhật ký sau publish không đổi snapshot đã phát hành.",
+    "evidence": [
+      "api-evidence.json"
+    ]
+  },
+  {
+    "id": "REP-01",
+    "priority": "P1",
+    "title": "Báo cáo hai loại",
+    "expected": "MONTHLY và END_OF_COURSE đúng kỳ/enrollment, academic, attendance và teacher evaluation; cuối khóa không đồng nghĩa đạt grade.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "REP-02",
+    "priority": "P0",
+    "title": "Duyệt/phát hành",
+    "expected": "Creator/reviewer, trạng thái thực, scope và snapshot đúng; Student/Parent không xem draft/review; không gửi hai event cho approved và published cùng một lần.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "REP-03",
+    "priority": "P1",
+    "title": "PDF",
+    "expected": "Đúng dữ liệu/version, font Việt, layout, MIME; tải trên desktop/mobile có bằng chứng; không gọi HTTP 200 là đủ PASS nội dung.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "REP-04",
+    "priority": "P1",
+    "title": "Hỏi/đáp báo cáo",
+    "expected": "Parent hỏi đúng report/version; public reply/internal note/resolve có actor và audit; thread không thay report approval status.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "REP-05",
+    "priority": "P1",
+    "title": "Feedback buổi học",
+    "expected": "Đủ điều kiện mới gửi rating/comment; rating thấp vào queue xử lý theo policy; reply/assign/resolve/reopen giữ lịch sử.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "REP-06",
+    "priority": "P0",
+    "title": "Nội dung và recipient",
+    "expected": "Không gửi internal note hoặc nhầm câu trả lời của học sinh khác; Parent nhiều con chọn đúng context; recipient được kiểm tra lại khi gửi.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "REP-07",
+    "priority": "P1",
+    "title": "Bộ 59 ca trước",
+    "expected": "Đối chiếu VIBE_Student_Academic_Zalo_E2E_Codex.md; chạy các ca chưa được phủ, gắn ID tương đương để không đếm hai lần một bằng chứng.",
+    "status": "BLOCKED",
+    "actual": "Đã chạy snapshot, conversation dedupe/internal note/resolve/reopen và 6 PDF checks. Sửa lệch trường nhận xét portal/PDF. Chưa đủ mọi điều kiện recipient, reviewer separation và bộ 59 ca trước; không cộng trùng assertion thành ca toàn diện.",
+    "evidence": [
+      "api-evidence.json",
+      "pdf-evidence.json",
+      "VISUAL_VERIFICATION.md",
+      "raw/report-summary-test.log"
+    ]
+  },
+  {
+    "id": "FIN-01",
+    "priority": "P0",
+    "title": "Học phí",
+    "expected": "Gói 3/12 tháng, ngày bắt đầu, hết hạn, bảo lưu, bù và đổi gói theo policy có thật; expected độc lập, không lấy UI output làm expected.",
+    "status": "FAIL",
+    "actual": "Các suite tuition/payment/refund/debt/ledger tương ứng chưa vượt fixture placement. Chưa có đối soát tài chính cuối ngày đạt.",
+    "evidence": [
+      "raw/db-final.log",
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "FIN-02",
+    "priority": "P0",
+    "title": "Ledger",
+    "expected": "Opening balance, invoice, receipt, allocation, credit/debt, void/refund nếu có khớp từng dòng/branch/period; không trộn VND với currency khác.",
+    "status": "FAIL",
+    "actual": "Các suite tuition/payment/refund/debt/ledger tương ứng chưa vượt fixture placement. Chưa có đối soát tài chính cuối ngày đạt.",
+    "evidence": [
+      "raw/db-final.log",
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "FIN-03",
+    "priority": "P0",
+    "title": "Thu nhiều lần",
+    "expected": "Partial/full/overpayment và phân bổ nhiều khoản đúng quy tắc; hai request cùng khóa không ghi trùng thu/giảm nợ.",
+    "status": "FAIL",
+    "actual": "Các suite tuition/payment/refund/debt/ledger tương ứng chưa vượt fixture placement. Chưa có đối soát tài chính cuối ngày đạt.",
+    "evidence": [
+      "raw/db-final.log",
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "FIN-04",
+    "priority": "P0",
+    "title": "Lỗi giữa transaction",
+    "expected": "Lỗi sau tạo payment trước allocation không làm tiền hoặc nợ sai; phục hồi có audit, không chỉnh số tổng trực tiếp.",
+    "status": "FAIL",
+    "actual": "Các suite tuition/payment/refund/debt/ledger tương ứng chưa vượt fixture placement. Chưa có đối soát tài chính cuối ngày đạt.",
+    "evidence": [
+      "raw/db-final.log",
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "FIN-05",
+    "priority": "P0",
+    "title": "payOS trust boundary",
+    "expected": "Chữ ký/payload/amount/orderCode/merchant mapping đúng SDK/docs đang dùng; return URL thành công không tự đánh dấu đã thanh toán.",
+    "status": "BLOCKED",
+    "actual": "Node/mock trust boundary và một số DB finance checks đạt; chưa thực hiện full browser-to-ledger journey trên đợt fixture này. Không thanh toán thật.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "FIN-06",
+    "priority": "P0",
+    "title": "Webhook",
+    "expected": "Callback duplicate, đến sai thứ tự, giả chữ ký, timeout, sai số tiền, payment canceled/expired được xử lý đúng; không tạo receipt đôi.",
+    "status": "BLOCKED",
+    "actual": "Node/mock trust boundary và một số DB finance checks đạt; chưa thực hiện full browser-to-ledger journey trên đợt fixture này. Không thanh toán thật.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "FIN-07",
+    "priority": "P1",
+    "title": "Chi phí",
+    "expected": "Công tác phí ITEMIZED_V2, legacy read-only và chi phí cố định theo branch có kỳ/ngày/số tiền/audit đúng; cấp quyền riêng.",
+    "status": "BLOCKED",
+    "actual": "Node/mock trust boundary và một số DB finance checks đạt; chưa thực hiện full browser-to-ledger journey trên đợt fixture này. Không thanh toán thật.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "FIN-08",
+    "priority": "P0",
+    "title": "Nhắc học phí và đối soát",
+    "expected": "Rule gói 3 tháng/12 tháng theo policy đã chốt; reminder preview đúng thời điểm và số nợ; không gửi thật hàng loạt; tổng dashboard khớp ledger.",
+    "status": "FAIL",
+    "actual": "Các suite tuition/payment/refund/debt/ledger tương ứng chưa vượt fixture placement. Chưa có đối soát tài chính cuối ngày đạt.",
+    "evidence": [
+      "raw/db-final.log",
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "HR-01",
+    "priority": "P0",
+    "title": "Dữ liệu nhân sự",
+    "expected": "Role/capacity/branch và thông tin nhạy cảm được bảo vệ; bỏ menu Giáo viên không làm mất teacher relationship.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "HR-02",
+    "priority": "P1",
+    "title": "Nghỉ/phân công",
+    "expected": "Đơn nghỉ/ca thay/đối soát đúng ngày và quyền; actual teacher gắn buổi dạy chính xác.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "HR-03",
+    "priority": "P0",
+    "title": "Giờ và công thức",
+    "expected": "Monthly/hourly pay, duration, late/cancel/makeup/substitute theo hợp đồng/policy có thật; join không nhân đôi giờ hoặc dùng teacher hiện tại cho lịch sử.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "HR-04",
+    "priority": "P0",
+    "title": "Payslip",
+    "expected": "Tổng earnings/deductions/expenses và thực nhận khớp expected; locked/approved payslip không đổi âm thầm do sửa ca cũ.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "HR-05",
+    "priority": "P0",
+    "title": "Disbursement ledger",
+    "expected": "Chi một phần/đủ, nhiều lần, duplicate/concurrent request không trả vượt hoặc trả trùng; reversal nếu có theo workflow, không xóa audit.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "HR-06",
+    "priority": "P0",
+    "title": "Quyền xem/duyệt",
+    "expected": "Teacher/employee chỉ thấy phiếu của mình; branch staff không thấy payroll nếu thiếu quyền; approve/pay theo separation rules hiện có.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "HR-07",
+    "priority": "P1",
+    "title": "Document/delivery",
+    "expected": "PDF payslip đúng kỳ/người/version; delivery count khớp recipient và trạng thái; chưa gửi phiếu lương thật trong thử nghiệm.",
+    "status": "BLOCKED",
+    "actual": "Một số payroll preview/maker-checker/disbursement/self-read suite đạt; teacher_payroll lỗi fixture. QR UI đã thử start/stop/switch. Chưa payroll-shadow reconciliation/PDF delivery end-to-end.",
+    "evidence": [
+      "raw/db-final.log",
+      "VISUAL_VERIFICATION.md"
+    ]
+  },
+  {
+    "id": "INV-01",
+    "priority": "P0",
+    "title": "Nhập/xuất/tồn",
+    "expected": "Nhập, xuất, chuyển kho hai vế, điều chỉnh lý do khớp opening + movements = closing; không tồn âm trái rule.",
+    "status": "BLOCKED",
+    "actual": "inventory_ledger và serialized_instruments suites đạt trong transaction rollback; chưa có hai session cạnh tranh thật và persisted browser reconciliation đợt này.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "INV-02",
+    "priority": "P0",
+    "title": "Concurrency",
+    "expected": "Hai yêu cầu xuất cuối kho hoặc bán cùng serial chỉ một được nhận; retry không tạo chứng từ đôi.",
+    "status": "BLOCKED",
+    "actual": "inventory_ledger và serialized_instruments suites đạt trong transaction rollback; chưa có hai session cạnh tranh thật và persisted browser reconciliation đợt này.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "INV-03",
+    "priority": "P1",
+    "title": "Serial và giá vốn",
+    "expected": "Model/serial/location/status/history đúng; giá vốn chỉ vai trò được phép; không vòng qua serial guard bằng thao tác kho thường.",
+    "status": "BLOCKED",
+    "actual": "inventory_ledger và serialized_instruments suites đạt trong transaction rollback; chưa có hai session cạnh tranh thật và persisted browser reconciliation đợt này.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "INV-04",
+    "priority": "P0",
+    "title": "Chứng từ tài chính",
+    "expected": "Xuất kho không tự thành doanh thu/thu tiền nếu chưa có nghiệp vụ đó; khi có tích hợp phải đối soát chính xác.",
+    "status": "BLOCKED",
+    "actual": "inventory_ledger và serialized_instruments suites đạt trong transaction rollback; chưa có hai session cạnh tranh thật và persisted browser reconciliation đợt này.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "INV-05",
+    "priority": "P1",
+    "title": "Menu và lịch sử",
+    "expected": "Chuyển menu xuống Hệ thống không mất danh mục/giao dịch/quyền; thống kê tháng và deep links vẫn đúng.",
+    "status": "BLOCKED",
+    "actual": "inventory_ledger và serialized_instruments suites đạt trong transaction rollback; chưa có hai session cạnh tranh thật và persisted browser reconciliation đợt này.",
+    "evidence": [
+      "raw/db-final.log"
+    ]
+  },
+  {
+    "id": "INT-01",
+    "priority": "P0",
+    "title": "Tắt gửi ngoài phạm vi",
+    "expected": "Mock/dry-run mặc định cho fixture; chỉ recipient test đã chỉ định, consent và allowlist phù hợp được dùng khi gửi thật; không reset counter/quota.",
+    "status": "PASS",
+    "actual": "Fixture không có provider attempts hoặc sent message ID; 4 jobs SKIPPED_NO_CHANNEL. App preview chạy với token renewal tắt, không đổi kho token MAIN.",
+    "evidence": [
+      "api-evidence.json",
+      "security-api.json",
+      "raw/preview.log"
+    ]
+  },
+  {
+    "id": "INT-02",
+    "priority": "P1",
+    "title": "Template registry",
+    "expected": "ID/purpose/channel/status/params/CTA lấy từ OA/App thật; template đăng ký không tự đại diện cho báo cáo, feedback hay payslip.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "INT-03",
+    "priority": "P0",
+    "title": "Outbox",
+    "expected": "Event bền vững và transaction đúng; rollback không gửi; worker claim/lock/dedupe theo entity/version/recipient/purpose.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "INT-04",
+    "priority": "P1",
+    "title": "Retry",
+    "expected": "429/5xx retry có backoff và giới hạn; timeout sau send là UNKNOWN cần đối soát; không resend vì thiếu receipt.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "INT-05",
+    "priority": "P0",
+    "title": "Token MAIN",
+    "expected": "Giữ kho token mã hóa; kiểm tra refresh rotation, lock, restart persistence bằng fixture/mocks trước; không force refresh live lặp lại hoặc revoke OA chỉ để test.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "INT-06",
+    "priority": "P1",
+    "title": "Scheduler thật",
+    "expected": "Xác minh lịch chạy, heartbeat, last success, queue lag; scheduler Mac chỉ chứng minh local. Bản online cần bằng chứng scheduler tại môi trường online.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "INT-07",
+    "priority": "P0",
+    "title": "Receipt và download",
+    "expected": "Webhook xác thực/replay-safe; ACCEPTED khác DELIVERED/READ; CTA HTTPS kiểm tra quyền rồi trả đúng PDF, không nhúng localhost hoặc public storage dài hạn.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "INT-08",
+    "priority": "P1",
+    "title": "Failure isolation",
+    "expected": "Provider lỗi không làm mất registration/report/reply đã commit; UI hiển thị lỗi có thể xử lý; notification event không tự gây vòng lặp.",
+    "status": "BLOCKED",
+    "actual": "Các regression mock/DB hiện hành được chạy, nhưng template/OA/scheduler/receipt live không có bằng chứng target environment. Không gửi thật khi chưa có recipient được chỉ định.",
+    "evidence": [
+      "raw/node-final.log",
+      "raw/db-final.log",
+      "SYSTEM_TEST_SCOPE.md"
+    ]
+  },
+  {
+    "id": "REC-01",
+    "priority": "P0",
+    "title": "Restore drill",
+    "expected": "Backup DB cùng dependency thiết yếu, auth/storage/config references theo kiến trúc; restore vào môi trường test riêng, xác minh sample records và quyền, không chỉ kiểm tra file backup tồn tại.",
+    "status": "BLOCKED",
+    "actual": "DB restore 200 bảng khớp baseline; chưa độc lập Auth service/keys/storage binaries/scheduler trên máy mới.",
+    "evidence": [
+      "RECOVERY_EVIDENCE.md"
+    ]
+  },
+  {
+    "id": "REC-02",
+    "priority": "P0",
+    "title": "Không mất dữ liệu",
+    "expected": "Crash giữa nghiệp vụ, worker restart, DB tạm lỗi, submit timeout được thử có kiểm soát; không tạo partial transaction hoặc thao tác không audit.",
+    "status": "NOT_RUN",
+    "actual": "Chưa hoàn tất diễn tập crash/DB outage/worker restart/rollback và audit observability toàn hệ thống. Không suy ra từ test transaction thông thường.",
+    "evidence": [
+      "RECOVERY_EVIDENCE.md"
+    ]
+  },
+  {
+    "id": "REC-03",
+    "priority": "P1",
+    "title": "Audit trail",
+    "expected": "Create/update/approve/resolve/void/correction có actor/time/reason/before-after phù hợp, log không chứa secrets; người không quyền không sửa audit.",
+    "status": "NOT_RUN",
+    "actual": "Chưa hoàn tất diễn tập crash/DB outage/worker restart/rollback và audit observability toàn hệ thống. Không suy ra từ test transaction thông thường.",
+    "evidence": [
+      "RECOVERY_EVIDENCE.md"
+    ]
+  },
+  {
+    "id": "REC-04",
+    "priority": "P1",
+    "title": "Quan sát lỗi",
+    "expected": "Lỗi frontend/API/DB/job có correlation ID và đủ thông tin truy vết; logs nhìn được ở môi trường thực, không dùng console xanh để bỏ qua queue lỗi.",
+    "status": "NOT_RUN",
+    "actual": "Chưa hoàn tất diễn tập crash/DB outage/worker restart/rollback và audit observability toàn hệ thống. Không suy ra từ test transaction thông thường.",
+    "evidence": [
+      "RECOVERY_EVIDENCE.md"
+    ]
+  },
+  {
+    "id": "REC-05",
+    "priority": "P1",
+    "title": "Disable/rollback",
+    "expected": "Thử tắt riêng module/integration và phục hồi bản cấu hình/code theo runbook; không xóa queue gửi chưa rõ kết quả, không rollback DB làm mất giao dịch mới.",
+    "status": "NOT_RUN",
+    "actual": "Chưa hoàn tất diễn tập crash/DB outage/worker restart/rollback và audit observability toàn hệ thống. Không suy ra từ test transaction thông thường.",
+    "evidence": [
+      "RECOVERY_EVIDENCE.md"
+    ]
+  },
+  {
+    "id": "REC-06",
+    "priority": "P1",
+    "title": "Cleanup fixture",
+    "expected": "Manifest ID/parent/run_id đầy đủ; cleanup chỉ dữ liệu thử và không xóa audit hoặc dữ liệu người dùng đã chỉnh sau đó.",
+    "status": "BLOCKED",
+    "actual": "Có manifest 560 đối tượng và cleanup quarantine mặc định dry-run; chưa bao phủ mọi composite link/event phát sinh. Chưa thực thi cleanup.",
+    "evidence": [
+      "mapping.json",
+      "CLEANUP_FIXTURE.sql"
+    ]
+  },
+  {
+    "id": "PERF-01",
+    "priority": "P1",
+    "title": "Dữ liệu có quy mô",
+    "expected": "Dataset synthetic đại diện 3 branches/ít nhất 500 học sinh và lịch/ledger/report có lịch sử; ghi số thật, không đánh giá từ DB rỗng.",
+    "status": "BLOCKED",
+    "actual": "Có 500 học viên/3 chi nhánh; lịch sử sâu tập trung S1, chưa đủ lịch/ledger/report đại diện toàn bộ dataset.",
+    "evidence": [
+      "mapping.json",
+      "security-api.json"
+    ]
+  },
+  {
+    "id": "PERF-02",
+    "priority": "P1",
+    "title": "Baseline",
+    "expected": "Đo cold riêng, warm riêng, p50/p95/max/error rate, query count và payload cho các route lõi; ghi hardware/runtime/dataset để so sánh.",
+    "status": "BLOCKED",
+    "actual": "Đo baseline read-only 2→5 actors riêng sau build/tests; thiếu cold cache thật, query count và full write workflows. Xem số đo thực tế trong performance report.",
+    "evidence": [
+      "PERFORMANCE_REPORT.md"
+    ]
+  },
+  {
+    "id": "PERF-03",
+    "priority": "P1",
+    "title": "Tải thực tế",
+    "expected": "Chạy 2→5 user workflows đồng thời, sau đó 10-user smoke nếu máy đủ; không coi 500 học sinh là 500 người truy cập đồng thời.",
+    "status": "BLOCKED",
+    "actual": "Đo baseline read-only 2→5 actors riêng sau build/tests; thiếu cold cache thật, query count và full write workflows. Xem số đo thực tế trong performance report.",
+    "evidence": [
+      "PERFORMANCE_REPORT.md"
+    ]
+  },
+  {
+    "id": "PERF-04",
+    "priority": "P1",
+    "title": "Truy vấn",
+    "expected": "Tìm N+1, full-table scan, fetch không pagination, join làm nhân dòng, cache sai scope; tối ưu dựa vào evidence, giữ correctness.",
+    "status": "NOT_RUN",
+    "actual": "Chưa profiling đầy đủ và chưa rehearsal liên tục 60 phút. Lần gọi rehearsal đầu lỗi cú pháp đã sửa; không lấy thời gian làm việc của Codex làm thời gian rehearsal.",
+    "evidence": [
+      "raw/rehearsal.log",
+      "PERFORMANCE_REPORT.md"
+    ]
+  },
+  {
+    "id": "PERF-05",
+    "priority": "P1",
+    "title": "Stability",
+    "expected": "Tối thiểu một phiên rehearsal liên tục 60 phút với nhiều vòng nghiệp vụ; checkpoint mỗi 10–15 phút; không kết luận đã ổn định nhiều ngày từ vòng này.",
+    "status": "NOT_RUN",
+    "actual": "Chưa profiling đầy đủ và chưa rehearsal liên tục 60 phút. Lần gọi rehearsal đầu lỗi cú pháp đã sửa; không lấy thời gian làm việc của Codex làm thời gian rehearsal.",
+    "evidence": [
+      "raw/rehearsal.log",
+      "PERFORMANCE_REPORT.md"
+    ]
+  },
+  {
+    "id": "PERF-06",
+    "priority": "P1",
+    "title": "Không tranh CPU",
+    "expected": "Build/tsc/tests/load chạy có thứ tự, không cùng nhiều tiến trình nặng; kiểm tra giới hạn máy trước khi quy mọi chậm trễ cho Next dev.",
+    "status": "PASS",
+    "actual": "Build/typecheck/tests/load chạy tuần tự. Dừng đúng preview trước build, khởi động lại sau khi hoàn tất.",
+    "evidence": [
+      "gates.json",
+      "raw/preview.log"
+    ]
+  },
+  {
+    "id": "UAT-01",
+    "priority": "P1",
+    "title": "Thực hành theo vai trò",
+    "expected": "Nhóm 2–5 người có tài khoản riêng; đủ đại diện Owner/Branch/Academic/Finance và Teacher khi dùng; mỗi người hoàn tất tác vụ chính mà không mượn SUPER_ADMIN.",
+    "status": "BLOCKED",
+    "actual": "Chưa có người thật ký nhận. Owner nêu Cần Thơ 3 quản trị + 3 giáo viên, Sóc Trăng 1 admin + 2 giáo viên (diễn giải tổng 9), đang chờ chốt so với 5 trước đó; chưa có tên/mã.",
+    "evidence": [
+      "PILOT_GO_NO_GO.md"
+    ]
+  },
+  {
+    "id": "UAT-02",
+    "priority": "P1",
+    "title": "Đối soát cuối ngày",
+    "expected": "Student/enrollment/session/attendance/tuition/finance/payroll-shadow/inventory/notifications đối soát độc lập, chênh lệch không giải thích được là blocker.",
+    "status": "BLOCKED",
+    "actual": "Đối soát học thuật/attendance/report có mẫu độc lập; tuition/payroll/inventory cuối ngày chưa đạt.",
+    "evidence": [
+      "RECONCILIATION_REPORT.md"
+    ]
+  },
+  {
+    "id": "UAT-03",
+    "priority": "P1",
+    "title": "Scope ký nhận",
+    "expected": "Liệt kê module được dùng, giới hạn, người phụ trách, thời gian support, nguồn dữ liệu và stop conditions; phần thiếu policy không được tự gán đã duyệt.",
+    "status": "BLOCKED",
+    "actual": "Chưa có người thật ký nhận. Owner nêu Cần Thơ 3 quản trị + 3 giáo viên, Sóc Trăng 1 admin + 2 giáo viên (diễn giải tổng 9), đang chờ chốt so với 5 trước đó; chưa có tên/mã.",
+    "evidence": [
+      "PILOT_GO_NO_GO.md"
+    ]
+  },
+  {
+    "id": "UAT-04",
+    "priority": "P0",
+    "title": "Gate đúng môi trường",
+    "expected": "NO-GO nếu critical test trong scope chưa chạy/fail, còn lỗi security/money/data integrity hoặc chưa có recovery evidence. Local PASS không được dùng làm online/cloud PASS.",
+    "status": "BLOCKED",
+    "actual": "NO-GO local technical acceptance và mọi rollout; critical còn FAIL/BLOCKED/NOT_RUN. Production HOLD.",
+    "evidence": [
+      "PILOT_GO_NO_GO.md"
+    ]
+  }
+]

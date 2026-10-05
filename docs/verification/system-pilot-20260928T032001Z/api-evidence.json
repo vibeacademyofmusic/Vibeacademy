@@ -1,0 +1,210 @@
+[
+  {
+    "name": "P1 sees exactly S1 and S2",
+    "actor": "P1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:52.811Z",
+    "evidence": [
+      "a8e0f759-10be-465a-8df6-ba0e6e84a106",
+      "edce00bc-e945-401e-854b-7e2e4cf0e630"
+    ]
+  },
+  {
+    "name": "Student sees self only",
+    "actor": "S1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.253Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Branch A cannot read S4 branch B",
+    "actor": "BA",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.260Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "P2 cannot read S1",
+    "actor": "P2",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.278Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Academic assignment uses existing RPC",
+    "actor": "ADMIN",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.284Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Unrelated teacher cannot write journal",
+    "actor": "T3",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.293Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Primary cannot write substitute session",
+    "actor": "T1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.302Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Branch Admin cannot edit journal",
+    "actor": "BA",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.309Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Scheduled session cannot submit journal",
+    "actor": "T1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.326Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "Completed S1 attendance remains 4 present 1 late 1 absent",
+    "actor": "ADMIN",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.330Z",
+    "evidence": [
+      {
+        "status": "PRESENT"
+      },
+      {
+        "status": "PRESENT"
+      },
+      {
+        "status": "PRESENT"
+      },
+      {
+        "status": "PRESENT"
+      },
+      {
+        "status": "LATE"
+      },
+      {
+        "status": "ABSENT"
+      }
+    ]
+  },
+  {
+    "name": "September report cannot bypass closed-period policy",
+    "actor": "ADMIN",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.333Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "MONTHLY published snapshot, journal source and portal",
+    "actor": "ADMIN + P1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.369Z",
+    "evidence": {
+      "report_id": "5523f3ee-dbe7-42b4-98e0-b0d44e55fb70",
+      "journals": 6,
+      "attendance": {
+        "late": 1,
+        "rate": 83.3,
+        "absent": 1,
+        "makeup": 0,
+        "excused": 0,
+        "present": 4,
+        "attended": 5,
+        "unmarked": 0,
+        "scheduled": 6
+      }
+    }
+  },
+  {
+    "name": "END_OF_COURSE published snapshot, journal source and portal",
+    "actor": "ADMIN + P1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.402Z",
+    "evidence": {
+      "report_id": "5063b1e9-abf1-4173-ba58-61f2792d6c22",
+      "journals": 6,
+      "attendance": {
+        "late": 1,
+        "rate": 83.3,
+        "absent": 1,
+        "makeup": 0,
+        "excused": 0,
+        "present": 4,
+        "attended": 5,
+        "unmarked": 0,
+        "scheduled": 6
+      }
+    }
+  },
+  {
+    "name": "Published snapshot immutable after journal revision",
+    "actor": "T1 + P1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.430Z",
+    "evidence": "Assertions passed"
+  },
+  {
+    "name": "REPORT question reply internal note resolve reopen",
+    "actor": "P1 + T1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.525Z",
+    "evidence": {
+      "entity": "5523f3ee-dbe7-42b4-98e0-b0d44e55fb70",
+      "messages": 6,
+      "state": "OPEN"
+    }
+  },
+  {
+    "name": "FEEDBACK question reply internal note resolve reopen",
+    "actor": "P1 + T1",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.605Z",
+    "evidence": {
+      "entity": "d57068de-b444-42fa-b67d-56031fc0f53f",
+      "messages": 6,
+      "state": "OPEN"
+    }
+  },
+  {
+    "name": "No real Zalo attempt for this run",
+    "actor": "ADMIN",
+    "status": "PASS",
+    "at": "2026-09-28T04:56:53.610Z",
+    "evidence": [
+      {
+        "id": "015b8226-8d1e-490b-bba5-0cb1b26dd1d3",
+        "status": "SKIPPED_NO_CHANNEL",
+        "attempts": 0
+      },
+      {
+        "id": "b4b36d74-39fd-4bb6-9da5-6ba3e0b9d045",
+        "status": "SKIPPED_NO_CHANNEL",
+        "attempts": 0
+      },
+      {
+        "id": "2fcc653a-6cf8-493b-bb2e-f61e3296b62f",
+        "status": "SKIPPED_NO_CHANNEL",
+        "attempts": 0
+      },
+      {
+        "id": "3eb7d88a-59f5-4cb2-97ae-016c1388d2fe",
+        "status": "SKIPPED_NO_CHANNEL",
+        "attempts": 0
+      },
+      {
+        "id": "8f864cc2-839c-4ab6-9b67-15bf8b260cfa",
+        "status": "SKIPPED_NO_CHANNEL",
+        "attempts": 0
+      },
+      {
+        "id": "5d1c2b7c-6718-44c0-ad19-f6964afb16b2",
+        "status": "SKIPPED_NO_CHANNEL",
+        "attempts": 0
+      }
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "body_md5": "32b51d99fd44c4d45ad0c16f32704923",
+        "signature": "create_payment(uuid,uuid,numeric,text,text,timestamp with time zone,text,text)",
+        "requires_super_admin": true,
+        "authenticated_execute": true,
+        "delegates_to_create_payment": false
+    },
+    {
+        "body_md5": "0882174080baba7382845b195b3f0fcb",
+        "signature": "create_payment_once(uuid,uuid,uuid,numeric,text,text,timestamp with time zone,text,text)",
+        "requires_super_admin": true,
+        "authenticated_execute": true,
+        "delegates_to_create_payment": true
+    }
+]

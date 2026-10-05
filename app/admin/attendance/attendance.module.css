@@ -1,0 +1,19 @@
+.sessionTable td { vertical-align: top; }
+.sessionTable th:last-child, .sessionTable td:last-child { position: sticky; right: 0; background: white; box-shadow: -1px 0 var(--vibe-line); z-index: 1; }
+.sessionTable td:last-child a { white-space: nowrap; }
+.sessionTable td:first-child { white-space: nowrap; }
+.sessionTable td:nth-child(2) { min-width: 130px; }
+.sessionTable td:nth-child(3) { min-width: 150px; }
+.sessionTable td:nth-child(4), .sessionTable td:nth-child(6) { min-width: 110px; }
+.roster { scroll-margin-top: 1rem; }
+@media (max-width: 640px) {
+  .sessionTable, .roster table { min-width: 0 !important; display: block; }
+  .sessionTable thead, .roster thead { display: none; }
+  .sessionTable tbody, .roster tbody { display: grid; gap: 1rem; }
+  .sessionTable tr, .roster tr { display: block; border: 1px solid var(--vibe-line); border-radius: var(--vibe-radius, 12px); padding: .75rem; }
+  .sessionTable td, .roster td { min-width: 0 !important; display: block; padding: .4rem 0 !important; white-space: normal; overflow-wrap: anywhere; }
+  .sessionTable td::before, .roster td::before { content: attr(data-label); display: block; font-size: .7rem; color: var(--vibe-muted); margin-bottom: .15rem; }
+  .sessionTable td:last-child { position: static; box-shadow: none; }
+  .sessionTable td:last-child a { width: 100%; min-height: 44px; }
+  .roster input, .roster select { min-width: 0; width: 100%; }
+}

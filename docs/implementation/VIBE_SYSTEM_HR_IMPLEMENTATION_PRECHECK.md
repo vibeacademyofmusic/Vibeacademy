@@ -1,0 +1,93 @@
+ M app/admin/academic/[id]/levels/[levelId]/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/edit/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/page.tsx
+ M app/admin/academic/actions.ts
+ M app/admin/attendance/page.tsx
+ M app/admin/employees/[id]/compensation/actions.ts
+ M app/admin/employees/[id]/compensation/page.tsx
+ M app/admin/finance/_components/InvoiceList.tsx
+ M app/admin/finance/invoices/data.ts
+ M app/admin/finance/invoices/page.tsx
+ M app/admin/finance/operations.ts
+ M app/admin/finance/page.tsx
+ M app/admin/finance/payments/actions.ts
+ M app/admin/finance/payments/data.ts
+ M app/admin/finance/payments/page.tsx
+ M app/admin/navigation.ts
+ M app/admin/payroll/[period]/[teacher]/page.tsx
+ M app/admin/payroll/[period]/page.tsx
+ M app/admin/payroll/actions.ts
+ M app/admin/payroll/data.ts
+ M app/admin/payroll/page.tsx
+ M app/admin/reports/learning/[id]/page.tsx
+ M app/admin/reports/learning/[id]/print.css
+ M app/admin/reports/learning/actions.ts
+ M app/admin/reports/learning/data.ts
+ M app/admin/reports/learning/page.tsx
+ M app/admin/students/[id]/AcademicPrograms.tsx
+ M app/admin/students/[id]/academic-progress.ts
+ M app/admin/students/actions.ts
+ M app/documents/finance/[kind]/[id]/page.tsx
+ M app/documents/print.css
+ M app/finance/payroll/[period]/page.tsx
+ M docs/backup-restore-validation-20260917.md
+ M docs/migration-gap-register-20260917.md
+ M docs/pilot/FINAL_PREPRODUCTION_CLOSURE.md
+ M docs/pilot/PRODUCTION_READINESS_GATE.md
+ M docs/staging-migration-review-20260917.md
+ M docs/staging-rehearsal-report.md
+ M docs/staging-upgrade-preflight-20260917.md
+ M supabase/tests/database/academic_engine_hardening_test.sql
+ M supabase/tests/database/learning_reports_test.sql
+ M tests/academic-profile.test.cjs
+ M tests/finance-invoice-operations.test.cjs
+ M tests/finance-payment-operations.test.cjs
+ M tests/learning-reports.test.cjs
+ M tests/operational-documents.test.cjs
+?? app/admin/attendance/retention/
+?? app/admin/employees/[id]/compensation/actions.ts.bak
+?? app/admin/employees/[id]/compensation/page.tsx.bak
+?? app/admin/finance/invoices/payment-status.ts
+?? app/admin/finance/payments/page.tsx.backup
+?? app/admin/payroll/[period]/[teacher]/page.tsx.bak
+?? app/admin/payroll/[period]/page.tsx.bak
+?? app/admin/payroll/_ux/
+?? app/admin/payroll/actions.ts.bak
+?? app/admin/payroll/data.ts.bak
+?? app/admin/reports/learning/[id]/PrintReportButton.tsx
+?? app/admin/reports/learning/[id]/ReportDocument.tsx
+?? app/admin/reports/learning/demo/
+?? app/admin/reports/learning/periods.ts
+?? app/documents/_components/InvoiceTemplate.tsx
+?? docs/implementation/
+?? docs/staging-batch-62-69-plan-20260917.md
+?? docs/staging-batch-84-94-approval-20260917.md
+?? docs/staging-batch-94-95-approval-20260917.md
+?? employee_expense_claims_v1.sql
+?? public/vibe-logo.png
+?? scripts/test-direct-assessment-migration.cjs
+?? staff_compensation_rpc_v1.sql
+?? staff_foundation_v1.sql
+?? supabase/migrations/20260917173000_learning_reports_v2.sql
+?? supabase/migrations/20260917232000_learning_reports_publish_workflow.sql
+?? supabase/migrations/20260918003000_fix_direct_assessment_subjects.sql
+?? supabase/migrations/20260918010000_learning_report_first_period_rule.sql
+?? supabase/migrations/20260918060000_academic_award_results.sql
+?? supabase/migrations/20260918070000_academic_component_items.sql
+?? supabase/migrations/20260918073000_payment_entry_idempotency.sql
+?? supabase/migrations/20260918074500_component_completion_rule.sql
+?? supabase/migrations/20260918080000_item_progress_engine.sql
+?? supabase/migrations/20260918081500_seed_component_item_progress.sql
+?? supabase/migrations/20260918152200_employee_expense_claims_v1.sql
+?? supabase/migrations/20260918202526_staff_foundation_v1.sql
+?? supabase/migrations/20260918205719_staff_compensation_rpc_v1.sql
+?? supabase/migrations/20260918211436_payroll_v2_generator_v1.sql
+?? supabase/migrations/20260918221109_payroll_v2_period_actions_v1.sql
+?? supabase/migrations/20260919044014_retire_fixed_pay_component.sql
+?? supabase/migrations/20260919115041_attendance_retention_risk_v1.sql
+?? supabase/migrations/20260919120145_attendance_retention_risk_v1.sql
+?? supabase/migrations/20260919141114_staff_combined_insurance_foundation.sql
+?? supabase/tests/database/payment_cash_integrity_test.sql
+?? tests/academic-subject.test.cjs
+?? tests/payroll-ux-phase1.test.cjs
+?? tests/staff-compensation-v2-ui.test.cjs

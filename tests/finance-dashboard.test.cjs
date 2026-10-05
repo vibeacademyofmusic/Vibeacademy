@@ -5,6 +5,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const ts = require('typescript')
 const { renderToStaticMarkup } = require('react-dom/server')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 function load(file, mocks = {}) {
   const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 },
@@ -12,7 +13,8 @@ function load(file, mocks = {}) {
   const compiledModule = { exports: {} }
   const localRequire = name => {
     if (name in mocks) return mocks[name]
-    if (name.startsWith('.')) return load(path.resolve(path.dirname(file), name + '.ts'), mocks)
+    if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
+    if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name), mocks)
     return require(name)
   }
   new Function('require', 'module', 'exports', output)(localRequire, compiledModule, compiledModule.exports)
@@ -22,7 +24,12 @@ const base = path.resolve('app/admin/finance')
 const helpers = load(path.join(base, 'data.ts'), { '@/lib/supabase/server': {} })
 function client(fixtures = {}, fail = '') {
   const calls = []
-  return { calls, from(table) {
+  return { calls, auth: { getClaims: async () => ({ data: { claims: { sub: 'user' } }, error: null }) }, rpc(name, args) {
+    calls.push({ rpc: name, args, fields: '' })
+    if (name === 'has_role' || name === 'is_global_super_admin') return Promise.resolve({ data: true, error: null })
+    if (fail === name) return Promise.resolve({ data: null, error: { message: 'SECRET internal SQL' } })
+    return Promise.resolve({ data: fixtures[name] ?? null, error: null })
+  }, from(table) {
     const call = { table, orders: [] }; calls.push(call)
     return {
       select(fields) { call.fields = fields; return this },
@@ -42,8 +49,12 @@ function client(fixtures = {}, fail = '') {
   } }
 }
 async function render(db) {
-  const Page = load(path.join(base, 'page.tsx'), { '@/lib/supabase/server': { createClient: async () => db } }).default
-  return renderToStaticMarkup(await Page())
+  const Page = load(path.join(base, 'page.tsx'), {
+    '@/lib/supabase/server': { createClient: async () => db },
+    'next/navigation': { redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
+    'next/link': { default: ({ children, href }) => require('react').createElement('a', { href }, children) },
+  }).default
+  return renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
 }
 test('Vietnam month changes seven hours before UTC month boundary, including new year', () => {
   assert.equal(helpers.vietnamMonth(new Date('2026-08-31T17:00:00Z')), '2026-09-01')
@@ -64,46 +75,22 @@ test('summary pagination includes all rows and discards incomplete results on pa
   assert.equal(await helpers.readAll(from => Promise.resolve(from ? { data: null, error: 'failed' } : { data: rows.slice(0, 500), error: null })), null)
   assert.equal(await helpers.readAll(() => Promise.reject(new Error('offline'))), null)
 })
-test('empty dashboard renders zeros and empty tables without warning or write controls', async () => {
+test('unavailable management report shows the safe error and no write controls', async () => {
   const html = await render(client())
-  assert.match(html, /Chưa có dữ liệu/)
-  assert.match(html, /0/)
-  assert.doesNotMatch(html, /role="alert"|<form|<button/)
+  assert.match(html, /Không tải được báo cáo tài chính quản trị/)
+  assert.doesNotMatch(html, /<form|<button|SECRET|internal SQL/)
 })
-test('query failures are isolated, do not expose internals and do not show zero in failed section', async () => {
-  const html = await render(client({}, 'branch_monthly_cash_summary'))
-  assert.match(html, /role="alert"/)
-  assert.match(html, /Không tải được dữ liệu phần này/)
-  assert.doesNotMatch(html, /SECRET|internal SQL|Tiền thu tháng này<\/dt>/)
-  assert.match(html, /Tổng công nợ<\/dt>/)
+test('query failures are isolated and do not expose internals', async () => {
+  const html = await render(client({}, 'get_financial_management_report'))
+  assert.match(html, /Không tải được báo cáo tài chính quản trị/)
+  assert.doesNotMatch(html, /SECRET|internal SQL/)
 })
-test('queries select only needed fields, filter monthly cash, sort forecast and cap ledger at 20', async () => {
+test('overview loads the canonical report and selects only branch identity fields', async () => {
   const db = client()
   await render(db)
-  assert.equal(db.calls.length, 5)
-  for (const call of db.calls) assert.ok(!call.fields.includes('*'))
-  const cash = db.calls.find(c => c.table === 'branch_monthly_cash_summary')
-  assert.deepEqual(cash.filter, ['month_start', helpers.vietnamMonth()])
-  const ledger = db.calls.find(c => c.table === 'finance_cash_ledger')
-  assert.equal(ledger.limit, 20)
-  assert.deepEqual(ledger.orders[0], ['occurred_at', { ascending: false }])
-  assert.ok(!ledger.fields.includes('notes') && !ledger.fields.includes('student_id'))
-  const forecast = db.calls.find(c => c.table === 'branch_monthly_revenue_forecast')
-  assert.deepEqual(forecast.orders.slice(0, 2).map(r => r[0]), ['month_start', 'branch_name'])
-})
-test('actual page renders both currencies, forecasts, refunds and Vietnam transaction time', async () => {
-  const forecast = { currency: 'VND', month_start: '2026-09-01', forecast_period: 'CURRENT_MONTH', expiring_tuition_count: 2, expiring_student_count: 1, projected_renewal_amount: 400000, expected_cash_due: 100000, gross_forecast_opportunity: 500000 }
-  const html = await render(client({
-    branch_monthly_cash_summary: [{ currency: 'VND', cash_in: 200000, cash_out: 50000, net_cash: 150000 }, { currency: 'USD', cash_in: 20.25, cash_out: 0, net_cash: 20.25 }],
-    system_monthly_revenue_forecast: [forecast, { ...forecast, forecast_period: 'NEXT_MONTH', month_start: '2026-10-01' }],
-    branch_monthly_revenue_forecast: [{ ...forecast, branch_name: 'Cần Thơ' }],
-    finance_cash_ledger: [{ transaction_id: 'r', transaction_number: 'RF-001', transaction_type: 'REFUND', branch_name: 'Cần Thơ', occurred_at: '2026-09-01T00:00:00Z', payment_method: null, currency: 'VND', cash_in: 0, cash_out: 50000, net_cash: -50000 }],
-  }))
-  assert.match(html, /150\.000/)
-  assert.match(html, /20,25/)
-  assert.match(html, /500\.000/)
-  assert.match(html, /RF-001/)
-  assert.match(html, /07:00/)
-  assert.match(html, /Hoàn tiền \(REFUND\)/)
-  assert.match(html, /-50\.000/)
+  assert.ok(db.calls.some(call => call.rpc === 'get_financial_management_report'))
+  assert.ok(!db.calls.some(call => call.table === 'branch_monthly_cash_summary' || call.table === 'finance_cash_ledger' || call.table === 'invoices' || call.table === 'payments'))
+  const branches = db.calls.find(call => call.table === 'branches')
+  assert.equal(branches.fields, 'id, name, code')
+  for (const call of db.calls) assert.ok(!String(call.fields).includes('*'))
 })

@@ -1,0 +1,158 @@
+{
+    "untrusted_search_paths": [
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "academic_operation_actor()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "academic_ops_may_manage()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "book_makeup_seat(uuid,uuid,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "cancel_active_pause(uuid,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "cancel_makeup_booking(uuid,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "confirm_absence(uuid,boolean,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "correct_source_attendance(uuid,text,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "current_academic_operation_policy()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "decide_enrollment_pause(uuid,boolean,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "generate_tuition_reminders()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "mark_makeup_credit_from_attendance()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "pause_makeup_desk(text,text,text,integer)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "pause_makeup_reconcile_report()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "preview_enrollment_pause(uuid,date,date)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "release_completed_makeup_without_present(uuid,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "replace_approved_pause_end(uuid,date,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "report_absence(uuid,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "request_enrollment_pause(uuid,date,date,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "reserve_makeup_credit_for_participant()"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "restore_enrollment_shift(uuid,uuid,date,text,text)"
+        },
+        {
+            "config": [
+                "search_path=public"
+            ],
+            "function": "sync_makeup_credits_from_session_status()"
+        }
+    ],
+    "anonymous_security_definers": [
+        "academic_operation_actor()",
+        "academic_ops_may_manage()",
+        "book_makeup_seat(uuid,uuid,text)",
+        "cancel_active_pause(uuid,text)",
+        "cancel_makeup_booking(uuid,text)",
+        "confirm_absence(uuid,boolean,text)",
+        "correct_source_attendance(uuid,text,text)",
+        "current_academic_operation_policy()",
+        "decide_enrollment_pause(uuid,boolean,text)",
+        "mark_makeup_credit_from_attendance()",
+        "pause_makeup_desk(text,text,text,integer)",
+        "pause_makeup_reconcile_report()",
+        "preview_enrollment_pause(uuid,date,date)",
+        "release_completed_makeup_without_present(uuid,text)",
+        "replace_approved_pause_end(uuid,date,text)",
+        "report_absence(uuid,text)",
+        "request_enrollment_pause(uuid,date,date,text)",
+        "restore_enrollment_shift(uuid,uuid,date,text,text)"
+    ],
+    "authenticated_truncate_tables": [
+        "absence_reports",
+        "academic_operation_exceptions",
+        "academic_operation_policies",
+        "enrollment_pause_events",
+        "enrollment_pause_requests",
+        "enrollment_shift_changes"
+    ]
+}

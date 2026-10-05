@@ -1,0 +1,151 @@
+- complementary:
+  - link "VIBE Academy":
+    - /url: /admin
+    - img "VIBE Academy"
+  - paragraph: Hệ thống quản lý
+  - navigation "Điều hướng quản trị":
+    - region "TỔNG QUAN":
+      - heading "TỔNG QUAN" [level=2]
+      - list:
+        - link "Bảng điều khiển":
+          - /url: /admin
+    - region "VẬN HÀNH":
+      - heading "VẬN HÀNH" [level=2]
+      - list:
+        - link "Đào tạo":
+          - /url: /admin/students
+        - link "Tổng quan tài chính":
+          - /url: /admin/finance
+        - link "Học phí & Thanh toán":
+          - /url: /admin/finance/invoices
+        - link "Số dư khách hàng":
+          - /url: /admin/finance/credits
+        - link "Chi phí vận hành":
+          - /url: /admin/finance/operating-expenses
+    - region "HR":
+      - heading "HR" [level=2]
+      - list:
+        - link "Tổng quan HR":
+          - /url: /admin/hr
+        - link "Nhân sự & nghỉ phép":
+          - /url: /admin/employees
+        - link "Lương & chi trả":
+          - /url: /admin/payroll
+        - link "Phân công và đối soát":
+          - /url: /admin/session-teachers
+    - region "KINH DOANH":
+      - heading "KINH DOANH" [level=2]
+      - list:
+        - link "Điều hành kinh doanh":
+          - /url: /admin/business
+        - link "CRM & Tuyển sinh":
+          - /url: /admin/business/registrations
+        - link "Báo cáo marketing":
+          - /url: /admin/business/marketing
+        - link "Sau bán hàng":
+          - /url: /admin/business/after-sales
+    - region "HỆ THỐNG":
+      - heading "HỆ THỐNG" [level=2]
+      - list:
+        - link "Kho sách và vật tư":
+          - /url: /admin/inventory
+        - link "Nhạc cụ theo serial":
+          - /url: /admin/instruments
+        - link "Hệ thống":
+          - /url: /admin/branches
+  - paragraph: Đăng nhập với tài khoản
+  - paragraph: TEST VIBE-EXEC-20260930 ADMIN
+  - paragraph: Quản trị viên cấp cao
+  - button "Đăng xuất"
+- banner:
+  - paragraph: Hệ thống Vibe Academy
+  - paragraph: Quản trị
+  - generic: TEST VIBE-EXEC-20260930 ADMIN
+- main:
+  - navigation "Đào tạo":
+    - link "Học viên":
+      - /url: /admin/students
+    - link "Chương trình học":
+      - /url: /admin/programs
+    - link "Ca dạy":
+      - /url: /admin/classes
+    - link "Lịch học":
+      - /url: /admin/schedule
+    - link "Điểm danh":
+      - /url: /admin/attendance
+    - link "Cảnh báo chuyên cần":
+      - /url: /admin/attendance/retention
+    - link "Báo cáo học tập":
+      - /url: /admin/reports/learning
+    - link "Phản hồi buổi học":
+      - /url: /admin/feedback
+    - link "Phòng học":
+      - /url: /admin/rooms
+  - heading "Học viên" [level=1]
+  - paragraph: Quản lý hồ sơ, ca dạy, lịch học, điểm danh và quá trình học tập của học viên.
+  - heading "Điểm danh" [level=1]
+  - paragraph: Lọc buổi học và mở sổ điểm danh trực tiếp. Giờ hiển thị theo Việt Nam.
+  - generic: Ngày
+  - textbox "Ngày": 2026-10-01
+  - generic: Chi nhánh
+  - combobox "Chi nhánh":
+    - option "Tất cả" [selected]
+    - option "TEST execution branch A"
+  - generic: Ca dạy
+  - combobox "Ca dạy":
+    - option "Tất cả" [selected]
+    - option "TEST execution class"
+  - generic: Giáo viên
+  - combobox "Giáo viên":
+    - option "Tất cả" [selected]
+    - option "TEST execution teacher"
+  - generic: Học viên
+  - searchbox "Học viên"
+  - generic: Trạng thái điểm danh
+  - combobox "Trạng thái điểm danh":
+    - option "Tất cả" [selected]
+    - option "Chưa điểm danh"
+    - option "Đang điểm danh"
+    - option "Đã hoàn tất"
+    - option "Có học viên vắng"
+  - button "Lọc"
+  - link "Xóa lọc":
+    - /url: /admin/students?tab=attendance
+  - heading "1 buổi học phù hợp" [level=2]
+  - link "Mở điểm danh":
+    - /url: /admin/attendance/e738af8e-d7b8-4490-aaeb-5cdee003d293?return_to=%2Fadmin%2Fstudents%3Ftab%3Dattendance%26date%3D2026-10-01%26page%3D1#attendance-roster
+  - table:
+    - rowgroup:
+      - row "Giờ Ca dạy Học viên / số học viên Giáo viên thực dạy Phòng Chi nhánh Đã điểm danh Chưa điểm danh Vắng Trạng thái Hành động":
+        - columnheader "Giờ"
+        - columnheader "Ca dạy"
+        - columnheader "Học viên / số học viên"
+        - columnheader "Giáo viên thực dạy"
+        - columnheader "Phòng"
+        - columnheader "Chi nhánh"
+        - columnheader "Đã điểm danh"
+        - columnheader "Chưa điểm danh"
+        - columnheader "Vắng"
+        - columnheader "Trạng thái"
+        - columnheader "Hành động"
+    - rowgroup:
+      - row "08:00–09:00 TEST execution class VIBE-EXEC-20260930 TEST VIBE EXEC 20260930 Student TEST execution teacher TEST execution room TEST execution branch A 1 0 0 Đã hoàn tất Mở điểm danh":
+        - cell "08:00–09:00"
+        - cell "TEST execution class VIBE-EXEC-20260930":
+          - strong: TEST execution class
+          - generic: VIBE-EXEC-20260930
+        - cell "TEST VIBE EXEC 20260930 Student"
+        - cell "TEST execution teacher"
+        - cell "TEST execution room"
+        - cell "TEST execution branch A"
+        - cell "1"
+        - cell "0"
+        - cell "0"
+        - cell "Đã hoàn tất":
+          - generic: Đã hoàn tất
+        - cell "Mở điểm danh":
+          - link "Mở điểm danh":
+            - /url: /admin/attendance/e738af8e-d7b8-4490-aaeb-5cdee003d293?return_to=%2Fadmin%2Fstudents%3Ftab%3Dattendance%26date%3D2026-10-01%26page%3D1#attendance-roster
+  - navigation "Trang điểm danh"
+- button "Open Next.js Dev Tools":
+- alert

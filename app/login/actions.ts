@@ -23,6 +23,13 @@ export async function login(formData: FormData) {
     redirect('/login?error=Invalid%20email%20or%20password')
   }
 
+  const next = String(formData.get('next') ?? '')
+  // Only known local academic destinations; authorization runs again at the destination.
+  if (/^\/my-learning\/(?:reports\/[0-9a-f-]{36}\/pdf|conversations\/(?:report|feedback)\/[0-9a-f-]{36})$/i.test(next)) {
+    revalidatePath('/', 'layout')
+    redirect(next)
+  }
+
   // Kiểm tra đây có phải SUPER_ADMIN không
   const { data: isSuperAdmin, error: roleError } = await supabase.rpc(
     'has_role',
@@ -32,14 +39,46 @@ export async function login(formData: FormData) {
   )
 
   if (!roleError && !isSuperAdmin) {
-    const roles = await Promise.all(['BRANCH_ADMIN', 'TEACHER'].map(role_code => supabase.rpc('has_role', { role_code })))
-    if (roles.some(role => !role.error && role.data === true)) {
+    const roles = await Promise.all(['FINANCE', 'BRANCH_ADMIN', 'TEACHER'].map(role_code => supabase.rpc('has_role', { role_code })))
+    if (!roles[0].error && roles[0].data === true) {
+      revalidatePath('/', 'layout')
+      redirect('/finance')
+    }
+    const branchAdmin = !roles[1].error && roles[1].data === true
+    if (branchAdmin) {
+      const shell = await supabase.rpc('crm_shell_may_enter')
+      if (!shell.error && shell.data === true) {
+        revalidatePath('/', 'layout')
+        redirect('/admin/business')
+      }
+      const students = await supabase.rpc('student_ops_may_enter')
+      if (!students.error && students.data === true) {
+        revalidatePath('/', 'layout')
+        redirect('/admin/students')
+      }
+    }
+    if (roles.slice(1).some(role => !role.error && role.data === true)) {
       revalidatePath('/', 'layout')
       redirect('/operations')
     }
   }
 
+  if (!roleError && !isSuperAdmin) {
+    const {data:staff,error:staffError}=await supabase.rpc('has_role',{role_code:'STAFF'})
+    if (!staffError && staff === true) {
+      revalidatePath('/', 'layout')
+      redirect('/my-payroll')
+    }
+  }
+
   if (roleError || !isSuperAdmin) {
+    if (!roleError) {
+      const family = await Promise.all(['STUDENT', 'PARENT'].map(role_code => supabase.rpc('has_role', { role_code })))
+      if (family.some(role => !role.error && role.data === true)) {
+        revalidatePath('/', 'layout')
+        redirect('/my-learning')
+      }
+    }
     await supabase.auth.signOut()
 
     redirect(

@@ -1,0 +1,361 @@
+✔ family portal rejects signed-out access before querying (176.591875ms)
+✔ unrelated student is not found before any journey or finance query (148.544958ms)
+✔ picker only renders server-authorized identities and paginates (148.8855ms)
+✔ selected tab loads only bounded attendance and uses Vietnam time (139.725209ms)
+✔ journey shows both programs and completed versus available without write actions (78.944833ms)
+✔ finance does not mislabel invoice subtotal as full customer balance (58.152792ms)
+✔ projection errors do not masquerade as an empty successful list (47.4295ms)
+✔ teacher portal requires teacher role before data reads (6.996167ms)
+✔ teacher history uses actual-teaching projection and preserves bounded page (10.116583ms)
+✔ teacher feedback summary renders no respondent identity or private resolution (13.103584ms)
+✔ off-cycle self-read displays signed delta and never implies cash payout (202.320292ms)
+✔ feedback action delegates identity and eligibility to the canonical RPC (26.577042ms)
+✔ feedback reasons outside the rating band never reach the database (5.456791ms)
+✔ feedback invalid ratings never reach the database mutation (6.884166ms)
+✔ credit page keeps unapplied credit separate and provides no automatic allocation (61.764542ms)
+✔ approved report renders snapshot sections without private or unexpected summary fields (27.295542ms)
+generate_learning_report RPC error: {
+  message: 'Invalid closed report period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Enrollment does not overlap period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'First monthly report must cover the enrollment start calendar month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'First monthly report must start on the enrollment start date and end on the last day of the following month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report must cover a full calendar month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report must stay within enrollment dates; use END_OF_COURSE for a shortened final period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report overlaps an existing report',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'private SQL detail',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+✔ report list filters branch status type month and bounded pagination (123.848625ms)
+✔ report list renders multiple branches and empty state (433.982292ms)
+✔ report ops dashboard exposes KPI tabs and needs view by default (129.828709ms)
+✔ report metrics use head counts without loading full payloads (32.236708ms)
+✔ generate sends only validated report context to RPC (49.84175ms)
+✔ invalid generation and unauthorized requests do not reach engine (66.04775ms)
+✔ ready and approval pass expected version; approval requires confirmation (242.892334ms)
+✔ reject fake SENT and safely surface engine lock (36.804917ms)
+✔ draft detail shows missing input attendance and editable summary (57.289208ms)
+✔ approved detail reads snapshot and hides editing actions (37.91425ms)
+✔ approved legacy V1 summary remains readable after V2 (89.478ms)
+✔ review detail offers approve and return but no inline edit (34.140791ms)
+✔ print preview keeps the approved snapshot and marks controls for exclusion (41.765125ms)
+✔ first monthly suggestions handle day one, mid-month, leap day and year rollover (0.223125ms)
+✔ selected enrollment prefills first-period dates and enrollment lower bound (27.890833ms)
+✔ existing monthly history suggests following calendar month including cancelled (174.485125ms)
+✔ other enrollment or END_OF_COURSE history does not replace first monthly default (42.740625ms)
+✔ early-ended and future enrollments explain why suggested monthly report is unavailable (86.5365ms)
+✔ first extended period action forwards validated inputs without calendar-month-only rejection (20.39225ms)
+✔ known generation errors have Vietnamese explanations and unknown errors stay private (159.287458ms)
+✔ approved official document exposes confirmed publish only and never refreshes snapshot (40.216875ms)
+✔ publish action requires confirmation and forwards version to existing engine (81.574916ms)
+✔ published report has disabled delivery controls with real student and active parent contacts (101.3275ms)
+✔ draft and review do not expose delivery controls (139.756208ms)
+✔ missing recipients and missing snapshot fail safely (94.240375ms)
+✔ repeated delivery page loads cannot enqueue, send, or mutate frozen content (76.911459ms)
+✔ delivery history uses actual records, preserves mock and queued distinctions, filters other reports (52.705208ms)
+✔ V2 academic document renders all seven summaries, maps enums, and handles direct assessment (41.804542ms)
+✔ official print content excludes internal notes, delivery and administration (49.095875ms)
+✔ official layout loads screen stylesheet and paper separates toolbar from content (41.80775ms)
+✔ academic award labels retain Pass Merit Distinction and legacy safety (44.062834ms)
+✔ feedback list applies server filters and pagination (161.478708ms)
+✔ feedback list shows low rating and multiple branches (331.838666ms)
+✔ empty feedback list is explicit (120.304959ms)
+✔ feedback page exposes class filter and shared ops chrome (134.87625ms)
+✔ feedback class filter scopes by enrollment ids (23.496417ms)
+✔ detail renders all dimensions context and resolution history (73.9465ms)
+✔ resolution passes version and note through guarded RPC (23.872917ms)
+✔ resolution rejects missing note and unauthorized user (37.696792ms)
+✔ resolved feedback supports reopening but keeps original rating (214.548792ms)
+✔ submission action uses current auth and ignores claimed respondent user ID (2.86725ms)
+✔ rating selects the matching predefined reason set (1.477541ms)
+✔ submission rejects invalid optional ratings and unauthenticated caller (2.64525ms)
+✔ unconfigured provider fails closed without SENT (0.514833ms)
+✔ Zalo channel fails closed with typed outbound code (0.089916ms)
+✔ mock confirms success with stable idempotency receipt (0.659834ms)
+✔ mock refuses live job (0.141ms)
+✔ provider failure is sanitized (0.244833ms)
+✔ provider response without confirmation cannot mark SENT (0.078541ms)
+✔ unclaimed job never calls provider (0.481583ms)
+✔ database acknowledgement failure does not resend or falsely record failure (0.203375ms)
+(node:48735) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/app/operations/teacher/sessions/%5Bid%5D/model.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ TSW33-40 one session shows a lane per student (2.49275ms)
+✔ TSW teaching helpers count individuals and keep absent feedback optional (171.618917ms)
+✔ expired access rotates once, verifies OA, persists pair/expiry/version; restart ignores stale env (6.865291ms)
+✔ missing refresh remains blocked without network or bootstrap overwrite (0.801959ms)
+✔ invalid/consumed refresh response -14014 blocks reuse (0.607708ms)
+✔ invalid/consumed refresh response -14001 blocks reuse (0.202709ms)
+✔ two concurrent processes share claim; only one consumes refresh (5.818833ms)
+✔ refresh timeout is durable unknown and never consumes same refresh twice (0.2595ms)
+✔ rotation persistence failure blocks sends; no provider refresh retry (205.796875ms)
+✔ lost commit acknowledgement recovered by readback without another rotation (201.314917ms)
+✔ crash after rotation persisted before verification resumes verification after restart (1.242959ms)
+✔ wrong OA after rotation stays blocked while recovered pair is retained (0.754ms)
+✔ late credential writer cannot overwrite a newer version (0.256833ms)
+✔ phone -1241 proof failure distinguished from invalid token; proof uses sent token (1.702166ms)
+✔ definitive rejection then concurrent manual/worker recovery sends once and duplicate callback cannot resend (2.079584ms)
+✔ timeout never sends a second request (0.398375ms)
+✔ accepted-write-failure never sends a second request (0.314667ms)
+✔ known invalid authentication does not claim another send or consume retry count (0.55425ms)
+✔ OA and ZBS diagnostics preserve separate proof/permission codes (0.493ms)
+ℹ tests 86
+ℹ suites 0
+ℹ pass 85
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3152.527167
+
+✖ failing tests:
+
+test at tests/teacher-session-workspace.test.cjs:11:1
+✖ TSW33-40 one session shows a lane per student (2.49275ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /Ca dạy/. Input:
+  
+  "import { isAfterSalesPath, isMarketingPath } from './business/workspaces'\n" +
+    '\n' +
+    'export const trainingTabs: { name: string; href: string; studentTab?: string }[] = [\n' +
+    "  { name: 'Học viên', href: '/admin/students' },\n" +
+    "  { name: 'Chương trình học', href: '/admin/programs' },\n" +
+    "  { name: 'Khóa học', href: '/admin/programs?view=courses' },\n" +
+    "  { name: 'Ca dạy', href: '/admin/classes', studentTab: 'teaching-shifts' },\n" +
+    "  { name: 'Lịch học', href: '/admin/schedule', studentTab: 'schedule' },\n" +
+    "  { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },\n" +
+    "  { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },\n" +
+    "  { name: 'Báo cáo học tập', href: '/admin/reports/learning' },\n" +
+    "  { name: 'Phản hồi buổi học', href: '/admin/feedback' },\n" +
+    '  // Rooms belongs to the student workspace, never a separate sidebar group.\n' +
+    "  { name: 'Phòng học', href: '/admin/rooms' },\n" +
+    ']\n' +
+    '\n' +
+    "export const studentTabs = trainingTabs.filter(tab => ['/admin/students', '/admin/rooms'].includes(tab.href))\n" +
+    '\n' +
+    'export const systemTabs = [\n' +
+    "  { name: 'Chi nhánh', href: '/admin/branches' },\n" +
+    "  { name: 'Thông báo', href: '/admin/notifications' },\n" +
+    "  { name: 'Tích hợp', href: '/admin/system/integrations' },\n" +
+    "  { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' },\n" +
+    ']\n' +
+    '\n' +
+    'export const navigationGroups: { name: string; items: NavigationItem[] }[] = [\n' +
+    "  { name: 'TỔNG QUAN', items: [{ name: 'Bảng điều khiển', href: '/admin' }] },\n" +
+    "  { name: 'VẬN HÀNH', items: [\n" +
+    "    { name: 'Đào tạo', href: '/admin/students' },\n" +
+    "    { name: 'Tổng quan tài chính', href: '/admin/finance' },\n" +
+    "    { name: 'Học phí & Thanh toán', href: '/admin/finance/invoices', hideChildren: true, children: [\n" +
+    "      { name: 'Hóa đơn', href: '/admin/finance/invoices' },\n" +
+    "      { name: 'Học phí', href: '/admin/tuition' },\n" +
+    "      { name: 'Thanh toán', href: '/admin/finance/payments' },\n" +
+    "      { name: 'Công nợ', href: '/admin/finance/receivables' },\n" +
+    "      { name: 'Hoàn tiền', href: '/admin/finance/refunds' },\n" +
+    "      { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },\n" +
+    '    ] },\n' +
+    "    { name: 'Số dư khách hàng', href: '/admin/finance/credits' },\n" +
+    "    { name: 'Chi phí vận hành', href: '/admin/finance/operating-expenses' },\n" +
+    '  ] },\n' +
+    "  { name: 'HR', items: [\n" +
+    "    { name: 'Tổng quan HR', href: '/admin/hr' },\n" +
+    "    { name: 'Nhân sự & nghỉ phép', href: '/admin/employees', hideChildren: true, children: [\n" +
+    "      { name: 'Hồ sơ nhân viên', href: '/admin/employees' },\n" +
+    "      { name: 'Chấm công', href: '/admin/hr/attendance' },\n" +
+    "      { name: 'Yêu cầu nghỉ phép', href: '/admin/employees/leave-requests' },\n" +
+    "      { name: 'Chính sách nghỉ phép', href: '/admin/employees/leave-policies' },\n" +
+    '    ] },\n' +
+    "    { name: 'Lương & chi trả', href: '/admin/payroll', hideChildren: true, children: [\n" +
+    "      { name: 'Mẫu lương & cấu hình', href: '/admin/hr/templates' },\n" +
+    "      { name: 'Kỳ lương', href: '/admin/payroll' },\n" +
+    "      { name: 'Công tác phí', href: '/admin/hr/expenses' },\n" +
+    "      { name: 'Phiếu lương & chi trả', href: '/admin/hr/payslips' },\n" +
+    '    ] },\n' +
+    "    { name: 'Phân công và đối soát', href: '/admin/session-teachers', hideChildren: true, children: [\n" +
+    "      { name: 'Phân công nhân viên', href: '/admin/session-teachers' },\n" +
+    "      { name: 'Đối soát', href: '/admin/hr/teaching' },\n" +
+    '    ] },\n' +
+    '  ] },\n' +
+    "  { name: 'KINH DOANH', items: [\n" +
+    "    { name: 'Điều hành kinh doanh', href: '/admin/business' },\n" +
+    "    { name: 'CRM & Tuyển sinh', href: '/admin/business/registrations' },\n" +
+    "    { name: 'Báo cáo marketing', href: '/admin/business/marketing' },\n" +
+    "    { name: 'Sau bán hàng', href: '/admin/business/after-sales' },\n" +
+    '  ] },\n' +
+    "  { name: 'HỆ THỐNG', items: [\n" +
+    "    { name: 'Kho sách và vật tư', href: '/admin/inventory' },\n" +
+    "    { name: 'Nhạc cụ theo serial', href: '/admin/instruments' },\n" +
+    "    { name: 'Hệ thống', href: '/admin/branches' },\n" +
+    '  ] },\n' +
+    ']\n' +
+    '// Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.\n' +
+    '// Existing learning report URLs remain under the training workspace.\n' +
+    'export function isBusinessShellPath(pathname: string | null | undefined) {\n' +
+    "  return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))\n" +
+    '}\n' +
+    '\n' +
+    'export function isStudentOpsPath(pathname: string | null | undefined) {\n' +
+    "  return pathname === '/admin/students'\n" +
+    '}\n' +
+    '\n' +
+    "export type ShellMode = 'full' | 'business' | 'students' | 'business-students'\n" +
+    '\n' +
+    'export function navigationForShell(businessOnly: boolean) {\n' +
+    "  return businessOnly ? navigationGroups.filter(group => group.name === 'KINH DOANH') : navigationGroups\n" +
+    '}\n' +
+    '\n' +
+    'export function navigationForAccess(mode: ShellMode) {\n' +
+    "  if (mode === 'full') return navigationGroups\n" +
+    "  const business = navigationGroups.filter(group => group.name === 'KINH DOANH')\n" +
+    '  const students = navigationGroups\n' +
+    "    .filter(group => group.name === 'VẬN HÀNH')\n" +
+    "    .map(group => ({ ...group, items: group.items.filter(item => item.href === '/admin/students') }))\n" +
+    "  if (mode === 'business') return business\n" +
+    "  if (mode === 'students') return students\n" +
+    '  return [...business, ...students]\n' +
+    '}\n' +
+    '\n' +
+    'export type NavigationChild = { name: string; href: string }\n' +
+    'export type NavigationItem = { name: string; href: string; children?: NavigationChild[]; hideChildren?: boolean }\n' +
+    '\n' +
+    'function navigationLeaves() {\n' +
+    '  return navigationGroups.flatMap(group => group.items.flatMap(item => item.children?.length ? item.children : [item]))\n' +
+    '}\n' +
+    '\n' +
+    'export function activeNavigationHref(pathname: string) {\n' +
+    '  const section = workspaceSection(pathname)\n' +
+    "  if (section === 'training') return '/admin/students'\n" +
+    "  if (section === 'system') return '/admin/branches'\n" +
+    "  if (pathname === '/admin/business/crm' || pathname.startsWith('/admin/business/crm/')) return '/admin/business/registrations'\n" +
+    "  if (pathname === '/admin/employees/attendance' || pathname.startsWith('/admin/employees/attendance/')) {\n" +
+    "    return '/admin/hr/attendance'\n" +
+    '  }\n' +
+    "  if (pathname === '/admin/academic' || pathname.startsWith('/admin/academic/') || pathname === '/admin/courses' || pathname.startsWith('/admin/courses/')) {\n" +
+    "    return '/admin/programs'\n" +
+    '  }\n' +
+    "  if (pathname === '/admin/rooms' || pathname.startsWith('/admin/rooms/')) return '/admin/rooms'\n" +
+    "  if (isMarketingPath(pathname)) return '/admin/business/marketing'\n" +
+    "  if (isAfterSalesPath(pathname)) return '/admin/business/after-sales'\n" +
+    '  if (\n' +
+    "    pathname === '/admin/classes' || pathname.startsWith('/admin/classes/')\n" +
+    "    || pathname === '/admin/schedule' || pathname.startsWith('/admin/schedule/')\n" +
+    "    || pathname === '/admin/attendance' || pathname.startsWith('/admin/attendance/')\n" +
+    "    || pathname === '/admin/reports/learning' || pathname.startsWith('/admin/reports/learning/')\n" +
+    "    || pathname === '/admin/feedback' || pathname.startsWith('/admin/feedback/')\n" +
+    '  ) {\n' +
+    "    return '/admin/students'\n" +
+    '  }\n' +
+    '  return navigationLeaves()\n' +
+    "    .filter(item => pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href + '/')))\n" +
+    '    .sort((a, b) => b.href.length - a.href.length)[0]?.href\n' +
+    '}\n' +
+    '\n' +
+    'export function activeNavigationParent(pathname: string) {\n' +
+    '  const leaf = activeNavigationHref(pathname)\n' +
+    '  if (!leaf) return undefined\n' +
+    '  for (const group of navigationGroups) {\n' +
+    '    for (const item of group.items) {\n' +
+    '      if (item.children?.some(child => child.href === leaf)) return item.href\n' +
+    '    }\n' +
+    '  }\n' +
+    '  return leaf\n' +
+    '}\n' +
+    'function inRoute(pathname: string, href: string) {\n' +
+    "  return pathname === href.split('?')[0] || pathname.startsWith(href.split('?')[0] + '/')\n" +
+    '}\n' +
+    '\n' +
+    'function activeTab(pathname: string, tabs: { href: string }[]) {\n' +
+    '  return tabs.filter(tab => inRoute(pathname, tab.href))\n' +
+    '    .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? null\n' +
+    '}\n' +
+    '\n' +
+    "export function workspaceSection(pathname: string): 'training' | 'system' | null {\n" +
+    "  if (inRoute(pathname, '/admin/academic') || inRoute(pathname, '/admin/courses')) return 'training'\n" +
+    "  if (activeTab(pathname, trainingTabs) || activeTab(pathname, studentTabs)) return 'training'\n" +
+    "  if (activeTab(pathname, systemTabs)) return 'system'\n" +
+    '  return null\n' +
+    '}\n' +
+    '\n' +
+    '// Menu visibility follows the existing server-side shell boundary. Grouping\n' +
+    '// rooms under students must never grant room access to student-placement staff.\n' +
+    'export function workspaceTabsForAccess(pathname: string, mode: ShellMode) {\n' +
+    '  const section = workspaceSection(pathname)\n' +
+    "  if (mode === 'full') {\n" +
+    "    return section === 'training' ? trainingTabs : section === 'system' ? systemTabs : []\n" +
+    '  }\n' +
+    "  return (mode === 'students' || mode === 'business-students') && isStudentOpsPath(pathname)\n" +
+    "    ? trainingTabs.filter(tab => tab.href === '/admin/students' || tab.studentTab).map(tab => ({ ...tab, activeHref: tab.href, href: tab.studentTab ? `/admin/students?tab=${tab.studentTab}` : tab.href }))\n" +
+    '    : []\n' +
+    '}\n' +
+    '\n' +
+    'export function activeWorkspaceTab(pathname: string, view?: string | null, tab?: string | null) {\n' +
+    "  if (pathname === '/admin/students') {\n" +
+    "    const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }\n" +
+    "    return aliases[tab || ''] || '/admin/students'\n" +
+    '  }\n' +
+    "  if (pathname === '/admin/programs') return view === 'courses' ? '/admin/programs?view=courses' : '/admin/programs'\n" +
+    "  if (inRoute(pathname, '/admin/academic')) return '/admin/programs'\n" +
+    "  if (inRoute(pathname, '/admin/courses')) return '/admin/programs?view=courses'\n" +
+    "  if (inRoute(pathname, '/admin/rooms')) return '/admin/rooms'\n" +
+    "  if (inRoute(pathname, '/admin/students')) return '/admin/students'\n" +
+    '  return activeTab(pathname, [...trainingTabs, ...systemTabs])\n' +
+    '}\n' +
+    '\n' +
+    'export function activeStudentTab(pathname: string) {\n' +
+    '  return activeTab(pathname, studentTabs)\n' +
+    '}\n' +
+    '\n' +
+    '// Preserve the existing program/course search filters when the shared bar\n' +
+    '// replaces the former local mode switch. Selection/health filters are view-specific.\n' +
+    'export function workspaceTabHref(pathname: string, search: { get(key: string): string | null }, href: string) {\n' +
+    "  if (pathname !== '/admin/programs' || href.split('?')[0] !== '/admin/programs') return href\n" +
+    "  const query = new URLSearchParams(href.split('?')[1] || '')\n" +
+    "  for (const key of ['q', 'stat"... 154 more characters
+  
+      at TestContext.<anonymous> (/Users/macbookair/vibe-academy-system/tests/teacher-session-workspace.test.cjs:38:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "import { isAfterSalesPath, isMarketingPath } from './business/workspaces'\n\nexport const trainingTabs: { name: string; href: string; studentTab?: string }[] = [\n  { name: 'Học viên', href: '/admin/students' },\n  { name: 'Chương trình học', href: '/admin/programs' },\n  { name: 'Khóa học', href: '/admin/programs?view=courses' },\n  { name: 'Ca dạy', href: '/admin/classes', studentTab: 'teaching-shifts' },\n  { name: 'Lịch học', href: '/admin/schedule', studentTab: 'schedule' },\n  { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },\n  { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },\n  { name: 'Báo cáo học tập', href: '/admin/reports/learning' },\n  { name: 'Phản hồi buổi học', href: '/admin/feedback' },\n  // Rooms belongs to the student workspace, never a separate sidebar group.\n  { name: 'Phòng học', href: '/admin/rooms' },\n]\n\nexport const studentTabs = trainingTabs.filter(tab => ['/admin/students', '/admin/rooms'].includes(tab.href))\n\nexport const systemTabs = [\n  { name: 'Chi nhánh', href: '/admin/branches' },\n  { name: 'Thông báo', href: '/admin/notifications' },\n  { name: 'Tích hợp', href: '/admin/system/integrations' },\n  { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' },\n]\n\nexport const navigationGroups: { name: string; items: NavigationItem[] }[] = [\n  { name: 'TỔNG QUAN', items: [{ name: 'Bảng điều khiển', href: '/admin' }] },\n  { name: 'VẬN HÀNH', items: [\n    { name: 'Đào tạo', href: '/admin/students' },\n    { name: 'Tổng quan tài chính', href: '/admin/finance' },\n    { name: 'Học phí & Thanh toán', href: '/admin/finance/invoices', hideChildren: true, children: [\n      { name: 'Hóa đơn', href: '/admin/finance/invoices' },\n      { name: 'Học phí', href: '/admin/tuition' },\n      { name: 'Thanh toán', href: '/admin/finance/payments' },\n      { name: 'Công nợ', href: '/admin/finance/receivables' },\n      { name: 'Hoàn tiền', href: '/admin/finance/refunds' },\n      { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },\n    ] },\n    { name: 'Số dư khách hàng', href: '/admin/finance/credits' },\n    { name: 'Chi phí vận hành', href: '/admin/finance/operating-expenses' },\n  ] },\n  { name: 'HR', items: [\n    { name: 'Tổng quan HR', href: '/admin/hr' },\n    { name: 'Nhân sự & nghỉ phép', href: '/admin/employees', hideChildren: true, children: [\n      { name: 'Hồ sơ nhân viên', href: '/admin/employees' },\n      { name: 'Chấm công', href: '/admin/hr/attendance' },\n      { name: 'Yêu cầu nghỉ phép', href: '/admin/employees/leave-requests' },\n      { name: 'Chính sách nghỉ phép', href: '/admin/employees/leave-policies' },\n    ] },\n    { name: 'Lương & chi trả', href: '/admin/payroll', hideChildren: true, children: [\n      { name: 'Mẫu lương & cấu hình', href: '/admin/hr/templates' },\n      { name: 'Kỳ lương', href: '/admin/payroll' },\n      { name: 'Công tác phí', href: '/admin/hr/expenses' },\n      { name: 'Phiếu lương & chi trả', href: '/admin/hr/payslips' },\n    ] },\n    { name: 'Phân công và đối soát', href: '/admin/session-teachers', hideChildren: true, children: [\n      { name: 'Phân công nhân viên', href: '/admin/session-teachers' },\n      { name: 'Đối soát', href: '/admin/hr/teaching' },\n    ] },\n  ] },\n  { name: 'KINH DOANH', items: [\n    { name: 'Điều hành kinh doanh', href: '/admin/business' },\n    { name: 'CRM & Tuyển sinh', href: '/admin/business/registrations' },\n    { name: 'Báo cáo marketing', href: '/admin/business/marketing' },\n    { name: 'Sau bán hàng', href: '/admin/business/after-sales' },\n  ] },\n  { name: 'HỆ THỐNG', items: [\n    { name: 'Kho sách và vật tư', href: '/admin/inventory' },\n    { name: 'Nhạc cụ theo serial', href: '/admin/instruments' },\n    { name: 'Hệ thống', href: '/admin/branches' },\n  ] },\n]\n// Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.\n// Existing learning report URLs remain under the training workspace.\nexport function isBusinessShellPath(pathname: string | null | undefined) {\n  return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))\n}\n\nexport function isStudentOpsPath(pathname: string | null | undefined) {\n  return pathname === '/admin/students'\n}\n\nexport type ShellMode = 'full' | 'business' | 'students' | 'business-students'\n\nexport function navigationForShell(businessOnly: boolean) {\n  return businessOnly ? navigationGroups.filter(group => group.name === 'KINH DOANH') : navigationGroups\n}\n\nexport function navigationForAccess(mode: ShellMode) {\n  if (mode === 'full') return navigationGroups\n  const business = navigationGroups.filter(group => group.name === 'KINH DOANH')\n  const students = navigationGroups\n    .filter(group => group.name === 'VẬN HÀNH')\n    .map(group => ({ ...group, items: group.items.filter(item => item.href === '/admin/students') }))\n  if (mode === 'business') return business\n  if (mode === 'students') return students\n  return [...business, ...students]\n}\n\nexport type NavigationChild = { name: string; href: string }\nexport type NavigationItem = { name: string; href: string; children?: NavigationChild[]; hideChildren?: boolean }\n\nfunction navigationLeaves() {\n  return navigationGroups.flatMap(group => group.items.flatMap(item => item.children?.length ? item.children : [item]))\n}\n\nexport function activeNavigationHref(pathname: string) {\n  const section = workspaceSection(pathname)\n  if (section === 'training') return '/admin/students'\n  if (section === 'system') return '/admin/branches'\n  if (pathname === '/admin/business/crm' || pathname.startsWith('/admin/business/crm/')) return '/admin/business/registrations'\n  if (pathname === '/admin/employees/attendance' || pathname.startsWith('/admin/employees/attendance/')) {\n    return '/admin/hr/attendance'\n  }\n  if (pathname === '/admin/academic' || pathname.startsWith('/admin/academic/') || pathname === '/admin/courses' || pathname.startsWith('/admin/courses/')) {\n    return '/admin/programs'\n  }\n  if (pathname === '/admin/rooms' || pathname.startsWith('/admin/rooms/')) return '/admin/rooms'\n  if (isMarketingPath(pathname)) return '/admin/business/marketing'\n  if (isAfterSalesPath(pathname)) return '/admin/business/after-sales'\n  if (\n    pathname === '/admin/classes' || pathname.startsWith('/admin/classes/')\n    || pathname === '/admin/schedule' || pathname.startsWith('/admin/schedule/')\n    || pathname === '/admin/attendance' || pathname.startsWith('/admin/attendance/')\n    || pathname === '/admin/reports/learning' || pathname.startsWith('/admin/reports/learning/')\n    || pathname === '/admin/feedback' || pathname.startsWith('/admin/feedback/')\n  ) {\n    return '/admin/students'\n  }\n  return navigationLeaves()\n    .filter(item => pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href + '/')))\n    .sort((a, b) => b.href.length - a.href.length)[0]?.href\n}\n\nexport function activeNavigationParent(pathname: string) {\n  const leaf = activeNavigationHref(pathname)\n  if (!leaf) return undefined\n  for (const group of navigationGroups) {\n    for (const item of group.items) {\n      if (item.children?.some(child => child.href === leaf)) return item.href\n    }\n  }\n  return leaf\n}\nfunction inRoute(pathname: string, href: string) {\n  return pathname === href.split('?')[0] || pathname.startsWith(href.split('?')[0] + '/')\n}\n\nfunction activeTab(pathname: string, tabs: { href: string }[]) {\n  return tabs.filter(tab => inRoute(pathname, tab.href))\n    .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? null\n}\n\nexport function workspaceSection(pathname: string): 'training' | 'system' | null {\n  if (inRoute(pathname, '/admin/academic') || inRoute(pathname, '/admin/courses')) return 'training'\n  if (activeTab(pathname, trainingTabs) || activeTab(pathname, studentTabs)) return 'training'\n  if (activeTab(pathname, systemTabs)) return 'system'\n  return null\n}\n\n// Menu visibility follows the existing server-side shell boundary. Grouping\n// rooms under students must never grant room access to student-placement staff.\nexport function workspaceTabsForAccess(pathname: string, mode: ShellMode) {\n  const section = workspaceSection(pathname)\n  if (mode === 'full') {\n    return section === 'training' ? trainingTabs : section === 'system' ? systemTabs : []\n  }\n  return (mode === 'students' || mode === 'business-students') && isStudentOpsPath(pathname)\n    ? trainingTabs.filter(tab => tab.href === '/admin/students' || tab.studentTab).map(tab => ({ ...tab, activeHref: tab.href, href: tab.studentTab ? `/admin/students?tab=${tab.studentTab}` : tab.href }))\n    : []\n}\n\nexport function activeWorkspaceTab(pathname: string, view?: string | null, tab?: string | null) {\n  if (pathname === '/admin/students') {\n    const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }\n    return aliases[tab || ''] || '/admin/students'\n  }\n  if (pathname === '/admin/programs') return view === 'courses' ? '/admin/programs?view=courses' : '/admin/programs'\n  if (inRoute(pathname, '/admin/academic')) return '/admin/programs'\n  if (inRoute(pathname, '/admin/courses')) return '/admin/programs?view=courses'\n  if (inRoute(pathname, '/admin/rooms')) return '/admin/rooms'\n  if (inRoute(pathname, '/admin/students')) return '/admin/students'\n  return activeTab(pathname, [...trainingTabs, ...systemTabs])\n}\n\nexport function activeStudentTab(pathname: string) {\n  return activeTab(pathname, studentTabs)\n}\n\n// Preserve the existing program/course search filters when the shared bar\n// replaces the former local mode switch. Selection/health filters are view-specific.\nexport function workspaceTabHref(pathname: string, search: { get(key: string): string | null }, href: string) {\n  if (pathname !== '/admin/programs' || href.split('?')[0] !== '/admin/programs') return href\n  const query = new URLSearchParams(href.split('?')[1] || '')\n  for (const key of ['q', 'stat"... 154 more characters,
+    expected: /Ca dạy/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

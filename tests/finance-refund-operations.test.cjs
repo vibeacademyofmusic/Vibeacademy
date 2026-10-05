@@ -4,22 +4,22 @@ const assert = require('node:assert/strict')
 const { harness, id, redirected, fixture, render, base, fs, path, renderToStaticMarkup } = require('./helpers/finance-operations.cjs')
 test('refund creation and allocation explicitly preserve original payment/allocation IDs', async () => {
   const h = harness(); const actions = h.load('refunds/actions.ts')
-  await redirected(actions.createRefund, { payment_id: id(1), amount: 25, refunded_at: '2026-09-15T08:00', reason: 'Hoàn học phí', confirm: 'yes' })
-  assert.equal(h.calls[1].rpc, 'create_refund'); assert.equal(h.calls[1].args.p_payment_id, id(1))
-  await redirected(actions.allocateRefund, { refund_id: id(99), payment_allocation_id: id(5), amount: 10 })
-  assert.equal(h.calls.at(-1).rpc, 'allocate_refund_to_payment_allocation'); assert.equal(h.calls.at(-1).args.p_payment_allocation_id, id(5))
+  await redirected(actions.createRefund, { idempotency_key: id(80), payment_id: id(1), amount: 25, refunded_at: '2026-09-15T08:00', reason: 'Hoàn học phí', confirm: 'yes' })
+  assert.equal(h.calls[1].rpc, 'request_financial_action'); assert.equal(h.calls[1].args.p_operation, 'REFUND'); assert.equal(h.calls[1].args.p_target_id, id(1))
+  await redirected(actions.allocateRefund, { idempotency_key: id(81), confirm:'yes', reason:'Phân bổ hoàn', refund_id: id(99), payment_allocation_id: id(5), amount: 10 })
+  assert.equal(h.calls.at(-1).rpc, 'request_financial_action'); assert.equal(h.calls.at(-1).args.p_operation, 'ALLOCATE_REFUND'); assert.equal(h.calls.at(-1).args.p_details.payment_allocation_id, id(5))
 })
 
 test('over-refund is reported safely and never reported as success', async () => {
   const h = harness({}, { message: 'Refund exceeds the remaining refundable payment amount' })
-  const url = await redirected(h.load('refunds/actions.ts').createRefund, { payment_id: id(1), amount: 1000, refunded_at: '2026-09-15T08:00', reason: 'Hoàn', confirm: 'yes' })
+  const url = await redirected(h.load('refunds/actions.ts').createRefund, { idempotency_key: id(80), payment_id: id(1), amount: 1000, refunded_at: '2026-09-15T08:00', reason: 'Hoàn', confirm: 'yes' })
   assert.match(url.searchParams.get('error'), /vượt phần có thể hoàn/); assert.equal(url.searchParams.has('success'), false)
 })
 
 test('void refund requires confirmation and reason', async () => {
   const h = harness(); const action = h.load('refunds/actions.ts').voidRefund
   await redirected(action, { refund_id: id(1), confirm: 'yes' }); assert.equal(h.calls.length, 1)
-  await redirected(action, { refund_id: id(1), reason: 'Sai phiếu', confirm: 'yes' }); assert.equal(h.calls.at(-1).rpc, 'void_refund')
+  await redirected(action, { idempotency_key: id(82), refund_id: id(1), reason: 'Sai phiếu', confirm: 'yes' }); assert.equal(h.calls.at(-1).rpc, 'request_financial_action'); assert.equal(h.calls.at(-1).args.p_operation, 'VOID_REFUND')
 })
 
 test('refund UI exposes original invoice allocation and explicit void warning', async () => {

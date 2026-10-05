@@ -1,0 +1,48 @@
+✔ operations consolidation does not expose finance to student-only staff (50.671875ms)
+✔ menu targets existing standalone routes only (0.61825ms)
+✔ active menu chooses the most specific existing URL (4.347792ms)
+✔ HR groups staff, pay, and assignment without a separate teacher entry (42.190625ms)
+✔ business shell keeps unaudited admin routes out of the branch menu (104.701542ms)
+✔ unimplemented domains are omitted and existing finance routes are present (0.461666ms)
+✔ CRM aliases and registration share the consolidated navigation entry (1.59075ms)
+✔ approved tuition and payment group keeps six routes and precise active state (43.863ms)
+✔ approved HR labels and deep links remain precise (58.987209ms)
+✔ HR sidebar renders exactly four direct links without nested links or controls (115.858583ms)
+✔ HR and recruitment use the same wrapping workspace tabs, mounted once (57.885042ms)
+✔ payroll retains its back link without a second cross-module navigation bar (0.777959ms)
+✔ training and system preserve local routes and exact active destinations (40.550375ms)
+✔ legacy embedded training URLs select the single canonical tab (44.627333ms)
+✔ program/course switches share the training bar and preserve existing search filters (24.305459ms)
+✔ room workspace does not repeat cross-module navigation as a dropdown (0.419083ms)
+✔ business shell accepts only the business route tree (1.649292ms)
+✔ business shell navigation hides unaudited admin domains (1.594375ms)
+✔ super admin reaches business and the rest of admin (513.773334ms)
+✔ branch admin with CRM permission reaches only business routes (495.76625ms)
+✔ student operations opens only the exact students list (358.686417ms)
+✔ business and student permissions share a menu without opening other admin domains (27.32975ms)
+✔ accounts without CRM shell permission are denied, including a missing path header (73.091709ms)
+✔ consolidated tabs obey existing server access boundaries (102.721334ms)
+✔ NAV: class ops lists live under Học viên, rooms stay in Vận hành (294.55375ms)
+✔ UI: workspace modes and mixed-level copy exist (0.864625ms)
+✔ MIX: enrollment uses Academic Program level and blocks outside scope (0.815292ms)
+✔ ATT: attendance detail shows Academic Program current Level (0.780917ms)
+✔ ATT: generator remains idempotent conflict target (0.628834ms)
+✔ MIX: course.level_id not treated as student level in ops model (0.324666ms)
+✔ list routes redirect into the Học viên tabs (0.4305ms)
+✔ same canonical compatibility drives list and linked overview; students deduplicated across classes/pages (802.293667ms)
+✔ branch filter excludes other classes and canonical compatible result removes warning (179.247791ms)
+✔ RPC errors do not silently present a clean work queue (54.849375ms)
+✔ overview retains missing-scope and partially marked attendance queues (46.305958ms)
+✔ acceptance invokes authoritative assignment/start and never directly sets current_level_id (2.318417ms)
+✔ attendance loads only its workspace and hides writes without management permission (152.600125ms)
+✔ registration is a business route and students stay one menu item (1.432291ms)
+✔ students page derives current and waiting without a second student table (1.141708ms)
+✔ won lead can open a prefilled registration and completion stays reviewed (0.231709ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2240.521333

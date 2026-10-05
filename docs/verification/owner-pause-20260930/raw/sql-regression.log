@@ -1,0 +1,21 @@
+Connecting to local database...
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/enrollment_pause_engine_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/enrollment_pause_engine_test.sql ........... ok
+All tests successful.
+Files=1, Tests=10,  1 wallclock secs ( 0.01 usr  0.01 sys +  0.03 cusr  0.00 csys =  0.05 CPU)
+Result: PASS
+Cannot detect source of '/Users/macbookair/vibe-academy-system/supabase/tes'! at /usr/share/perl5/core_perl/TAP/Parser/IteratorFactory.pm line 256.
+	TAP::Parser::IteratorFactory::detect_source(TAP::Parser::IteratorFactory=HASH(0xffff9cde67f0), TAP::Parser::Source=HASH(0xffff9d340e50)) called at /usr/share/perl5/core_perl/TAP/Parser/IteratorFactory.pm line 211
+	TAP::Parser::IteratorFactory::make_iterator(TAP::Parser::IteratorFactory=HASH(0xffff9cde67f0), TAP::Parser::Source=HASH(0xffff9d340e50)) called at /usr/share/perl5/core_perl/TAP/Parser.pm line 472
+	TAP::Parser::_initialize(TAP::Parser=HASH(0xffff9d940570), HASH(0xffff9d010c20)) called at /usr/share/perl5/core_perl/TAP/Object.pm line 55
+	TAP::Object::new("TAP::Parser", HASH(0xffff9d010c20)) called at /usr/share/perl5/core_perl/TAP/Object.pm line 130
+	TAP::Object::_construct(TAP::Harness=HASH(0xffff9d3cb288), "TAP::Parser", HASH(0xffff9d010c20)) called at /usr/share/perl5/core_perl/TAP/Harness.pm line 865
+	TAP::Harness::make_parser(TAP::Harness=HASH(0xffff9d3cb288), TAP::Parser::Scheduler::Job=HASH(0xffff9d0111e0)) called at /usr/share/perl5/core_perl/TAP/Harness.pm line 664
+	TAP::Harness::_aggregate_single(TAP::Harness=HASH(0xffff9d3cb288), TAP::Parser::Aggregator=HASH(0xffff9d3cb198), TAP::Parser::Scheduler=HASH(0xffff9d0110a8)) called at /usr/share/perl5/core_perl/TAP/Harness.pm line 756
+	TAP::Harness::aggregate_tests(TAP::Harness=HASH(0xffff9d3cb288), TAP::Parser::Aggregator=HASH(0xffff9d3cb198), "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"...) called at /usr/share/perl5/core_perl/TAP/Harness.pm line 559
+	eval {...} called at /usr/share/perl5/core_perl/TAP/Harness.pm line 560
+	TAP::Harness::__ANON__() called at /usr/share/perl5/core_perl/TAP/Harness.pm line 574
+	TAP::Harness::runtests(TAP::Harness=HASH(0xffff9d3cb288), "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"...) called at /usr/share/perl5/core_perl/App/Prove.pm line 548
+	App::Prove::_runtests(App::Prove::pgTAP=HASH(0xffff9d940588), HASH(0xffff9d45c1c0), "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"..., "/Users/macbookair/vibe-academy-system/supabase/tests/database"...) called at /usr/share/perl5/core_perl/App/Prove.pm line 506
+	App::Prove::run(App::Prove::pgTAP=HASH(0xffff9d940588)) called at /usr/local/bin/pg_prove line 13
+error running container: exit 2

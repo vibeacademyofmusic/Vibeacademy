@@ -1,0 +1,198 @@
+begin;
+
+-- Fixture prerequisite for the current enrollment guard. Does not change production rules.
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql security definer set search_path=public,pg_temp as $$
+declare c public.classes%rowtype; course public.courses%rowtype; level_id uuid; t uuid; r uuid; slot int;
+begin
+ select * into c from public.classes where id=p_class;
+ if not found or c.course_id is null or c.xmin::text is distinct from txid_current()::text then return; end if;
+ select * into course from public.courses where id=c.course_id;
+ if not found then return; end if;
+ level_id := course.level_id;
+ if level_id is null then
+   select id into level_id from public.curriculum_levels where curriculum_id=course.curriculum_id order by sequence_no limit 1;
+   if level_id is null then return; end if;
+   update public.courses set level_id=level_id where id=course.id and xmin::text=txid_current()::text;
+ end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,level_id) where id=c.id;
+ update public.students set default_branch_id=c.branch_id
+  where default_branch_id is null and status='ACTIVE' and xmin::text=txid_current()::text;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,level_id,date '2000-01-01','ACTIVE',true
+ from public.students s
+ where s.default_branch_id=c.branch_id and s.xmin::text=txid_current()::text
+   and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.status='ACTIVE' and (a.curriculum_id=course.curriculum_id or a.is_primary));
+ if not exists(select 1 from public.class_teachers where class_id=c.id and teacher_role='PRIMARY' and (is_active or ended_at is not null)) then
+   select id into t from public.teachers where teacher_code='FIX-'||c.id;
+   if t is null then
+     insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+     insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   end if;
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+ end if;
+ if not exists(select 1 from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id) then
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+ else
+   select id into r from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id limit 1;
+ end if;
+ if exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   update public.schedules set room_id=coalesce(room_id,r) where class_id=c.id and status='ACTIVE' and room_id is null;
+ else
+   slot := abs(hashtext(c.id::text));
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+end $$;
+
+create extension if not exists pgtap with schema extensions;
+select no_plan();
+insert into auth.users(id) values('ee000000-0000-0000-0000-000000000001'),('ee000000-0000-0000-0000-000000000002'),('ee000000-0000-0000-0000-000000000003');
+insert into public.profiles(id,status) select id,'ACTIVE' from auth.users where id::text like 'ee000000-%';
+insert into public.user_roles(user_id,role_id) select u.id,r.id from auth.users u cross join public.roles r where u.id in ('ee000000-0000-0000-0000-000000000001','ee000000-0000-0000-0000-000000000002') and r.code='SUPER_ADMIN';
+insert into public.branches(id,code,name) values('ee100000-0000-0000-0000-000000000001','LEGACY-A','Legacy A');
+insert into public.curriculums(id,code,name) values('ee200000-0000-0000-0000-000000000001','LEGACY-PIANO','Legacy Piano');
+insert into public.curriculum_levels(id,curriculum_id,code,name,sequence_no) values('ee300000-0000-0000-0000-000000000004','ee200000-0000-0000-0000-000000000001','LEGACY-G4','Grade 4',4);
+insert into public.curriculum_subjects(level_id,family_code,code,name,completion_rule) values('ee300000-0000-0000-0000-000000000004','LEGACY','LEGACY-SUB','Subject','DIRECT_ASSESSMENT');
+insert into public.courses(id,curriculum_id,level_id,code,name) values('ee400000-0000-0000-0000-000000000001','ee200000-0000-0000-0000-000000000001','ee300000-0000-0000-0000-000000000004','LEGACY-COURSE','Legacy course');
+insert into public.classes(id,branch_id,course_id,code,name,class_type,capacity,status) values('ee500000-0000-0000-0000-000000000001','ee100000-0000-0000-0000-000000000001','ee400000-0000-0000-0000-000000000001','LEGACY-CLASS','Legacy class','GROUP',30,'ACTIVE');
+insert into public.tuition_plans(id,code,name,duration_months) values('ee600000-0000-0000-0000-000000000001','LEGACY-PLAN','Legacy plan',1);
+insert into public.tuition_plan_branch_prices(tuition_plan_id,branch_id,list_price,currency) values('ee600000-0000-0000-0000-000000000001','ee100000-0000-0000-0000-000000000001',5500000,'VND');
+create temp table fixture(name text primary key,id uuid,payload jsonb);
+grant all on fixture to authenticated;
+insert into fixture(name,payload) values('source',jsonb_build_object(
+ 'legacy_reference','source-1','student_code','LEGACY-STUDENT-1','full_name','Legacy synthetic learner',
+ 'class_code','','curriculum_code','LEGACY-PIANO','level_code','LEGACY-G4',
+ 'started_at',(now() at time zone 'Asia/Ho_Chi_Minh')::date::text,
+ 'tuition_starts_on',(now() at time zone 'Asia/Ho_Chi_Minh')::date::text,
+ 'tuition_plan_code','LEGACY-PLAN','student_status','ACTIVE','tuition_status','ACTIVE',
+ 'currency','VND','discount_type','NONE','discount_value','0','final_amount','5500000','opening_paid_amount','0','opening_outstanding','5500000'));
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000001',true);
+insert into fixture(name,id) select 'batch',public.stage_legacy_batch('LEGACY-TEST','synthetic.csv',repeat('a',64),(now() at time zone 'Asia/Ho_Chi_Minh')::date,'ee100000-0000-0000-0000-000000000001',jsonb_build_array(payload)) from fixture where name='source';
+insert into fixture(name,id) select 'row',id from public.migration_batch_rows where batch_id=(select id from fixture where name='batch');
+select public.review_legacy_row((select id from fixture where name='row'),1,'MAP','Exact mapping',(select payload||'{"class_code":"LEGACY-CLASS"}'::jsonb from fixture where name='source'));
+select public.review_legacy_row((select id from fixture where name='row'),2,'IDENTITY','Checked');
+select public.review_legacy_row((select id from fixture where name='row'),2,'ACADEMIC','Checked');
+select set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000002',true);
+select public.review_legacy_row((select id from fixture where name='row'),2,'FINANCE','Independent check');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
+select public.import_legacy_row((select id from fixture where name='row'),2);
+insert into fixture(name,id) select 'opening',id from public.opening_receivables where migration_row_id=(select id from fixture where name='row');
+create function pg_temp.balance() returns numeric language sql as $$select outstanding_balance from public.opening_receivable_balances where id=(select id from fixture where name='opening')$$;
+create function pg_temp.make(label text,op text,target uuid,details jsonb) returns uuid language plpgsql as $$declare rid uuid; begin
+ perform set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000001',true);
+ rid:=public.request_financial_action(op,target,details,'Synthetic regression',gen_random_uuid());
+ insert into fixture(name,id) values(label,rid);return rid;end $$;
+create function pg_temp.approve(label text) returns uuid language plpgsql as $$begin
+ perform set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000002',true);
+ return public.approve_financial_action((select id from fixture where name=label),'Independent regression check');end $$;
+insert into fixture(name,id) select 'payment',public.create_payment(student_id,branch_id,4000000,'VND','CASH',now(),'CREDIT-TEST','Synthetic receipt') from public.opening_receivables where id=(select id from fixture where name='opening');
+insert into fixture(name,id) select 'allocation',public.allocate_payment_to_opening((select id from fixture where name='payment'),(select id from fixture where name='opening'),4000000);
+select pg_temp.make('less','OPENING_RECEIVABLE_CORRECTION',(select id from fixture where name='opening'),'{"corrected_amount":5000000}');
+select pg_temp.approve('less');
+select is(pg_temp.balance(),1000000::numeric,'Payment less than corrected obligation leaves debt');
+select is((select count(*) from public.customer_credits where payment_id=(select id from fixture where name='payment')),0::bigint,'No excess means no credit');
+select pg_temp.make('equal','OPENING_RECEIVABLE_CORRECTION',(select id from fixture where name='opening'),'{"corrected_amount":4000000}');
+select pg_temp.approve('equal');
+select is(pg_temp.balance(),0::numeric,'Exact payment clears debt');
+select is((select count(*) from public.customer_credits where payment_id=(select id from fixture where name='payment')),0::bigint,'Exact payment creates no credit');
+select pg_temp.make('excess','OPENING_RECEIVABLE_CORRECTION',(select id from fixture where name='opening'),'{"corrected_amount":3000000}');
+select lives_ok($$select pg_temp.approve('excess')$$,'Downward correction with excess is allowed');
+insert into fixture(name,id) select 'credit',id from public.customer_credits where correction_id=(select id from fixture where name='excess');
+select is(pg_temp.balance(),0::numeric,'Receivable never becomes negative');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),1000000::numeric,'One million becomes traceable customer credit');
+select is((select post_cutover_net_paid from public.opening_receivable_balances where id=(select id from fixture where name='opening')),3000000::numeric,'Only valid receivable remains applied');
+select is((select cash_received from public.branch_finance_summary where branch_id='ee100000-0000-0000-0000-000000000001'),4000000::numeric,'Cash remains four million');
+select is((select billed_amount from public.branch_finance_summary where branch_id='ee100000-0000-0000-0000-000000000001'),0::numeric,'Credit creates no new revenue');
+select ok((select source_allocation_id=(select id from fixture where name='allocation') and correction_id=(select id from fixture where name='excess') from public.customer_credits where id=(select id from fixture where name='credit')),'Credit traces original payment allocation and correction');
+select pg_temp.approve('excess');
+select is((select count(*) from public.customer_credits where correction_id=(select id from fixture where name='excess')),1::bigint,'Approval rerun does not duplicate credit');
+insert into fixture(name,id) select 'term',public.create_tuition_term(o.enrollment_id,'ee600000-0000-0000-0000-000000000001',t.effective_ends_on+1,'NONE',0,null,'Future legitimate obligation') from public.opening_receivables o join public.enrollment_tuition t on t.id=o.tuition_id where o.id=(select id from fixture where name='opening');
+insert into fixture(name,id) values('invoice',public.create_tuition_invoice((select id from fixture where name='term'),null));
+select public.issue_invoice((select id from fixture where name='invoice'),current_date,current_date+30);
+select throws_ok($$select pg_temp.make('fraction','APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',0.5,'invoice_id',(select id from fixture where name='invoice')))$$,'P0001','Invalid credit amount','Fractional VND credit use rejected');
+select pg_temp.make('stale','APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',200000,'invoice_id',(select id from fixture where name='invoice')));
+select pg_temp.make('apply','APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',400000,'invoice_id',(select id from fixture where name='invoice')));
+select throws_ok($$select public.approve_financial_action((select id from fixture where name='apply'),'Self')$$,'P0001','Maker cannot approve own financial request','Credit application requires independent approval');
+select pg_temp.approve('apply');
+select throws_ok($$select pg_temp.approve('stale')$$,'P0001','Source changed; cancel and create a new request','Stale approval cannot consume changed credit');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),600000::numeric,'Partial application retains remainder');
+select is((select outstanding_balance from public.invoice_receivables where invoice_id=(select id from fixture where name='invoice')),5100000::numeric,'Future valid invoice receives credit allocation');
+select pg_temp.make('apply-two','APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',100000,'invoice_id',(select id from fixture where name='invoice')));
+select lives_ok($$select pg_temp.approve('apply-two')$$,'Second explicit partial use may target same invoice');
+select is((select applied_amount from public.customer_credit_balances where id=(select id from fixture where name='credit')),500000::numeric,'Application sum exact');
+select pg_temp.make('ordinary-refund','REFUND',(select id from fixture where name='payment'),jsonb_build_object('amount',4000000,'refunded_at',now()));
+select throws_ok($$select pg_temp.approve('ordinary-refund')$$,'P0001','Use approved customer credit refund','Ordinary refund cannot consume reserved credit');
+select pg_temp.make('refund-credit','REFUND_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',250000,'refunded_at',now()));
+select throws_ok($$select public.approve_financial_action((select id from fixture where name='refund-credit'),'Self')$$,'P0001','Maker cannot approve own financial request','Credit refund maker cannot self approve');
+insert into fixture(name,id) values('refund',pg_temp.approve('refund-credit'));
+select is((select amount from public.refunds where id=(select id from fixture where name='refund')),250000::numeric,'Credit refund uses existing refund ledger');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),250000::numeric,'Refund consumes only selected credit amount');
+select is(pg_temp.balance(),0::numeric,'Credit refund does not reopen already-valid applied receivable');
+select is((select p.amount-coalesce((select sum(f.amount) from public.refunds f where f.payment_id=p.id and f.status='POSTED'),0)
+ -(select coalesce(sum(a.effective_amount-coalesce(r.amount,0)),0) from public.payment_allocation_effective a left join lateral(select sum(ra.amount) as amount from public.refund_allocations ra join public.refunds f on f.id=ra.refund_id and f.status='POSTED' where ra.payment_allocation_id=a.id)r on true where a.payment_id=p.id)
+ -(select coalesce(sum(remaining_credit),0) from public.customer_credit_balances c where c.payment_id=p.id)
+ from public.payments p where p.id=(select id from fixture where name='payment')),0::numeric,'Net actual cash equals effective applications plus credit: VND difference zero');
+select pg_temp.make('double-refund-allocation','ALLOCATE_REFUND',(select id from fixture where name='refund'),jsonb_build_object('amount',100,'payment_allocation_id',(select id from fixture where name='allocation')));
+select throws_ok($$select pg_temp.approve('double-refund-allocation')$$,'P0001','Credit refund cannot be allocated again','Credit refund cannot reopen debt a second time');
+select pg_temp.make('undo-refund','VOID_REFUND',(select id from fixture where name='refund'),'{}');
+select pg_temp.approve('undo-refund');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),500000::numeric,'Refund reversal restores remaining credit');
+select pg_temp.make('undo-correction','OPENING_RECEIVABLE_CORRECTION',(select id from fixture where name='opening'),'{"corrected_amount":4000000}');
+select pg_temp.approve('undo-correction');
+select is(pg_temp.balance(),1000000::numeric,'Reverse correction restores obligation without stealing credit applied elsewhere');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),500000::numeric,'Unapplied credit remains visible until explicit allocation');
+select pg_temp.make('apply-original','APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',500000,'opening_receivable_id',(select id from fixture where name='opening')));
+select pg_temp.approve('apply-original');
+select is(pg_temp.balance(),500000::numeric,'Explicit reallocation to original opening obligation works');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),0::numeric,'Fully applied credit remains traceable at zero');
+select throws_ok($$select pg_temp.make('overuse','APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',1,'invoice_id',(select id from fixture where name='invoice')))$$,'P0001','Credit amount exceeds remaining credit','No credit double spend');
+select pg_temp.make('void-original','VOID_PAYMENT',(select id from fixture where name='payment'),'{}');
+select pg_temp.approve('void-original');
+select is(pg_temp.balance(),4000000::numeric,'Payment void restores full corrected opening receivable');
+select is((select remaining_credit from public.customer_credit_balances where id=(select id from fixture where name='credit')),0::numeric,'Voided payment carries no live customer credit');
+select is((select outstanding_balance from public.invoice_receivables where invoice_id=(select id from fixture where name='invoice')),5500000::numeric,'Payment void also restores target invoice obligation');
+select is((select amount from public.payments where id=(select id from fixture where name='payment')),4000000::numeric,'Original payment amount preserved');
+select is((select amount from public.opening_receivables where id=(select id from fixture where name='opening')),5500000::numeric,'Original opening amount preserved');
+reset role;
+select throws_ok($$update public.customer_credits set amount=1 where id=(select id from fixture where name='credit')$$,'P0001','Financial approval history is immutable','Credit origin is immutable');
+insert into public.branches(id,code,name) values('ee100000-0000-0000-0000-000000000002','CREDIT-OTHER','Credit other branch');
+insert into public.user_roles(user_id,role_id,branch_id) select 'ee000000-0000-0000-0000-000000000003',id,'ee100000-0000-0000-0000-000000000002' from public.roles where code='FINANCE';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000003',true);
+select is((select count(*) from public.customer_credit_balances where id=(select id from fixture where name='credit')),0::bigint,'Other-branch finance cannot see customer credit');
+select throws_ok($$select public.request_financial_action('APPLY_CUSTOMER_CREDIT',(select id from fixture where name='credit'),jsonb_build_object('amount',100,'invoice_id',(select id from fixture where name='invoice')),'Cross branch attempt',gen_random_uuid())$$,'P0001','Unauthorized','Other-branch finance cannot use customer credit');
+select ok(not has_table_privilege('service_role','public.customer_credits','INSERT'),'Service role has no direct credit posting bypass');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+insert into fixture(name,id) select 'portal-student',student_id from opening_receivables where id=(select id from fixture where name='opening');
+update students set user_id='ee000000-0000-0000-0000-000000000003' where id=(select id from fixture where name='portal-student');
+insert into user_roles(user_id,role_id) select 'ee000000-0000-0000-0000-000000000003',id from roles where code='STUDENT';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000003',true);
+select is((select outstanding_balance from student_opening_balances((select id from fixture where name='portal-student')) where receivable_id=(select id from fixture where name='opening')),4000000::numeric,'Student portal opening balance matches canonical engine');
+select is((select remaining_credit from student_customer_credits((select id from fixture where name='portal-student')) where credit_id=(select id from fixture where name='credit')),0::numeric,'Student portal respects voided credit balance');
+select is((select count(*) from student_customer_credits('00000000-0000-4000-8000-000000000001')),0::bigint,'Student cannot read unrelated customer credit');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+insert into auth.users(id) values('ee000000-0000-0000-0000-000000000004');
+insert into profiles(id) values('ee000000-0000-0000-0000-000000000004');
+insert into user_roles(user_id,role_id) select 'ee000000-0000-0000-0000-000000000004',id from roles where code='PARENT';
+insert into parents(id,user_id,parent_code) values('ee900000-0000-0000-0000-000000000004','ee000000-0000-0000-0000-000000000004','CREDIT-PORTAL-P');
+insert into student_parents(student_id,parent_id,can_view_finance) select id,'ee900000-0000-0000-0000-000000000004',false from fixture where name='portal-student';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000004',true);
+select is((select count(*) from student_customer_credits((select id from fixture where name='portal-student'))),0::bigint,'Parent finance flag denies customer credit');
+select is((select count(*) from student_opening_balances((select id from fixture where name='portal-student'))),0::bigint,'Parent finance flag denies opening balances');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+update student_parents set can_view_finance=true where parent_id='ee900000-0000-0000-0000-000000000004';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','ee000000-0000-0000-0000-000000000004',true);
+select is((select remaining_credit from student_customer_credits((select id from fixture where name='portal-student')) where credit_id=(select id from fixture where name='credit')),0::numeric,'Permitted parent reads canonical credit');
+select ok(not has_function_privilege('anon','public.student_customer_credits(uuid,integer)','EXECUTE'),'Anonymous credit portal denied');
+select ok(not has_function_privilege('anon','public.student_opening_balances(uuid,integer)','EXECUTE'),'Anonymous opening portal denied');
+select * from finish();
+rollback;

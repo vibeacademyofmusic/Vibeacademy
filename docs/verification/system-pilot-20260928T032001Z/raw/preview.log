@@ -1,0 +1,70 @@
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Starting verified build from 2026-09-28T04:16:51.132Z at http://localhost:3000
+▲ Next.js 16.3.3
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.14:3000
+✓ Ready in 68ms
+✓ Running next.config.ts took 14ms
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Preview build is stale: source, config or environment changed. Stop dev and run npm run build again.
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Starting verified build from 2026-09-28T04:28:36.681Z at http://localhost:3000
+⨯ Failed to start server
+Error: listen EPERM: operation not permitted 0.0.0.0:3000
+    at <unknown> (Error: listen EPERM: operation not permitted 0.0.0.0:3000)
+    at new Promise (<anonymous>) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Starting verified build from 2026-09-28T04:28:36.681Z at http://localhost:3000
+▲ Next.js 16.3.3
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.14:3000
+✓ Ready in 81ms
+✓ Running next.config.ts took 17ms
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Starting verified build from 2026-09-28T04:40:33.046Z at http://localhost:3000
+▲ Next.js 16.3.3
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.14:3000
+✓ Ready in 68ms
+✓ Running next.config.ts took 15ms
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Starting verified build from 2026-09-28T04:48:00.558Z at http://localhost:3000
+▲ Next.js 16.3.3
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.14:3000
+✓ Ready in 70ms
+✓ Running next.config.ts took 17ms
+
+> vibe-academy-system@0.1.0 preview
+> node scripts/local-preview.cjs preview
+
+Starting verified build from 2026-09-28T04:54:10.917Z at http://localhost:3000
+▲ Next.js 16.3.3
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.14:3000
+✓ Ready in 71ms
+✓ Running next.config.ts took 16ms
