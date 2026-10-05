@@ -108,4 +108,3 @@ begin
   return jsonb_build_object('result', 'created', 'case_id', existing.id, 'invoice_id', invoice_id, 'invoice_number', invoice_number,
     'order_code', order_code, 'order_id', order_id, 'amount_due', due, 'list_price', price, 'state', 'CHECKOUT_PENDING', 'description', description);
 end $$;
-

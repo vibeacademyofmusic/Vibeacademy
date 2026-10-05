@@ -450,4 +450,3 @@ end
 $pa1$;
 
 select payload as report from pa1_report;
-

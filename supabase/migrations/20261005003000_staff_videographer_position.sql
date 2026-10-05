@@ -107,5 +107,3 @@ begin
   where directory.id = p_employee;
 end;
 $function$;
-
-

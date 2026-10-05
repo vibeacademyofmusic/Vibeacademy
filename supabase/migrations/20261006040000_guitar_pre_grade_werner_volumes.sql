@@ -347,4 +347,3 @@ $function$;
 
 revoke all on function public.apply_guitar_pre_werner_v1() from public, anon, authenticated, service_role;
 select public.apply_guitar_pre_werner_v1();
-
