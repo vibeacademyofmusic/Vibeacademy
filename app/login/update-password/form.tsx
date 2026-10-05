@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { passwordSaveMessage } from '@/lib/auth/preview-recovery'
 import { createClient } from '@/lib/supabase/client'
 
-export function UpdatePasswordForm() {
+export function UpdatePasswordForm({ client }: { client?: SupabaseClient }) {
   const [error, setError] = useState('')
   const [pending, setPending] = useState(false)
 
@@ -18,26 +20,33 @@ export function UpdatePasswordForm() {
     }
     setPending(true)
     setError('')
-    const supabase = createClient()
-    const { data } = await supabase.auth.getSession()
-    if (!data.session) {
-      setPending(false)
-      setError('Phiên đặt mật khẩu đã hết hạn. Quay lại và nhập email một lần nữa.')
-      return
+    const supabase = client ?? createClient()
+    if (!client) {
+      const { data } = await supabase.auth.getSession()
+      if (!data.session) {
+        setPending(false)
+        setError('Phiên đặt mật khẩu đã hết. Mở lại trang thiết lập và nhập email một lần nữa.')
+        return
+      }
     }
     const { error: updateError } = await supabase.auth.updateUser({ password })
     if (updateError) {
       setPending(false)
-      setError('Chưa lưu được mật khẩu. Quay lại và nhập email một lần nữa.')
+      setError(passwordSaveMessage(updateError.message))
       return
     }
-    await supabase.auth.signOut()
+    try {
+      await supabase.auth.signOut()
+    } catch {
+      // The password is already stored. Sign-in starts from a clean session.
+    }
     window.location.assign('/login?notice=' + encodeURIComponent('Mật khẩu đã được lưu. Đăng nhập bằng mật khẩu mới.'))
   }
 
   return (
     <form onSubmit={onSubmit} className="mt-6 space-y-4">
       {error ? <p className="text-sm text-[var(--vibe-danger,#9b2c2c)]">{error}</p> : null}
+      {client ? <p className="text-sm text-[var(--vibe-muted)]">Phiên đặt mật khẩu còn hiệu lực. Mật khẩu mới phải khác mật khẩu hiện tại.</p> : null}
       <label className="block text-sm font-semibold text-[var(--vibe-navy)]" htmlFor="password">
         Mật khẩu mới
         <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" className="mt-2 w-full border px-3 py-2" />

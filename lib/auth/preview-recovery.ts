@@ -11,6 +11,23 @@ export function pilotRecoveryEmail(email: string) {
   return PILOT_EMAILS.has(email.trim().toLowerCase())
 }
 
+export function passwordSaveMessage(message: string) {
+  const text = message.toLowerCase()
+  if (text.includes('different from the old') || text.includes('should be different')) {
+    return 'Mật khẩu mới phải khác mật khẩu hiện tại.'
+  }
+  if (text.includes('at least') || text.includes('too short') || text.includes('password should be')) {
+    return 'Mật khẩu cần ít nhất 8 ký tự.'
+  }
+  if (text.includes('weak') || text.includes('easy to guess') || text.includes('known') || text.includes('pwned') || text.includes('leaked')) {
+    return 'Mật khẩu này quá dễ đoán. Hãy chọn mật khẩu khác.'
+  }
+  if (text.includes('session') || text.includes('jwt') || text.includes('not authenticated')) {
+    return 'Phiên đặt mật khẩu đã hết. Mở lại trang thiết lập và nhập email một lần nữa.'
+  }
+  return 'Chưa lưu được mật khẩu. Hãy chọn mật khẩu khác rồi thử lại.'
+}
+
 export function previewRecoveryRedirect(supabaseUrl: string, appOrigin: string) {
   const supabase = new URL(supabaseUrl)
   const app = new URL(appOrigin)
