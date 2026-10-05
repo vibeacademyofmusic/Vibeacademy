@@ -92,16 +92,26 @@ body:has(.report-print-preview) * { visibility: hidden; }
   .academic-metrics { grid-template-columns: repeat(2, 1fr); }
 }
 @media print {
-  @page { size: A4 portrait; margin: 15mm; }
-  body:has(.official-learning-report) * { visibility: hidden; }
-  body:has(.official-learning-report) .academic-document, body:has(.official-learning-report) .academic-document * { visibility: visible; }
+  @page { size: A4 portrait; margin: 14mm 12mm 16mm; }
+  body:has(.official-learning-report) { margin: 0; background: #fff; }
+  body:has(.official-learning-report) .vibe-admin > aside,
+  body:has(.official-learning-report) .vibe-admin > div > header,
+  body:has(.official-learning-report) .vibe-admin nav { display: none !important; }
+  body:has(.official-learning-report) .vibe-admin,
+  body:has(.official-learning-report) .vibe-admin > div,
+  body:has(.official-learning-report) .vibe-admin main,
+  body:has(.official-learning-report) .vibe-admin main > div { display: block; width: auto; max-width: none; min-height: 0; margin: 0; padding: 0 !important; background: #fff; }
   .official-learning-report .report-controls, nextjs-portal { display: none !important; }
-  .official-learning-report { position: absolute; left: 0; top: 0; width: 100%; }
-  .academic-document { position: relative; left: auto; top: auto; width: 100%; max-width: none; padding: 0; margin: 0; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 10pt; }
+  .learning-report.official-learning-report { position: static; left: auto; top: auto; width: auto; max-width: none; margin: 0; }
+  .academic-document { position: static; left: auto; top: auto; width: auto; max-width: none; padding: 0; margin: 0; box-shadow: none; border: 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 10pt; background: #fff; }
   .academic-cover-sheet { break-after: page; page-break-after: always; }
+  .academic-cover-sheet .academic-brand { padding-bottom: 14px; margin-bottom: 16px; }
+  .academic-cover-sheet .academic-brand img { width: 128px; margin-bottom: 8px; }
+  .academic-cover-sheet section.academic-cover { margin: 4px 0 0; }
+  .academic-cover-sheet .academic-cover-program { margin-bottom: 16px; }
   .academic-document section { break-inside: auto; }
   .academic-document h2, .academic-document h3 { break-after: avoid; }
-  .academic-document tr, .academic-metrics, .academic-approval, .academic-brand { break-inside: avoid; }
+  .academic-document tr, .academic-metrics, .academic-approval, .academic-brand, .academic-register { break-inside: avoid; }
   .academic-document p, .academic-document dd { orphans: 3; widows: 3; }
   .academic-document thead { display: table-header-group; }
   .academic-document table { font-size: 9pt; }
@@ -143,7 +153,9 @@ body:has(.report-print-preview) * { visibility: hidden; }
 .learning-report-paper table td { padding: 18px 9px; border-bottom: 1px solid #ebe7df; }
 .learning-report-paper .academic-assessment { margin: 24px 0; }
 .learning-report-paper .academic-assessment h3 { font: 400 13px/1.5 Georgia, 'Times New Roman', serif; letter-spacing: .06em; color: var(--ink); border-bottom: 1px solid #ebe7df; padding-bottom: 8px; margin-bottom: 10px; }
-.learning-report-paper .academic-assessment h3 span { margin-left: .45em; font: italic 12px/1.45 Georgia, 'Times New Roman', serif; letter-spacing: 0; color: #697789; }
+.learning-report-paper h2 > span[lang="vi"],
+.learning-report-paper .academic-assessment h3 span { margin-left: .45em; font: italic .92em/1.45 Georgia, 'Times New Roman', serif; letter-spacing: 0; color: #697789; text-transform: none; }
+.learning-report-paper h2 > span[lang="vi"]::before,
 .learning-report-paper .academic-assessment h3 span::before { content: "· "; color: #c8ad75; font-style: normal; }
 .learning-report-paper .academic-assessment p { color: #555; line-height: 1.7; }
 .academic-signature-line { border-bottom: 1px solid var(--line); margin: 30px 0 14px; }

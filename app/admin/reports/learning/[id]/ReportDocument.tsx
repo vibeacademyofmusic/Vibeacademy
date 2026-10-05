@@ -6,6 +6,7 @@ const labels = [
   ['intervention', 'TEACHER INTERVENTION'], ['next_month_plan', 'NEXT PERIOD PLAN'],
   ['practice_consistency', 'PRACTICE CONSISTENCY'], ['lesson_preparation', 'LESSON PREPARATION'], ['learning_attitude', 'LEARNING ATTITUDE'],
 ]
+const sectionHeading = (en: string, vi: string) => <h2>{en}<span lang="vi">{vi}</span></h2>
 const displayStatus = (value: string) => ({ NOT_STARTED: 'Not Started', IN_PROGRESS: 'In Progress', PASSED: 'Passed', PASS: 'Pass', MERIT: 'Merit', DISTINCTION: 'Distinction', FAILED: 'Needs Review', NOT_PASSED: 'Needs Review', EXEMPT: 'Exempt' } as Record<string, string>)[value] ?? value
 const field = (label: string, value: string | number | null | undefined) => <div key={label}><dt>{label}</dt><dd>{value ?? 'Not provided.'}</dd></div>
 export default function ReportDocument({ report: r, draftPreview = false }: { report: Report; draftPreview?: boolean }) {
@@ -36,12 +37,12 @@ export default function ReportDocument({ report: r, draftPreview = false }: { re
       <p>Báo cáo học tập kỳ tháng {periodMonth}</p>
       <p className="academic-running-identity"><strong>{s.student.name}</strong><span>{grade}</span></p>
     </header>
-    <section><h2>ATTENDANCE SUMMARY</h2><dl className="academic-metrics">
+    <section>{sectionHeading('ATTENDANCE SUMMARY', 'Tổng hợp chuyên cần')}<dl className="academic-metrics">
       {field('SCHEDULED', s.attendance.scheduled)}{field('ATTENDED', s.attendance.attended)}{field('ABSENT', s.attendance.absent)}{field('EXCUSED', s.attendance.excused)}{field('MAKE-UP', s.attendance.makeup)}{field('ATTENDANCE RATE', s.attendance.rate === null ? 'Not available' : `${s.attendance.rate}%`)}
     </dl><p className="academic-note">Attendance rate is based on marked sessions; attended includes late arrivals. Unmarked sessions: {s.attendance.unmarked}. Make-up counts scheduled sessions.</p>
       <p className="academic-note">Cancelled sessions and unmarked regular sessions during an active pause are excluded. Pause dates are not recorded in this snapshot.</p>
     </section>
-    <section><h2>ACADEMIC PROGRESS</h2><dl>{field('CURRENT GRADE', s.academic.current_grade)}</dl>
+    <section>{sectionHeading('ACADEMIC PROGRESS', 'Tiến độ học tập')}<dl>{field('CURRENT GRADE', s.academic.current_grade)}</dl>
       <p className="academic-note">Progress reflects the generation date. Optional requirements do not block completion.</p>
       {!s.academic.subjects.length && <p>No academic progress recorded.</p>}
       <div className="academic-subjects">{s.academic.subjects.map((subject, i) => <article className="academic-subject" key={i}>
@@ -52,7 +53,7 @@ export default function ReportDocument({ report: r, draftPreview = false }: { re
         {subject.completion_rule === 'DIRECT_ASSESSMENT' ? <p>Direct assessment</p> : subject.components.length ? <ul className="academic-components">{subject.components.map((c, j) => <li key={j}><span>{c.name}</span><span>{c.required ? 'Required' : 'Optional'} · {displayStatus(c.status)}{c.score === null ? '' : ` · ${c.score}`}</span></li>)}</ul> : <p>Not provided.</p>}
       </article>)}</div>
     </section>
-    {Array.isArray(s.videos) && <section><h2>LESSON VIDEOS</h2>
+    {Array.isArray(s.videos) && <section>{sectionHeading('LESSON VIDEOS', 'Video bài học')}
       <p className="academic-note">Shared lesson links captured when this report was generated. Opening a video still depends on the permission set by the video owner on YouTube.</p>
       {!s.videos.length && <p>No shared lesson videos recorded.</p>}
       {s.videos.map((video, i) => <div className="academic-entry" key={`${video.url}-${i}`}>
@@ -64,12 +65,12 @@ export default function ReportDocument({ report: r, draftPreview = false }: { re
         </dl>
       </div>)}
     </section>}
-    <section><h2>LEARNING JOURNAL</h2><p className="academic-note">{s.journals.count} entries recorded. Up to 30 most recently updated entries in this period are shown.</p>
+    <section>{sectionHeading('LEARNING JOURNAL', 'Nhật ký học tập')}<p className="academic-note">{s.journals.count} entries recorded. Up to 30 most recently updated entries in this period are shown.</p>
       {!s.journals.excerpts.length && <p>No learning journal entries recorded for this period.</p>}
       {s.journals.excerpts.map((j, i) => <div className="academic-entry" key={i}><dl>{field('UPDATED AT', timeText(j.updated_at))}{j.content && field('CONTENT', j.content)}{j.repertoire && field('REPERTOIRE', j.repertoire)}{j.skills && field('SKILLS', j.skills)}{j.homework && field('PRACTICE / HOMEWORK', j.homework)}</dl></div>)}
     </section>
-    <section><h2>TEACHER ASSESSMENT</h2>{labels.map(([key, label]) => <div className="academic-assessment" key={key}><h3>{label}<span lang="vi">{summaryFields.find(field => field.id === key)?.name}</span></h3><p>{value(key)}</p></div>)}</section>
-    {!isDraftPreview && <section className="academic-approval"><div className="academic-signature-line" /><h2>AUTHORIZED ACADEMIC APPROVAL</h2><dl>{field('APPROVED BY', r.approver_name || r.approved_by)}{field('APPROVED AT', r.approved_at ? timeText(r.approved_at) : null)}</dl></section>}
+    <section>{sectionHeading('TEACHER ASSESSMENT', 'Nhận xét của giáo viên')}{labels.map(([key, label]) => <div className="academic-assessment" key={key}><h3>{label}<span lang="vi">{summaryFields.find(field => field.id === key)?.name}</span></h3><p>{value(key)}</p></div>)}</section>
+    {!isDraftPreview && <section className="academic-approval"><div className="academic-signature-line" />{sectionHeading('AUTHORIZED ACADEMIC APPROVAL', 'Phê duyệt học thuật')}<dl>{field('APPROVED BY', r.approver_name || r.approved_by)}{field('APPROVED AT', r.approved_at ? timeText(r.approved_at) : null)}</dl></section>}
     <footer>{s.branch.name && <p>{s.branch.name}</p>}</footer>
   </article>
   </>
