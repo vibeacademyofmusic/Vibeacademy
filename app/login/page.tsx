@@ -4,13 +4,14 @@ type LoginPageProps = {
   searchParams: Promise<{
     error?: string
     next?: string
+    notice?: string
   }>
 }
 
 export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
-  const { error, next } = await searchParams
+  const { error, next, notice } = await searchParams
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -24,6 +25,12 @@ export default async function LoginPage({
             Management System
           </p>
         </div>
+
+        {notice && (
+          <div className="mb-5 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">
+            {notice}
+          </div>
+        )}
 
         {error && (
           <div className="mb-5 rounded-lg bg-red-50 p-3 text-sm text-red-700">

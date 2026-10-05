@@ -1,13 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const PASSWORD_NEXT = '/login/update-password'
 
 export default function AuthCallbackPage() {
-  const router = useRouter()
   const [message, setMessage] = useState('Đang mở liên kết...')
 
   useEffect(() => {
@@ -28,13 +26,13 @@ export default function AuthCallbackPage() {
           : new Error('missing')
       if (error) {
         setMessage('Liên kết không còn hiệu lực.')
-        router.replace('/login/recover?error=' + encodeURIComponent('Liên kết không còn hiệu lực.'))
+        window.location.replace('/login/recover?error=' + encodeURIComponent('Liên kết không còn hiệu lực.'))
         return
       }
-      router.replace(next)
+      window.location.replace(next)
     }
     void finish()
-  }, [router])
+  }, [])
 
   return (
     <main className="vibe-admin flex min-h-screen items-center justify-center px-4">
