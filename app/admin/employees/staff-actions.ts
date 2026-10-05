@@ -69,7 +69,7 @@ export async function assignPosition(form: FormData) {
     p_effective_from: effective,
     p_reason: read(form, 'reason'),
   })
-  back(employee, result.error ? staffError(result.error.message) : undefined, result.error ? undefined : 'Đã ghi vị trí VAS/VAM/VAH. Quyền tài khoản và lương không đổi.')
+  back(employee, result.error ? staffError(result.error.message) : undefined, result.error ? undefined : 'Đã ghi vị trí công việc. Quyền tài khoản và lương không đổi.')
 }
 
 export async function endPosition(form: FormData) {

@@ -36,7 +36,7 @@ export async function loadStaffFace(db: SupabaseClient, employeeId: string) {
     db.rpc('staff_name_card', { p_employee: employeeId }),
     db.from('staff_teaching_assignments').select('id,curriculum_id,capacity,effective_from,effective_to,status,reason').eq('employee_id', employeeId).order('effective_from', { ascending: false }),
     db.from('staff_position_assignments').select('id,position_code,effective_from,effective_to,status,reason').eq('employee_id', employeeId).order('effective_from', { ascending: false }),
-    db.from('curriculums').select('id,name,code').eq('status', 'ACTIVE').order('name').limit(300),
+    db.from('operational_curriculums').select('id,name,code').order('name').limit(300),
   ])
   if (card.error || teaching.error || positions.error || subjects.error) {
     throw new Error('Could not load staff profile')

@@ -37,10 +37,10 @@ export default async function LevelDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string; levelId: string }>
-  searchParams: Promise<{ error?: string; success?: string }>
+  searchParams: Promise<{ error?: string; success?: string; subjects?: string }>
 }) {
   const { id, levelId } = await params
-  const { error, success } = await searchParams
+  const { error, success, subjects: subjectFilter } = await searchParams
   const supabase = await createClient()
   const { data: curriculum } = await supabase.from('curriculums').select('id, code, name').eq('id', id).maybeSingle()
   if (!curriculum) notFound()
@@ -59,14 +59,30 @@ export default async function LevelDetailPage({
     .order('sort_order', { ascending: true })
   const subjectRows = (subjects ?? []) as SubjectRow[]
   const subjectIds = subjectRows.map(subject => subject.id)
-  const { data: components } = subjectIds.length
+  const { data: components, error: componentsError } = subjectIds.length
     ? await loadPaged<ComponentRow>((from, to) => supabase.from('curriculum_subject_components').select('id, subject_id, status, is_required, completion_rule').in('subject_id', subjectIds).range(from, to))
-    : { data: [] as ComponentRow[] }
+    : { data: [] as ComponentRow[], error: null }
   const componentRows = components ?? []
   const componentIds = componentRows.map(component => component.id)
-  const { data: lessons } = componentIds.length
+  const { data: lessons, error: lessonsError } = componentIds.length
     ? await loadPaged<ItemRow>((from, to) => supabase.from('curriculum_component_items').select('id, component_id, status, is_required').in('component_id', componentIds).range(from, to))
-    : { data: [] as ItemRow[] }
+    : { data: [] as ItemRow[], error: null }
+  const loadError = subjectsError || componentsError || lessonsError
+  if (loadError) {
+    return (
+      <AppPage>
+        <AcademicTrail items={[
+          { label: curriculum.name, href: `/admin/academic/${curriculum.id}` },
+          { label: level.name },
+        ]} />
+        <PageHeader title={level.name} description={`${curriculum.name} · ${level.code}`} />
+        <InlineNotice tone="error">
+          Không tải được {subjectsError ? 'môn học' : componentsError ? 'Unit / nhóm đánh giá' : 'Lesson'}. Chưa thể kiểm tra cấu trúc học thuật. Hãy tải lại trang.
+        </InlineNotice>
+        <Link className="vibe-button" href={`/admin/academic/${curriculum.id}/levels/${level.id}`}>Tải lại cấp độ</Link>
+      </AppPage>
+    )
+  }
   const lessonTotals = new Map<string, { active: number; requiredActive: number }>()
   for (const lesson of lessons ?? []) {
     if (lesson.status !== 'ACTIVE') continue
@@ -80,7 +96,7 @@ export default async function LevelDetailPage({
     const health: HealthSubject = {
       status: subject.status,
       completionRule: subject.completion_rule,
-      activeLessonCount: own.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0),
+      activeLessonCount: own.filter(component => component.status === 'ACTIVE').reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0),
       components: own.map(component => ({
         status: component.status,
         isRequired: component.is_required,
@@ -97,6 +113,10 @@ export default async function LevelDetailPage({
     }
   })
   const activeSubjects = rows.filter(row => row.subject.status === 'ACTIVE')
+  const showInactive = subjectFilter === 'all'
+  const visibleRows = showInactive ? rows : activeSubjects
+  const unpublishedSubjects = rows.filter(row => row.subject.status !== 'ACTIVE' && row.activeLessonCount === 0)
+  const retiredSubjects = rows.filter(row => row.subject.status !== 'ACTIVE' && row.activeLessonCount > 0)
   const levelHealth = levelAcademicHealth({
     status: level.status,
     activeSubjectCount: activeSubjects.length,
@@ -129,35 +149,53 @@ export default async function LevelDetailPage({
       {error ? <InlineNotice tone="error">{error}</InlineNotice> : null}
       {success ? <InlineNotice>{success}</InlineNotice> : null}
       <div className="vibe-metrics">
-        <MetricCard title="Môn học" value={String(subjectRows.length)} />
-        <MetricCard title="Nhóm đánh giá" value={String(rows.reduce((sum, row) => sum + row.componentCount, 0))} />
-        <MetricCard title="Lesson đang hoạt động" value={String(rows.reduce((sum, row) => sum + row.activeLessonCount, 0))} />
+        <MetricCard title="Môn đang hoạt động" value={String(activeSubjects.length)} />
+        <MetricCard title="Unit / nhóm đang hoạt động" value={String(activeSubjects.reduce((sum, row) => sum + row.componentCount, 0))} />
+        <MetricCard title="Lesson đang hoạt động" value={String(activeSubjects.reduce((sum, row) => sum + row.activeLessonCount, 0))} />
       </div>
       <SectionCard title="Thông tin cấp độ">
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
           <div><dt className="text-gray-500">Trạng thái</dt><dd><StatusBadge tone={statusTone(level.status)}>{statusLabel(level.status)}</StatusBadge></dd></div>
           <div><dt className="text-gray-500">Loại</dt><dd>{levelTypeLabel(level.level_type)}</dd></div>
           <div><dt className="text-gray-500">Cách hoàn thành</dt><dd>{subjectCompletionLabel(level.completion_rule)}</dd></div>
-          <div><dt className="text-gray-500">Cấu trúc học thuật</dt><dd>{level.status !== 'ACTIVE' ? 'Chưa áp dụng cho học vụ' : levelHealth === 'incomplete' ? 'Cần bổ sung cấu trúc học thuật' : 'Đủ cấu trúc học thuật'}</dd></div>
+          <div><dt className="text-gray-500">Cấu trúc học thuật</dt><dd>{level.status !== 'ACTIVE' ? 'Chưa áp dụng cho học vụ' : levelHealth === 'incomplete' ? 'Cần bổ sung cấu trúc học thuật' : 'Đủ cấu trúc phần đang hoạt động'}</dd></div>
         </dl>
       </SectionCard>
+      {unpublishedSubjects.length > 0 ? (
+        <InlineNotice>
+          {unpublishedSubjects.length} môn chưa phát hành: {unpublishedSubjects.map(row => row.subject.name).join(', ')}. Các môn này được giữ để biên soạn và không tính vào phần đang hoạt động.
+        </InlineNotice>
+      ) : null}
+      {retiredSubjects.length > 0 ? (
+        <InlineNotice>
+          Môn đã ngừng sử dụng: {retiredSubjects.map(row => row.subject.name).join(', ')}. Lịch sử học tập được giữ lại; các môn này không dùng cho hoạt động mới.
+        </InlineNotice>
+      ) : null}
       {warnings.length > 0 ? (
         <InlineNotice tone="warning">
           {warnings.map(row => row.subject.name).join(', ')} cần bổ sung cấu trúc học thuật.
         </InlineNotice>
       ) : null}
       <SectionCard title="Môn học">
-        {subjectsError ? <InlineNotice tone="error">Không tải được môn học.</InlineNotice> : subjectRows.length === 0 ? <EmptyState>Chưa có môn học.</EmptyState> : (
+        {rows.some(row => row.subject.status !== 'ACTIVE') ? (
+          <div className="vibe-actions mb-4">
+            <Link className="vibe-button" href={`/admin/academic/${curriculum.id}/levels/${level.id}${showInactive ? '' : '?subjects=all'}`}>
+              {showInactive ? 'Chỉ hiện môn đang hoạt động' : 'Xem môn chưa phát hành / đã ngừng sử dụng'}
+            </Link>
+          </div>
+        ) : null}
+        {visibleRows.length === 0 ? <EmptyState>Chưa có môn học.</EmptyState> : (
           <DataTable
-            headers={['Môn học', 'Bắt buộc', 'Cách hoàn thành', 'Nhóm đánh giá', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Sẵn sàng nội dung', 'Tác vụ']}
-            rows={rows.map(row => [
+            headers={['Môn học', 'Trạng thái', 'Bắt buộc', 'Cách hoàn thành', 'Unit / nhóm', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Sẵn sàng nội dung', 'Tác vụ']}
+            rows={visibleRows.map(row => [
               <div key="name"><strong>{row.subject.name}</strong><p className="text-xs text-gray-500">{row.subject.code}</p></div>,
+              <StatusBadge key="status" tone={statusTone(row.subject.status)}>{statusLabel(row.subject.status)}</StatusBadge>,
               requirementLabel(row.subject.is_required),
               subjectCompletionLabel(row.subject.completion_rule),
-              String(row.componentCount),
-              String(row.activeLessonCount),
+              String(row.subject.status === 'ACTIVE' ? row.componentCount : 0),
+              String(row.subject.status === 'ACTIVE' ? row.activeLessonCount : 0),
               row.subject.status !== 'ACTIVE' ? 'Chưa áp dụng cho học vụ' : row.structureReady ? 'Đủ cấu trúc học thuật' : 'Cần bổ sung cấu trúc học thuật',
-              row.subject.status !== 'ACTIVE' ? 'Chưa phát hành nội dung' : row.contentReady ? 'Đủ nội dung Lesson' : 'Nội dung Lesson chưa đầy đủ',
+              row.subject.status !== 'ACTIVE' ? row.activeLessonCount > 0 ? 'Ngừng sử dụng cho hoạt động mới' : 'Chưa phát hành nội dung' : row.contentReady ? 'Đủ nội dung Lesson' : 'Nội dung Lesson chưa đầy đủ',
               <span key="actions" className="flex flex-wrap gap-2">
                 <Link href={`/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${row.subject.id}`}>Mở môn học</Link>
                 <Link href={`/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${row.subject.id}/edit`}>Chỉnh sửa</Link>

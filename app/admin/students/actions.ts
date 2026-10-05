@@ -536,6 +536,20 @@ const ACADEMIC_PROGRESS_STATUSES = [
       )
     }
 
+    const { data: operationalCurriculum } = await supabase
+      .from('operational_curriculums')
+      .select('id')
+      .eq('id', curriculumId)
+      .maybeSingle()
+
+    if (!operationalCurriculum) {
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          "Chỉ được ghi danh vào Piano, Guitar, Violin hoặc Trống"
+        )}`
+      )
+    }
+
     const { error } = await supabase.rpc(
       'assign_student_academic_program',
       {

@@ -27,9 +27,8 @@ export default async function EditCoursePage({
         .eq('id', id)
         .maybeSingle(),
       supabase
-        .from('curriculums')
+        .from('operational_curriculums')
         .select('id, code, name, status')
-        .eq('status', 'ACTIVE')
         .order('name'),
       supabase
         .from('curriculum_levels')

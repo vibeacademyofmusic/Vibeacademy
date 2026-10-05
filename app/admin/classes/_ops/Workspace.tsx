@@ -9,7 +9,7 @@ import {
   buildQuery,
   InlineNotice,
 } from '../../_components/vibe'
-import { createClass } from '../actions'
+import { createClass, setClassStatus } from '../actions'
 import { generateSessions } from '../../attendance/actions'
 import ClassCreateLevelFields from './ClassCreateLevelFields'
 import {
@@ -131,14 +131,14 @@ function ClassesView({ data, params, canManage }: { data: Loaded; params: Record
     <>
       {canManage && <section className="vibe-card space-y-3">
         <h2 className="text-lg font-semibold">Tạo ca dạy</h2>
-        <p className="text-sm text-[var(--vibe-muted)]">Chọn khoảng trình độ thuộc chương trình của khóa học. Trình độ hiện tại được quản lý riêng trên từng học viên.</p>
+        <p className="text-sm text-[var(--vibe-muted)]">Chọn chương trình và khoảng trình độ. Một ca dạy nhận nhiều học viên ở các trình độ khác nhau; trình độ hiện tại vẫn thuộc từng học viên.</p>
         <form action={createClass} className="vibe-filter">
-          <label className="vibe-field"><span>Chi nhánh</span>
-            <select name="branch_id" required defaultValue="">{data.branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
-          </label>
           <ClassCreateLevelFields
-            courses={data.courses.map(c => ({ id: c.id, name: c.name, curriculum_id: c.curriculum_id }))}
+            branches={data.branches}
+            programs={data.programs}
             levelsByCurriculum={data.levelsByCurriculum}
+            teachers={data.teachers}
+            rooms={data.classRooms}
           />
           <label className="vibe-field"><span>Mã ca dạy</span><input name="code" required /></label>
           <label className="vibe-field"><span>Tên ca dạy</span><input name="name" required /></label>
@@ -146,6 +146,8 @@ function ClassesView({ data, params, canManage }: { data: Loaded; params: Record
             <select name="class_type" defaultValue="GROUP"><option value="GROUP">Nhóm</option><option value="ONE_ON_ONE">1-1</option></select>
           </label>
           <label className="vibe-field"><span>Sức chứa</span><input name="capacity" type="number" min={1} defaultValue={4} required /></label>
+          <label className="vibe-field"><span>Ngày bắt đầu ca</span><input name="start_date" type="date" /></label>
+          <label className="vibe-field"><span>Ngày kết thúc ca</span><input name="end_date" type="date" /></label>
           <button className="vibe-button vibe-button-primary" type="submit">Tạo ca dạy</button>
         </form>
         <p className="text-xs text-[var(--vibe-muted)]">Ca dạy có thể tiếp nhận học viên ở các cấp độ trong phạm vi này. Trình độ hiện tại vẫn được quản lý riêng trên từng học viên.</p>
@@ -167,9 +169,17 @@ function ClassesView({ data, params, canManage }: { data: Loaded; params: Record
                   <td>{row.enrolled}</td>
                   <td>{row.capacity}</td>
                   <td>
-                    {!row.scopeConfigured && <p><Link prefetch={false} href={`/admin/classes/${row.id}`}>Chưa cấu hình phạm vi</Link></p>}
+                    {row.gaps.map(gap => gap.label === 'Kích hoạt ca dạy' ? (
+                      <form key={gap.label} action={setClassStatus}>
+                        <input type="hidden" name="id" value={row.id} />
+                        <input type="hidden" name="status" value="ACTIVE" />
+                        <button className="vibe-button" type="submit">Kích hoạt ca dạy</button>
+                      </form>
+                    ) : (
+                      <p key={gap.label}><Link prefetch={false} href={gap.href}>{gap.label}</Link></p>
+                    ))}
                     {row.outOfScopeCount > 0 && <p><Link prefetch={false} href={`/admin/classes/${row.id}`}>{row.outOfScopeCount} học viên ngoài phạm vi</Link></p>}
-                    {row.scopeConfigured && row.outOfScopeCount === 0 ? '—' : null}
+                    {!row.gaps.length && row.outOfScopeCount === 0 ? '—' : null}
                   </td>
                   <td><OpsStatusBadge status={row.status} labels={classStatusLabel} /></td>
                 </tr>

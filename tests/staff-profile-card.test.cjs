@@ -80,3 +80,13 @@ test('staff card and legacy teacher route do not expose private HR data', () => 
   assert.match(portrait, /remove\(\[path\]\)/)
   assert.match(portrait, /staff-portraits/)
 })
+
+ test('videographer label follows the existing dated position workflow', () => {
+  assert.equal(positionBadgeLabel('VIDEOGRAPHER'), 'CAM OP')
+  assert.equal(positionBadgeLabel('UNKNOWN'), null)
+  const card = publicCard({ fullName: 'Test', employeeCode: 'TEST', teaching: [], today: '2026-10-05', positions: [
+    { code: 'VIDEOGRAPHER', status: 'ACTIVE', effectiveFrom: '2026-10-05', effectiveTo: null },
+    { code: 'VAS', status: 'ACTIVE', effectiveFrom: '2026-10-06', effectiveTo: null },
+  ] })
+  assert.deepEqual(card.positionBadges, ['CAM OP'])
+})

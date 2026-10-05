@@ -1,3 +1,4 @@
+import { loadVideoLinks } from '@/app/_components/academic-video-links/data'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -46,6 +47,7 @@ export default async function MyLearning({ searchParams }: { searchParams: Promi
   if (loaded?.error) throw new Error('Không thể tải nội dung học tập. Vui lòng thử lại.')
   const data = loaded?.data || [], entries = data.slice(0, 25)
   const feedback = student && tab === 'attendance' ? await feedbackContext(db) : { roles: [], asOf: 0 }
+  const videos = student && tab === 'journey' ? Object.fromEntries(await Promise.all((entries as Program[]).map(async program => [program.program_id, await loadVideoLinks(student.id, program.program_id)]))) : {}
   const respondents = feedback.roles
   return <main className="vibe-admin vibe-page mx-auto w-full min-w-0 max-w-5xl p-4 sm:p-8">
     <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold">Hồ sơ học tập</h1><form action={logout}><button className="vibe-button">Đăng xuất</button></form></header>
@@ -57,7 +59,7 @@ export default async function MyLearning({ searchParams }: { searchParams: Promi
       <nav aria-label="Hồ sơ học tập" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} aria-current={tab === key ? 'page' : undefined} className={`vibe-button ${tab === key ? 'vibe-button-primary' : ''}`} href={href(1, key as Tab)}>{title}</Link>)}</nav>
       <h2 className="text-xl font-semibold">{tabs[tab]}</h2>
       {!entries.length && <p>Chưa có dữ liệu được phép xem trong mục này.</p>}
-      {tab === 'journey' && <Journey programs={entries as Program[]}/>}
+      {tab === 'journey' && <Journey programs={entries as Program[]} studentId={student.id} videos={videos}/>}
       {tab === 'schedule' && (entries as Session[]).map(s => <article key={s.session_id} className="rounded border p-4">{s.class_name}<p>{time(s.starts_at)} – {time(s.ends_at)}</p></article>)}
       {tab === 'attendance' && (entries as Attendance[]).map(s => {
         const canRespond = respondents.length > 0 && s.session_status === 'COMPLETED' && ['PRESENT', 'LATE'].includes(s.attendance_status) && Date.parse(s.ends_at) <= feedback.asOf

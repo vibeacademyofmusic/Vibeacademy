@@ -44,6 +44,7 @@ export type Snapshot = {
   academic: { curriculum: string | null; current_grade: string | null; status: string | null; subjects: { grade: string; grade_status: string; name: string; is_required: boolean; completion_rule: string; status: string; score: number | null; components: { name: string; required: boolean; status: string; score: number | null }[] }[] }
   attendance: { scheduled: number; attended: number; absent: number; excused: number; unmarked: number; makeup: number; rate: number | null }
   journals: { count: number; excerpts: { content: string; repertoire: string; skills: string; homework: string; observation: string; updated_at: string }[] }
+  videos?: { title: string; url: string; note: string | null; level_name: string | null; lesson_name: string | null }[]
   teacher_summary?: Record<string, string>; admin_note?: string
 }
 export type Report = { id: string; student_id: string; approved_by: string | null; approver_name?: string | null; report_type: string; status: string; version: number; period_start: string; period_end: string; generated_at: string; approved_at: string | null; sent_at: string | null; draft_data: Snapshot; snapshot_data: Snapshot | null; teacher_summary: Record<string, string>; admin_note: string }

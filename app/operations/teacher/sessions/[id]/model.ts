@@ -1,5 +1,9 @@
 import type { ObservationOption } from '@/app/admin/learning-journals/priority'
-export type Progress = { id: string; name: string; progress_id: string | null; status: string }
+export type Progress = { id: string; name: string; code?: string | null; progress_id: string | null; status: string }
+export function progressLabel(item: Pick<Progress, 'name' | 'code'>) {
+  const code = item.code?.trim()
+  return code ? `${code} · ${item.name}` : item.name
+}
 export type Component = Progress & { rule: string; items: Progress[] }
 export type Subject = Progress & { rule: string; components: Component[] }
 export type Entry = { id: string; version: number; observation: string; progress_note: string; individual_homework: string; homework_custom: boolean; next_focus_code: string | null; attention_required: boolean; attention_reason_code: string | null; attention_detail: string; attention_resolved_at: string | null; family_note: string; codes: string[] }

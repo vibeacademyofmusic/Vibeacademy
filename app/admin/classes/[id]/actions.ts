@@ -162,6 +162,12 @@ export async function assignTeacher(
         )
       }
 
+      if (error.message.includes('two overlapping')) {
+        redirect(
+          `/admin/classes/${classId}?error=` + encodeURIComponent('Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.')
+        )
+      }
+
       redirect(
         `/admin/classes/${classId}?error=Could%20not%20assign%20teacher`
       )
@@ -283,6 +289,7 @@ export async function enrollStudent(
       .select(`
         id,
         course_id,
+        curriculum_id,
         capacity,
         status
       `)
@@ -386,17 +393,20 @@ export async function enrollStudent(
       )
     }
 
-    const { data: course } = await supabase
-      .from('courses')
-      .select('id, curriculum_id')
-      .eq('id', classItem.course_id)
-      .maybeSingle()
+    const { data: course } = classItem.course_id
+      ? await supabase
+        .from('courses')
+        .select('id, curriculum_id')
+        .eq('id', classItem.course_id)
+        .maybeSingle()
+      : { data: null }
+    const programId = classItem.curriculum_id || course?.curriculum_id || null
 
     let academicEnrollmentId: string | null =
       existingEnrollment
         ?.student_curriculum_enrollment_id ?? null
 
-    if (course?.curriculum_id) {
+    if (programId) {
       const {
         data: academicEnrollments,
       } = await supabase
@@ -405,7 +415,7 @@ export async function enrollStudent(
         .eq('student_id', studentId)
         .eq(
           'curriculum_id',
-          course.curriculum_id
+          programId
         )
         .eq('status', 'ACTIVE')
         .order('is_primary', {

@@ -657,10 +657,11 @@ function PlacementActions({ row, canManage, classes, allowed, earliestStart }: {
       <input type="hidden" name="version" value={row.placement_version} />
       <p className="text-xs font-semibold text-[var(--vibe-navy)]">{row.program_name || 'Chương trình'} · {row.level_name || 'Trình độ'}</p>
       <ShiftChoices shifts={shifts} />
-      <label className="block text-xs">Ngày vào ca
+      <p className="text-xs text-[var(--vibe-muted)]">Chờ vào ca dạy → Chọn ca dạy → Ngày bắt đầu → Xác nhận</p>
+      <label className="block text-xs">Ngày bắt đầu
         <input name="start_date" type="date" required defaultValue={row.desired_start ?? earliestStart} className="mt-1 w-40 rounded border px-2 py-1" />
       </label>
-      <button className="vibe-button vibe-button-primary" disabled={!shifts.length}>Sắp vào ca dạy</button>
+      <button className="vibe-button vibe-button-primary" disabled={!shifts.length}>Xác nhận</button>
     </form>
   )
 }
@@ -706,7 +707,7 @@ async function StudentPlacementBoard({
     view === 'waiting' || view === 'future'
       ? db.rpc('list_placement_class_options', { p_branch: branch || null }).range((shiftPage - 1) * 100, shiftPage * 100)
       : Promise.resolve({ data: [] }),
-    db.from('curriculums').select('id,name').order('name'),
+    db.from('operational_curriculums').select('id,name').order('name'),
   ])
   const classes = new Map<string, ClassOption[]>()
   for (const item of ((placementClasses ?? []) as ClassOption[]).slice(0, 100)) {

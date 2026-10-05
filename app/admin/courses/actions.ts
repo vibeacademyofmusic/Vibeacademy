@@ -117,10 +117,9 @@ export async function updateCourse(formData: FormData) {
   }
 
   const { data: curriculum } = await supabase
-    .from('curriculums')
+    .from('operational_curriculums')
     .select('id')
     .eq('id', curriculumId)
-    .eq('status', 'ACTIVE')
     .maybeSingle()
 
   if (!curriculum) {

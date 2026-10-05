@@ -64,10 +64,19 @@ function intakeInput(formData: FormData) {
   }
 }
 
+async function operationalCurriculum(client: Awaited<ReturnType<typeof db>>, id: string) {
+  if (!uuidPattern.test(id)) return false
+  const { data } = await client.from('operational_curriculums').select('id').eq('id', id).maybeSingle()
+  return Boolean(data)
+}
+
 export async function createRegistration(formData: FormData) {
   const client = await db()
   const intake = intakeInput(formData)
   if ('error' in intake) fail('/admin/business/registrations/new', { message: intake.error })
+  if (!(await operationalCurriculum(client, intake.args.p_curriculum))) {
+    fail('/admin/business/registrations/new', { message: 'Chỉ được đăng ký Piano, Guitar, Violin hoặc Trống.' })
+  }
   const { data, error } = await client.rpc('create_registration_with_zalo_consent', intake.args)
   if (error || !data) fail('/admin/business/registrations/new', error)
   redirect(`/admin/business/registrations/${data}`)
@@ -79,6 +88,11 @@ export async function updateRegistrationIntake(formData: FormData) {
   const path = `/admin/business/registrations/${id}`
   const intake = intakeInput(formData)
   if ('error' in intake) fail(path, { message: intake.error })
+  const { data: current } = await client.from('registration_applications').select('curriculum_id').eq('id', id).maybeSingle()
+  const keepsHistoricalCurriculum = current?.curriculum_id === intake.args.p_curriculum
+  if (!keepsHistoricalCurriculum && !(await operationalCurriculum(client, intake.args.p_curriculum))) {
+    fail(path, { message: 'Chỉ được đăng ký Piano, Guitar, Violin hoặc Trống.' })
+  }
   const { error } = await client.rpc('update_registration_intake', {
     ...intake.args,
     p_application: id,

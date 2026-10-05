@@ -23,6 +23,15 @@ export default async function LearningReportDetail({ params, searchParams }: { p
     return ''
   }
   const action = (value: string, label: string, confirm = false) => <form action={updateReport} className="space-y-2"><input type="hidden" name="id" value={r.id} /><input type="hidden" name="version" value={r.version} /><input type="hidden" name="action" value={value} />{confirm && <Confirm text={'Xác nhận ' + label.toLowerCase()} />}<SubmitButton>{label}</SubmitButton></form>
+  if (query.print === '1' && ['DRAFT', 'READY_FOR_REVIEW'].includes(r.status)) {
+    return <div className="learning-report official-learning-report learning-report-page report-print-preview">
+      <div className="report-controls learning-report-toolbar">
+        <Link href={`/admin/reports/learning/${r.id}`}>← Quay lại báo cáo</Link>
+        <PrintReportButton />
+      </div>
+      <ReportDocument report={r} draftPreview />
+    </div>
+  }
   if (['APPROVED', 'PUBLISHED'].includes(r.status)) {
     let delivery: Awaited<ReturnType<typeof reportDelivery>> | null = null
     if (r.status === 'PUBLISHED') {
@@ -125,7 +134,7 @@ export default async function LearningReportDetail({ params, searchParams }: { p
       {r.status === 'DRAFT' && <div className="flex flex-wrap gap-4">{action('REGENERATE', 'Tổng hợp lại bản nháp')}{action('READY', 'Chuyển chờ duyệt')}</div>}
       {r.status === 'READY_FOR_REVIEW' && <div className="flex flex-wrap gap-4">{action('APPROVE', 'Duyệt và khóa báo cáo', true)}{action('RETURN', 'Trả về bản nháp')}</div>}
       {['DRAFT', 'READY_FOR_REVIEW'].includes(r.status) && action('CANCEL', 'Hủy báo cáo', true)}
-      <Link prefetch={false} href={'/admin/reports/learning/' + r.id + '?print=1'}>Xem bản in</Link><p>Có thể dùng chức năng In của trình duyệt. Bản in hiện dành cho quản trị viên, bao gồm ghi chú nội bộ.</p>
+      <Link prefetch={false} href={'/admin/reports/learning/' + r.id + '?print=1'}>Xem bản in</Link><p>Có thể dùng chức năng In của trình duyệt. Bản xem trước dùng mẫu báo cáo VIBE và ghi rõ chưa duyệt. Ghi chú nội bộ không đưa vào bản in.</p>
     </div>
     <Panel title="Lịch sử xử lý"><p>Hiển thị tối đa 100 thao tác gần nhất. Chưa gửi email / Zalo.</p><Table headers={['Thao tác', 'Phiên bản', 'Thời gian', 'Người xử lý']} rows={events.map(e => [e.event, e.version, timeText(e.created_at), e.actor_id])} /></Panel>
   </article>

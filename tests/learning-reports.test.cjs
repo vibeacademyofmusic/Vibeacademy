@@ -162,7 +162,8 @@ async function officialReport(status, extra = {}, fixtures = {}) {
 }
 test('approved official document exposes confirmed publish only and never refreshes snapshot', async () => {
  const {h,html} = await officialReport('APPROVED')
- for (const text of ['LEARNING PROGRESS REPORT','STUDENT INFORMATION','ATTENDANCE SUMMARY','ACADEMIC PROGRESS','AUTHORIZED ACADEMIC APPROVAL','PUBLISH REPORT']) assert.ok(html.includes(text))
+ for (const text of ['LEARNING PROGRESS REPORT','Báo cáo học tập kỳ tháng 8','ATTENDANCE SUMMARY','ACADEMIC PROGRESS','AUTHORIZED ACADEMIC APPROVAL','PUBLISH REPORT']) assert.ok(html.includes(text))
+ assert.doesNotMatch(html,/STUDENT INFORMATION/)
  assert.match(html,/name="action" value="PUBLISH"/); assert.match(html,/<input(?=[^>]*name="confirm")(?=[^>]*required)[^>]*>/)
  assert.doesNotMatch(html,/SEND EMAIL|SEND ZALO|textarea/)
  assert.ok(!h.calls.some(c=>c.rpc==='update_learning_report'||c.rpc==='learning_report_source'))
@@ -236,7 +237,7 @@ test('official print content excludes internal notes, delivery and administratio
  assert.match(fs.readFileSync('app/admin/reports/learning/[id]/layout.tsx','utf8'),/import '.\/print.css'/)
  const {html}=await officialReport('APPROVED',{}, {profiles:[{id:id(21),full_name:'Academic Approver'}]})
  assert.match(html,/Academic Approver/)
- const paperStart=html.indexOf('<article class="academic-document learning-report-paper"')
+ const paperStart=html.indexOf('<article class="academic-document learning-report-paper academic-cover-sheet"')
  assert.ok(paperStart>html.indexOf('learning-report-toolbar'))
  const paper=html.slice(paperStart,html.indexOf('</article>',paperStart))
  assert.doesNotMatch(paper,/PUBLISH REPORT|PRINT \/ PDF|<form/)
@@ -261,4 +262,34 @@ test('published portal renders V2 and legacy public summaries without internal n
   assert.doesNotMatch(html,/PRIVATE ADMIN NOTE|Chưa có nhận xét/)
  }
  const empty=renderToStaticMarkup(Page({snapshot}));assert.match(empty,/Chưa có nhận xét/)
+})
+test('approved print includes shared lesson videos and the family portal does not yet',()=>{
+ const videos=[{title:'TEST — Biểu diễn Piano 2A',url:'https://www.youtube.com/watch?v=TESTVIDEO01',note:'Ghi chú video',level_name:'Pre Grade',lesson_name:'Piano Adventures 2A · L01'}]
+ const Document=harness().load(base+'[id]/ReportDocument.tsx').default
+ const html=renderToStaticMarkup(Document({report:{...report,status:'APPROVED',approved_at:snapshot.as_of,snapshot_data:{...snapshot,videos}}}))
+ assert.match(html,/LESSON VIDEOS/)
+ assert.match(html,/href="https:\/\/www\.youtube\.com\/watch\?v=TESTVIDEO01"/)
+ assert.match(html,/target="_blank"/)
+ assert.match(html,/>TEST — Biểu diễn Piano 2A<\/a>/)
+ assert.doesNotMatch(html,/>LINK</)
+ const legacy=renderToStaticMarkup(Document({report:{...report,status:'APPROVED',approved_at:snapshot.as_of,snapshot_data:snapshot}}))
+ assert.doesNotMatch(legacy,/LESSON VIDEOS/)
+ const portal=renderToStaticMarkup(harness().load('../../my-learning/ApprovedReport.tsx').default({snapshot:{...snapshot,videos,teacher_summary:{achievement:'Approved achievement'}}}))
+ assert.doesNotMatch(portal,/TESTVIDEO01|LESSON VIDEOS/)
+ assert.match(portal,/Approved achievement/)
+})
+test('draft print uses the original branded document without approval or internal notes',()=>{
+ const Document=harness().load(base+'[id]/ReportDocument.tsx').default
+ const html=renderToStaticMarkup(Document({report:{...report,admin_note:'PRIVATE_INTERNAL_NOTE'},draftPreview:true}))
+ assert.match(html,/learning-report-paper/)
+ assert.match(html,/LEARNING PROGRESS REPORT/)
+ assert.match(html,/BẢN NHÁP — CHƯA DUYỆT/)
+ assert.doesNotMatch(html,/AUTHORIZED ACADEMIC APPROVAL|PRIVATE_INTERNAL_NOTE/)
+})
+test('draft preview cannot replace an approved frozen snapshot',()=>{
+ const Document=harness().load(base+'[id]/ReportDocument.tsx').default
+ const html=renderToStaticMarkup(Document({report:{...report,status:'APPROVED',snapshot_data:{...snapshot,student:{name:'FROZEN_NAME',code:'A'}},draft_data:{...snapshot,student:{name:'CHANGED_DRAFT',code:'B'}}},draftPreview:true}))
+ assert.match(html,/FROZEN_NAME/)
+ assert.doesNotMatch(html,/CHANGED_DRAFT|BẢN NHÁP/)
+ assert.match(html,/AUTHORIZED ACADEMIC APPROVAL/)
 })

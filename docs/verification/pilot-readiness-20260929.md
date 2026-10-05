@@ -64,9 +64,11 @@ Không bịa quy tắc mới.
 
 ## Việc chưa làm được vì thiếu quyền
 
-Đăng nhập: trình duyệt local trước đó dừng ở `/login`. Không có phiên đã đăng nhập trong lượt này. Không xin mật khẩu và không đặt lại tài khoản. Cần đăng nhập local tại `http://localhost:3000/login` bằng tài khoản đã cấp rồi báo lại để kiểm tra vai trò.
+Đăng nhập 30/09 lúc kiểm tra lại: tab tự động của Cursor, tiêu đề “VIBE Academy”, view `glass-browser-0c515d31-d78a-4ddd-a153-8077cb69a1e1`, vẫn ở `http://localhost:3000/login`. Trang là form Email/Password, không có cookie. Phiên này không thấy phiên người dùng vừa đăng nhập.
 
-Ánh xạ preview sang database: URL preview vẫn cổng SSO Vercel. Lần đọc SQL staging/production trước đó bị chặn với lý do: công cụ từ chối vì hướng dẫn không được truy vấn staging hoặc production khi chưa có phê duyệt riêng. Không thử lại và không dùng tài liệu lịch sử (`qhznfywwrhmcwbkujclm`, `owpfqwdrmyzcmjahehek`) làm bằng chứng deployment.
+Kết nối đang mở tới cổng 3000 còn một trình duyệt khác: Codex bên trong ChatGPT.app, thư mục dữ liệu `/Users/macbookair/Library/Application Support/Codex`, tiền tố user agent `CodexBrowser`, tiến trình mạng PID 50427. Cookie của trình duyệt đó không được đọc và không được chép sang tab Cursor. Sổ `auth.sessions` local chỉ có user agent `node`, không có phiên trình duyệt. Không đặt lại mật khẩu.
+
+Luồng đã đăng nhập, từ chối vai trò, đăng ký, hồ sơ học viên, xếp lớp, điểm danh, học phí, phiếu thu, bảo lưu và học bù vì thế chưa thao tác được trên phiên người dùng. Cần đăng nhập lại trên đúng tab Cursor ở `http://localhost:3000/login`.
 
 ## Rollback
 
@@ -90,6 +92,95 @@ Không có bằng chứng lộ qua Git. Chưa cần xoay khóa chỉ vì reposit
 
 `npx eslint .` trên cây trước lượt này: exit 0, **0 lỗi, 73 cảnh báo**. Lượt này không tắt rule.
 
-## Commit cuối
+## Commit ứng viên đã triển khai Preview
 
-`75e0d016a8a1bd75e8856106aa327abb10707ae3` chứa khóa Zalo, đối chiếu migration và việc ngừng tạo khóa học. `ec7557d3d342cbd602bb8e49d461b2a4d754e227` ghi nhận commit đó. Run `regression` https://github.com/vibeacademyofmusic/Vibeacademy/actions/runs/36571794278 fail vì phục hồi đăng ký còn trả trạng thái SEND khi khóa pilot đã chặn provider. Commit sửa đường đó là HEAD sau commit này.
+SHA đã đẩy và đang chạy Preview: `fed93be98c3ed34a14a42e57a0dbadc54416b2ce`.
+
+Run `regression` thất bại trước đó, https://github.com/vibeacademyofmusic/Vibeacademy/actions/runs/36571794278, vì phục hồi đăng ký còn trả SEND khi khóa pilot chặn provider. `fed93be` sửa đường đó. Run push https://github.com/vibeacademyofmusic/Vibeacademy/actions/runs/36572381761 và run pull request https://github.com/vibeacademyofmusic/Vibeacademy/actions/runs/36572388704 đều thành công, gồm `supabase db reset` trên runner trống. Cổng hồi quy của đúng SHA này đạt. SHA này vẫn cho phép gọi provider khi `VERCEL_ENV=production` và `ZALO_PILOT_OUTBOUND` thiếu hoặc không phải đúng `enabled`.
+
+## Bằng chứng 30/09/2026
+
+Quyết định vẫn **NO-GO**. Phần dưới chỉ ghi việc mới.
+
+### Khóa gửi Zalo
+
+Trên `fed93be`, `zaloPilotOutboundBlocked` trả về chặn khi giá trị là `disabled`, và khi giá trị không phải `enabled` thì chỉ chặn nếu `VERCEL_ENV` khác `production`. Vì vậy production thiếu biến, hoặc nhận chuỗi rỗng, `false`, `true`, `yes`, `Enabled`, `enabled ` vẫn mở cổng gọi ra ngoài. Đó là hành vi không an toàn.
+
+Sửa local, chưa commit và chưa có trên Preview: chỉ đúng chuỗi `enabled` mới mở cổng. Mọi giá trị khác, kể cả thiếu biến và `VERCEL_ENV=production`, trả `ZALO_PILOT_OUTBOUND_DISABLED` trước transport.
+
+`node --test tests/zalo-pilot-outbound.test.cjs tests/pilot-failure-log.test.cjs`: 14/14 đạt. Chín chế độ thiếu, preview, rỗng, `false`, `true`, `yes`, `Enabled`, `enabled ` và `disabled` đều có số lần gọi provider bằng 0 trên gửi điện thoại, gửi UID, xác nhận đăng ký, gia hạn credential, kiểm tra token, đổi mã OAuth, nhắc học phí qua `sendZaloTemplateMessage`, lịch `maintainZaloCredentials`, hàng đợi chạy hai lần, và phục hồi ở trạng thái RETRY. Một ca đặt đúng `enabled` đi qua mock đúng một lần và `delivered` vẫn là false. Chưa chạy lại GitHub `regression` cho cây local này.
+
+### Preview và phạm vi cấu hình
+
+Đọc cấu hình đã cấp quyền, không ghi giá trị secret.
+
+| Dự án Vercel | Mục tiêu | SHA | `ZALO_PILOT_OUTBOUND` | Supabase |
+| --- | --- | --- | --- | --- |
+| vibeacademy-staging | Preview `dpl_9ixXoxPbsF22Dj7ew9fvkY7Kwz1M` | `fed93be98c3ed34a14a42e57a0dbadc54416b2ce` | không có khóa | host là `owpfqwdrmyzcmjahehek`, cập nhật trước lúc build |
+| vibeacademy-staging | Production `dpl_54JzzSNdpV95gsCGxqWTYNXDj995` | `341f5b329abc15237b42ea5d6306a8f99d1b844b` | không có khóa | cùng host staging |
+| vibeacademy | Preview `dpl_5PcoDs3qNWA1r3wLu5PcvU6RF7BP` | `fed93be98c3ed34a14a42e57a0dbadc54416b2ce` | không có khóa | `NEXT_PUBLIC_SUPABASE_URL` có mặt nhưng giá trị rỗng |
+| vibeacademy | Production | `770b81855609cee8372e09fa7ff71bc2f0220849` | không có khóa | giá trị URL rỗng |
+
+`341f5b3` có trong Git với thông điệp map mẫu đăng ký nhưng không bật gửi. File `lib/integrations/zalo/pilot-outbound.ts` không có trong commit đó. Preview staging của `fed93be` là bản có khóa cũ và biến pilot vắng, nên cổng cũ chặn vì mục tiêu là Preview. Production của dự án staging không có khóa đó. Không đổi biến trên Vercel.
+
+Đề xuất để duyệt, chưa áp dụng: trên vibeacademy-staging, cả Preview và Production, đặt `ZALO_PILOT_OUTBOUND` đúng bằng `disabled` cho đến khi có cửa sổ gửi được duyệt. Không dùng giá trị nào khác. Không đặt `enabled` trong đợt này. Không dùng deployment production `770b818` làm đích rollback của pilot.
+
+Ledger staging vẫn 150 dòng, lớn nhất `20260923052000`, thiếu 41 file local từ `20260922310000` đến `20260929220000`. Không `db push`. Học viên 5, payment 0. Mẫu Zalo đăng ký là `PENDING`, `enabled=false`, chưa có provider id. Các mẫu Zalo khác là `DRAFT` và tắt. Không gửi tin và không bấm nút.
+
+### Bản sao public
+
+Đã chép hai file từ `/private/tmp` sang `~/.vibe-private/staging-backups/public-20260929/`. Thư mục `0700`, file `0600`, không đưa vào Git. Nguồn là project `owpfqwdrmyzcmjahehek`, chỉ schema `public` và dữ liệu `public`.
+
+| File | Byte | SHA-256 |
+| --- | --- | --- |
+| schema | 1352482 | `47b43537fe60bc28c5d23258eeeb38fb09387fe221481b9a5240c387549aae29` |
+| data | 243403 | `fe7781ac70bf5a546e7f4f9d2988b6995c5e8cc25081395274068260e2ee35d9` |
+
+Đây không phải bản sao toàn hệ thống. File không có schema Auth, không có dòng `auth.users`, không có Storage, không có `supabase_migrations`, và không có thân 20 hàm trigger trong `finance_private`, `hr_private`, `notification_private`, `payroll_disbursement_private`, `vibe_expense_private`, `vibe_operating_expense_private`.
+
+Phát lại nguyên file schema trên database trống dừng vì thiếu `auth` và operator class `gist`. Database tách `vibe_staging_dump_restore_20260930` chỉ nạp được sau các bước ngoài file: `btree_gist` trong `pg_catalog`, bảng `auth.users(id uuid)` rỗng, ba hàm `auth.uid/role/email` trả null, sáu schema private rỗng, và 20 hàm trigger đi tiếp mà không giữ luật cấm sửa. Sau đó schema và dữ liệu nạp hết.
+
+Kết quả database tách: 151 bảng public, 445 khóa ngoại, 0 khóa ngoại chưa validate, 183 policy, RLS bật trên 151 bảng, không có sổ migration, không có hàm đăng ký tại quầy của commit ứng viên. `anon` không được `SELECT` học viên hay payment. `authenticated` được `SELECT` học viên. Đếm dòng: 5 học viên, 0 payment, 0 hồ sơ đăng ký, khớp số đếm staging đã đọc. 445 khóa ngoại trong public không có dòng mồ côi trỏ tới bảng public. 13 khóa ngoại trỏ `auth.users` có 68 tham chiếu không tìm thấy cha, vì bản sao không có người dùng Auth. Quyền RLS với người dùng thật chưa chạy.
+
+Để khôi phục pilot cần thêm bản Auth và Storage cùng thời điểm, thân hàm private đúng bản đang chạy, secret nằm ngoài SQL, rồi mới so ledger và áp từng migration còn thiếu trên bản sao đã diễn tập. Chưa có bản đó nên chưa khôi phục được staging.
+
+### Nhật ký lỗi
+
+Trước lượt này, lỗi server chủ yếu là `console.error` rời, không có mã tương quan, môi trường hay quy tắc bỏ secret. Chưa thêm dịch vụ giám sát mới. Vercel của cả ba dự án không có log drain. Speed Insights có mặt và `hasData` là false.
+
+Đã thêm `lib/observability/pilot-failure.ts` và `onRequestError` trong `instrumentation.ts`. Một lỗi server ghi một dòng JSON: `failure`, `environment`, `timestamp`, `correlationId`. Không ghi header, query, thông điệp lỗi, secret hay tên học viên. Test tổng hợp với mã `corr-synthetic-001`, môi trường `preview`, thời điểm `2026-09-30T00:00:00.000Z` đạt. Mã tương quan lấy từ `digest` khi có. Bản Preview `fed93be` chưa chứa đường này, nên log deployment hiện tại chưa được xác nhận bằng một lỗi tổng hợp trên Vercel.
+
+Chưa có người được chỉ định theo dõi lỗi pilot. Cách xem sau khi bản có logger được triển khai Preview: mở log runtime của đúng deployment, tìm `source=pilot-failure`. Việc chỉ định người trực vẫn là điều kiện trước pilot.
+
+### hooks-preview-relay
+
+Đây là lỗi cấu hình của một dự án Vercel khác, cùng repo GitHub `vibeacademyofmusic/Vibeacademy`, nhánh production `main`, thư mục gốc đặt là `hooks-preview-relay`. Thư mục đó không có trong repository. Deployment trên `fed93be` dừng với `NOW_SANDBOX_WORKER_ROOTDIR_NOT_EXIST`. Creator của deployment lỗi là tài khoản `vibeacademyofmusic`. Dự án có biến `PREVIEW_WEBHOOK_UPSTREAM` ở Preview. Không có dependency trong mã academy này. Chưa đổi root directory và chưa đề xuất sửa cho đến khi chủ dự án xác nhận relay phải trỏ repo khác hay bỏ thư mục gốc.
+
+### Cổng còn lại
+
+1. Hồi quy GitHub của `fed93be`: đạt. Cây local siết khóa gửi: chưa có run mới.
+2. Preview staging trỏ đúng project Supabase staging: đạt với biến URL hiện tại. Khóa gửi của SHA đã triển khai chưa phải bản fail-closed.
+3. Production của dự án staging, SHA `341f5b3`: chưa có khóa gửi.
+4. URL Supabase của dự án `vibeacademy`: rỗng. Không dùng làm pilot.
+5. Migration staging: thiếu 41 file. Chưa áp.
+6. Bản sao: chỉ public, đã diễn tập có điều kiện. Auth, Storage, hàm private và ledger còn thiếu.
+7. Mẫu Zalo: chưa duyệt, chưa gửi, chưa phát lại webhook.
+8. Đăng ký tại quầy trên staging: chưa chạy vì schema staging chưa có hàm của commit ứng viên và chưa có phiên đăng nhập.
+9. Giám sát: chưa có người trực, logger mới chưa ở trên Preview.
+10. Hai câu nghiệp vụ ở trên và `classes.course_id` vẫn chưa quyết định migration.
+
+## Kiểm tra lại phiên và nâng cấp tách
+
+Tab Cursor `glass-browser-0c515d31-d78a-4ddd-a153-8077cb69a1e1` được mở lại tại `http://localhost:3000/login` và để mở khóa để đăng nhập. Form Email/Password vẫn hiện. Chưa có cookie phiên. Chưa tạo bản ghi tổng hợp.
+
+Server local PID 81249 không có `ZALO_PILOT_OUTBOUND`. Mã hiện tại chỉ mở cổng khi giá trị đúng là `enabled`, nên gửi ra ngoài đang bị chặn.
+
+Bản phục hồi `vibe_staging_dump_restore_20260930` được giữ nguyên. Bản sao nâng cấp `vibe_staging_upgrade_20260930` dừng ở file đầu trong 41 file thiếu, `20260922310000_zalo_admin_read_v1.sql`: `registration_zalo_connection(uuid)` đã tồn tại. Trên bản phục hồi, hàm này có tham số tên `p_application`, md5 thân `8b7f3b87027d97f8adb92efd7b9f678f`, có nhánh `NONE`. File migration định nghĩa cùng kiểu đối số nhưng tên `p_registration`. Ba hàm `zalo_integration_overview`, `zalo_recent_events`, `zalo_linked_customers` chưa có trên bản phục hồi. Không thay hàm đang có. Bản nâng cấp dở được xóa.
+
+Lần sau xác nhận kiểu trả về của hàm trên bản phục hồi trùng `20260923040000`: `link_status`, `external_link_key`, `linked_at`, `last_verified_at`, `masked_user_id`. Không chạy lại `CREATE` cũ. Chỉ tạo ba hàm đọc còn thiếu, rồi áp được 8 file kế tiếp trên bản sao. `20260926183000_staff_profile_badges_v1.sql` dừng với `VIBE_STAFF_PROFILE_PREREQUISITE_MISSING` vì `storage.buckets` không có. Học viên vẫn 5, payment vẫn 0. Bản sao đó đã xóa. Chưa ghi ledger và chưa áp lên staging.
+
+## Tài khoản pilot — chưa tạo
+
+Tab Cursor vẫn không có cookie tại `/login`. Chưa gửi lời mời và chưa tạo tài khoản trên staging hay production.
+
+Vai trò có trong database local, không bịa thêm. `SUPER_ADMIN` với `branch_id` null đi qua `has_permission` khi mã quyền tồn tại và hồ sơ `ACTIVE`. `BRANCH_ADMIN` có các quyền registration, students.view, student_placement, attendance.manage, classes. `FINANCE` có các quyền finance và payroll đã gán. `TEACHER`, `STUDENT`, `PARENT`, `STAFF` chỉ có các quyền đã gán trong `role_permissions`. `ACADEMIC_ADMIN` chỉ xuất hiện ở trao đổi gia đình. `ACADEMIC_MANAGER` chỉ đọc bảo lưu và học bù trong migration chưa có trên staging. `ACCOUNTANT` và `BRANCH_MANAGER` không có dòng `role_permissions` và không có `has_role`. Không có luồng mời qua email. `local-bootstrap-admin` chỉ chạy local và không đổi mật khẩu cũ.

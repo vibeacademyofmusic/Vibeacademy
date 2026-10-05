@@ -70,6 +70,7 @@ function fixtures() {
       { id: 'b', student_id: 'B', curriculum_id: 'other', status: 'ACTIVE', is_primary: true },
     ],
     curriculums: [{ id: 'piano', name: 'Piano', status: 'ACTIVE' }, { id: 'guitar', name: 'Guitar', status: 'ACTIVE' }],
+    operational_curriculums: [{ id: 'piano', code: 'PIANO', name: 'Piano', status: 'ACTIVE' }, { id: 'guitar', code: 'GUITAR', name: 'Guitar', status: 'ACTIVE' }],
     curriculum_levels: [{ id: 'p1', curriculum_id: 'piano', name: 'Piano Grade 1', sequence_no: 1, status: 'ACTIVE' }, { id: 'p2', curriculum_id: 'piano', name: 'Piano Grade 2', sequence_no: 2, status: 'ACTIVE' }, { id: 'g1', curriculum_id: 'guitar', name: 'Guitar Grade 1', sequence_no: 1, status: 'ACTIVE' }],
     student_level_progress: [{ id: 'lp1', enrollment_id: 'p', level_id: 'p1', status: 'COMPLETED' }, { id: 'lp2', enrollment_id: 'p', level_id: 'p2', status: 'AVAILABLE' }, { id: 'lg1', enrollment_id: 'g', level_id: 'g1', status: 'IN_PROGRESS' }],
     curriculum_subjects: [{ id: 's1', level_id: 'p1', name: 'Historical subject', status: 'ACTIVE', is_required: true, completion_rule: 'ALL_REQUIRED_COMPONENTS', sort_order: 1 }],
@@ -101,6 +102,8 @@ function client(data) {
 async function render(data, studentId = 'A') {
   const noop = async () => {}
   const { default: Component } = load(path.join(base, 'AcademicPrograms.tsx'), {
+    '@/app/_components/academic-video-links/data': { loadVideoLinks: async () => ({ can_manage: false, links: [], levels: [], lessons: [] }) },
+    '@/app/_components/academic-video-links/actions': { saveVideoLink: noop, removeVideoLink: noop },
     '@/lib/supabase/server': { createClient: async () => client(data) },
     '@/lib/display': { displayLabel: status => status },
     '../actions': { assignStudentAcademicProgram: noop, startStudentAcademicLevel: noop, updateComponentProgressStatus: noop, updateDirectSubjectProgressStatus: noop, updateLessonProgressStatus: noop, updateStudentAcademicEnrollmentStartDate: noop },

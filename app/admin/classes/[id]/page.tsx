@@ -35,6 +35,7 @@ export default async function ClassDetailPage({
       id,
       branch_id,
       course_id,
+      curriculum_id,
       code,
       name,
       class_type,
@@ -59,14 +60,21 @@ export default async function ClassDetailPage({
     .eq('id', classItem.branch_id)
     .maybeSingle()
 
-  const { data: course } = await supabase
-    .from('courses')
-    .select('id, code, name, curriculum_id, level_id')
-    .eq('id', classItem.course_id)
-    .maybeSingle()
+  const { data: course } = classItem.course_id
+    ? await supabase
+      .from('courses')
+      .select('id, code, name, curriculum_id, level_id')
+      .eq('id', classItem.course_id)
+      .maybeSingle()
+    : { data: null }
 
-  const { data: levels } = course?.curriculum_id
-    ? await supabase.from('curriculum_levels').select('id, name, sequence_no').eq('curriculum_id', course.curriculum_id).eq('status', 'ACTIVE').order('sequence_no')
+  const programId = classItem.curriculum_id || course?.curriculum_id || null
+  const { data: program } = programId
+    ? await supabase.from('curriculums').select('id, code, name').eq('id', programId).maybeSingle()
+    : { data: null }
+
+  const { data: levels } = programId
+    ? await supabase.from('curriculum_levels').select('id, name, sequence_no').eq('curriculum_id', programId).eq('status', 'ACTIVE').order('sequence_no')
     : { data: [] as { id: string; name: string; sequence_no: number }[] }
 
   const fromLevel = levels?.find(l => l.id === classItem.accepted_from_level_id)
@@ -202,17 +210,17 @@ export default async function ClassDetailPage({
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-gray-200 bg-white p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Course
+              Chương trình
             </p>
 
             <p className="mt-2 font-semibold text-gray-950">
-              {course?.name ?? 'Not found'}
+              {program?.name ?? 'Chưa chọn chương trình'}
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
-              {course?.code ?? '—'}
+              {program?.code ?? '—'}
             </p>
-            <p className="mt-2 text-xs text-gray-500">Course target Level (metadata): {course?.level_id ? 'có gắn level_id' : 'NULL — không dùng làm trình độ học viên'}</p>
+            <p className="mt-2 text-xs text-gray-500">{course ? `Khóa học cũ: ${course.name}` : 'Không cần khóa học cũ. Trình độ hiện tại thuộc từng học viên.'}</p>
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white p-4">

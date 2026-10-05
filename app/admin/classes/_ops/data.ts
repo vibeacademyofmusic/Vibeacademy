@@ -20,9 +20,11 @@ export async function loadClassOps(db: DB, params: Params, view: OpsView) {
   const date = /^\d{4}-\d{2}-\d{2}$/.test(params.date ?? '') ? params.date! : todayVietnam()
 
   const compatibility = view === 'classes' || view === 'overview' ? loadScopeWarnings(db, branch) : Promise.resolve({ byClass: new Map<string, Set<string>>(), affectedClasses: [], studentCount: 0 })
-  const [branches, courses, overview, classes, schedules, rooms, sessions, sessionDiag] = await Promise.all([
+  const [branches, programs, teachers, classRooms, overview, classes, schedules, rooms, sessions, sessionDiag] = await Promise.all([
     db.from('branches').select('id,name,status').eq('status', 'ACTIVE').order('name').limit(200),
-    view === 'classes' ? db.from('courses').select('id,name,code,curriculum_id,level_id,status').eq('status', 'ACTIVE').order('name').limit(200) : Promise.resolve({ data: [] }),
+    view === 'classes' ? db.from('operational_curriculums').select('id,name,code').order('name') : Promise.resolve({ data: [] }),
+    view === 'classes' ? db.from('teachers').select('id,full_name,teacher_code').eq('status', 'ACTIVE').order('full_name').limit(200) : Promise.resolve({ data: [] }),
+    view === 'classes' ? db.from('rooms').select('id,name,branch_id').eq('status', 'ACTIVE').order('name').limit(200) : Promise.resolve({ data: [] }),
     view === 'overview' ? loadOverview(db, branch, compatibility) : Promise.resolve(null),
     view === 'classes' ? loadClasses(db, { branch, page, q: params.q }, compatibility) : Promise.resolve(null),
     view === 'schedule' ? loadSchedules(db, { branch, page }) : Promise.resolve(null),
@@ -34,14 +36,16 @@ export async function loadClassOps(db: DB, params: Params, view: OpsView) {
   return {
     today: date,
     branches: branches.data ?? [],
-    courses: courses.data ?? [],
+    programs: programs.data ?? [],
+    teachers: teachers.data ?? [],
+    classRooms: classRooms.data ?? [],
     overview,
     classes,
     schedules,
     rooms,
     sessions,
     sessionDiag,
-    levelsByCurriculum: await loadLevelsByCurriculum(db, (courses.data ?? []).map(c => c.curriculum_id)),
+    levelsByCurriculum: await loadLevelsByCurriculum(db, (programs.data ?? []).map(program => program.id)),
   }
 }
 
@@ -142,9 +146,10 @@ async function loadOverview(db: DB, branch: string | null, warnings: ScopeWarnin
 
 async function loadClasses(db: DB, opts: { branch: string | null; page: number; q?: string }, warnings: ScopeWarnings) {
   let q = db.from('classes').select(`
-    id, code, name, class_type, capacity, status, branch_id, course_id,
+    id, code, name, class_type, capacity, status, branch_id, course_id, curriculum_id,
     accepted_from_level_id, accepted_to_level_id,
-    courses!inner(id, name, code, curriculum_id, level_id),
+    curriculums(id, name, code),
+    courses(id, name, code, curriculum_id, level_id),
     branches!inner(id, name)
   `).order('name').range((opts.page - 1) * pageSize, opts.page * pageSize)
   if (opts.branch) q = q.eq('branch_id', opts.branch)
@@ -184,17 +189,32 @@ async function loadClasses(db: DB, opts: { branch: string | null; page: number; 
 
   return {
     data: visible.map(row => {
-      const course = rel(row.courses as { id: string; name: string; code: string; curriculum_id: string; level_id: string | null } | { id: string; name: string; code: string; curriculum_id: string; level_id: string | null }[])!
+      const course = rel(row.courses as { id: string; name: string; code: string; curriculum_id: string; level_id: string | null } | { id: string; name: string; code: string; curriculum_id: string; level_id: string | null }[] | null)
+      const program = rel(row.curriculums as { id: string; name: string; code: string } | { id: string; name: string; code: string }[] | null)
       const branchRow = rel(row.branches as { id: string; name: string } | { id: string; name: string }[])!
+      const hasTeacher = teacherMap.has(row.id)
+      const hasSchedule = scheduleMap.has(row.id)
+      const hasRoom = roomMap.has(row.id)
+      const scopeConfigured = Boolean(row.accepted_from_level_id && row.accepted_to_level_id)
+      const gaps = [
+        !scopeConfigured ? { label: 'Cấu hình phạm vi trình độ', href: `/admin/classes/${row.id}` } : null,
+        !hasTeacher ? { label: 'Gán giáo viên chính', href: `/admin/classes/${row.id}` } : null,
+        !hasSchedule ? { label: 'Thêm lịch lặp lại', href: '/admin/schedule' } : null,
+        hasSchedule && !hasRoom ? { label: 'Gán phòng học', href: '/admin/schedule' } : null,
+        row.status === 'DRAFT' && scopeConfigured && hasTeacher && hasSchedule && hasRoom
+          ? { label: 'Kích hoạt ca dạy', href: `/admin/classes/${row.id}` }
+          : null,
+      ].filter((gap): gap is { label: string; href: string } => Boolean(gap))
       return {
         id: row.id,
         name: row.name,
         code: row.code,
         status: row.status,
         capacity: row.capacity,
-        courseName: course.name,
-        curriculumId: course.curriculum_id,
-        courseLevelId: course.level_id,
+        courseName: program?.name || course?.name || 'Chưa chọn chương trình',
+        curriculumId: program?.id || course?.curriculum_id || null,
+        courseLevelId: course?.level_id ?? null,
+        gaps,
         branchName: branchRow.name,
         scopeLabel: formatLevelScope(
           row.accepted_from_level_id ? levelMap.get(row.accepted_from_level_id) : null,

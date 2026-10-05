@@ -101,7 +101,7 @@ export async function loadWorkspace() {
   const supabase = await createClient()
   const today = businessDate()
   const [curriculums, levels, subjects, components, items, courses, classes, enrollments, branches] = await Promise.all([
-    loadPaged<CurriculumRow>( (from, to) => supabase.from('curriculums').select('id, code, name, description, status').order('name').range(from, to)),
+    loadPaged<CurriculumRow>( (from, to) => supabase.from('operational_curriculums').select('id, code, name, description, status').order('name').range(from, to)),
     loadPaged<LevelRow>( (from, to) => supabase.from('curriculum_levels').select('id, curriculum_id, code, name, sequence_no, level_number, level_type, completion_rule, status').range(from, to)),
     loadPaged<SubjectRow>( (from, to) => supabase.from('curriculum_subjects').select('id, level_id, name, status, is_required, completion_rule').range(from, to)),
     loadPaged<ComponentRow>( (from, to) => supabase.from('curriculum_subject_components').select('id, subject_id, status, is_required, completion_rule').range(from, to)),

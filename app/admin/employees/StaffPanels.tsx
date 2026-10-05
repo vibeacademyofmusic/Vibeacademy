@@ -4,13 +4,12 @@ import { loadStaffFace, searchIdentity } from './staff-data'
 import { assignPosition, assignTeaching, endPosition, endTeaching, removePortrait, replacePortrait } from './staff-actions'
 import { linkIdentity } from './actions'
 import { createClient } from '@/lib/supabase/server'
-import { vietnamToday } from '@/lib/staff/profile'
+import { vietnamToday, STAFF_POSITIONS, positionBadgeLabel } from '@/lib/staff/profile'
 
 const capacities = [
   { id: 'TEACHER', name: 'Giáo viên' },
   { id: 'ASSISTANT', name: 'Trợ giảng' },
 ]
-const positions = ['VAS', 'VAM', 'VAH']
 
 export async function StaffPanels({ employeeId, profileId, teacherId, identityQuery }: { employeeId: string; profileId: string | null; teacherId: string | null; identityQuery: string }) {
   const db = await createClient()
@@ -32,7 +31,7 @@ export async function StaffPanels({ employeeId, profileId, teacherId, identityQu
           </div>
           <Link className="vibe-button" href={`/documents/staff-cards/${employeeId}`}>Xem, in và tải PDF</Link>
         </div>
-        <NameCard card={face.facts} portraitUrl={face.portraitUrl} />
+        <NameCard employeeId={employeeId} card={face.facts} portraitUrl={face.portraitUrl} />
       </section>
 
       <section className="space-y-3 rounded-xl border border-[var(--vibe-line)] bg-white p-5">
@@ -62,7 +61,7 @@ export async function StaffPanels({ employeeId, profileId, teacherId, identityQu
       </section>
 
       <section className="space-y-3 rounded-xl border border-[var(--vibe-line)] bg-white p-5">
-        <h3 className="text-lg font-semibold text-[var(--vibe-navy)]">Vị trí VAS, VAM, VAH</h3>
+        <h3 className="text-lg font-semibold text-[var(--vibe-navy)]">Vị trí công việc</h3>
         <p className="text-sm text-[var(--vibe-muted)]">Một hồ sơ có thể giữ nhiều vị trí cùng lúc. Vị trí này không thay vai trò vận hành cũ và không cấp quyền đăng nhập.</p>
         <div className="flex flex-wrap gap-2">
           {face.facts.positionBadges.length ? face.facts.positionBadges.map(badge => <span key={badge} className="vibe-badge" data-tone="warning">{badge}</span>) : <span className="text-sm text-[var(--vibe-muted)]">Chưa có vị trí đang hiệu lực.</span>}
@@ -71,14 +70,14 @@ export async function StaffPanels({ employeeId, profileId, teacherId, identityQu
           <input type="hidden" name="employee_id" value={employeeId} />
           <label className="vibe-field"><span>Vị trí</span>
             <select name="position_code" required defaultValue="VAM">
-              {positions.map(code => <option key={code} value={code}>{code}</option>)}
+              {STAFF_POSITIONS.map(position => <option key={position.code} value={position.code}>{position.vi}</option>)}
             </select>
           </label>
           <label className="vibe-field"><span>Ngày hiệu lực</span><input name="effective_from" type="date" required defaultValue={today} /></label>
           <label className="vibe-field sm:col-span-2"><span>Lý do / căn cứ</span><input name="reason" required /></label>
           <button className="vibe-button vibe-button-primary" type="submit">Thêm vị trí</button>
         </form>
-        <AssignmentHistory rows={face.positions.map(row => ({ id: row.id, label: row.position_code, from: row.effective_from, to: row.effective_to, status: row.status }))} employeeId={employeeId} action={endPosition} />
+        <AssignmentHistory rows={face.positions.map(row => ({ id: row.id, label: positionBadgeLabel(row.position_code) || row.position_code, from: row.effective_from, to: row.effective_to, status: row.status }))} employeeId={employeeId} action={endPosition} />
       </section>
 
       <section className="space-y-3 rounded-xl border border-[var(--vibe-line)] bg-white p-5">

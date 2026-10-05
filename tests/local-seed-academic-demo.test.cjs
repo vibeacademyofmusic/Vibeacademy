@@ -2,7 +2,7 @@ const { test } = require('node:test')
 const assert = require('node:assert/strict')
 const {
   REFUSED, TEST_CODES, FORBIDDEN_SUBJECTS, localUrl, guardedFetch, parseArgs, buildPlan,
-  missingKeys, ownedCurriculumIds, run,
+  missingKeys, ownedCurriculumIds, resolveProgramIdentity, run,
 } = require('../scripts/local-seed-academic-demo.cjs')
 
 function plan() {
@@ -64,6 +64,16 @@ test('S10 second-run idempotent', () => {
   const lessonKeys = catalog.lessons.map(row => `${row.program}|${row.level}|${row.subject}|${row.code}`)
   assert.equal(missingKeys(lessonKeys, lessonKeys).length, 0)
   assert.equal(missingKeys(lessonKeys, lessonKeys.slice(0, 10)).length, 1430)
+})
+
+test('canonical identity is reused and cleanup cannot own it', () => {
+  const rows = [
+    { id: 'piano', code: 'PIANO' },
+    { id: 'legacy', code: 'TEST_PIANO' },
+  ]
+  assert.equal(resolveProgramIdentity(rows, { code: 'TEST_PIANO' }).id, 'piano')
+  assert.deepEqual(ownedCurriculumIds(rows), ['legacy'])
+  assert.deepEqual(ownedCurriculumIds([{ id: 'piano', code: 'PIANO' }]), [])
 })
 
 test('S11 non-test data untouched', () => {

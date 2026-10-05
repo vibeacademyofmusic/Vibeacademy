@@ -7,7 +7,12 @@ export type PortraitInspection =
   | { ok: true; mime: PortraitMime; ext: 'jpg' | 'png' | 'webp'; width: number; height: number }
   | { ok: false; message: string }
 
-const POSITION_CODES = ['VAS', 'VAM', 'VAH'] as const
+export const STAFF_POSITIONS = [
+  { code: 'VAS', vi: 'VAS', en: 'VAS' },
+  { code: 'VAM', vi: 'VAM', en: 'VAM' },
+  { code: 'VAH', vi: 'VAH', en: 'VAH' },
+  { code: 'VIDEOGRAPHER', vi: 'CAM OP', en: 'Camera Operator' },
+] as const
 
 export type PublicCard = {
   fullName: string
@@ -34,7 +39,7 @@ export function teachingBadgeLabel(capacity: string, subjectName: string) {
 }
 
 export function positionBadgeLabel(code: string) {
-  return POSITION_CODES.includes(code as (typeof POSITION_CODES)[number]) ? code : null
+  return STAFF_POSITIONS.find(position => position.code === code)?.vi ?? null
 }
 
 export function isCurrentAssignment(

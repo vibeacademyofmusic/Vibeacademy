@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { useActionState, useState, type ReactNode } from 'react'
 import { saveTeaching } from './actions'
-import { attendanceLabels, progressLabels, summary, journalLabel, sessionLabel, type Workspace, type Participant, type Progress } from './model'
+import { attendanceLabels, progressLabels, progressLabel, summary, journalLabel, sessionLabel, type Workspace, type Participant, type Progress } from './model'
 import { observations } from '@/app/admin/learning-journals/types'
 import { draftHomework, draftProgressNote, lessonContexts } from '@/app/admin/learning-journals/priority'
 import styles from './workspace.module.css'
@@ -16,9 +16,10 @@ function SaveForm({data,p,intent,children}:{data:Workspace;p?:Participant;intent
   </form>
 }
 function ProgressControl({data,p,item,kind,disabled}:{data:Workspace;p:Participant;item:Progress;kind:string;disabled:boolean}) {
-  return <div className={styles.progress}><p>{item.name} <span className={styles.badge}>{progressLabels[item.status]??item.status}</span></p>
+  const lessonLabel = progressLabel(item)
+  return <div className={styles.progress}><p>{lessonLabel} <span className={styles.badge}>{progressLabels[item.status]??item.status}</span></p>
     {item.progress_id && <SaveForm data={data} p={p} intent="progress"><input type="hidden" name="progress_id" value={item.progress_id}/><input type="hidden" name="kind" value={kind}/><input type="hidden" name="expected_status" value={item.status}/>
-      <div className={styles.row}><select name="status" aria-label={`Tiến độ ${item.name}`} defaultValue={item.status} disabled={disabled}>{Object.entries(progressLabels).filter(([key])=>['NOT_STARTED','IN_PROGRESS','PASS','MERIT','DISTINCTION',item.status].includes(key)).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select><button type="submit" disabled={disabled}>Lưu tiến độ</button></div>
+      <div className={styles.row}><select name="status" aria-label={`Tiến độ ${lessonLabel}`} defaultValue={item.status} disabled={disabled}>{Object.entries(progressLabels).filter(([key])=>['NOT_STARTED','IN_PROGRESS','PASS','MERIT','DISTINCTION',item.status].includes(key)).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select><button type="submit" disabled={disabled}>Lưu tiến độ</button></div>
     </SaveForm>}
   </div>
 }

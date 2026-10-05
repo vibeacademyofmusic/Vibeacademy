@@ -40,7 +40,7 @@ test('students page derives current and waiting without a second student table',
   assert.match(students, /count_paused_student_enrollments/)
   assert.match(students, /waiting_placement_summary/)
   assert.match(fs.readFileSync('app/admin/business/crm/model.ts', 'utf8'), /Đã vào ca dạy – chờ bắt đầu/)
-  assert.match(students, /Sắp vào ca dạy/)
+  assert.match(students, /Chờ vào ca dạy/)
   assert.match(students, /Hành trình học thuật đã được ghi từ lúc đăng ký/)
   assert.match(students, /Đổi ca dạy/)
   assert.match(students, /Đang bảo lưu/)

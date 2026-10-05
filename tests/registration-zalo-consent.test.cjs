@@ -17,6 +17,14 @@ function compile(file, mocks) {
 function actions() {
   const calls=[], paths=[]
   const client={auth:{getClaims:async()=>({data:{claims:{sub:'synthetic'}}})},rpc:async(name,args)=>{calls.push({name,args});return{data:'record-id',error:null}}}
+  client.from = table => {
+    assert.equal(table, 'operational_curriculums')
+    return { select() { return this }, eq(key, value) {
+      assert.equal(key, 'id'); this.id = value; return this
+    }, async maybeSingle() {
+      return { data: this.id === '11111111-1111-4111-8111-111111111111' ? { id: this.id } : null, error: null }
+    } }
+  }
   return {calls,paths,actions:compile('app/admin/business/registrations/actions.ts',{
     'next/cache':{revalidatePath:p=>paths.push(p)},'next/navigation':{redirect:url=>{throw Object.assign(Error('redirect'),{url})}},
     '@/lib/supabase/server':{createClient:async()=>client},'@supabase/supabase-js':{},

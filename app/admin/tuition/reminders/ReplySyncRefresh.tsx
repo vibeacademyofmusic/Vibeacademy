@@ -3,11 +3,11 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export function ReplySyncRefresh() {
+export function ReplySyncRefresh({ paused = false }: { paused?: boolean } = {}) {
   const router = useRouter()
   useEffect(() => {
     const refresh = () => {
-      if (document.visibilityState === 'visible') router.refresh()
+      if (!paused && document.visibilityState === 'visible') router.refresh()
     }
     const timer = window.setInterval(refresh, 20000)
     document.addEventListener('visibilitychange', refresh)
@@ -15,6 +15,6 @@ export function ReplySyncRefresh() {
       window.clearInterval(timer)
       document.removeEventListener('visibilitychange', refresh)
     }
-  }, [router])
+  }, [router, paused])
   return null
 }

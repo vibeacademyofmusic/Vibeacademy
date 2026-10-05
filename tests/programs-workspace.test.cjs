@@ -85,7 +85,7 @@ test('N01 N02 N03 N04 curriculum stays one workspace under Đào tạo', () => {
 })
 
 test('P01 P02 program list reads curricula and derives counts', () => {
-  assert.match(data, /\.from\('curriculums'\)/)
+  assert.match(data, /\.from\('operational_curriculums'\)/)
   assert.match(data, /\.from\('curriculum_levels'\)/)
   assert.match(data, /\.from\('curriculum_subjects'\)/)
   assert.match(data, /structureMeta/)

@@ -656,6 +656,10 @@ export async function rescheduleSession(
     ) {
       message = 'This room is already occupied at that time'
     } else if (
+      error.message.includes('two overlapping teaching shifts')
+    ) {
+      message = 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giờ khác.'
+    } else if (
       error.message.includes(
         'A teacher assigned to this class'
       )
@@ -862,6 +866,10 @@ export async function createMakeupSession(
       )
     ) {
       message = 'This room is already occupied at that time'
+    } else if (
+      error.message.includes('two overlapping teaching shifts')
+    ) {
+      message = 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giờ khác.'
     } else if (
       error.message.includes(
         'A teacher assigned to this class'

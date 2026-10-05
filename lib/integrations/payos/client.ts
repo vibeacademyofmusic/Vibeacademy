@@ -172,3 +172,24 @@ export async function readPayosPayment(orderCode: number, env: NodeJS.ProcessEnv
     transactionAmount: Number(transaction.amount),
   }
 }
+
+// Reconcile reserved orders after a timeout or a failed local persistence step.
+// A failed lookup never authorizes another create request.
+export async function readPayosPendingCheckout(input: { orderCode: number; amount: number }, env: NodeJS.ProcessEnv = process.env): Promise<PayosCheckout> {
+  if (!env.PAYOS_CLIENT_ID || !env.PAYOS_API_KEY || !env.PAYOS_CHECKSUM_KEY) throw new Error('PAYOS_NOT_CONFIGURED')
+  const response = await fetch(`${PAYOS_API}/${input.orderCode}`, {
+    headers: { 'x-client-id': env.PAYOS_CLIENT_ID, 'x-api-key': env.PAYOS_API_KEY },
+    signal: AbortSignal.timeout(35_000), cache: 'no-store',
+  })
+  if (!response.ok) throw new Error(`PAYOS_HTTP_${response.status}`)
+  const body = await response.json() as { code?: string; signature?: string; data?: Record<string, unknown> }
+  if (body.code !== '00') throw new Error(`PAYOS_LOOKUP_${/^[0-9]+$/.test(body.code ?? '') ? body.code : 'REJECTED'}`)
+  const data = body.data ?? {}
+  if (!body.signature || !payosSignatureMatches(data, body.signature, env.PAYOS_CHECKSUM_KEY)) throw new Error('PAYOS_SIGNATURE_REJECTED')
+  const id = typeof data.id === 'string' ? data.id : data.paymentLinkId
+  if (data.orderCode !== input.orderCode || data.amount !== input.amount || data.status !== 'PENDING'
+      || data.amountPaid !== 0 || data.amountRemaining !== input.amount
+      || !Array.isArray(data.transactions) || data.transactions.length !== 0
+      || typeof id !== 'string' || !/^[A-Za-z0-9]{8,64}$/.test(id)) throw new Error('PAYOS_RECONCILIATION_REQUIRED')
+  return { ...input, paymentLinkId: id, checkoutUrl: `https://pay.payos.vn/web/${id}`, qrCode: '' }
+}

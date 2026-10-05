@@ -1,0 +1,17 @@
+--- a/handler.cjs
++++ b/handler.cjs
+@@ -1,4 +1,5 @@
+ const { relayRequest, MAX_BODY_BYTES } = require('./relay.cjs')
++const { webhookUpstream } = require('./pilot-routing.cjs')
+ 
+ async function readLimited(req, maxBytes) {
+   const chunks = []
+@@ -30,7 +31,7 @@
+     headers,
+     body: req.method === 'GET' || req.method === 'HEAD' ? undefined : body,
+   })
+-  const result = await relayRequest(request, env.PREVIEW_WEBHOOK_UPSTREAM, fetchImpl)
++  const result = await relayRequest(request, webhookUpstream(new URL(request.url).pathname, env), fetchImpl)
+   res.statusCode = result.status
+   res.setHeader('content-type', result.headers.get('content-type') || 'application/json')
+   res.end(Buffer.from(await result.arrayBuffer()))

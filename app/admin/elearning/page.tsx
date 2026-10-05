@@ -10,7 +10,7 @@ export default async function LearningAdmin({searchParams}:{searchParams:Promise
   const [versions,levels,curriculums,grants]=await Promise.all([
     db.from('learning_versions').select('id,title,version,state,source_scope').order('created_at',{ascending:false}).order('id').range((page-1)*25,page*25),
     db.from('curriculum_levels').select('id,name,curriculum_id').eq('status','ACTIVE').order('sequence_no').limit(500),
-    db.from('curriculums').select('id,name').eq('status','ACTIVE').order('name').limit(500),
+    db.from('operational_curriculums').select('id,name').order('name').limit(500),
     db.from('learning_access_grants').select('id,enrollment_id,valid_from,valid_until,revoked_at,reason').order('created_at',{ascending:false}).order('id').range((page-1)*25,page*25),
   ])
   const levelOptions=levels.data?.map(l=><option key={l.id} value={l.id}>{curriculums.data?.find(c=>c.id===l.curriculum_id)?.name} — {l.name}</option>)

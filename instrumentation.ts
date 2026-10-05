@@ -10,10 +10,18 @@ export async function register() {
       })
     } catch { /* Durable pending events remain available for the independent scheduler. */ }
     if (process.env.ZALO_GATEWAY_SSH_HOST?.trim()) {
-      try {
+      const gateway = globalThis as typeof globalThis & { __vibeZaloGatewayApply?: ReturnType<typeof setInterval> }
+      if (!gateway.__vibeZaloGatewayApply) {
         const { applyGatewayClicks } = await import('./scripts/zalo/apply-gateway-clicks.cjs')
-        await applyGatewayClicks(process.env)
-      } catch { /* The Vietnam gateway keeps the event until a later apply succeeds. */ }
+        const interval = Number(process.env.ZALO_GATEWAY_APPLY_INTERVAL_MS || 15000)
+        const run = () => {
+          try { applyGatewayClicks(process.env) } catch {
+            console.error(JSON.stringify({ component: 'zalo_gateway_apply', outcome: 'failed' }))
+          }
+        }
+        run()
+        if (interval >= 15000) gateway.__vibeZaloGatewayApply = setInterval(run, interval)
+      }
     }
   }
 

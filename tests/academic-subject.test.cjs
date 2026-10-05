@@ -39,7 +39,7 @@ for (const rule of ['DIRECT_ASSESSMENT', 'MANUAL']) test(`edit form displays exp
   assert.match(html, rule === 'DIRECT_ASSESSMENT' ? /value="DIRECT_ASSESSMENT" selected=""/ : /selected="" value=""|value=""[^>]*selected=""/)
 })
 test('assign action forwards inputs and exposes validation failure without success', async () => {
-  const h = harness({}, { message: 'A required subject has no required active components' })
+  const h = harness({ operational_curriculums: [{ id: id(1), code: 'PIANO', status: 'ACTIVE' }] }, { message: 'A required subject has no required active components' })
   const result = await redirected(h.load('../students/actions.ts').assignStudentAcademicProgram, { student_id: id(4), curriculum_id: id(1), level_id: id(2), started_at: '2026-09-01', is_primary: 'on' })
   assert.equal(result.searchParams.get('error'), 'A required subject has no required active components')
   assert.ok(!result.searchParams.has('success'))

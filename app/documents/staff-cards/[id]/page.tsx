@@ -32,7 +32,7 @@ export default async function StaffCardPage({
       <CardActions backHref={`/admin/employees?selected=${id}`} />
       {query.created ? <p className="document-actions text-sm text-[var(--vibe-navy)]">Hồ sơ đã được lưu. Thẻ dưới đây lấy từ dữ liệu vừa ghi.</p> : null}
       {query.error ? <p className="document-actions text-sm text-[var(--vibe-red)]" role="alert">{query.error}</p> : null}
-      <NameCard card={face.facts} portraitUrl={face.portraitUrl} />
+      <NameCard employeeId={id} card={face.facts} portraitUrl={face.portraitUrl} />
     </div>
   )
 }

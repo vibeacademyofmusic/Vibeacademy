@@ -27,7 +27,7 @@ function placementMessage(error: string) {
   if (error.includes('PLACEMENT_REQUEST_REUSED')) return 'Yêu cầu đã được dùng cho thao tác khác. Hãy tải lại hồ sơ.'
   if (error.includes('PLACEMENT_SCHEDULE_UNKNOWN')) return 'Chưa đủ dữ liệu lịch, phòng hoặc phân công giáo viên để kiểm tra xung đột.'
   if (error.includes('PLACEMENT_STUDENT_CONFLICT')) return 'Học viên đã có lịch học trùng thời gian.'
-  if (error.includes('PLACEMENT_TEACHER_CONFLICT')) return 'Giáo viên có ca dạy trùng thời gian.'
+  if (error.includes('PLACEMENT_TEACHER_CONFLICT')) return 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn ca khác hoặc đổi lịch.'
   if (error.includes('PLACEMENT_ROOM_CONFLICT')) return 'Phòng học đã có lịch trùng thời gian.'
   if (error.includes('PLACEMENT_UNAUTHORIZED')) return 'Bạn không có quyền xác nhận học viên vào ca dạy tại chi nhánh này.'
   if (error.includes('PLACEMENT_PROGRAM_DENIED')) return 'Ca dạy không cùng chương trình với hồ sơ đăng ký.'

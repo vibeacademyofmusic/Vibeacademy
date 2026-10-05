@@ -16,4 +16,5 @@ test('open screen refreshes every 20 seconds while visible and on return; unmoun
   documentMock.visibilityState='hidden'; tick(); assert.equal(refreshes,1)
   documentMock.visibilityState='visible'; events.get('visibilitychange')(); assert.equal(refreshes,2)
   cleanup(); assert.ok(cleared); assert.equal(events.size,0)
+  loaded.exports.ReplySyncRefresh({paused:true}); tick(); events.get('visibilitychange')(); assert.equal(refreshes,2); cleanup()
 })

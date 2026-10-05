@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { isCanonicalProgramCode } from '@/lib/academic/canonical-programs'
 import { createClient } from '@/lib/supabase/server'
 import { lessonCodeValid, lessonWriteError, missingLessonParentMessage, normalizeLessonCode } from '@/app/admin/academic/lesson-rules'
 
@@ -49,6 +50,12 @@ export async function createCurriculum(formData: FormData) {
   if (!/^[A-Z0-9_-]{2,30}$/.test(code)) {
     redirect(
       '/admin/academic?error=Curriculum%20code%20must%20contain%20only%20letters%2C%20numbers%2C%20_%20or%20-'
+    )
+  }
+
+  if (!isCanonicalProgramCode(code)) {
+    redirect(
+      '/admin/academic?error=Ch%E1%BB%89%20b%E1%BB%91n%20ch%C6%B0%C6%A1ng%20tr%C3%ACnh%20Piano%2C%20Guitar%2C%20Violin%20v%C3%A0%20Tr%E1%BB%91ng%20%C4%91%C6%B0%E1%BB%A3c%20d%C3%B9ng%20cho%20v%E1%BA%ADn%20h%C3%A0nh.'
     )
   }
 

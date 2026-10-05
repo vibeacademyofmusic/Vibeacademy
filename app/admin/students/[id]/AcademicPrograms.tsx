@@ -1,3 +1,5 @@
+import VideoLinks from '@/app/_components/academic-video-links/VideoLinks'
+import { loadVideoLinks } from '@/app/_components/academic-video-links/data'
 import { displayLabel } from '@/lib/display'
 
 import { createClient } from '@/lib/supabase/server'
@@ -94,11 +96,9 @@ async function AddProgram({ student }: { student: { id: string } }) {
 
   const { data: activeCurriculums, error: activeCurriculumsError } = await supabase
 
-  .from('curriculums')
+  .from('operational_curriculums')
 
   .select('id, code, name')
-
-  .eq('status', 'ACTIVE')
 
   .order('name')
 
@@ -127,6 +127,7 @@ return <AddAcademicProgramForm student={student} activeCurriculums={activeCurric
 async function ProgramJourney({ student, enrollment }: { student: { id: string }; enrollment: Enrollment }) {
 
   const supabase = await createClient()
+  const videoContext = await loadVideoLinks(student.id, enrollment.id)
 
   const { data: curriculum, error: curriculumError } = await supabase
 
@@ -556,6 +557,8 @@ return (<div className="space-y-5">            <div className="rounded-xl border
     <span className="ml-2 text-sm text-gray-500">{displayLabel(enrollment.status)}</span>
 
   </p>
+
+  <div className="mt-4"><VideoLinks studentId={student.id} enrollmentId={enrollment.id} context={videoContext}/></div>
 
   <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
 

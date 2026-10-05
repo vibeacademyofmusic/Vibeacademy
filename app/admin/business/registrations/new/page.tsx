@@ -14,7 +14,7 @@ export default async function NewRegistrationPage({ searchParams }: { searchPara
   const [{ data: branches, error: branchError }, { data: lead }, { data: curriculums, error: curriculumError }, { data: levels, error: levelError }] = await Promise.all([
     db.from('branches').select('id, name').eq('status', 'ACTIVE').order('name'),
     leadId ? db.from('crm_leads').select('id, branch_id, status, full_name, phone, parent_name, student_name, student_date_of_birth').eq('id', leadId).maybeSingle() : Promise.resolve({ data: null }),
-    db.from('curriculums').select('id, name').eq('status', 'ACTIVE').order('name'),
+    db.from('operational_curriculums').select('id, name').order('name'),
     db.from('curriculum_levels').select('id, curriculum_id, name, sequence_no').eq('status', 'ACTIVE').order('sequence_no'),
   ])
   const loadError = branchError || curriculumError || levelError

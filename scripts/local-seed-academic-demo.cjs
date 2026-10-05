@@ -5,6 +5,19 @@ const { createClient } = require('@supabase/supabase-js')
 
 const REFUSED = 'REFUSED: local academic demo seed can only run against local Supabase.'
 const TEST_CODES = ['TEST_GUITAR', 'TEST_PIANO', 'TEST_DRUMS', 'TEST_VIOLIN']
+const CANONICAL_CODES = ['PIANO', 'GUITAR', 'VIOLIN', 'DRUMS']
+const CANONICAL_BY_LEGACY = {
+  TEST_GUITAR: 'GUITAR',
+  TEST_PIANO: 'PIANO',
+  TEST_DRUMS: 'DRUMS',
+  TEST_VIOLIN: 'VIOLIN',
+}
+const CANONICAL_NAMES = {
+  GUITAR: 'Guitar',
+  PIANO: 'Piano',
+  VIOLIN: 'Violin',
+  DRUMS: 'Trống',
+}
 const PROGRAMS = [
   { code: 'TEST_GUITAR', name: 'Guitar' },
   { code: 'TEST_PIANO', name: 'Piano' },
@@ -164,7 +177,12 @@ function missingKeys(desired, existing) {
 }
 
 function ownedCurriculumIds(rows) {
-  return rows.filter(row => TEST_CODES.includes(row.code)).map(row => row.id)
+  return rows.filter(row => TEST_CODES.includes(row.code) && !CANONICAL_CODES.includes(row.code)).map(row => row.id)
+}
+
+function resolveProgramIdentity(curricula, spec) {
+  const canonicalCode = CANONICAL_BY_LEGACY[spec.code]
+  return curricula.find(row => row.code === canonicalCode || row.code === spec.code) ?? null
 }
 
 function printCounts(log, counts) {
@@ -218,20 +236,26 @@ async function seed(client, log) {
   if (courseError) throw dbError(courseError)
 
   const programs = []
+  const skipped = []
   for (const spec of PROGRAMS) {
-    const found = curricula.find(row => row.code === spec.code)
+    const found = resolveProgramIdentity(curricula, spec)
     if (found) {
-      programs.push(found)
+      skipped.push(found.code)
       continue
     }
-    const nameTaken = curricula.some(row => row.name === spec.name)
-    const name = nameTaken ? `${spec.name} — Test` : spec.name
+    const canonicalCode = CANONICAL_BY_LEGACY[spec.code]
     const { data, error } = await client.from('curriculums').insert({
-      code: spec.code, name, status: 'ACTIVE',
+      code: canonicalCode,
+      name: CANONICAL_NAMES[canonicalCode],
+      status: 'ACTIVE',
     }).select('id, code, name, status').single()
     if (error) throw dbError(error)
     curricula.push(data)
     programs.push(data)
+  }
+  if (!programs.length) {
+    log(`Canonical programs already exist (${skipped.join(', ')}). No parallel catalog was created.`)
+    return { programs: skipped.length, levels: 0, subjects: 0, components: 0, lessons: 0, created: 0 }
   }
 
   const programIds = programs.map(row => row.id)
@@ -440,7 +464,9 @@ async function retireOwned(client, programIds) {
 
 async function cleanup(client, log) {
   const curricula = await loadAll(() => client.from('curriculums').select('id, code'))
+  const canonicalIds = new Set(curricula.filter(row => CANONICAL_CODES.includes(row.code)).map(row => row.id))
   const ids = ownedCurriculumIds(curricula)
+  if (ids.some(id => canonicalIds.has(id))) throw new Error('Refusing to delete a canonical program.')
   if (!ids.length) {
     printCounts(log, { programs: 0, levels: 0, subjects: 0, components: 0, lessons: 0 })
     return { removed: 0, retired: 0 }
@@ -486,6 +512,6 @@ if (require.main === module) main().catch(error => {
 })
 
 module.exports = {
-  REFUSED, TEST_CODES, FORBIDDEN_SUBJECTS, localUrl, guardedFetch, parseArgs, buildPlan,
-  missingKeys, ownedCurriculumIds, run,
+  REFUSED, TEST_CODES, CANONICAL_CODES, FORBIDDEN_SUBJECTS, localUrl, guardedFetch, parseArgs, buildPlan,
+  missingKeys, ownedCurriculumIds, resolveProgramIdentity, run,
 }

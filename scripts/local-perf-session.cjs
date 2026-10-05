@@ -16,7 +16,8 @@ async function main() {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { fetch: guardedFetch(url) },
   })
-  const email = 'admin@vibe.local'
+  // Performance fixtures must never reset the owner's local admin password.
+  const email = 'perf-audit-admin@vibe.local'
   const password = 'LocalPerfAudit-Admin-2026!'
   let user
   for (let page = 1; ; page++) {

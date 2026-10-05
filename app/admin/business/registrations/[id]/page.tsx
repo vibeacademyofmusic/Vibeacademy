@@ -88,7 +88,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   const stepIndex = app.status === 'COMPLETED' ? 5 : steps.indexOf(progress)
   const intakeCatalogs = app.status === 'DRAFT' ? await Promise.all([
     db.from('branches').select('id, name').eq('status', 'ACTIVE').order('name'),
-    db.from('curriculums').select('id, name').eq('status', 'ACTIVE').order('name'),
+    db.from('operational_curriculums').select('id, name').order('name'),
     db.from('curriculum_levels').select('id, curriculum_id, name').eq('status', 'ACTIVE').order('sequence_no'),
   ]) : null
 
@@ -143,7 +143,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             </form>}
           </SectionCard>
           <SectionCard title="Bước tiếp theo">
-            {app.status === 'DRAFT' && intakeCatalogs && <CounterForm branches={intakeCatalogs[0].data ?? []} lead={null} curriculums={intakeCatalogs[1].data ?? []} levels={intakeCatalogs[2].data ?? []} today={vietnamToday()} existing={app} consentPhone={phone?.consent_present ? app.zalo_phone : null} />}
+            {app.status === 'DRAFT' && intakeCatalogs && <CounterForm branches={intakeCatalogs[0].data ?? []} lead={null} curriculums={[...(intakeCatalogs[1].data ?? []), ...(app.curriculum_id && curriculum?.name && !(intakeCatalogs[1].data ?? []).some(item => item.id === app.curriculum_id) ? [{ id: app.curriculum_id, name: `${curriculum.name} (hồ sơ lịch sử)` }] : [])]} levels={intakeCatalogs[2].data ?? []} today={vietnamToday()} existing={app} consentPhone={phone?.consent_present ? app.zalo_phone : null} />}
             {app.status === 'DRAFT' && <ActionForm action={transitionRegistration} hidden={hidden} name="SUBMIT" label="Nộp hồ sơ" />}
             {app.status === 'SUBMITTED' && <ActionForm action={transitionRegistration} hidden={hidden} name="VERIFY" label="Xác minh hồ sơ" />}
             {app.status === 'DRAFT' && <p className="text-sm text-slate-600">Lưu bản nháp chưa tạo học viên và chưa phải đăng ký thành công.</p>}
