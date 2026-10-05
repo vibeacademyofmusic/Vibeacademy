@@ -16,7 +16,7 @@ function buildMigration() {
   return `-- Guitar Pre Grade: Classical Guitar Method Volumes 1 and 2.
 -- Renames the existing method and repertoire subjects when that catalog is already present.
 -- A database without GUITAR keeps this function and does not invent a second program.
-${buildFunctionSql()}
+${buildFunctionSql().trimEnd()}
 `
 }
 
