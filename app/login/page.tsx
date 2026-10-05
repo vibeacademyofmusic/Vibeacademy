@@ -78,6 +78,9 @@ export default async function LoginPage({
             Sign in
           </button>
         </form>
+        <p className="mt-4 text-center text-sm">
+          <a className="underline" href="/login/recover">Thiết lập hoặc đặt lại mật khẩu</a>
+        </p>
 
         <p className="mt-8 text-center text-xs text-gray-400">
           Vibe Academy of Music & Cinema
