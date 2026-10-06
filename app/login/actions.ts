@@ -57,6 +57,10 @@ export async function login(formData: FormData) {
         redirect('/admin/students')
       }
     }
+    if (!branchAdmin && !roles[2].error && roles[2].data === true) {
+      revalidatePath('/', 'layout')
+      redirect('/operations/teacher')
+    }
     if (roles.slice(1).some(role => !role.error && role.data === true)) {
       revalidatePath('/', 'layout')
       redirect('/operations')

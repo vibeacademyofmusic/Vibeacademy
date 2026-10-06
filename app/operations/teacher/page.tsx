@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { displayLabel } from '@/lib/display'
-import { logout } from '@/app/login/actions'
 
 const tabs = { schedule: 'Lịch dạy', classes: 'Lớp đang phụ trách', history: 'Buổi đã thực dạy', journals: 'Nhật ký được phép xem', feedback: 'Tổng hợp phản hồi' }
 type Tab = keyof typeof tabs
@@ -26,17 +25,16 @@ export default async function TeacherPortal({ searchParams }: { searchParams: Pr
   const data = result.data || [], entries = data.slice(0, 25)
   const href = (nextPage: number, nextTab = tab) => `/operations/teacher?${new URLSearchParams({ tab: nextTab, page: String(nextPage) })}`
   return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-5 p-4 sm:p-8">
-    <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold">Không gian giáo viên</h1><form action={logout}><button className="rounded border px-4 py-2">Đăng xuất</button></form></header>
-    <Link prefetch={false} href="/notifications">Thông báo của tôi</Link>
-    <div className="flex flex-wrap gap-4"><Link prefetch={false} href="/operations">Học viên trong phân công hiện tại</Link><Link prefetch={false} href="/my-payroll">Bảng lương của tôi</Link></div>
+    <h1 className="text-2xl font-bold">Không gian giáo viên</h1>
+    <div className="flex flex-wrap gap-4 text-sm"><Link prefetch={false} href="/my-payroll">Bảng lương của tôi</Link><Link prefetch={false} href="/notifications">Thông báo của tôi</Link></div>
     <p className="text-sm">Lịch và lịch sử dựa trên giáo viên thực dạy. Khi kết thúc phân công, bạn chỉ giữ quyền xem buổi đã thực dạy và nhật ký mình viết.</p>
-    <nav aria-label="Giáo viên" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} href={href(1, key as Tab)} aria-current={tab === key ? 'page' : undefined} className={`rounded border px-3 py-2 ${tab === key ? 'bg-slate-900 text-white' : ''}`}>{title}</Link>)}</nav>
+    <nav aria-label="Giáo viên" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} href={href(1, key as Tab)} aria-current={tab === key ? 'page' : undefined} className={`rounded-lg border px-3 py-2 text-sm font-medium !no-underline ${tab === key ? 'border-slate-900 bg-slate-900 !text-white' : 'border-gray-300 bg-white !text-gray-700 hover:bg-gray-50'}`}>{title}</Link>)}</nav>
     <h2 className="text-xl font-semibold">{tabs[tab]}</h2>
     {!entries.length && <p>Chưa có dữ liệu được phép xem trong mục này.</p>}
-    {['schedule', 'history'].includes(tab) && (entries as Session[]).map(s => <article key={s.session_id} className="rounded border p-4"><h3>{s.class_name}</h3><p>{time(s.starts_at)} – {time(s.ends_at)} · {s.room_name ?? 'Chưa xếp phòng'} · {s.roster_count} học viên</p><p>{displayLabel(s.status)}</p><Link prefetch={false} href={`/operations/teacher/sessions/${s.session_id}`}>{s.status === 'SCHEDULED' ? 'Mở ca dạy' : 'Xem ca dạy'}</Link></article>)}
-    {tab === 'classes' && (entries as Class[]).map(c => <article key={c.class_id} className="rounded border p-4">{c.code} — {c.name}</article>)}
-    {tab === 'journals' && (entries as Journal[]).map(j => <article key={j.journal_id} className="space-y-2 rounded border p-4"><h3 className="font-semibold">{j.class_name} — {time(j.starts_at)}</h3>{j.is_author && <p>Nhật ký do bạn viết</p>}<p className="whitespace-pre-wrap">{j.content}</p>{j.repertoire && <p>Tác phẩm: {j.repertoire}</p>}{j.skills && <p>Kỹ năng: {j.skills}</p>}{j.homework && <p>Bài tập: {j.homework}</p>}</article>)}
-    {tab === 'feedback' && <><p className="text-sm">Tổng hợp phản hồi về buổi bạn thực dạy. Phản hồi không tự động thay đổi lương.</p>{(entries as Feedback[]).map(f => <article key={f.month} className="rounded border p-4">{f.month.slice(0, 7)} — {f.response_count} phản hồi · Trung bình {f.overall_average}/5</article>)}</>}
+    {['schedule', 'history'].includes(tab) && (entries as Session[]).map(s => <article key={s.session_id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"><h3>{s.class_name}</h3><p>{time(s.starts_at)} – {time(s.ends_at)} · {s.room_name ?? 'Chưa xếp phòng'} · {s.roster_count} học viên</p><p>{displayLabel(s.status)}</p><Link prefetch={false} href={`/operations/teacher/sessions/${s.session_id}`}>{s.status === 'SCHEDULED' ? 'Mở ca dạy' : 'Xem ca dạy'}</Link></article>)}
+    {tab === 'classes' && (entries as Class[]).map(c => <article key={c.class_id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">{c.code} — {c.name}</article>)}
+    {tab === 'journals' && (entries as Journal[]).map(j => <article key={j.journal_id} className="space-y-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"><h3 className="font-semibold">{j.class_name} — {time(j.starts_at)}</h3>{j.is_author && <p>Nhật ký do bạn viết</p>}<p className="whitespace-pre-wrap">{j.content}</p>{j.repertoire && <p>Tác phẩm: {j.repertoire}</p>}{j.skills && <p>Kỹ năng: {j.skills}</p>}{j.homework && <p>Bài tập: {j.homework}</p>}</article>)}
+    {tab === 'feedback' && <><p className="text-sm">Tổng hợp phản hồi về buổi bạn thực dạy. Phản hồi không tự động thay đổi lương.</p>{(entries as Feedback[]).map(f => <article key={f.month} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">{f.month.slice(0, 7)} — {f.response_count} phản hồi · Trung bình {f.overall_average}/5</article>)}</>}
     <nav aria-label="Phân trang" className="flex gap-4">{page > 1 && <Link prefetch={false} href={href(page - 1)}>Trang trước</Link>}{data.length > 25 && page < 4001 && <Link prefetch={false} href={href(page + 1)}>Trang tiếp</Link>}</nav>
   </main>
 }
