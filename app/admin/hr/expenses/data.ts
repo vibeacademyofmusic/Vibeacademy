@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { pageNumber, pageSize, uuidPattern, type Params } from '../../finance/operations'
+import { pageNumber, pageSize, uuidPattern, vietnamDateTime, type Params } from '../../finance/operations'
 import { expenseStates, type ClaimDetail, type ClaimListItem, type CreateContext } from './model'
 
 export async function loadExpenses(params: Params, forEmployee = false) {
@@ -25,6 +25,7 @@ export async function loadExpenses(params: Params, forEmployee = false) {
   ]) : [null, null, null]
   return {
     page, claims,
+    currentMonth: vietnamDateTime().slice(0, 7),
     listError: claimsResult.error ? 'Không xác nhận được danh sách bảng kê.' : null,
     context,
     contextError: contextResult.error
