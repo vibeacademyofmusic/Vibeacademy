@@ -17,7 +17,7 @@ import {
   buildQuery,
 } from '@/app/admin/_components/vibe'
 import { businessDate, shiftBusinessDate } from '@/app/admin/_lib/business-date'
-import { createClient } from '@/lib/supabase/server'
+import { requestClient, requestRole } from '@/lib/auth/request'
 import { assignPlacement, cancelPlacement, changePlacement } from './placement-actions'
 import { placementLabel } from '@/app/admin/business/crm/model'
 import { StudentOpsHub } from './hub'
@@ -82,7 +82,7 @@ type StudentsPageProps = {
               filter={params.filter ?? 'ALL'}
               page={pageNumber(params.page)}
               shiftPage={pageNumber(params.class_page)}
-              canOpenStudent={(await (await createClient()).rpc('has_role', { role_code: 'SUPER_ADMIN' })).data === true}
+              canOpenStudent={(await requestRole('SUPER_ADMIN')).data === true}
               earliestStart={shiftBusinessDate(businessDate(), 1)}
               hrefBuilder={waitingHref}
             />
@@ -103,8 +103,8 @@ type StudentsPageProps = {
     const page = pageNumber(params.page)
     const lifecycle = params.lifecycle === 'future' || params.lifecycle === 'paused' ? params.lifecycle : 'active'
   
-    const supabase = await createClient()
-    const { data: isSuperAdmin } = await supabase.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+    const supabase = await requestClient()
+    const { data: isSuperAdmin } = await requestRole('SUPER_ADMIN')
     const showRecords = params.view === 'records' && isSuperAdmin === true
 
     const branchesQuery = showRecords ? supabase
@@ -697,7 +697,7 @@ async function StudentPlacementBoard({
   earliestStart: string
   hrefBuilder: (patch?: Record<string, string | undefined>) => string
 }) {
-  const db = await createClient()
+  const db = await requestClient()
   let classQuery = db.from('classes').select('id,name,branch_id').eq('status', 'ACTIVE').order('name').limit(200)
   if (branch) classQuery = classQuery.eq('branch_id', branch)
   const [{ data: classRows }, { data: teacherOptions }, { data: branchOptions }, { data: placementClasses }, { data: curriculumOptions }] = await Promise.all([

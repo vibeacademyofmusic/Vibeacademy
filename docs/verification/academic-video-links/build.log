@@ -1,0 +1,139 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+▲ Next.js 16.3.3 (webpack)
+✓ Running next.config.ts took 55ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.6s
+  Running TypeScript ...
+  Finished TypeScript in 2.9s ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/83) ...
+  Generating static pages using 8 workers (20/83)
+  Generating static pages using 8 workers (41/83)
+  Generating static pages using 8 workers (62/83)
+✓ Generating static pages using 8 workers (83/83) in 361ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /admin/academic
+├ ƒ /admin/academic/[id]
+├ ƒ /admin/academic/[id]/edit
+├ ƒ /admin/academic/[id]/levels/[levelId]
+├ ƒ /admin/academic/[id]/levels/[levelId]/edit
+├ ƒ /admin/academic/[id]/levels/[levelId]/subjects/[subjectId]
+├ ƒ /admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/components/[componentId]/edit
+├ ƒ /admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/edit
+├ ƒ /admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/lessons/[itemId]
+├ ƒ /admin/academic/pause-requests
+├ ƒ /admin/attendance
+├ ƒ /admin/attendance/[id]
+├ ƒ /admin/attendance/retention
+├ ƒ /admin/branches
+├ ƒ /admin/branches/[id]
+├ ƒ /admin/business
+├ ƒ /admin/business/after-sales
+├ ƒ /admin/business/campaigns
+├ ƒ /admin/business/crm
+├ ƒ /admin/business/crm/[id]
+├ ƒ /admin/business/instrument-customers
+├ ƒ /admin/business/marketing
+├ ƒ /admin/business/reactivation
+├ ƒ /admin/business/registrations
+├ ƒ /admin/business/registrations/[id]
+├ ƒ /admin/business/registrations/new
+├ ƒ /admin/business/reports
+├ ƒ /admin/classes
+├ ƒ /admin/classes/[id]
+├ ƒ /admin/courses
+├ ƒ /admin/courses/[id]/edit
+├ ƒ /admin/elearning
+├ ƒ /admin/elearning/[id]
+├ ƒ /admin/elearning/analytics
+├ ƒ /admin/elearning/assessments
+├ ƒ /admin/elearning/notation
+├ ƒ /admin/elearning/reconciliation
+├ ƒ /admin/elearning/theory
+├ ƒ /admin/employees
+├ ƒ /admin/employees/[id]/compensation
+├ ƒ /admin/employees/attendance
+├ ƒ /admin/employees/leave-policies
+├ ƒ /admin/employees/leave-requests
+├ ƒ /admin/enrollments/[id]/pauses
+├ ƒ /admin/enrollments/[id]/tuition
+├ ƒ /admin/feedback
+├ ƒ /admin/feedback/[id]
+├ ƒ /admin/finance
+├ ƒ /admin/finance/credits
+├ ƒ /admin/finance/invoices
+├ ƒ /admin/finance/operating-expenses
+├ ƒ /admin/finance/payments
+├ ƒ /admin/finance/receivables
+├ ƒ /admin/finance/refunds
+├ ƒ /admin/hr
+├ ƒ /admin/hr/attendance
+├ ƒ /admin/hr/expenses
+├ ƒ /admin/hr/payslips
+├ ƒ /admin/hr/retroactive-pay
+├ ƒ /admin/hr/teaching
+├ ƒ /admin/hr/templates
+├ ƒ /admin/instruments
+├ ƒ /admin/inventory
+├ ƒ /admin/migration
+├ ƒ /admin/notifications
+├ ƒ /admin/payroll
+├ ƒ /admin/payroll/[period]
+├ ƒ /admin/payroll/[period]/[teacher]
+├ ƒ /admin/programs
+├ ƒ /admin/reports/learning
+├ ƒ /admin/reports/learning/[id]
+├ ƒ /admin/reports/learning/demo
+├ ƒ /admin/rooms
+├ ƒ /admin/schedule
+├ ƒ /admin/session-teachers
+├ ƒ /admin/students
+├ ƒ /admin/students/[id]
+├ ƒ /admin/system/integrations
+├ ƒ /admin/system/integrations/zalo
+├ ƒ /admin/teachers
+├ ƒ /admin/teachers/[id]
+├ ƒ /admin/tuition
+├ ƒ /admin/tuition/reminders
+├ ƒ /api/health/supabase
+├ ƒ /api/integrations/momo/ipn
+├ ƒ /api/integrations/payos/webhook
+├ ƒ /api/integrations/zalo/oauth/callback
+├ ƒ /api/integrations/zalo/oauth/start
+├ ƒ /api/integrations/zalo/webhook
+├ ƒ /api/internal/zalo/maintenance
+├ ƒ /attendance/scan
+├ ƒ /documents/finance/[kind]/[id]
+├ ƒ /documents/finance/management-report
+├ ƒ /documents/payslips/[id]
+├ ƒ /documents/staff-cards/[id]
+├ ƒ /documents/students/movement
+├ ƒ /finance
+├ ƒ /finance/payroll/[period]
+├ ƒ /learn
+├ ƒ /learn/assessments/[id]
+├ ƒ /login
+├ ƒ /my-attendance
+├ ƒ /my-expenses
+├ ƒ /my-learning
+├ ƒ /my-learning/conversations/[kind]/[id]
+├ ƒ /my-learning/reports/[id]/pdf
+├ ƒ /my-payroll
+├ ƒ /notifications
+├ ƒ /operations
+├ ƒ /operations/teacher
+├ ƒ /operations/teacher/sessions/[id]
+└ ƒ /operations/teacher/students/[id]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

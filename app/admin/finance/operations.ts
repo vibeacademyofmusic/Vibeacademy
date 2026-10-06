@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
+import { requestClaims, requestClient, requestRole } from '@/lib/auth/request'
 
 export const invoiceStatuses = ['DRAFT', 'ISSUED', 'CANCELLED']
 export const debtStatuses = ['OVERDUE', 'UNPAID', 'PARTIALLY_PAID', 'PAID']
@@ -20,16 +20,16 @@ export function vietnamDateTime(now = new Date()) {
   return parts.replace(' ', 'T')
 }
 export async function adminClient() {
-  const db = await createClient()
-  const { data, error } = await db.auth.getClaims()
+  const db = await requestClient()
+  const { data, error } = await requestClaims()
   if (error || !data?.claims) redirect('/login')
-  const role = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const role = await requestRole('SUPER_ADMIN')
   if (role.error || role.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
   return db
 }
 export async function signedInClient() {
-  const db = await createClient()
-  const { data, error } = await db.auth.getClaims()
+  const db = await requestClient()
+  const { data, error } = await requestClaims()
   if (error || !data?.claims) redirect('/login')
   return db
 }

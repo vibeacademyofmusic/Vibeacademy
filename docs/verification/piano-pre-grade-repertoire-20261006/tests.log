@@ -1,0 +1,21 @@
+✔ 100 exact ordered lessons, source-page coverage, distinct shared-page scopes and challenge placement (6.198833ms)
+✔ replacement retains historical subject/children/progress and makes two distinct optional manual subjects; rerun is unchanged (5000.087167ms)
+✔ conflicting existing book content refuses import and rolls back without overwriting or duplicate rows (4048.685167ms)
+✔ Book B preserves all 50 authored entries and all source pages except duplicate 49 (11.61375ms)
+✔ import reuses ten draft IDs, adds 40 and preserves progression; rerun changes nothing (4679.981333ms)
+✔ existing authored draft refuses import and rolls back (3756.005083ms)
+✔ query failure in curriculum_subjects cannot be rendered as academic readiness or zero lessons (589.062291ms)
+✔ query failure in curriculum_subject_components cannot be rendered as academic readiness or zero lessons (498.982792ms)
+✔ query failure in curriculum_component_items cannot be rendered as academic readiness or zero lessons (124.778166ms)
+✔ level counts exclude inactive parent content and keeps unpublished subjects visible (127.082667ms)
+✔ 2A shows exact lesson scope and separates VIBE syllabus page from source scan pages (503.535ms)
+✔ 2B shows exact lesson scope and separates VIBE syllabus page from source scan pages (282.681125ms)
+✔ retired historical subject is removed from main table but remains accessible with all-subject filter (287.360042ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9375.31925

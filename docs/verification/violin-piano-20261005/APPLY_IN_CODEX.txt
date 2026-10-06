@@ -1,0 +1,32 @@
+Mở Codex trên Mac tại /Users/macbookair/vibe-academy-system, đính kèm gói này và yêu cầu thực hiện các bước dưới đây. Không dán nguyên văn hướng dẫn này vào Terminal.
+
+Execute this local curriculum import, not just a review or a plan.
+
+1. Read AGENTS.md, RESULT.txt, and violin-piano-curriculum.patch. Inspect the current HEAD, branch and working tree. Preserve all unrelated work. This patch was prepared against 4f921bea1a241453caf9b34c87eb71bd60303e5a. Do not check out or reset to that commit. Do not cherry-pick a remote-workspace-only commit.
+
+2. Identify the actual process/CWD serving port 3000 and its effective Supabase connection. Compare it with this project's .env.local and Supabase status. Keep the same port and database. If local Supabase is missing or unavailable, report that blocker; do not substitute a new database, reset, or restore a backup under this task.
+
+3. Run git apply --check on the attached patch, then apply it. If the current project already contains overlapping files or the PGlite dependency from the earlier video patch, integrate only missing changes; do not duplicate or downgrade dependencies. Resolve conflicts against the actual current code without overwriting unrelated work. Install dependencies using the resulting lockfile if necessary.
+
+4. Run:
+   node --test --test-concurrency=1 tests/violin-piano-curriculum.test.cjs tests/curriculum-four-programs-plan.test.cjs
+   npx eslint scripts/curriculum-violin-piano-plan.cjs scripts/local-violin-piano-curriculum.cjs tests/violin-piano-curriculum.test.cjs tests/helpers/curriculum-authoring-db.cjs
+   git diff --check
+
+5. Inspect actual official vs TEST_* programs and their level/subject/component identities. Do not convert demo trees silently. If official Piano does not exist, the importer creates only its requested Pre Step/Pre scope; report that explicitly rather than claiming a complete Piano Grade 1–8 catalog. If an official identity is ambiguous, reconcile based on documented existing identities or report the precise blocker.
+
+6. Run against the verified existing local database:
+   node scripts/local-violin-piano-curriculum.cjs --dry-run
+   Review planned rows, preserved existing 10+/50-lesson subjects and sequence shifts. Confirm they match the requested Violin Pre–Grade 8 and Piano Pre Step/Pre scope.
+   node scripts/local-violin-piano-curriculum.cjs --apply
+   The --apply command creates a restricted backup of the five catalog tables before writing and prints the backup/report locations. Do not treat this as a full system recovery backup or restore it wholesale over newer data.
+   node scripts/local-violin-piano-curriculum.cjs --dry-run
+   The final dry run must report zero changes. Investigate any nonzero result.
+
+7. Verify actual database totals, all parent associations, duplicates, Pre Step -> Pre -> existing Grade 1 ordering, and unchanged student enrollments/progress. Counts are 450 Violin + 80 Piano foundation slots only for a fresh target. Preserve and separately report existing additional lessons/legacy levels; never delete them to force the totals.
+
+8. In the actual browser at port 3000, open /admin/programs with all statuses. Check the program code to distinguish official programs from TEST_* demos. Open representative Pre, Grade 1, Grade 4 and Grade 8 subjects, plus both Piano foundation levels. Use the returned authoring_path (?lessons=all) to display inactive slots. Verify 10 slots and the expected subject matrix. Edit a newly created draft Lesson, save/reload and restore its label after verification. Check desktop and 390px layouts. Use an existing authorized admin session; never request a password in chat or grant staff new permissions.
+
+9. Keep new authoring records inactive and optional, and preserve existing assessment policies. Lesson slots do not constitute approved teaching content. Do not activate automatic completion, publish Final Tests, change payment/attendance/Zalo flows, or mark full pilot acceptance PASS.
+
+10. Finish in Vietnamese with the actual runtime/database target (no secrets), actual inserted/reused/preserved counts, backup/report paths, test/browser evidence and remaining blockers. Clearly distinguish isolated PostgreSQL tests from actual local acceptance. Do not claim the Mac was updated unless the actual import and readback succeeded. No push, deploy or cloud/production mutations.

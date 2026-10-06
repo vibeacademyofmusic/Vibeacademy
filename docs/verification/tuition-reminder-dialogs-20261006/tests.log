@@ -1,0 +1,56 @@
+✔ fresh checkout persists then redirects to provider despite notice failure (1044.829541ms)
+✔ persisted pending link reopens without provider creation (730.380625ms)
+✔ branch denial prevents all provider and service activity (615.278542ms)
+✔ ambiguous retry reconciles existing order, preserves selected case on actionable failure (452.772625ms)
+✔ submitted price is rejected before renewal mutation (150.994958ms)
+✔ untrusted checkout URLs cannot be opened (28.080166ms)
+✔ persistence failure retains selected case and never opens provider URL (227.623333ms)
+✔ retry recovers signed unpaid provider order with one GET and no POST (796.640167ms)
+✔ timeout after provider creation reconciles the same order without second POST (342.916625ms)
+✔ provider query failure blocks retry instead of treating absence as permission to create (856.571542ms)
+✔ tampered signed provider response cannot become a persisted checkout (420.145292ms)
+✔ partial payment, wrong amount and terminal orders require reconciliation, never another create (483.66325ms)
+✔ return and cancel retain selected reminder safely (31.337042ms)
+✔ dialog close preserves filters and removes selected panels/messages (1.153958ms)
+✔ action failure retains selected dialog, parent and list filters without allowing open redirects (64.80775ms)
+✔ invalid send stays in selected Zalo dialog before any sending RPC (2256.777ms)
+✔ invalid resolution retains process dialog and filters without writing records (921.081917ms)
+✔ all selected operations render inside the shared video dialog, history is separate and no inline editor remains (2509.196ms)
+✔ unavailable selected reminder is an error inside a dialog, not silently hidden (516.732125ms)
+✔ reminder timing respects inclusive calendar windows (350.024875ms)
+✔ reminder server filters status branch plan and pagination (1840.786ms)
+✔ queue renders distinct branches and currencies with no send button (2678.709708ms)
+✔ skip and cancel go through resolution RPC with reason (260.419416ms)
+✔ fake sent and missing reasons rejected without RPC (341.736375ms)
+✔ generation has no caller supplied date or delivery status; admin required (175.859625ms)
+✔ customer continue reply is care work and does not become a payment (199.528084ms)
+✔ payment request matches the approved ZBS contract and does not reuse reminder templates (75.63525ms)
+✔ renewal action ignores a submitted price and reuses one checkout (1.311166ms)
+✔ tuition payOS return stays on the reminder page (162.21475ms)
+✔ open screen refreshes every 20 seconds while visible and on return; unmount cleans up (115.168708ms)
+✔ approved template uses package tuition and does not send early (287.273167ms)
+✔ parameter limits, missing consent, and the wrong recipient stay blocked (72.697541ms)
+✔ multiple parents are not all selected (517.390208ms)
+✔ confirmation records a local error and does not claim Zalo delivery (30.668792ms)
+✔ begin failures name the blocked check and a timeout is not success (318.167ms)
+✔ send status is chưa gửi, đã gửi, or lỗi (605.064709ms)
+{"component":"tuition_zalo_send","phase":"provider_request","trackingId":"abc123","appId":null,"oaId":null,"templateId":"643118","at":"2026-10-05T19:46:56.373Z"}
+{"component":"tuition_zalo_send","phase":"provider_result","trackingId":"abc123","templateId":"643118","httpStatus":200,"providerError":0,"messageId":"msg-test-1","at":"2026-10-05T19:46:56.374Z"}
+{"component":"tuition_zalo_send","phase":"provider_request","trackingId":"abc123","appId":null,"oaId":null,"templateId":"643118","at":"2026-10-05T19:46:56.376Z"}
+{"component":"tuition_zalo_send","phase":"provider_request","trackingId":"trackmanual1","appId":null,"oaId":null,"templateId":"643118","at":"2026-10-05T19:46:56.379Z"}
+{"component":"tuition_zalo_send","phase":"provider_result","trackingId":"trackmanual1","templateId":"643118","httpStatus":200,"providerError":0,"messageId":"msg-manual-1","at":"2026-10-05T19:46:56.380Z"}
+{"component":"tuition_zalo_send","phase":"provider_request","trackingId":"trackmanual1","appId":null,"oaId":null,"templateId":"643118","at":"2026-10-05T19:46:56.381Z"}
+✔ other recipients, templates, and an unarmed process never call Zalo (2.949917ms)
+✔ the authorized notice is posted once and acceptance is not delivery (17.641709ms)
+✔ a timeout after the template check is not posted again (0.504209ms)
+✔ manual send stays closed until ZALO_PILOT_OUTBOUND is enabled and posts the notice once (5.509417ms)
+✔ a disabled template is not sent (0.404917ms)
+✔ invalid appsecret_proof never rotates credentials or posts a message (0.417708ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7037.557291

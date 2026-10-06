@@ -1,0 +1,22 @@
+✔ Book B preserves all 50 authored entries and all source pages except duplicate 49 (4.387417ms)
+✔ import reuses ten draft IDs, adds 40 and preserves progression; rerun changes nothing (9634.25575ms)
+✔ existing authored draft refuses import and rolls back (9132.558125ms)
+✔ query failure in curriculum_subjects cannot be rendered as academic readiness or zero lessons (1091.008459ms)
+✔ query failure in curriculum_subject_components cannot be rendered as academic readiness or zero lessons (472.450791ms)
+✔ query failure in curriculum_component_items cannot be rendered as academic readiness or zero lessons (338.69075ms)
+✔ level counts exclude inactive parent content and keeps unpublished subjects visible (418.243292ms)
+✔ draft reconciliation preserves content, IDs, rules, other subjects and progression, then reruns without changes (10088.100083ms)
+✔ reconciliation refuses authored rather than hiding an operational subject (8483.93025ms)
+✔ reconciliation refuses history rather than hiding an operational subject (4011.281542ms)
+✔ reconciliation refuses required rather than hiding an operational subject (3110.079917ms)
+✔ reconciliation refuses video rather than hiding an operational subject (1635.900375ms)
+✔ reconciliation refuses guide rather than hiding an operational subject (2083.103833ms)
+✔ active incomplete technique still fails the academic rule; reconciliation does not weaken validation (0.956542ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30232.531083

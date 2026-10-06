@@ -3,7 +3,7 @@ import { reportSummaryLabels } from './summary-labels'
 import PDFDocument from 'pdfkit'
 import path from 'node:path'
 import type { Snapshot } from '@/app/admin/reports/learning/data'
-export async function renderLearningPdf(report:{id:string;version:number;type:string;snapshot:Snapshot}):Promise<Buffer> {
+export async function renderLearningPdf(report:{id:string;version:number;type:string;snapshot:Snapshot;notice?:string}):Promise<Buffer> {
   const doc=new PDFDocument({size:'A4',margin:48,bufferPages:true,info:{Title:'Báo cáo học tập VIBE Academy',Author:'VIBE Academy'}})
   const chunks:Buffer[]=[]
   const complete=new Promise<Buffer>((resolve,reject)=>{doc.on('data',chunk=>chunks.push(chunk));doc.on('end',()=>resolve(Buffer.concat(chunks)));doc.on('error',reject)})
@@ -11,6 +11,7 @@ export async function renderLearningPdf(report:{id:string;version:number;type:st
   const text=(value:string,size=11)=>{doc.fontSize(size).text(value,{lineGap:3});doc.moveDown(0.4)}
   const heading=(value:string)=>{if(doc.y>690)doc.addPage();doc.moveDown(0.4);text(value,14)}
   const s=report.snapshot
+  if(report.notice)text(report.notice,13)
   text('VIBE ACADEMY',22);text(report.type==='MONTHLY'?'BÁO CÁO HỌC TẬP THÁNG':'BÁO CÁO CUỐI KHÓA',16)
   text(`${s.student.name} · ${s.student.code}`);text(`${s.period_start} — ${s.period_end} · Phiên bản ${report.version}`)
   heading('Thông tin học tập');text(`${s.branch.name} · ${s.class_name}`);text(`${s.academic.curriculum??'Chưa gán'} · ${s.academic.current_grade??'Chưa xác định'}`)

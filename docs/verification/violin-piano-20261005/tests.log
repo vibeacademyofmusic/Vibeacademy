@@ -1,0 +1,30 @@
+✔ owner matrix produces 37 levels, 184 subjects and 2640 lessons (28.063498ms)
+✔ foundation and grade boundaries match the approved subject matrix (5.675897ms)
+✔ lesson keys are stable, unique and mapping remains explicitly unresolved (30.174293ms)
+✔ current request has 9 Violin levels/450 slots and 2 Piano levels/80 slots (23.349881ms)
+✔ local target guard rejects cloud, credential URLs and mismatched database (1.247538ms)
+▶ PostgreSQL import acceptance
+  ✔ dry run rolls back; apply produces 530 inactive slots; rerun changes nothing (3918.456762ms)
+  ✔ Piano foundations precede existing grades, preserving IDs and all progression rows (2516.683342ms)
+  ✔ grade and Sightreading aliases are reused without duplicate subjects or levels (3684.727501ms)
+  ✔ 50 authored lessons and live assessment configuration remain unchanged (2512.725919ms)
+  ✔ partial subject gains only missing slots in separate inactive container (3765.056717ms)
+  ✔ test programs and unrelated instrument catalogs are untouched (2352.656844ms)
+  ✔ ambiguous subjects abort without leaving a partially created Piano tree (2755.522006ms)
+  ✔ an active component using the draft code is never silently repurposed (3124.32598ms)
+  ✔ ambiguous program names aborts the whole transaction (3306.498963ms)
+  ✔ conflicting program identity aborts the whole transaction (2842.287627ms)
+  ✔ duplicate level aliases aborts the whole transaction (3315.296623ms)
+  ✔ out of order grades aborts the whole transaction (2097.379719ms)
+  ✔ conflicting foundation identity aborts the whole transaction (2045.535632ms)
+  ✔ conflicting numeric grade identity aborts the whole transaction (2044.474028ms)
+  ✔ unexpected progress-writing trigger aborts and rolls back all imported rows (2101.79815ms)
+✔ PostgreSQL import acceptance (42413.812859ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43245.96007

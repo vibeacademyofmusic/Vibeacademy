@@ -17,7 +17,7 @@ test('customer continue reply is care work and does not become a payment', () =>
   assert.notEqual(13500000, 4500000 * 4)
 })
 
-test('payment request matches the approved ZBS contract and does not reuse reminder templates', () => {
+test('payment request matches the approved ZBS contract and does not reuse reminder templates', async () => {
   const status = harness().load('../../../lib/integrations/tuition/renewal-status.ts')
   const payment = harness().load('../../../lib/integrations/tuition/payment-zbs.ts')
   const parameters = [...payment.TUITION_PAYMENT_BODY_PARAMETERS, payment.TUITION_PAYMENT_CTA_PARAMETER]
@@ -54,8 +54,73 @@ test('payment request matches the approved ZBS contract and does not reuse remin
     packageAmount: 5500000, paymentType: 'Đặt cọc 50%', amountDue: 2750000, deadline: '2026-11-15',
     paymentLinkId: 'https://pay.payos.vn/web/tuitionlink1', checkoutUrl: 'https://pay.payos.vn/web/tuitionlink1',
   } }).ok, false)
-  assert.equal(payment.tuitionPaymentDispatch(ready, request).state, 'HELD')
+  assert.equal(payment.tuitionPaymentDispatch(ready, request).state, 'ELIGIBLE')
+  assert.equal(payment.tuitionPaymentDispatch(ready, request).code, 'ELIGIBLE')
+  assert.equal(payment.tuitionPaymentDispatch(ready, request).sent, false)
+  assert.equal(payment.tuitionPaymentDispatch(ready, request).paid, false)
+  assert.equal(payment.tuitionPaymentDispatch({ ...ready, enabled: false }, request).state, 'HELD')
+  assert.equal(payment.tuitionPaymentDispatch({ ...ready, enabled: false }, request).code, 'ZBS_SEND_DISABLED')
   assert.equal(payment.tuitionPaymentDispatch({ ...ready, status: 'PENDING', enabled: false }, request).code, 'ZBS_TEMPLATE_REQUIRED')
+  const verified = {
+    ...ready,
+    status: 'APPROVED',
+    enabled: false,
+    provider_template_id: payment.VERIFIED_TUITION_PAYMENT_TEMPLATE_ID,
+  }
+  const preview = payment.previewVerifiedTuitionPayment(verified, {
+    customerName: 'Phụ huynh thử', studentName: 'Học viên thử', invoiceCode: 'INV-2026-000645', packageName: '3 tháng',
+    packageAmount: 5500000, paymentType: 'Thanh toán 100%', amountDue: 5500000, deadline: '2026-11-15',
+    paymentLinkId: 'synthetic01', checkoutUrl: 'https://pay.payos.vn/web/synthetic01',
+  })
+  assert.equal(preview.ok, true)
+  assert.equal(preview.sent, false)
+  assert.equal(preview.templateId, '645028')
+  assert.equal(preview.parameters.package_amount, '5500000')
+  assert.equal(preview.parameters.amount_due, '5500000')
+  assert.equal(preview.parameters.payment_deadline, '15/11/2026')
+  assert.equal(preview.parameters.payment_status, 'Chờ thanh toán')
+  assert.equal(preview.button.title, 'Thanh toán học phí')
+  assert.equal(payment.tuitionPaymentDispatch(verified, request).state, 'HELD')
+  assert.equal(payment.tuitionPaymentDispatch(verified, request).templateId, '645028')
+  const gate = status.paymentTemplateGate(verified)
+  assert.equal(gate.ready, true)
+  assert.equal(gate.sendingEnabled, false)
+  assert.equal(gate.code, 'ZBS_SEND_DISABLED')
+  assert.equal(gate.templateId, '645028')
+  assert.equal(status.paymentTemplateGate({ ...verified, status: 'PENDING', provider_template_id: null }).code, 'ZBS_TEMPLATE_REQUIRED')
+  assert.equal(status.persistedPaymentNoticeStatus({ state: 'HELD', code: 'ZBS_SEND_DISABLED' }), 'HELD')
+  assert.equal(status.persistedPaymentNoticeStatus({ state: 'ELIGIBLE', code: 'ELIGIBLE' }), 'HELD')
+  assert.match(status.paymentNoticeReason('ELIGIBLE', '645028'), /không tự gửi/)
+  const held = { key: 'case', outcome: 'HELD', invoiceCode: 'INV-2026-000001', paymentLinkId: 'tuitionlink1' }
+  const input = { customerName: 'Phụ huynh', studentName: 'Học viên', invoiceCode: 'INV-2026-000001', packageName: '3 tháng', packageAmount: 5500000, paymentType: 'Đặt cọc 50%', amountDue: 2750000, deadline: '2026-11-15', paymentLinkId: 'tuitionlink1', checkoutUrl: 'https://pay.payos.vn/web/tuitionlink1' }
+  assert.equal(payment.prepareTuitionPaymentRequest({ template: verified, input, linkInvoiceCode: 'INV-2026-000001', attempt: held }).code, 'DUPLICATE_HELD')
+  assert.equal(payment.prepareTuitionPaymentRequest({ template: { ...verified, enabled: true }, input, linkInvoiceCode: 'INV-2026-000001', attempt: held }).code, 'ELIGIBLE')
+  assert.equal(payment.prepareTuitionPaymentRequest({ template: { ...verified, enabled: true }, input, linkInvoiceCode: 'INV-OTHER', attempt: held }).code, 'LINK_INVOICE_MISMATCH')
+  assert.equal(payment.prepareTuitionPaymentRequest({ template: { ...verified, enabled: true }, input, linkInvoiceCode: input.invoiceCode, attempt: { ...held, outcome: 'UNKNOWN' } }).code, 'UNKNOWN_NOT_RETRIED')
+  assert.equal(payment.prepareTuitionPaymentRequest({ template: { ...verified, enabled: true }, input, linkInvoiceCode: input.invoiceCode, attempt: { ...held, outcome: 'SENT' } }).code, 'ALREADY_RECORDED')
+  const calls = []
+  const ledger = payment.createTuitionPaymentLedger()
+  const provider = { send: async () => { calls.push('send'); return 'ACCEPTED' } }
+  assert.equal((await payment.dispatchAuthorizedTuitionPayment({ template: { ...verified, enabled: true }, input, linkInvoiceCode: input.invoiceCode, attempt: held, authorized: false, provider, ledger })).code, 'UNAUTHORIZED')
+  assert.equal(calls.length, 0)
+  const sent = await payment.dispatchAuthorizedTuitionPayment({ template: { ...verified, enabled: true }, input, linkInvoiceCode: input.invoiceCode, attempt: held, authorized: true, provider, ledger })
+  assert.equal(sent.code, 'ACCEPTED')
+  assert.equal(sent.paid, false)
+  assert.equal(calls.length, 1)
+  assert.equal((await payment.dispatchAuthorizedTuitionPayment({ template: { ...verified, enabled: true }, input, linkInvoiceCode: input.invoiceCode, attempt: { ...held, outcome: 'SENT' }, authorized: true, provider, ledger })).providerCalls, 0)
+  assert.equal(status.persistedPaymentNoticeStatus({ state: 'BLOCKED', code: 'ZBS_TEMPLATE_REQUIRED' }), 'AWAITING_TEMPLATE')
+  assert.equal(status.storedZbsStatusLabel('HELD'), 'Đã lưu: gửi đang tắt')
+  assert.equal(status.storedZbsStatusLabel('AWAITING_TEMPLATE'), 'Đã lưu: chờ mẫu')
+  assert.match(status.paymentNoticeReason('ZBS_SEND_DISABLED', '645028'), /đã cấu hình/)
+  assert.match(status.paymentNoticeReason('ZBS_TEMPLATE_REQUIRED', null), /chưa có mã/)
+  const again = payment.tuitionPaymentDispatch(verified, request)
+  assert.equal(again.code, 'ZBS_SEND_DISABLED')
+  assert.equal(again.state, 'HELD')
+  assert.equal(payment.previewVerifiedTuitionPayment({ ...verified, parameter_schema: ['amount', 'due_date'] }, {
+    customerName: 'Phụ huynh thử', studentName: 'Học viên thử', invoiceCode: 'INV-2026-000645', packageName: '3 tháng',
+    packageAmount: 5500000, paymentType: 'Thanh toán 100%', amountDue: 5500000, deadline: '2026-11-15',
+    paymentLinkId: 'synthetic01', checkoutUrl: 'https://pay.payos.vn/web/synthetic01',
+  }).code, 'SCHEMA_UNVERIFIED')
   assert.deepEqual(payment.buildTuitionPaymentConfirmation('Đã nhận cọc 50%').body, { payment_status: 'Đã nhận cọc 50%' })
   assert.deepEqual(payment.buildTuitionPaymentConfirmation('Đã thanh toán').body, { payment_status: 'Đã thanh toán' })
   assert.equal(payment.TUITION_PAYMENT_CONFIRMATION === payment.TUITION_PAYMENT_REQUEST, false)

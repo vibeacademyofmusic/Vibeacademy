@@ -1,0 +1,12 @@
+✔ query failure in curriculum_subjects cannot be rendered as academic readiness or zero lessons (200.771291ms)
+✔ query failure in curriculum_subject_components cannot be rendered as academic readiness or zero lessons (91.756709ms)
+✔ query failure in curriculum_component_items cannot be rendered as academic readiness or zero lessons (68.781917ms)
+✔ level counts exclude inactive parent content and keeps unpublished subjects visible (68.213083ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 699.689916

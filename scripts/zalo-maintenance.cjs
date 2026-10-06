@@ -8,7 +8,14 @@ function load(file) {
   if (cache.has(file)) return cache.get(file)
   const m = { exports: {} }; cache.set(file, m.exports)
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText
-  new Function('module', 'exports', 'require', code)(m, m.exports, id => id === 'server-only' ? {} : id.startsWith('.') ? load(path.resolve(path.dirname(file), id + '.ts')) : require(id))
+  new Function('module', 'exports', 'require', code)(m, m.exports, id => {
+    if (id === 'server-only') return {}
+    const base = id.startsWith('@/') ? path.resolve(__dirname, '..', id.slice(2)) : id.startsWith('.') ? path.resolve(path.dirname(file), id) : null
+    if (!base) return require(id)
+    const target = [base + '.ts', base + '.tsx', path.join(base, 'index.ts'), path.join(base, 'index.tsx')].find(candidate => fs.existsSync(candidate))
+    if (!target) throw Error('Module missing: ' + id)
+    return load(target)
+  })
   return m.exports
 }
 async function main() {
@@ -22,12 +29,18 @@ async function main() {
     return
   }
   const { maintainZaloCredentials } = load(path.resolve(__dirname, '../lib/integrations/zalo/maintenance.ts'))
-  const credentials = await maintainZaloCredentials(db)
+  let credentials = { result: 'MAINTENANCE_UNAVAILABLE' }
+  try { credentials = await maintainZaloCredentials(db) } catch { /* Independent PDF work must survive credential maintenance failure. */ }
   let replies = { state: 'UNAVAILABLE' }
   try {
     const { maintainTuitionZaloResponses } = load(path.resolve(__dirname, '../lib/integrations/zalo/tuition-response-sync.ts'))
     replies = await maintainTuitionZaloResponses(db)
   } catch { replies = { state: 'UNAVAILABLE' } }
-  console.log(JSON.stringify({ component: 'zalo_maintenance', ...credentials, replies }))
+  let reports = { state: 'UNAVAILABLE' }
+  try {
+    const { maintainLearningReports } = load(path.resolve(__dirname, '../lib/reports/zbs-worker.ts'))
+    reports = await maintainLearningReports(db)
+  } catch { reports = { state: 'UNAVAILABLE' } }
+  console.log(JSON.stringify({ component: 'zalo_maintenance', ...credentials, replies, reports }))
 }
 main().catch(() => { console.error(JSON.stringify({ component: 'zalo_maintenance', result: 'MAINTENANCE_UNAVAILABLE' })); process.exitCode = 1 })

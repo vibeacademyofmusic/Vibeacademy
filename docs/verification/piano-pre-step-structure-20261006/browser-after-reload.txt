@@ -1,0 +1,219 @@
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đường dẫn chương trình
+							52 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							53 link Piano, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af
+							54 text Pre Step
+						55 heading Pre Step, Value: 1
+							56 text Pre Step
+						57 text Piano · PRE_STEP
+						58 link Chỉnh sửa cấp độ, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/edit
+						59 text Môn đang hoạt động 1 Unit / nhóm đang hoạt động 8 Lesson đang hoạt động 50
+						60 heading Thông tin cấp độ, Value: 2
+							61 text Thông tin cấp độ
+						62 description list
+							63 text Trạng thái
+							64 text Đang hoạt động
+							65 text Loại
+							66 text Nền tảng
+							67 text Cách hoàn thành
+							68 text Hoàn thành mọi môn bắt buộc
+							69 text Cấu trúc học thuật
+							70 text Đủ cấu trúc phần đang hoạt động
+						71 text 3  môn chưa phát hành:  Technique Foundation, Aural, Sight Reading . Các môn này được giữ để biên soạn và không tính vào phần đang hoạt động.
+						72 heading Môn học, Value: 2
+							73 text Môn học
+						74 table
+							75 row (selectable) Môn học
+Trạng thái
+Bắt buộc
+Cách hoàn thành
+Unit / nhóm
+Lesson đang hoạt động
+Cấu trúc học thuật
+Sẵn sàng nội dung
+Tác vụ
+							76 row (selectable)
+								77 cell (selectable) My First Piano Adventure - Lesson Book B: Steps on the Staff
+METHODE_BOOK
+								78 cell (selectable) Đang hoạt động
+								79 cell (selectable) Tùy chọn
+								80 cell (selectable) Thủ công
+								81 cell (selectable) 8
+								82 cell (selectable) 50
+								83 cell (selectable) Đủ cấu trúc học thuật
+								84 cell (selectable) Đủ nội dung Lesson
+								85 cell (selectable) Mở môn học
+Chỉnh sửa
+Ngừng hoạt động, Value: Mở môn học
+Chỉnh sửa
+							86 row (selectable)
+								87 cell (selectable) Technique Foundation
+TECHNIQUE_FOUNDATION
+								88 cell (selectable) Ngừng hoạt động
+								89 cell (selectable) Tùy chọn
+								90 cell (selectable) Đánh giá theo nhóm đánh giá
+								91 cell (selectable) 0
+								92 cell (selectable) 0
+								93 cell (selectable) Chưa áp dụng cho học vụ
+								94 cell (selectable) Chưa phát hành nội dung
+								95 cell (selectable) Mở môn học
+Chỉnh sửa
+Kích hoạt, Value: Mở môn học
+Chỉnh sửa
+							96 row (selectable)
+								97 cell (selectable) Aural
+AURAL
+								98 cell (selectable) Ngừng hoạt động
+								99 cell (selectable) Tùy chọn
+								100 cell (selectable) Đánh giá theo nhóm đánh giá
+								101 cell (selectable) 0
+								102 cell (selectable) 0
+								103 cell (selectable) Chưa áp dụng cho học vụ
+								104 cell (selectable) Chưa phát hành nội dung
+								105 cell (selectable) Mở môn học
+Chỉnh sửa
+Kích hoạt, Value: Mở môn học
+Chỉnh sửa
+							106 row (selectable)
+								107 cell (selectable) Sight Reading
+SIGHT_READING
+								108 cell (selectable) Ngừng hoạt động
+								109 cell (selectable) Tùy chọn
+								110 cell (selectable) Đánh giá theo nhóm đánh giá
+								111 cell (selectable) 0
+								112 cell (selectable) 0
+								113 cell (selectable) Chưa áp dụng cho học vụ
+								114 cell (selectable) Chưa phát hành nội dung
+								115 cell (selectable) Mở môn học
+Chỉnh sửa
+Kích hoạt, Value: Mở môn học
+Chỉnh sửa
+						116 heading Thêm môn học, Value: 2
+							117 text Thêm môn học
+						118 container
+							119 text Nhóm môn
+							120 text field (settable) Nhóm môn, Placeholder: REPERTOIRE
+						121 container
+							122 text Mã môn học
+							123 text field (settable) Mã môn học, Placeholder: REPERTOIRE_1
+						124 container
+							125 text Tên môn học
+							126 text field (settable) Tên môn học, Placeholder: Repertoire 1
+						127 container
+							128 text Cấp của môn
+							129 number field (settable) Cấp của môn
+								130 stepper 0
+									131 unknown
+									132 unknown
+						133 container
+							134 text Thứ tự
+							135 number field (settable) Thứ tự, Value: 5
+								136 stepper 0
+									137 unknown
+									138 unknown
+						139 container
+							140 text Cách hoàn thành
+							141 pop up button Cách hoàn thành, Value: Đánh giá theo nhóm đánh giá
+						142 container
+							143 checkbox Môn học bắt buộc, Value: 1
+							144 text Môn học bắt buộc
+						145 button Tạo môn học
+				146 scroll bar (settable, float) 0
+	147 container
+		148 image WindowControlShadowView._shadowImageView
+		149 toolbar
+			150 container Secondary Actions: Move next, Remove from toolbar
+				151 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				152 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			153 container BackForwardSegmentedControl
+				154 button Description: Go back, Help: Show the previous page, ID: BackButton
+				155 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			156 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				157 button Page Menu, ID: AssistantButton
+				158 button Add page to Reading List, ID: OneStepBookmarkingButton
+				159 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd
+				160 button Translation Available, ID: TranslationButton
+				161 button Reload this page, ID: ReloadButton
+			162 button Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				163 button Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			164 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			165 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				166 button Description: new tab, Help: New Tab, ID: NewTabButton
+					167 button Description: add, Help: New Tab
+			168 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		169 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			170 tab Xây dựng chương trình երաժ nhạc, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				171 image FaviconImageView
+				172 text Value: Xây dựng chương trình երաժ nhạc, ID: UnifedTabBarButton._titleTextField
+			173 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				174 image FaviconImageView
+				175 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			176 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				177 image FaviconImageView
+				178 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			179 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				180 image FaviconImageView
+				181 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			182 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				183 image FaviconImageView
+				184 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+185 menu bar
+	186 Safari
+	187 File
+	188 Edit
+	189 View, ID: SafariViewMenu
+	190 History
+	191 Bookmarks, ID: SafariBookmarksMenu
+	192 Window, ID: SafariWindowMenu
+	193 Help, ID: SafariHelpMenu

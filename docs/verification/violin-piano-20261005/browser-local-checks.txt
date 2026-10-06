@@ -1,0 +1,1005 @@
+The following is a diff from the previous accessibility tree for Window: "VIBE Academy" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 50-127, 130-137
++			139 scroll area
++				140 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c?lessons=all
++					141 container
++						142 link VIBE Academy, Value: 127.0.0.1:3000/admin
++						143 text Hệ thống quản lý
++						144 container Điều hướng quản trị
++							145 container TỔNG QUAN
++								146 heading TỔNG QUAN, Value: 2
++									147 text TỔNG QUAN
++								148 content list
++									149 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
++							150 container VẬN HÀNH
++								151 heading VẬN HÀNH, Value: 2
++									152 text VẬN HÀNH
++								153 content list
++									154 link Đào tạo, Value: 127.0.0.1:3000/admin/students
++									155 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
++									156 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
++									157 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
++									158 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
++							159 container HR
++								160 heading HR, Value: 2
++									161 text HR
++								162 content list
++									163 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
++									164 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
++									165 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
++									166 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
++							167 container KINH DOANH
++								168 heading KINH DOANH, Value: 2
++									169 text KINH DOANH
++								170 content list
++									171 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
++									172 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
++									173 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
++									174 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
++							175 container HỆ THỐNG
++								176 heading HỆ THỐNG, Value: 2
++									177 text HỆ THỐNG
++								178 content list
++									179 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
++									180 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
++									181 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
++						182 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
++						183 button Đăng xuất
++					184 container
++						185 text Hệ thống Vibe Academy Quản trị Local Developer Admin
++					186 container
++						187 container Đường dẫn chương trình
++							188 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
++							189 link Violin, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440
++							190 link Grade 8, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495
++							191 text Repertoire
++						192 heading Repertoire, Value: 1
++							193 text Repertoire
++						194 text Violin · Grade 8
++						195 link Chỉnh sửa môn học, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/edit
++						196 text Ngừng hoạt động Tùy chọn Đủ cấu trúc học thuật Đủ nội dung Lesson Cách hoàn thành Thủ công Nhóm đánh giá 0 Lesson đang hoạt động 0
++						197 heading Thông tin môn học, Value: 2
++							198 text Thông tin môn học
++						199 description list
++							200 text Mã
++							201 text REPERTOIRE
++							202 text Nhóm môn
++							203 text REPERTOIRE
++						204 heading Lesson, Value: 2
++							205 text Lesson
++						206 link Chỉ Lesson đang hoạt động, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c
++						207 text 10  Lesson đang hiển thị
++						208 container
++							209 text 01 Lesson 01 L01  ·  Tùy chọn  ·  Ngừng hoạt động
++							210 button Đưa Lesson 01 xuống
++							211 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/06f3c1ba-799c-446f-865f-48533f68ca97
++						212 container
++							213 text 02 Lesson 02 L02  ·  Tùy chọn  ·  Ngừng hoạt động
++							214 button Đưa Lesson 02 lên
++							215 button Đưa Lesson 02 xuống
++							216 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/49e98bac-b741-4372-9189-f967a6d3baa9
++						217 container
++							218 text 03 Lesson 03 L03  ·  Tùy chọn  ·  Ngừng hoạt động
++							219 button Đưa Lesson 03 lên
++							220 button Đưa Lesson 03 xuống
++							221 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/0e9f3877-2ea8-4489-a7ef-abff70f64c1e
++						222 container
++							223 text 04 Lesson 04 L04  ·  Tùy chọn  ·  Ngừng hoạt động
++							224 button Đưa Lesson 04 lên
++							225 button Đưa Lesson 04 xuống
++							226 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/eea68ac2-5a38-4aad-8f37-1c8f514b49b8
++						227 container
++							228 text 05 Lesson 05 L05  ·  Tùy chọn  ·  Ngừng hoạt động
++							229 button Đưa Lesson 05 lên
++							230 button Đưa Lesson 05 xuống
++							231 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/38beebcf-85d8-4b65-a918-12789c70f0b9
++						232 container
++							233 text 06 Lesson 06 L06  ·  Tùy chọn  ·  Ngừng hoạt động
++							234 button Đưa Lesson 06 lên
++							235 button Đưa Lesson 06 xuống
++							236 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/af0cf16d-1a3c-492d-9030-e7cf12b33885
++						237 container
++							238 text 07 Lesson 07 L07  ·  Tùy chọn  ·  Ngừng hoạt động
++							239 button Đưa Lesson 07 lên
++							240 button Đưa Lesson 07 xuống
++							241 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/b4574c57-6183-4885-94f7-172113e2dd43
++						242 container
++							243 text 08 Lesson 08 L08  ·  Tùy chọn  ·  Ngừng hoạt động
++							244 button Đưa Lesson 08 lên
++							245 button Đưa Lesson 08 xuống
++							246 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/f296e71b-9e8d-46d9-bd5b-ab1b5bc9ba6b
++						247 container
++							248 text 09 Lesson 09 L09  ·  Tùy chọn  ·  Ngừng hoạt động
++							249 button Đưa Lesson 09 lên
++							250 button Đưa Lesson 09 xuống
++							251 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/8ca2b4b0-ad9d-423c-85da-f04ac8b8e6c6
++						252 container
++							253 text 10 Lesson 10 L10  ·  Tùy chọn  ·  Ngừng hoạt động
++							254 button Đưa Lesson 10 lên
++							255 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/lessons/b487584c-37d5-413d-8306-13e997cc4417
++						256 text Thêm Lesson
++						257 text Tên Lesson *
++						258 text field (settable) Tên Lesson *
++						259 text Mã Lesson *
++						260 text field (settable) Mã Lesson *, Value: L11
++						261 text Thứ tự *
++						262 number field (settable) Thứ tự *, Value: 11
++							263 stepper 0
++								264 unknown
++								265 unknown
++						266 text Trạng thái *
++						267 pop up button Trạng thái *, Value: Đang hoạt động
++						268 container
++							269 checkbox Bắt buộc, Value: 1
++							270 text Bắt buộc
++						271 button Tạo Lesson
++						272 link Hủy, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c
++						273 heading Cấu trúc nội bộ, Value: 2
++							274 text Cấu trúc nội bộ
++						275 text Thêm nhóm đánh giá cho  Repertoire . Mã nhóm đánh giá *
++						276 text field (settable) Mã nhóm đánh giá *, Placeholder: BAROQUE
++						277 text Example: BAROQUE, SCALES, ETUDES
++						278 text Tên nhóm đánh giá *
++						279 text field (settable) Tên nhóm đánh giá *, Placeholder: Baroque Repertoire
++						280 text Thứ tự *
++						281 number field (settable) Thứ tự *, Value: 2
++							282 stepper 0
++								283 unknown
++								284 unknown
++						285 text Cách hoàn thành *
++						286 pop up button Cách hoàn thành *, Value: Chọn cách hoàn thành
++						287 container
++							288 checkbox Nhóm đánh giá bắt buộc, Value: 1
++							289 text Nhóm đánh giá bắt buộc
++						290 button Tạo nhóm đánh giá
++						291 heading Nhóm đánh giá, Value: 2
++							292 text Nhóm đánh giá
++						293 text 1  nhóm trong  Repertoire Bài học dự thảo INACTIVE Mã:  LESSON_DRAFTS Thứ tự:  1 Đánh giá trực tiếp
++						294 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c/components/44b0af35-7b4b-4b44-8717-c36573be84c5/edit
++						295 button Kích hoạt
++				296 scroll bar (settable, float) 0
+~				17 button Reload this page, ID: ReloadButton
+~			20 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e?lessons=all
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đường dẫn chương trình
+							52 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							53 link Violin, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440
+							54 link Grade 1, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a
+							55 text Repertoire
+						56 heading Repertoire, Value: 1
+							57 text Repertoire
+						58 text Violin · Grade 1
+						59 link Chỉnh sửa môn học, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/edit
+						60 text Ngừng hoạt động Tùy chọn Đủ cấu trúc học thuật Đủ nội dung Lesson Cách hoàn thành Thủ công Nhóm đánh giá 0 Lesson đang hoạt động 0
+						61 heading Thông tin môn học, Value: 2
+							62 text Thông tin môn học
+						63 description list
+							64 text Mã
+							65 text REPERTOIRE
+							66 text Nhóm môn
+							67 text REPERTOIRE
+						68 heading Lesson, Value: 2
+							69 text Lesson
+						70 link Chỉ Lesson đang hoạt động, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e
+						71 text 10  Lesson đang hiển thị
+						72 container
+							73 text 01 Lesson 01 L01  ·  Tùy chọn  ·  Ngừng hoạt động
+							74 button Đưa Lesson 01 xuống
+							75 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/91da99b0-e5aa-4012-99b6-9ff825d64b2d
+						76 container
+							77 text 02 Lesson 02 L02  ·  Tùy chọn  ·  Ngừng hoạt động
+							78 button Đưa Lesson 02 lên
+							79 button Đưa Lesson 02 xuống
+							80 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/c25e2b5e-7363-4bae-923e-4f3727060de5
+						81 container
+							82 text 03 Lesson 03 L03  ·  Tùy chọn  ·  Ngừng hoạt động
+							83 button Đưa Lesson 03 lên
+							84 button Đưa Lesson 03 xuống
+							85 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/4898812b-3872-45fd-991b-4fde56910d68
+						86 container
+							87 text 04 Lesson 04 L04  ·  Tùy chọn  ·  Ngừng hoạt động
+							88 button Đưa Lesson 04 lên
+							89 button Đưa Lesson 04 xuống
+							90 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/b4ce51ec-7cc2-471c-a20d-8824acc3ed52
+						91 container
+							92 text 05 Lesson 05 L05  ·  Tùy chọn  ·  Ngừng hoạt động
+							93 button Đưa Lesson 05 lên
+							94 button Đưa Lesson 05 xuống
+							95 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/7377fb4a-4410-401d-a528-b2cb01c78aca
+						96 container
+							97 text 06 Lesson 06 L06  ·  Tùy chọn  ·  Ngừng hoạt động
+							98 button Đưa Lesson 06 lên
+							99 button Đưa Lesson 06 xuống
+							100 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/e0a37f91-50e3-40e6-9572-93fbb26e6a49
+						101 container
+							102 text 07 Lesson 07 L07  ·  Tùy chọn  ·  Ngừng hoạt động
+							103 button Đưa Lesson 07 lên
+							104 button Đưa Lesson 07 xuống
+							105 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/2d357008-ce2f-4d2b-8552-ee48e4fb0897
+						106 container
+							107 text 08 Lesson 08 L08  ·  Tùy chọn  ·  Ngừng hoạt động
+							108 button Đưa Lesson 08 lên
+							109 button Đưa Lesson 08 xuống
+							110 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/11be2b86-76cd-4c4e-b1de-cb88930376b4
+						111 container
+							112 text 09 Lesson 09 L09  ·  Tùy chọn  ·  Ngừng hoạt động
+							113 button Đưa Lesson 09 lên
+							114 button Đưa Lesson 09 xuống
+							115 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/0f4b3219-5850-4243-a6bf-9ee46e0bd4c9
+						116 container
+							117 text 10 Lesson 10 L10  ·  Tùy chọn  ·  Ngừng hoạt động
+							118 button Đưa Lesson 10 lên
+							119 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/lessons/1e8bfe97-0467-4f4d-be1e-b7506d26deab
+						120 text Thêm Lesson
+						121 text Tên Lesson *
+						122 text field (settable) Tên Lesson *
+						123 text Mã Lesson *
+						124 text field (settable) Mã Lesson *, Value: L11
+						125 text Thứ tự *
+						126 number field (settable) Thứ tự *, Value: 11
+							127 stepper 0
+								128 unknown
+								129 unknown
+						130 text Trạng thái *
+						131 pop up button Trạng thái *, Value: Đang hoạt động
+						132 container
+							133 checkbox Bắt buộc, Value: 1
+							134 text Bắt buộc
+						135 button Tạo Lesson
+						136 link Hủy, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e
+						137 heading Cấu trúc nội bộ, Value: 2
+							138 text Cấu trúc nội bộ
+						139 text Thêm nhóm đánh giá cho  Repertoire . Mã nhóm đánh giá *
+						140 text field (settable) Mã nhóm đánh giá *, Placeholder: BAROQUE
+						141 text Example: BAROQUE, SCALES, ETUDES
+						142 text Tên nhóm đánh giá *
+						143 text field (settable) Tên nhóm đánh giá *, Placeholder: Baroque Repertoire
+						144 text Thứ tự *
+						145 number field (settable) Thứ tự *, Value: 2
+							146 stepper 0
+								147 unknown
+								148 unknown
+						149 text Cách hoàn thành *
+						150 pop up button Cách hoàn thành *, Value: Chọn cách hoàn thành
+						151 container
+							152 checkbox Nhóm đánh giá bắt buộc, Value: 1
+							153 text Nhóm đánh giá bắt buộc
+						154 button Tạo nhóm đánh giá
+						155 heading Nhóm đánh giá, Value: 2
+							156 text Nhóm đánh giá
+						157 text 1  nhóm trong  Repertoire Bài học dự thảo INACTIVE Mã:  LESSON_DRAFTS Thứ tự:  1 Đánh giá trực tiếp
+						158 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e/components/4af074b1-c237-4859-a87b-a20f93974e5a/edit
+						159 button Kích hoạt
+				160 scroll bar (settable, float) 0
+	161 container
+		162 image WindowControlShadowView._shadowImageView
+		163 toolbar
+			164 container Secondary Actions: Move next, Remove from toolbar
+				165 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				166 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			167 container BackForwardSegmentedControl
+				168 button Description: Go back, Help: Show the previous page, ID: BackButton
+				169 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			170 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				171 button Page Menu, ID: AssistantButton
+				172 button Add page to Reading List, ID: OneStepBookmarkingButton
+				173 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e?lessons=all
+				174 button Translation Available, ID: TranslationButton
+				175 button Reload this page, ID: ReloadButton
+			176 button Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				177 button Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			178 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			179 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				180 button Description: new tab, Help: New Tab, ID: NewTabButton
+					181 button Description: add, Help: New Tab
+			182 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		183 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			184 tab Xây dựng chương trình երաժ nhạc, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				185 image FaviconImageView
+				186 text Value: Xây dựng chương trình երաժ nhạc, ID: UnifedTabBarButton._titleTextField
+			187 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				188 image FaviconImageView
+				189 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			190 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				191 image FaviconImageView
+				192 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			193 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				194 image FaviconImageView
+				195 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			196 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				197 image FaviconImageView
+				198 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+199 menu bar
+	200 Safari
+	201 File
+	202 Edit
+	203 View, ID: SafariViewMenu
+	204 History
+	205 Bookmarks, ID: SafariBookmarksMenu
+	206 Window, ID: SafariWindowMenu
+	207 Help, ID: SafariHelpMenu
+
+
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e?lessons=all
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đường dẫn chương trình
+							52 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							53 link Violin, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440
+							54 link Grade 4, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94
+							55 text Repertoire
+						56 heading Repertoire, Value: 1
+							57 text Repertoire
+						58 text Violin · Grade 4
+						59 link Chỉnh sửa môn học, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/edit
+						60 text Ngừng hoạt động Tùy chọn Đủ cấu trúc học thuật Đủ nội dung Lesson Cách hoàn thành Thủ công Nhóm đánh giá 0 Lesson đang hoạt động 0
+						61 heading Thông tin môn học, Value: 2
+							62 text Thông tin môn học
+						63 description list
+							64 text Mã
+							65 text REPERTOIRE
+							66 text Nhóm môn
+							67 text REPERTOIRE
+						68 heading Lesson, Value: 2
+							69 text Lesson
+						70 link Chỉ Lesson đang hoạt động, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e
+						71 text 10  Lesson đang hiển thị
+						72 container
+							73 text 01 Lesson 01 L01  ·  Tùy chọn  ·  Ngừng hoạt động
+							74 button Đưa Lesson 01 xuống
+							75 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/6d7d4576-6591-4457-833f-78bdee2e943d
+						76 container
+							77 text 02 Lesson 02 L02  ·  Tùy chọn  ·  Ngừng hoạt động
+							78 button Đưa Lesson 02 lên
+							79 button Đưa Lesson 02 xuống
+							80 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/69fe5f28-5146-47c7-9d58-87788f234bd7
+						81 container
+							82 text 03 Lesson 03 L03  ·  Tùy chọn  ·  Ngừng hoạt động
+							83 button Đưa Lesson 03 lên
+							84 button Đưa Lesson 03 xuống
+							85 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/0ec34df5-dcca-4022-b3a6-de19f2cfc5a3
+						86 container
+							87 text 04 Lesson 04 L04  ·  Tùy chọn  ·  Ngừng hoạt động
+							88 button Đưa Lesson 04 lên
+							89 button Đưa Lesson 04 xuống
+							90 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/97a3fa6c-5df0-44b2-b07d-da336dad4f1e
+						91 container
+							92 text 05 Lesson 05 L05  ·  Tùy chọn  ·  Ngừng hoạt động
+							93 button Đưa Lesson 05 lên
+							94 button Đưa Lesson 05 xuống
+							95 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/6903299a-6fdd-4bc4-8a31-07a08ae25827
+						96 container
+							97 text 06 Lesson 06 L06  ·  Tùy chọn  ·  Ngừng hoạt động
+							98 button Đưa Lesson 06 lên
+							99 button Đưa Lesson 06 xuống
+							100 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/b7498612-1e41-45a2-85a4-7a86305ad029
+						101 container
+							102 text 07 Lesson 07 L07  ·  Tùy chọn  ·  Ngừng hoạt động
+							103 button Đưa Lesson 07 lên
+							104 button Đưa Lesson 07 xuống
+							105 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/33a45ee8-568e-4be1-97a9-5f4e84db3637
+						106 container
+							107 text 08 Lesson 08 L08  ·  Tùy chọn  ·  Ngừng hoạt động
+							108 button Đưa Lesson 08 lên
+							109 button Đưa Lesson 08 xuống
+							110 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/2edb5401-a767-4c27-bbcc-eef0cc1c0468
+						111 container
+							112 text 09 Lesson 09 L09  ·  Tùy chọn  ·  Ngừng hoạt động
+							113 button Đưa Lesson 09 lên
+							114 button Đưa Lesson 09 xuống
+							115 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/086ef4ef-c421-40e2-ad90-5adaf4ede81f
+						116 container
+							117 text 10 Lesson 10 L10  ·  Tùy chọn  ·  Ngừng hoạt động
+							118 button Đưa Lesson 10 lên
+							119 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/lessons/1eb07cc2-b406-4190-801b-4e50671fb9ed
+						120 text Thêm Lesson
+						121 text Tên Lesson *
+						122 text field (settable) Tên Lesson *
+						123 text Mã Lesson *
+						124 text field (settable) Mã Lesson *, Value: L11
+						125 text Thứ tự *
+						126 number field (settable) Thứ tự *, Value: 11
+							127 stepper 0
+								128 unknown
+								129 unknown
+						130 text Trạng thái *
+						131 pop up button Trạng thái *, Value: Đang hoạt động
+						132 container
+							133 checkbox Bắt buộc, Value: 1
+							134 text Bắt buộc
+						135 button Tạo Lesson
+						136 link Hủy, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e
+						137 heading Cấu trúc nội bộ, Value: 2
+							138 text Cấu trúc nội bộ
+						139 text Thêm nhóm đánh giá cho  Repertoire . Mã nhóm đánh giá *
+						140 text field (settable) Mã nhóm đánh giá *, Placeholder: BAROQUE
+						141 text Example: BAROQUE, SCALES, ETUDES
+						142 text Tên nhóm đánh giá *
+						143 text field (settable) Tên nhóm đánh giá *, Placeholder: Baroque Repertoire
+						144 text Thứ tự *
+						145 number field (settable) Thứ tự *, Value: 2
+							146 stepper 0
+								147 unknown
+								148 unknown
+						149 text Cách hoàn thành *
+						150 pop up button Cách hoàn thành *, Value: Chọn cách hoàn thành
+						151 container
+							152 checkbox Nhóm đánh giá bắt buộc, Value: 1
+							153 text Nhóm đánh giá bắt buộc
+						154 button Tạo nhóm đánh giá
+						155 heading Nhóm đánh giá, Value: 2
+							156 text Nhóm đánh giá
+						157 text 1  nhóm trong  Repertoire Bài học dự thảo INACTIVE Mã:  LESSON_DRAFTS Thứ tự:  1 Đánh giá trực tiếp
+						158 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e/components/c15a0c11-45ba-4968-841c-ef1f7747b801/edit
+						159 button Kích hoạt
+				160 scroll bar (settable, float) 0
+	161 container
+		162 image WindowControlShadowView._shadowImageView
+		163 toolbar
+			164 container Secondary Actions: Move next, Remove from toolbar
+				165 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				166 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			167 container BackForwardSegmentedControl
+				168 button Description: Go back, Help: Show the previous page, ID: BackButton
+				169 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			170 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				171 button Page Menu, ID: AssistantButton
+				172 button Add page to Reading List, ID: OneStepBookmarkingButton
+				173 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e?lessons=all
+				174 button Translation Available, ID: TranslationButton
+				175 button Reload this page, ID: ReloadButton
+			176 button Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				177 button Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			178 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			179 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				180 button Description: new tab, Help: New Tab, ID: NewTabButton
+					181 button Description: add, Help: New Tab
+			182 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		183 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			184 tab Xây dựng chương trình երաժ nhạc, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				185 image FaviconImageView
+				186 text Value: Xây dựng chương trình երաժ nhạc, ID: UnifedTabBarButton._titleTextField
+			187 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				188 image FaviconImageView
+				189 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			190 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				191 image FaviconImageView
+				192 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			193 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				194 image FaviconImageView
+				195 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			196 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				197 image FaviconImageView
+				198 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+199 menu bar
+	200 Safari
+	201 File
+	202 Edit
+	203 View, ID: SafariViewMenu
+	204 History
+	205 Bookmarks, ID: SafariBookmarksMenu
+	206 Window, ID: SafariWindowMenu
+	207 Help, ID: SafariHelpMenu
+
+
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7?lessons=all
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đường dẫn chương trình
+							52 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							53 link Piano, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7
+							54 link Pre Step, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454
+							55 text Methode Book
+						56 heading Methode Book, Value: 1
+							57 text Methode Book
+						58 text Piano · Pre Step
+						59 link Chỉnh sửa môn học, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/edit
+						60 text Ngừng hoạt động Tùy chọn Đủ cấu trúc học thuật Đủ nội dung Lesson Cách hoàn thành Thủ công Nhóm đánh giá 0 Lesson đang hoạt động 0
+						61 heading Thông tin môn học, Value: 2
+							62 text Thông tin môn học
+						63 description list
+							64 text Mã
+							65 text METHODE_BOOK
+							66 text Nhóm môn
+							67 text METHODE_BOOK
+						68 heading Lesson, Value: 2
+							69 text Lesson
+						70 link Chỉ Lesson đang hoạt động, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7
+						71 text 10  Lesson đang hiển thị
+						72 container
+							73 text 01 Lesson 01 L01  ·  Tùy chọn  ·  Ngừng hoạt động
+							74 button Đưa Lesson 01 xuống
+							75 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/99808b3c-9814-4829-9598-0123723f9929
+						76 container
+							77 text 02 Lesson 02 L02  ·  Tùy chọn  ·  Ngừng hoạt động
+							78 button Đưa Lesson 02 lên
+							79 button Đưa Lesson 02 xuống
+							80 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/049ae355-8432-4502-a2d5-d35b317f67a4
+						81 container
+							82 text 03 Lesson 03 L03  ·  Tùy chọn  ·  Ngừng hoạt động
+							83 button Đưa Lesson 03 lên
+							84 button Đưa Lesson 03 xuống
+							85 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/6cebf07d-9482-4278-b3f9-02ba0e0c74d7
+						86 container
+							87 text 04 Lesson 04 L04  ·  Tùy chọn  ·  Ngừng hoạt động
+							88 button Đưa Lesson 04 lên
+							89 button Đưa Lesson 04 xuống
+							90 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/4c0df2ff-ae53-4cfa-9269-c90d89bb3cac
+						91 container
+							92 text 05 Lesson 05 L05  ·  Tùy chọn  ·  Ngừng hoạt động
+							93 button Đưa Lesson 05 lên
+							94 button Đưa Lesson 05 xuống
+							95 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/3e54c45a-668a-40d9-b6b5-a1fbfdc4ffdb
+						96 container
+							97 text 06 Lesson 06 L06  ·  Tùy chọn  ·  Ngừng hoạt động
+							98 button Đưa Lesson 06 lên
+							99 button Đưa Lesson 06 xuống
+							100 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/2c546bdf-64fc-4a4e-802b-5495b46eb316
+						101 container
+							102 text 07 Lesson 07 L07  ·  Tùy chọn  ·  Ngừng hoạt động
+							103 button Đưa Lesson 07 lên
+							104 button Đưa Lesson 07 xuống
+							105 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/cc368823-5cd4-47c2-a1ce-883749da43ad
+						106 container
+							107 text 08 Lesson 08 L08  ·  Tùy chọn  ·  Ngừng hoạt động
+							108 button Đưa Lesson 08 lên
+							109 button Đưa Lesson 08 xuống
+							110 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/a879706f-b0d5-43ec-bd91-a814d8353785
+						111 container
+							112 text 09 Lesson 09 L09  ·  Tùy chọn  ·  Ngừng hoạt động
+							113 button Đưa Lesson 09 lên
+							114 button Đưa Lesson 09 xuống
+							115 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/ade85e2e-b446-4f88-a54f-bf3c89342dce
+						116 container
+							117 text 10 Lesson 10 L10  ·  Tùy chọn  ·  Ngừng hoạt động
+							118 button Đưa Lesson 10 lên
+							119 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/lessons/3667ed5c-65b1-4c5f-a6ad-359d39c52c85
+						120 text Thêm Lesson
+						121 text Tên Lesson *
+						122 text field (settable) Tên Lesson *
+						123 text Mã Lesson *
+						124 text field (settable) Mã Lesson *, Value: L11
+						125 text Thứ tự *
+						126 number field (settable) Thứ tự *, Value: 11
+							127 stepper 0
+								128 unknown
+								129 unknown
+						130 text Trạng thái *
+						131 pop up button Trạng thái *, Value: Đang hoạt động
+						132 container
+							133 checkbox Bắt buộc, Value: 1
+							134 text Bắt buộc
+						135 button Tạo Lesson
+						136 link Hủy, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7
+						137 heading Cấu trúc nội bộ, Value: 2
+							138 text Cấu trúc nội bộ
+						139 text Thêm nhóm đánh giá cho  Methode Book . Mã nhóm đánh giá *
+						140 text field (settable) Mã nhóm đánh giá *, Placeholder: BAROQUE
+						141 text Example: BAROQUE, SCALES, ETUDES
+						142 text Tên nhóm đánh giá *
+						143 text field (settable) Tên nhóm đánh giá *, Placeholder: Baroque Repertoire
+						144 text Thứ tự *
+						145 number field (settable) Thứ tự *, Value: 2
+							146 stepper 0
+								147 unknown
+								148 unknown
+						149 text Cách hoàn thành *
+						150 pop up button Cách hoàn thành *, Value: Chọn cách hoàn thành
+						151 container
+							152 checkbox Nhóm đánh giá bắt buộc, Value: 1
+							153 text Nhóm đánh giá bắt buộc
+						154 button Tạo nhóm đánh giá
+						155 heading Nhóm đánh giá, Value: 2
+							156 text Nhóm đánh giá
+						157 text 1  nhóm trong  Methode Book Bài học dự thảo INACTIVE Mã:  LESSON_DRAFTS Thứ tự:  1 Đánh giá trực tiếp
+						158 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7/components/5054f5d9-0ab4-41cc-8e45-ab3a6c41966a/edit
+						159 button Kích hoạt
+				160 scroll bar (settable, float) 0
+	161 container
+		162 image WindowControlShadowView._shadowImageView
+		163 toolbar
+			164 container Secondary Actions: Move next, Remove from toolbar
+				165 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				166 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			167 container BackForwardSegmentedControl
+				168 button Description: Go back, Help: Show the previous page, ID: BackButton
+				169 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			170 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				171 button Page Menu, ID: AssistantButton
+				172 button Add page to Reading List, ID: OneStepBookmarkingButton
+				173 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7?lessons=all
+				174 button Translation Available, ID: TranslationButton
+				175 button Reload this page, ID: ReloadButton
+			176 button Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				177 button Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			178 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			179 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				180 button Description: new tab, Help: New Tab, ID: NewTabButton
+					181 button Description: add, Help: New Tab
+			182 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		183 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			184 tab Xây dựng chương trình երաժ nhạc, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				185 image FaviconImageView
+				186 text Value: Xây dựng chương trình երաժ nhạc, ID: UnifedTabBarButton._titleTextField
+			187 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				188 image FaviconImageView
+				189 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			190 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				191 image FaviconImageView
+				192 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			193 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				194 image FaviconImageView
+				195 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			196 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				197 image FaviconImageView
+				198 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+199 menu bar
+	200 Safari
+	201 File
+	202 Edit
+	203 View, ID: SafariViewMenu
+	204 History
+	205 Bookmarks, ID: SafariBookmarksMenu
+	206 Window, ID: SafariWindowMenu
+	207 Help, ID: SafariHelpMenu
+
+
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64?lessons=all
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đường dẫn chương trình
+							52 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							53 link Piano, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7
+							54 link Pre, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6
+							55 text Methode Book
+						56 heading Methode Book, Value: 1
+							57 text Methode Book
+						58 text Piano · Pre
+						59 link Chỉnh sửa môn học, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/edit
+						60 text Ngừng hoạt động Tùy chọn Đủ cấu trúc học thuật Đủ nội dung Lesson Cách hoàn thành Thủ công Nhóm đánh giá 0 Lesson đang hoạt động 0
+						61 heading Thông tin môn học, Value: 2
+							62 text Thông tin môn học
+						63 description list
+							64 text Mã
+							65 text METHODE_BOOK
+							66 text Nhóm môn
+							67 text METHODE_BOOK
+						68 heading Lesson, Value: 2
+							69 text Lesson
+						70 link Chỉ Lesson đang hoạt động, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64
+						71 text 10  Lesson đang hiển thị
+						72 container
+							73 text 01 Lesson 01 L01  ·  Tùy chọn  ·  Ngừng hoạt động
+							74 button Đưa Lesson 01 xuống
+							75 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/e8c8e23f-dd34-4391-a767-e2efc8554be6
+						76 container
+							77 text 02 Lesson 02 L02  ·  Tùy chọn  ·  Ngừng hoạt động
+							78 button Đưa Lesson 02 lên
+							79 button Đưa Lesson 02 xuống
+							80 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/4d455f17-9ae5-4248-93de-ebc559f37645
+						81 container
+							82 text 03 Lesson 03 L03  ·  Tùy chọn  ·  Ngừng hoạt động
+							83 button Đưa Lesson 03 lên
+							84 button Đưa Lesson 03 xuống
+							85 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/6e01f369-1cf8-41c1-8ba9-af8376aec9e9
+						86 container
+							87 text 04 Lesson 04 L04  ·  Tùy chọn  ·  Ngừng hoạt động
+							88 button Đưa Lesson 04 lên
+							89 button Đưa Lesson 04 xuống
+							90 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/0171ec84-f8b9-43e4-ae50-b3f21b01c450
+						91 container
+							92 text 05 Lesson 05 L05  ·  Tùy chọn  ·  Ngừng hoạt động
+							93 button Đưa Lesson 05 lên
+							94 button Đưa Lesson 05 xuống
+							95 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/d0f835c1-f09d-49d2-a3c2-b0e278f20deb
+						96 container
+							97 text 06 Lesson 06 L06  ·  Tùy chọn  ·  Ngừng hoạt động
+							98 button Đưa Lesson 06 lên
+							99 button Đưa Lesson 06 xuống
+							100 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/08c18cd6-4efa-4a19-a3ad-566417a7f8e6
+						101 container
+							102 text 07 Lesson 07 L07  ·  Tùy chọn  ·  Ngừng hoạt động
+							103 button Đưa Lesson 07 lên
+							104 button Đưa Lesson 07 xuống
+							105 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/09c2901e-4e02-4d54-8c0b-6a9d11e6147a
+						106 container
+							107 text 08 Lesson 08 L08  ·  Tùy chọn  ·  Ngừng hoạt động
+							108 button Đưa Lesson 08 lên
+							109 button Đưa Lesson 08 xuống
+							110 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/891d4b20-07ec-4ac9-8b32-65a49e118541
+						111 container
+							112 text 09 Lesson 09 L09  ·  Tùy chọn  ·  Ngừng hoạt động
+							113 button Đưa Lesson 09 lên
+							114 button Đưa Lesson 09 xuống
+							115 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/2632c536-53d9-4cd6-8dc7-aec9ab6dcf9c
+						116 container
+							117 text 10 Lesson 10 L10  ·  Tùy chọn  ·  Ngừng hoạt động
+							118 button Đưa Lesson 10 lên
+							119 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/lessons/94de77b4-deee-413c-bb3d-05fb8e0b1118
+						120 text Thêm Lesson
+						121 text Tên Lesson *
+						122 text field (settable) Tên Lesson *
+						123 text Mã Lesson *
+						124 text field (settable) Mã Lesson *, Value: L11
+						125 text Thứ tự *
+						126 number field (settable) Thứ tự *, Value: 11
+							127 stepper 0
+								128 unknown
+								129 unknown
+						130 text Trạng thái *
+						131 pop up button Trạng thái *, Value: Đang hoạt động
+						132 container
+							133 checkbox Bắt buộc, Value: 1
+							134 text Bắt buộc
+						135 button Tạo Lesson
+						136 link Hủy, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64
+						137 heading Cấu trúc nội bộ, Value: 2
+							138 text Cấu trúc nội bộ
+						139 text Thêm nhóm đánh giá cho  Methode Book . Mã nhóm đánh giá *
+						140 text field (settable) Mã nhóm đánh giá *, Placeholder: BAROQUE
+						141 text Example: BAROQUE, SCALES, ETUDES
+						142 text Tên nhóm đánh giá *
+						143 text field (settable) Tên nhóm đánh giá *, Placeholder: Baroque Repertoire
+						144 text Thứ tự *
+						145 number field (settable) Thứ tự *, Value: 2
+							146 stepper 0
+								147 unknown
+								148 unknown
+						149 text Cách hoàn thành *
+						150 pop up button Cách hoàn thành *, Value: Chọn cách hoàn thành
+						151 container
+							152 checkbox Nhóm đánh giá bắt buộc, Value: 1
+							153 text Nhóm đánh giá bắt buộc
+						154 button Tạo nhóm đánh giá
+						155 heading Nhóm đánh giá, Value: 2
+							156 text Nhóm đánh giá
+						157 text 1  nhóm trong  Methode Book Bài học dự thảo INACTIVE Mã:  LESSON_DRAFTS Thứ tự:  1 Đánh giá trực tiếp
+						158 link Chỉnh sửa, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64/components/ba947757-5b78-4e1f-af1d-e9329e70be2c/edit
+						159 button Kích hoạt
+				160 scroll bar (settable, float) 0
+	161 container
+		162 image WindowControlShadowView._shadowImageView
+		163 toolbar
+			164 container Secondary Actions: Move next, Remove from toolbar
+				165 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				166 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			167 container BackForwardSegmentedControl
+				168 button Description: Go back, Help: Show the previous page, ID: BackButton
+				169 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			170 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				171 button Page Menu, ID: AssistantButton
+				172 button Add page to Reading List, ID: OneStepBookmarkingButton
+				173 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64?lessons=all
+				174 button Translation Available, ID: TranslationButton
+				175 button Reload this page, ID: ReloadButton
+			176 button Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				177 button Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			178 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			179 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				180 button Description: new tab, Help: New Tab, ID: NewTabButton
+					181 button Description: add, Help: New Tab
+			182 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		183 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			184 tab Xây dựng chương trình երաժ nhạc, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				185 image FaviconImageView
+				186 text Value: Xây dựng chương trình երաժ nhạc, ID: UnifedTabBarButton._titleTextField
+			187 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				188 image FaviconImageView
+				189 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			190 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				191 image FaviconImageView
+				192 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			193 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				194 image FaviconImageView
+				195 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			196 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				197 image FaviconImageView
+				198 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+199 menu bar
+	200 Safari
+	201 File
+	202 Edit
+	203 View, ID: SafariViewMenu
+	204 History
+	205 Bookmarks, ID: SafariBookmarksMenu
+	206 Window, ID: SafariWindowMenu
+	207 Help, ID: SafariHelpMenu

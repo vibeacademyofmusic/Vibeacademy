@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { randomUUID } from 'node:crypto'
 
+import { requestClaims, requestRole } from '@/lib/auth/request'
 import {
   adminClient,
   uuidPattern,
@@ -318,15 +319,9 @@ export default async function Expenses({
     financeRole,
     branchRole,
   ] = await Promise.all([
-    db.rpc('has_role', {
-      role_code: 'SUPER_ADMIN',
-    }),
-    db.rpc('has_role', {
-      role_code: 'FINANCE',
-    }),
-    db.rpc('has_role', {
-      role_code: 'BRANCH_ADMIN',
-    }),
+    requestRole('SUPER_ADMIN'),
+    requestRole('FINANCE'),
+    requestRole('BRANCH_ADMIN'),
   ])
 
   const operator =
@@ -351,7 +346,7 @@ export default async function Expenses({
   // decides whether the operator can open self-service.
   // ----------------------------------------------------
 
-  const auth = await db.auth.getClaims()
+  const auth = await requestClaims()
   const userId =
     typeof auth.data?.claims?.sub === 'string'
       ? auth.data.claims.sub
@@ -467,29 +462,29 @@ export default async function Expenses({
   // read failure never becomes a false zero.
   // ----------------------------------------------------
 
+  const none = Promise.resolve({ data: [] as never[], error: null })
+  const [peopleResult, branchResult, linesResult, itemResult, postingsResult, periodsResult] = await Promise.all([
+    employeeIds.length
+      ? db.from('employee_directory').select('id,full_name,employee_code').in('id', employeeIds)
+      : none,
+    db.from('branches').select('id,name').eq('status', 'ACTIVE').order('name'),
+    claimIds.length
+      ? db.from('employee_expense_claim_lines').select('claim_id,total_amount,evidence_reference').in('claim_id', claimIds).eq('reservation_active', true)
+      : none,
+    claimIds.length
+      ? db.from('employee_expense_claim_items_v2').select('claim_id,amount').in('claim_id', claimIds)
+      : none,
+    claimIds.length
+      ? db.from('payroll_period_actions_v2').select('source_expense_claim_id,period_id,amount,currency,status,created_at').in('source_expense_claim_id', claimIds).eq('status', 'ACTIVE').order('created_at', { ascending: false })
+      : none,
+    branchIds.length
+      ? db.from('payroll_periods').select('id,branch_id,starts_on,status,version').in('branch_id', branchIds).order('starts_on', { ascending: false }).limit(500)
+      : none,
+  ])
+
   let people: Person[] = []
-  let peopleAvailable = true
-
-  if (employeeIds.length) {
-    const result = await db
-      .from('employee_directory')
-      .select(
-        'id,full_name,employee_code'
-      )
-      .in('id', employeeIds)
-
-    peopleAvailable = !result.error
-
-    if (!result.error) {
-      people = (result.data || []) as Person[]
-    }
-  }
-
-  const branchResult = await db
-    .from('branches')
-    .select('id,name')
-    .eq('status', 'ACTIVE')
-    .order('name')
+  const peopleAvailable = !employeeIds.length || !peopleResult.error
+  if (peopleAvailable && employeeIds.length) people = (peopleResult.data || []) as Person[]
 
   const branches =
     !branchResult.error
@@ -497,85 +492,19 @@ export default async function Expenses({
       : []
 
   let lines: ClaimLine[] = []
-  let linesAvailable = true
+  const linesAvailable = !claimIds.length || !linesResult.error
+  if (linesAvailable && claimIds.length) lines = (linesResult.data || []) as ClaimLine[]
+
   let items: ExpenseItemRow[] = []
-  let itemsAvailable = true
-
-  if (claimIds.length) {
-    const result = await db
-      .from('employee_expense_claim_lines')
-      .select(
-        'claim_id,total_amount,evidence_reference'
-      )
-      .in('claim_id', claimIds)
-      .eq('reservation_active', true)
-
-    linesAvailable = !result.error
-
-    if (!result.error) {
-      lines =
-        (result.data || []) as ClaimLine[]
-    }
-
-    const itemResult = await db
-      .from('employee_expense_claim_items_v2')
-      .select('claim_id,amount')
-      .in('claim_id', claimIds)
-
-    itemsAvailable = !itemResult.error
-    if (!itemResult.error) {
-      items = (itemResult.data || []) as ExpenseItemRow[]
-    }
-  }
+  const itemsAvailable = !claimIds.length || !itemResult.error
+  if (itemsAvailable && claimIds.length) items = (itemResult.data || []) as ExpenseItemRow[]
 
   let postings: Posting[] = []
-  let postingsAvailable = true
+  const postingsAvailable = !claimIds.length || !postingsResult.error
+  if (postingsAvailable && claimIds.length) postings = (postingsResult.data || []) as Posting[]
 
-  if (claimIds.length) {
-    const result = await db
-      .from('payroll_period_actions_v2')
-      .select(
-        'source_expense_claim_id,period_id,amount,currency,status,created_at'
-      )
-      .in(
-        'source_expense_claim_id',
-        claimIds
-      )
-      .eq('status', 'ACTIVE')
-      .order('created_at', {
-        ascending: false,
-      })
-
-    postingsAvailable = !result.error
-
-    if (!result.error) {
-      postings =
-        (result.data || []) as Posting[]
-    }
-  }
-
-  let periods: Period[] = []
-  let periodsAvailable = true
-
-  if (branchIds.length) {
-    const result = await db
-      .from('payroll_periods')
-      .select(
-        'id,branch_id,starts_on,status,version'
-      )
-      .in('branch_id', branchIds)
-      .order('starts_on', {
-        ascending: false,
-      })
-      .limit(500)
-
-    periodsAvailable = !result.error
-
-    if (!result.error) {
-      periods =
-        (result.data || []) as Period[]
-    }
-  }
+  const periodsAvailable = !branchIds.length || !periodsResult.error
+  const periods: Period[] = periodsAvailable && branchIds.length ? (periodsResult.data || []) as Period[] : []
 
   // ----------------------------------------------------
   // Maps

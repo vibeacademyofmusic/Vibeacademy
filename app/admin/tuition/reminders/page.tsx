@@ -12,8 +12,9 @@ import { AppPage, PageHeader, MetricCard, StatusBadge, FilterBar, SectionCard } 
 import { plans, debts } from '../data'
 import { reminders, kpis, timing, filters, replyFilters, type Reminder } from './data'
 import { generateReminders, resolveReminder, confirmTuitionZalo, recordTuitionNoticeConsent, recordTuitionContactNote } from './actions'
-import { createTuitionRenewal, retryTuitionPayos, retryTuitionNotice } from './renewal-actions'
-import { PAYMENT_TEMPLATE_REQUEST, renewalPaymentLabel, renewalProcessingLabel } from '@/lib/integrations/tuition/renewal-status'
+import { createTuitionRenewal, retryTuitionPayos, sendTuitionPaymentRequest } from './renewal-actions'
+import { paymentNoticeReason, paymentTemplateGate, renewalPaymentLabel, renewalProcessingLabel, storedZbsStatusLabel } from '@/lib/integrations/tuition/renewal-status'
+import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest } from '@/lib/integrations/tuition/payment-zbs'
 import { loadTuitionNotice } from './notice'
 import { noticeDate, zaloAttemptLabel } from '@/lib/integrations/zalo/tuition-notice'
 import { zaloPilotOutboundBlocked } from '@/lib/integrations/zalo/pilot-outbound'
@@ -104,8 +105,8 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   const sendStateRows = list.data.length ? await rows(db.from('tuition_zalo_sends').select('reminder_id,send_status,created_at').in('reminder_id', list.data.map(row => row.id)).order('created_at', { ascending: false }).returns<{ reminder_id: string; send_status: string; created_at: string }[]>()) : []
   const sendByReminder = new Map<string, string>()
   for (const send of sendStateRows) if (!sendByReminder.has(send.reminder_id)) sendByReminder.set(send.reminder_id, send.send_status)
-  type RenewalRow = { id: string; reminder_id: string; state: string; plan_code: string; list_price: number; amount_due: number; payment_option: string; paid_amount: number; starts_on: string; due_on: string; zbs_status: string; confirmation_status: string; invoice_id: string; last_event: string | null }
-  const renewalRows = detailRows.length ? await rows(db.from('tuition_renewal_cases').select('id,reminder_id,state,plan_code,list_price,amount_due,payment_option,paid_amount,starts_on,due_on,zbs_status,confirmation_status,invoice_id,last_event').in('reminder_id', detailRows.map(row => row.id)).returns<RenewalRow[]>()) : []
+  type RenewalRow = { id: string; reminder_id: string; student_id: string; parent_id: string | null; state: string; plan_code: string; list_price: number; amount_due: number; payment_option: string; paid_amount: number; starts_on: string; due_on: string; zbs_status: string; zbs_error_code: string | null; confirmation_status: string; invoice_id: string; last_event: string | null }
+  const renewalRows = detailRows.length ? await rows(db.from('tuition_renewal_cases').select('id,reminder_id,student_id,parent_id,state,plan_code,list_price,amount_due,payment_option,paid_amount,starts_on,due_on,zbs_status,zbs_error_code,confirmation_status,invoice_id,last_event').in('reminder_id', detailRows.map(row => row.id)).returns<RenewalRow[]>()) : []
   const renewalByReminder = new Map(renewalRows.map(row => [row.reminder_id, row]))
   const invoiceRows = renewalRows.length ? await rows(db.from('invoices').select('id,invoice_number,status').in('id', renewalRows.map(row => row.invoice_id)).returns<{ id: string; invoice_number: string; status: string }[]>()) : []
   const invoiceById = new Map(invoiceRows.map(row => [row.id, row]))
@@ -115,7 +116,11 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   const returnHref = reminderReturnHref(params)
   const contextHref = reminderReturnHref(params, true)
   const context = <input type="hidden" name="return_context" value={contextHref} />
-  const manualLive = !zaloPilotOutboundBlocked()
+  const reminderTemplate = (await rows(db.from('notification_templates').select('status,enabled,provider_template_id').eq('template_key', 'ZALO_TUITION_REMINDER').eq('provider', 'ZALO').limit(1).returns<{ status: string; enabled: boolean; provider_template_id: string | null }[]>()))[0]
+  const paymentTemplate = (await rows(db.from('notification_templates').select('template_key,status,enabled,provider_template_id,parameter_schema,payload_schema').eq('template_key', 'ZALO_TUITION_PAYMENT').eq('provider', 'ZALO').limit(1).returns<{ template_key: string; status: string; enabled: boolean; provider_template_id: string | null; parameter_schema: unknown; payload_schema: unknown }[]>()))[0]
+  const manualLive = reminderTemplate?.enabled === true && reminderTemplate.provider_template_id === '643118' && !zaloPilotOutboundBlocked()
+  const paymentGate = paymentTemplateGate(paymentTemplate ?? null)
+  const reminderTemplateId = reminderTemplate?.provider_template_id || 'chưa gắn'
   const syncResult = await db.rpc('tuition_zalo_response_sync_status')
   const sync = syncResult.error ? null : readTuitionResponseSyncStatus(syncResult.data)
   const syncFailing = tuitionResponseSyncFailing(sync)
@@ -185,11 +190,45 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
             <label className="vibe-field"><span>Ghi chú nội bộ</span><textarea name="note" maxLength={2000} rows={3} /></label>
             <SubmitButton className="vibe-button vibe-button-primary" pendingLabel="Đang tạo gia hạn">Tạo gia hạn học phí</SubmitButton>
           </form>
-          {renewal && <div className="flex flex-wrap gap-2"><form action={retryTuitionPayos}>{context}<input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Mở / đối chiếu đơn payOS</SubmitButton></form><form action={retryTuitionNotice}>{context}<input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Gửi lại ZBS</SubmitButton></form></div>}
+          {renewal && await (async () => {
+            const invoice = invoiceById.get(renewal.invoice_id)
+            const parent = renewal.parent_id ? await db.from('parents').select('parent_code,user_id').eq('id', renewal.parent_id).maybeSingle() : { data: null }
+            const profile = parent.data?.user_id ? await db.from('profiles').select('full_name,phone').eq('id', parent.data.user_id).maybeSingle() : { data: null }
+            const input = {
+              customerName: profile.data?.full_name || parent.data?.parent_code || '',
+              studentName: renewRow.full_name,
+              invoiceCode: invoice?.invoice_number || '',
+              packageName: renewal.plan_code === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng',
+              packageAmount: Number(renewal.list_price),
+              paymentType: renewal.payment_option === 'FULL' ? 'Thanh toán 100%' : 'Đặt cọc 50%',
+              amountDue: Number(renewal.amount_due),
+              deadline: renewal.due_on,
+              paymentLinkId: order?.payment_link_id || '',
+              checkoutUrl: order?.checkout_url || '',
+            }
+            const built = buildTuitionPaymentRequest(input)
+            const prepared = prepareTuitionPaymentRequest({
+              template: paymentTemplate ?? null,
+              input,
+              linkInvoiceCode: invoice?.invoice_number || '',
+              attempt: paymentAttemptFromStored(renewal.zbs_status, renewal.zbs_error_code, renewal.id, invoice?.invoice_number || '', order?.payment_link_id || ''),
+            })
+            const amountMatches = order ? Number(order.amount) === Number(renewal.amount_due) : false
+            const canSend = prepared.code === 'ELIGIBLE' && renewal.zbs_status !== 'QUEUED' && Boolean(profile.data?.phone) && amountMatches
+            const readiness = prepared.code !== 'ELIGIBLE' ? prepared.code : amountMatches ? 'ELIGIBLE' : 'LINK_INVOICE_MISMATCH'
+            return <>
+              <p>Sẵn sàng mẫu 645028: {paymentNoticeReason(paymentGate.sendingEnabled ? 'ELIGIBLE' : paymentGate.code, paymentGate.templateId)}</p>
+              <p>Hồ sơ này: {paymentNoticeReason(readiness, paymentGate.templateId)}{profile.data?.phone ? '' : ' Người nhận chưa có số điện thoại.'}</p>
+              {built.ok && <ul className="list-disc pl-5 text-sm">{Object.entries({ ...built.body, payment_link_id: built.cta.payment_link_id }).map(([key, value]) => <li key={key}>{key}: {value}</li>)}<li>Nút Thanh toán học phí: {built.checkoutUrl}</li></ul>}
+              <div className="flex flex-wrap gap-2">
+                <form action={retryTuitionPayos}>{context}<input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button">Mở / đối chiếu đơn payOS</SubmitButton></form>
+                {canSend ? <form action={sendTuitionPaymentRequest}>{context}<input type="hidden" name="case_id" value={renewal.id} /><SubmitButton className="vibe-button vibe-button-primary" pendingLabel="Đang gửi">Gửi lại ZBS</SubmitButton></form> : <button type="button" className="vibe-button" disabled>Gửi lại ZBS</button>}
+              </div>
+            </>
+          })()}
           {order && tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) && <CheckoutLink url={tuitionCheckoutUrl(order.payment_link_id, order.checkout_url)!} />}
           {order?.checkout_url && !tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) && <p role="alert">Link payOS đã lưu không hợp lệ. Cần đối chiếu đơn trước khi thử lại.</p>}
-          {renewal && <p>ZBS thanh toán: {renewal.zbs_status}. Xác nhận sau thu: {renewal.confirmation_status}. Bắt đầu kỳ mới: {dateText(renewal.starts_on)}. Sự kiện gần nhất: {renewal.last_event ?? 'chưa có'}.</p>}
-          {renewal?.zbs_status === 'AWAITING_TEMPLATE' && <p>{PAYMENT_TEMPLATE_REQUEST}</p>}
+          {renewal && <p>Lịch sử đã lưu: {paymentGate.sendingEnabled && renewal.zbs_status === 'HELD' ? 'Đã lưu: chờ nhân viên gửi' : storedZbsStatusLabel(renewal.zbs_status)}. Xác nhận sau thu: {renewal.confirmation_status}. Mẫu 645028 không phải biên nhận. Bắt đầu kỳ mới: {dateText(renewal.starts_on)}.</p>}
         </div>
       </ReminderDialog>
     })()}
@@ -225,7 +264,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         {notice.deliveryBlockers.length > 0 && <ul className="list-disc pl-5 text-sm">{notice.deliveryBlockers.map(item => <li key={item}>{item}</li>)}</ul>}
         <div className="flex flex-wrap gap-2">
           <Link scroll={false} className="vibe-button" href={returnHref}>Hủy</Link>
-          <form action={confirmTuitionZalo}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} />{notice.recipient && <input type="hidden" name="parent_id" value={notice.recipient.id} />}<SubmitButton className="vibe-button vibe-button-primary">Xác nhận gửi cho học viên này</SubmitButton></form>
+          {notice.attemptAllowed && manualLive && !['Đã tiếp nhận', 'Đã phát đến máy', 'Đã tạo mã theo dõi'].includes(notice.attemptLabel) ? <form action={confirmTuitionZalo}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} />{notice.recipient && <input type="hidden" name="parent_id" value={notice.recipient.id} />}<SubmitButton className="vibe-button vibe-button-primary">Xác nhận gửi cho học viên này</SubmitButton></form> : <button type="button" className="vibe-button" disabled>Xác nhận gửi cho học viên này</button>}
         </div>
       </div>
       </>}
@@ -270,7 +309,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
     {params.auto === '1' && <ReminderDialog title="Zalo tự động" closeHref={returnHref}>
       <div id="zalo-auto" className="space-y-2">
         <p>{manualLive ? 'Chế độ hiện tại: Gửi thật thủ công đã bật. Gửi theo lịch đang tắt. Chưa gửi tồn đọng.' : 'Chế độ hiện tại: xem trước. Gửi thật đang tắt. Chưa bật lịch gửi tự động và chưa gửi tồn đọng.'}</p>
-        <p>Mẫu đang gửi vẫn là ZALO_TUITION_REMINDER, mã Zalo 643118, trạng thái đã duyệt. Nút trên tin thật của mẫu này vẫn là Tiếp tục học và Dừng học. Chưa chuyển mã mẫu. Tham số: tên phụ huynh, kỳ học, tên học viên, học phí gói, hạn cuối khoảng nhắc, mã học viên. Không có đường dẫn. Gửi theo lịch đang tắt. Mẫu đăng ký 640377 giữ nguyên. Nhắc gia hạn không lấy số nợ.</p>
+        <p>Mẫu đang cấu hình là ZALO_TUITION_REMINDER, mã Zalo {reminderTemplateId}, trạng thái {reminderTemplate?.status ?? 'chưa đọc'}. Gửi theo lịch đang tắt. Gửi thủ công {manualLive ? 'đang bật' : 'đang tắt'}. {reminderTemplateId === '643118' ? 'Nút trên tin của mẫu này là Tiếp tục học và Dừng học.' : 'Hợp đồng nút của mã này chưa được xác minh từ Zalo.'} Tham số đã có nguồn: tên phụ huynh, kỳ học, tên học viên, học phí gói, hạn cuối khoảng nhắc, mã học viên. Không có đường dẫn. Mẫu đăng ký 640377 giữ nguyên. Nhắc gia hạn không lấy số nợ và không ghi đã thanh toán.</p>
         <p>Nội dung mẫu thay thế đã chuẩn bị, chờ tạo và duyệt trên Zalo. Chưa dùng để gửi:</p>
         <pre className="whitespace-pre-wrap rounded-xl border border-[var(--vibe-line)] bg-white p-4 text-sm">{notice?.replacementPreview ?? 'Quý khách {customer_name}, Vibe Academy thông báo sắp kết thúc khoá học của học viên {student_name}, mã học viên {student_code}, kỳ học {period}. Học phí cần gia hạn là: {amount} đồng. Hạn thanh toán: {due_date}. Vui lòng xác nhận kế hoạch học tập của bạn để nhà trường có thể sắp xếp chương trình và kế hoạch tiếp theo cho mình. Vui lòng xác nhận bên dưới.\nNút phản hồi: Tiếp tục học\nNút phản hồi: Yêu cầu khác\nKhông có đường dẫn.'}</pre>
         <p>Phạm vi: chi nhánh đang lọc trên trang này. Mốc nhắc vẫn là lịch học phí đã duyệt. Lần chạy gần nhất: chưa có vì lịch gửi chưa được bật.</p>

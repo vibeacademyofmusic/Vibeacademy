@@ -2,7 +2,7 @@ import { rows, type DB } from '../../finance/query'
 import { uuidPattern, vietnamDateTime } from '../../finance/operations'
 import {
   evaluateTuitionNotice,
-  TUITION_PROVIDER_TEMPLATE_ID,
+  tuitionReminderTemplateId,
   zaloAttemptLabel,
   type NoticeRecipient,
   type TuitionNotice,
@@ -28,6 +28,7 @@ export type TuitionNoticeView = TuitionNotice & {
   periodStart: string
   periodEnd: string
   eventCode: string | null
+  templateId: string | null
   maskedPhone: string
   attemptLabel: string
   replyLabel: string
@@ -107,9 +108,9 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
     recipients,
     selectedRecipientId,
     consentParentIds: consent.filter(item => !item.revoked_at).map(item => item.parent_id),
-    templateReady: template?.status === 'APPROVED' && template.provider_template_id === TUITION_PROVIDER_TEMPLATE_ID,
-    scheduledDispatchEnabled: template?.enabled === true,
-    manualSendEnabled: !zaloPilotOutboundBlocked(),
+    templateReady: tuitionReminderTemplateId(template) !== null,
+    scheduledDispatchEnabled: false,
+    manualSendEnabled: template?.enabled === true && template.provider_template_id === '643118' && !zaloPilotOutboundBlocked(),
   })
   const phone = notice.recipient?.phone ?? null
   const activeConsent = notice.recipient
@@ -125,6 +126,7 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
     periodStart: reminder.starts_on,
     periodEnd: reminder.effective_ends_on,
     eventCode: reminder.event_code,
+    templateId: tuitionReminderTemplateId(template),
     maskedPhone: phone ? phone.replace(/\d(?=\d{3})/g, '•') : 'Chưa có số điện thoại',
     consentRecord: activeConsent ? {
       parentId: activeConsent.parent_id,

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { requestClient } from '@/lib/auth/request'
 import { CrmLeadContent } from '../crm/CrmContent'
 import { RecruitmentShell } from './shell'
 import { registrationProgressLabel, staffFacingError } from './status'
@@ -14,7 +14,7 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
       </RecruitmentShell>
     )
   }
-  const db = await createClient()
+  const db = await requestClient()
   const { data, error } = await db.from('registration_applications')
     .select('id, application_code, student_name, status, desired_start_date, branches(name), student_placement_cases(status, scheduled_start_date)')
     .order('created_at', { ascending: false })

@@ -8,7 +8,7 @@ import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
 
 import { logout } from '@/app/login/actions'
-import { createClient } from '@/lib/supabase/server'
+import { requestClaims, requestClient, requestRole } from '@/lib/auth/request'
 import { TuitionPaymentNav } from './finance/SectionNav'
 import { HrSectionNav } from './hr/SectionNav'
 import { fullBusinessAccess, loadBranchBusinessAccess } from './business/access'
@@ -20,31 +20,26 @@ export default async function AdminLayout({
 }: {
   children: ReactNode
 }) {
-  const supabase = await createClient()
+  const supabase = await requestClient()
 
-  const { data: claimsData, error: claimsError } =
-    await supabase.auth.getClaims()
+  const { data: claimsData, error: claimsError } = await requestClaims()
 
   if (claimsError || !claimsData?.claims) {
     redirect('/login')
   }
 
-  const { data: isSuperAdmin, error: roleError } = await supabase.rpc(
-    'has_role',
-    {
-      role_code: 'SUPER_ADMIN',
-    }
-  )
-
+  const userId = claimsData.claims.sub
   const pathname = (await headers()).get('x-vibe-pathname')
+  const [{ data: isSuperAdmin, error: roleError }, { data: profile }] = await Promise.all([
+    requestRole('SUPER_ADMIN'),
+    supabase.from('profiles').select('full_name').eq('id', userId).single(),
+  ])
   let mode: ShellMode = 'full'
 
   if (roleError || !isSuperAdmin) {
-    const [{ data: mayEnter, error: shellError }, { data: mayStudents, error: studentError }] = await Promise.all([
+    const [{ data: mayEnter, error: shellError }, { data: mayStudents, error: studentError }, { data: mayCashier }, { data: mayDecidePause }] = await Promise.all([
       supabase.rpc('crm_shell_may_enter'),
       supabase.rpc('student_ops_may_enter'),
-    ])
-    const [{ data: mayCashier }, { data: mayDecidePause }] = await Promise.all([
       supabase.rpc('cashier_may_enter'),
       supabase.rpc('academic_ops_may_manage'),
     ])
@@ -62,14 +57,6 @@ export default async function AdminLayout({
   const includeBusiness = mode === 'full' || mode === 'business' || mode === 'business-students'
   const businessAccess = !includeBusiness ? null : isSuperAdmin ? fullBusinessAccess : await loadBranchBusinessAccess(supabase)
   const hiddenHrefs = businessAccess ? hiddenBusinessHrefs(businessAccess) : []
-
-  const userId = claimsData.claims.sub
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name')
-    .eq('id', userId)
-    .single()
 
   return (
     <div className="vibe-admin min-h-screen bg-gray-50">

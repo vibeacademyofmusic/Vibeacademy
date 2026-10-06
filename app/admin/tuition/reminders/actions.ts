@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient, uuidPattern } from '../../finance/operations'
 import { ZALO_PILOT_OUTBOUND_DISABLED } from '@/lib/integrations/zalo/pilot-outbound'
-import { TUITION_PROVIDER_TEMPLATE_ID, tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
+import { tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
 import { sendManualTuitionZalo } from '@/lib/integrations/zalo/tuition-test-send'
 import { loadTuitionNotice } from './notice'
 
@@ -74,6 +74,7 @@ export async function confirmTuitionZalo(form: FormData) {
   const db = await adminClient()
   const notice = await loadTuitionNotice(db, id, uuidPattern.test(parentId) ? parentId : null)
   if (!notice) return back(form, 'Không tìm thấy nhắc học phí của học viên này.')
+  if (!notice.templateId) return back(form, 'Mẫu ZALO_TUITION_REMINDER chưa có mã Zalo đã duyệt. Chưa gửi.')
   if (!notice.attemptAllowed || !notice.recipient || !notice.parameters) return back(form, notice.blockers[0] ?? 'Hồ sơ chưa đủ điều kiện. Trạng thái vẫn là chưa gửi.')
   if (!notice.recipient.phone) return back(form, 'Người nhận chưa có số điện thoại. Trạng thái vẫn là chưa gửi.')
   const opened = await db.rpc('begin_tuition_zalo_send', {
@@ -85,7 +86,7 @@ export async function confirmTuitionZalo(form: FormData) {
   const sent = await sendManualTuitionZalo({
     studentCode: notice.studentCode,
     phone: notice.recipient.phone,
-    templateId: TUITION_PROVIDER_TEMPLATE_ID,
+    templateId: notice.templateId,
     trackingId: send.tracking_id,
     eventCode: notice.eventCode,
     parameters: notice.parameters,
@@ -113,7 +114,7 @@ export async function confirmTuitionZalo(form: FormData) {
   if (accepted) return back(form, 'Tình trạng gửi: Đã gửi. Zalo đã tiếp nhận một tin. Chưa xác nhận tới máy và chưa có phản hồi.', 'success')
   const label = recorded.data === 'ERROR' ? 'Gửi thất bại' : 'Chưa gửi'
   const detail = sent.state === 'TEMPLATE_NOT_ENABLED'
-    ? 'Mẫu 643118 chưa ở trạng thái có thể gửi.'
+    ? 'Mẫu đã cấu hình chưa ở trạng thái có thể gửi.'
     : sent.state === 'BLOCKED'
       ? 'Gửi thật đang tắt hoặc nội dung không đủ điều kiện.'
       : sent.state === 'ZALO_TOKEN_INVALID' || sent.state === 'ZALO_PROOF_INVALID'

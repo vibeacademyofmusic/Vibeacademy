@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { requestClient } from '@/lib/auth/request'
 import { EmptyState, InlineNotice, OperationsFilterBar, PageHeader, StatusBadge } from '../_components/vibe'
 import { attendanceFilters, attendanceListHref, attendanceStates } from './launcher-model'
 import { attendanceLoadMessage } from './attendance-loader'
@@ -17,7 +17,7 @@ const time = (value: string) => new Intl.DateTimeFormat('vi-VN', { timeZone: 'As
 export default async function AttendanceLauncher({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const params = await searchParams
   const filters = attendanceFilters(params)
-  const db = await createClient()
+  const db = await requestClient()
   const { data, error } = await db.rpc('attendance_session_search', { p_date: filters.date, p_branch: filters.branch || null,
       p_class: filters.class || null, p_teacher: filters.teacher || null, p_student: filters.student || null,
       p_status: filters.status || null, p_offset: (filters.page - 1) * 25 })

@@ -5,9 +5,10 @@ import { redirect } from 'next/navigation'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { signedInClient, uuidPattern } from '../../finance/operations'
 import { openTuitionPayosCheckout } from '@/lib/integrations/tuition/renewal-payos'
-import { buildTuitionPaymentRequest, tuitionPaymentDispatch, TUITION_PAYMENT_TEMPLATE_KEY } from '@/lib/integrations/tuition/payment-zbs'
+import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest, tuitionPaymentDispatch, TUITION_PAYMENT_TEMPLATE_KEY, VERIFIED_TUITION_PAYMENT_TEMPLATE_ID } from '@/lib/integrations/tuition/payment-zbs'
+import { sendTuitionPaymentTemplate } from '@/lib/integrations/tuition/payment-send'
 import { tuitionCheckoutUrl } from '@/lib/integrations/tuition/checkout-link'
-import { PAYMENT_TEMPLATE_REQUEST } from '@/lib/integrations/tuition/renewal-status'
+import { paymentNoticeReason, persistedPaymentNoticeStatus } from '@/lib/integrations/tuition/renewal-status'
 
 const plans = ['VIBE_3_MONTHS', 'VIBE_12_MONTHS']
 const options = ['DEPOSIT_50', 'FULL']
@@ -68,15 +69,14 @@ async function markNotice(caseId: string) {
     checkoutUrl: order.data?.checkout_url || '',
   })
   const dispatch = tuitionPaymentDispatch(template.data, request)
-  const waiting = dispatch.code === 'ZBS_TEMPLATE_REQUIRED'
   await db.rpc('note_tuition_renewal_notice', {
     p_case: caseId,
     p_kind: 'PAYMENT',
-    p_status: waiting ? 'AWAITING_TEMPLATE' : 'FAILED',
+    p_status: persistedPaymentNoticeStatus(dispatch),
     p_error_code: dispatch.code,
     p_tracking: null,
   })
-  return dispatch.state === 'HELD'
+  return dispatch
 }
 
 async function activateCheckout(caseId: string, fresh = false): Promise<{ url?: string; error?: string }> {
@@ -174,6 +174,66 @@ export async function retryTuitionNotice(form: FormData) {
   if (!uuidPattern.test(caseId)) return back(form, 'Không xác định được hồ sơ gia hạn.')
   const db = await signedInClient()
   const renewal = await db.from('tuition_renewal_cases').select('reminder_id').eq('id', caseId).maybeSingle()
-  await markNotice(caseId)
-  return back(form, PAYMENT_TEMPLATE_REQUEST, 'error', renewal.data?.reminder_id ?? '')
+  const dispatch = await markNotice(caseId)
+  return back(form, paymentNoticeReason(dispatch.code, dispatch.templateId), 'error', renewal.data?.reminder_id ?? '')
+}
+
+export async function sendTuitionPaymentRequest(form: FormData) {
+  const caseId = String(form.get('case_id') ?? '')
+  if (!uuidPattern.test(caseId)) return back(form, 'Không xác định được hồ sơ gia hạn.')
+  const db = await signedInClient()
+  const renewal = await db.from('tuition_renewal_cases').select('id,reminder_id,branch_id,student_id,parent_id,plan_code,list_price,amount_due,payment_option,due_on,invoice_id,zbs_status,zbs_error_code,state').eq('id', caseId).maybeSingle()
+  const reminderId = renewal.data?.reminder_id ?? ''
+  if (renewal.error || !renewal.data) return back(form, 'Không đọc được hồ sơ gia hạn hoặc bạn không có quyền xem.', 'error', reminderId)
+  const allowed = await db.rpc('has_permission', { p_permission: 'tuition.renewal.prepare', p_branch: renewal.data.branch_id })
+  if (allowed.error || allowed.data !== true) return back(form, 'Bạn không có quyền gửi yêu cầu thanh toán tại chi nhánh này.', 'error', reminderId)
+  if (renewal.data.state === 'DEPOSIT_PAID' || renewal.data.state === 'PAID') return back(form, 'Hồ sơ này đã ghi nhận thanh toán. Không gửi yêu cầu mới.', 'error', reminderId)
+  const template = await db.from('notification_templates').select('template_key,status,enabled,provider_template_id,parameter_schema,payload_schema').eq('template_key', TUITION_PAYMENT_TEMPLATE_KEY).limit(1).maybeSingle()
+  const invoice = await db.from('invoices').select('invoice_number').eq('id', renewal.data.invoice_id).maybeSingle()
+  const order = await db.from('tuition_payos_orders').select('payment_link_id,checkout_url,amount,state').eq('case_id', caseId).eq('state', 'PENDING').maybeSingle()
+  const student = await db.from('students').select('full_name').eq('id', renewal.data.student_id).maybeSingle()
+  const parent = await db.from('parents').select('parent_code,user_id').eq('id', renewal.data.parent_id).maybeSingle()
+  const profile = parent.data?.user_id ? await db.from('profiles').select('full_name,phone').eq('id', parent.data.user_id).maybeSingle() : { data: null }
+  const invoiceCode = invoice.data?.invoice_number || ''
+  const input = {
+    customerName: profile.data?.full_name || parent.data?.parent_code || '',
+    studentName: student.data?.full_name || '',
+    invoiceCode,
+    packageName: renewal.data.plan_code === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng',
+    packageAmount: Number(renewal.data.list_price ?? 0),
+    paymentType: renewal.data.payment_option === 'FULL' ? 'Thanh toán 100%' : 'Đặt cọc 50%',
+    amountDue: Number(renewal.data.amount_due ?? 0),
+    deadline: renewal.data.due_on || '',
+    paymentLinkId: order.data?.payment_link_id || '',
+    checkoutUrl: order.data?.checkout_url || '',
+  }
+  const prepared = prepareTuitionPaymentRequest({
+    template: template.data,
+    input,
+    linkInvoiceCode: invoiceCode,
+    attempt: paymentAttemptFromStored(renewal.data.zbs_status, renewal.data.zbs_error_code, caseId, invoiceCode, input.paymentLinkId),
+  })
+  if (prepared.code !== 'ELIGIBLE' || !prepared.parameters || prepared.templateId !== VERIFIED_TUITION_PAYMENT_TEMPLATE_ID || Number(order.data?.amount) !== input.amountDue) {
+    return back(form, paymentNoticeReason(prepared.code === 'ELIGIBLE' ? 'LINK_INVOICE_MISMATCH' : prepared.code, prepared.templateId), 'error', reminderId)
+  }
+  if (!profile.data?.phone) return back(form, 'Người nhận chưa có số điện thoại. Chưa gửi.', 'error', reminderId)
+  const claim = await db.rpc('claim_tuition_payment_notice', { p_case: caseId })
+  if (claim.error || claim.data !== 'CLAIMED') return back(form, paymentNoticeReason(String(claim.data ?? 'NOT_CLAIMED'), prepared.templateId), 'error', reminderId)
+  const tracking = crypto.randomUUID().replaceAll('-', '')
+  let outcome: 'ACCEPTED' | 'UNKNOWN' | 'REJECTED' = 'UNKNOWN'
+  try {
+    outcome = await sendTuitionPaymentTemplate({ phone: profile.data.phone, templateId: prepared.templateId, trackingId: tracking, parameters: prepared.parameters })
+  } catch {
+    outcome = 'UNKNOWN'
+  }
+  const finished = await db.rpc('finish_tuition_payment_notice', {
+    p_case: caseId,
+    p_outcome: outcome,
+    p_error: outcome === 'REJECTED' ? 'REJECTED' : null,
+    p_tracking: tracking,
+  })
+  if (finished.error || !finished.data) return back(form, 'Không ghi được kết quả gửi. Không bấm gửi lại trước khi đối soát.', 'error', reminderId)
+  if (outcome === 'ACCEPTED') return back(form, 'Đã gửi yêu cầu thanh toán cho đúng hóa đơn này. Chưa ghi đã thanh toán.', 'success', reminderId)
+  if (outcome === 'UNKNOWN') return back(form, paymentNoticeReason('ACCEPTANCE_UNKNOWN', prepared.templateId), 'error', reminderId)
+  return back(form, 'Zalo chưa nhận tin. Có thể gửi lại sau khi kiểm tra hồ sơ. Chưa ghi đã thanh toán.', 'error', reminderId)
 }

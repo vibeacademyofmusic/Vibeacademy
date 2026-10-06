@@ -6,6 +6,7 @@ const path = require('node:path')
 const ts = require('typescript')
 const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 
 const now = new Date('2026-09-22T03:00:00.000Z')
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
@@ -122,12 +123,7 @@ function loadDashboard(options = {}) {
     const req = name => {
       if (name in mocks) return mocks[name]
       if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
-      if (name.startsWith('.') || name.startsWith('@/')) {
-        const base = path.resolve(path.dirname(file), name)
-        if (fs.existsSync(base + '.ts')) return load(base + '.ts')
-        if (fs.existsSync(base + '.tsx')) return load(base + '.tsx')
-        if (fs.existsSync(path.join(base, 'index.tsx'))) return load(path.join(base, 'index.tsx'))
-      }
+      if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name))
       return require(name)
     }
     new Function('require', 'module', 'exports', output)(req, compiled, compiled.exports)
@@ -144,7 +140,7 @@ test('dashboard source stays on the user client and omits forbidden KPIs', () =>
   assert.doesNotMatch(source, /UNMARKED|attendance rate|tỷ lệ chuyên cần/i)
   assert.match(source, /businessDate/)
   assert.match(source, /get_financial_management_report|loadFinancialManagementReport/)
-  assert.match(fs.readFileSync('app/admin/layout.tsx', 'utf8'), /has_role/)
+  assert.match(fs.readFileSync('app/admin/layout.tsx', 'utf8'), /requestRole\('SUPER_ADMIN'\)/)
   assert.match(fs.readFileSync('app/admin/layout.tsx', 'utf8'), /crm_shell_may_enter/)
 })
 

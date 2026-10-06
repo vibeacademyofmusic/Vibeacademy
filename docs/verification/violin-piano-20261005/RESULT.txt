@@ -1,0 +1,54 @@
+VIBE — Violin and Piano foundation lesson slots
+Date: 2026-10-05
+Base: 4f921bea1a241453caf9b34c87eb71bd60303e5a (codex/release-candidate-lint)
+
+DELIVERED IN THIS PATCH
+Violin: Pre, Grade 1–8, 45 subjects, 450 Lesson slots.
+Piano: Pre Step and Pre, 8 subjects, 80 Lesson slots. Existing higher levels are preserved.
+"are step" is interpreted as Pre Step. "pre grade" is recognized as the existing Pre/Pre Grade foundation level, not a third new foundation level.
+10 slots per affected subject follows the latest request. The historical four-program manifest remains an archived earlier specification; its 50-slot foundation rule is not used by this importer.
+
+SUBJECT MATRIX (from scripts/curriculum-four-programs-plan.cjs)
+Foundation: Methode Book, Technique Foundation, Aural, Sight Reading (4).
+Grades 1–3: Repertoire, Technique Foundation, Aural, Sight Reading (4).
+Grades 4–6: the grade subjects plus Ensemble (5).
+Grades 7–8: the grade subjects plus Ensemble, Music History, Media Product (7).
+All newly created slots are named Lesson 01 through Lesson 10, codes L01–L10.
+These are editable lesson records, NOT completed lesson plans, textbook content, exercises, videos, exam criteria, or ABRSM accreditation.
+
+IMPORT BEHAVIOR
+- Only official Violin and Piano foundation catalogs are targeted. TEST_* trees are never converted or changed; missing official trees are created separately.
+- Existing program/level/subject identities are reused, recognizing G1/GRADE_1, Pre/Pre Grade and Sight Reading/Sightreading aliases. Ambiguities abort the entire import.
+- Adds only enough slots to bring an existing subject to 10 total items across all its components. Existing 10+ items are preserved, including inactive items. More-than-10 subjects are explicitly reported; they are not silently reduced.
+- Existing lesson titles, component mapping, completion policies and statuses remain unchanged.
+- New rows are INACTIVE; new subjects/components/items are optional. New levels/subjects use MANUAL; the technical LESSON_DRAFTS container uses the schema's DIRECT_ASSESSMENT default and stays inactive. This is storage for authoring, not an approved assessment mapping.
+- Positive sequence slots for missing levels are inserted before the next recognized level, preserving existing IDs and relative order. Existing sequence numbers may shift; old/new values appear in the report. Conflicting pre-existing order is not rewritten.
+- No enrollments or progress rows are created/updated. Five academic enrollment/progress tables are locked and checksummed before/after; any difference aborts the transaction.
+- No permanent schema migration, RPC, RLS, permission grant, outbound message or production write is introduced.
+- CLI verifies .env.local against local Supabase status and the Docker database port. Default is dry-run with rollback. --apply first repeats the dry run and creates a restricted custom-format backup of the five curriculum catalog tables. This is NOT a full system recovery backup.
+- CLI does not start, reset, restore, reconfigure or migrate Supabase. Import must use the existing local database serving port 3000 after the local operator verifies that runtime.
+
+VERIFIED HERE
+21/21 Node test results passed, including PostgreSQL execution through PGlite:
+fresh dry-run rollback; 530-slot creation; idempotent rerun; progress unchanged;
+existing Piano grade ordering/IDs; aliases; preserved 50-lesson data;
+partial subjects; TEST/unrelated catalogs; ambiguous programs/subjects;
+duplicate or inconsistent levels; reserved component collision;
+unexpected progress-writing trigger causes complete rollback.
+Actual catalog table definitions and constraints were extracted from repository migrations.
+Auth and progress dependencies are minimal isolated fixtures. This is not a full Supabase migration/RLS/application acceptance test.
+Changed JavaScript files: lint clean. git diff --check clean.
+No application UI/TypeScript files changed; no build, browser or full pilot PASS is claimed.
+
+NOT VERIFIED / NOT APPLIED
+The Mac at /Users/macbookair/vibe-academy-system and its local port 3000 are not accessible from this session.
+No changes have been applied to that database, staging or production.
+Docker/Supabase CLI execution and catalog backup recovery must be checked on the Mac.
+Actual local authentication, browser editing, reload persistence and desktop/mobile rendering are pending.
+No push or deploy was performed. Pilot readiness is unchanged.
+
+WHERE TO VIEW AFTER LOCAL APPLY
+Open /admin/programs, choose all statuses, and select the official Violin or Piano program (check code; do not confuse with TEST_*).
+Open level -> subject -> "Hiển thị Lesson ngừng sử dụng".
+Each subject's exact authoring URL with ?lessons=all is in import-report.json.
+Existing UI readiness badges are not proof of an approved curriculum; all new content remains authoring-only.

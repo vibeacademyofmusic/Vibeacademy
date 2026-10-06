@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import AttendanceLauncher from '../attendance/Launcher'
 
-import { createClient } from '@/lib/supabase/server'
+import { requestClient, requestRole } from '@/lib/auth/request'
 import { businessDate } from '@/app/admin/_lib/business-date'
 import { DataTable, OperationsFilterBar, OpsMetricLink } from '@/app/admin/_components/vibe'
 import { LoadError } from '../finance/_components/ui'
@@ -24,7 +24,7 @@ function roster(rows: MovementRow[]) {
 
 async function Overview({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const params = await searchParams
-  const db = await createClient()
+  const db = await requestClient()
   const today = businessDate()
   let report
   try {
@@ -117,9 +117,9 @@ async function ClassTab({
   view: 'classes' | 'schedule' | 'attendance'
 }) {
   const params = await searchParams
-  const db = await createClient()
+  const db = await requestClient()
   const selectedView = view === 'classes' && params.view === 'overview' ? 'overview' : view
-  const { data: isAdmin } = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const { data: isAdmin } = await requestRole('SUPER_ADMIN')
   let data
   try {
     data = await loadClassOps(db, params, selectedView)

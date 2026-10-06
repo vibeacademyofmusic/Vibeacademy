@@ -54,7 +54,7 @@ const MANUAL_PARAMETER_KEYS = ['customer_name', 'period', 'student_name', 'amoun
 
 export function tuitionManualMatches(input: TuitionTestInput) {
   const phone = normalizeVnPhone(input.phone)
-  if (input.templateId !== TUITION_PROVIDER_TEMPLATE_ID || input.eventCode !== 'RENEWAL_V1') return false
+  if (!/^[0-9]{1,20}$/.test(input.templateId) || input.templateId === '640377' || input.eventCode !== 'RENEWAL_V1') return false
   if (!phone || !/^[A-Za-z0-9]{1,48}$/.test(input.trackingId)) return false
   const keys = Object.keys(input.parameters)
   if (keys.length !== MANUAL_PARAMETER_KEYS.length || MANUAL_PARAMETER_KEYS.some(key => !Object.prototype.hasOwnProperty.call(input.parameters, key))) return false
@@ -97,7 +97,7 @@ async function deliverTuitionTemplate(
   const headersFor = (token: string) => ({ ...zaloAccessHeaders(token, env.ZALO_APP_SECRET!.trim()), accept: 'application/json' })
   let info: { status?: number; body: { error?: number; data?: { status?: string; templateId?: number } } }
   try {
-    const response = await transport(TUITION_TEST_TEMPLATE_URL, { method: 'GET', headers: headersFor(accessToken) })
+    const response = await transport(`https://business.openapi.zalo.me/template/info/v2?template_id=${input.templateId}`, { method: 'GET', headers: headersFor(accessToken) })
     info = { status: response.status, body: await response.json() as typeof info.body }
   } catch {
     return { state: 'AMBIGUOUS' }
@@ -116,7 +116,7 @@ async function deliverTuitionTemplate(
     if (credential.app_id && (refreshed.app_id !== credential.app_id || refreshed.oa_id !== credential.oa_id)) return { state: 'BLOCKED' }
     accessToken = refreshed.access_token
     try {
-      const response = await transport(TUITION_TEST_TEMPLATE_URL, { method: 'GET', headers: headersFor(accessToken) })
+      const response = await transport(`https://business.openapi.zalo.me/template/info/v2?template_id=${input.templateId}`, { method: 'GET', headers: headersFor(accessToken) })
       info = { status: response.status, body: await response.json() as typeof info.body }
     } catch {
       return { state: 'AMBIGUOUS' }
@@ -124,7 +124,7 @@ async function deliverTuitionTemplate(
   }
   if (info.body.error === -1241) return { state: 'ZALO_PROOF_INVALID' }
   if (info.body.error === -124) return { state: 'ZALO_TOKEN_INVALID' }
-  if (info.body.error !== 0 || info.body.data?.status !== 'ENABLE' || Number(info.body.data?.templateId) !== Number(TUITION_PROVIDER_TEMPLATE_ID)) return { state: 'TEMPLATE_NOT_ENABLED' }
+  if (info.body.error !== 0 || info.body.data?.status !== 'ENABLE' || Number(info.body.data?.templateId) !== Number(input.templateId)) return { state: 'TEMPLATE_NOT_ENABLED' }
   // Persist the identity of the credential actually used before making a send.
   // Injected transports are isolated test harnesses; real sends require this snapshot.
   if (!deps.readCredential) {

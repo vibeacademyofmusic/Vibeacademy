@@ -134,7 +134,7 @@ test('confirmation records a local error and does not claim Zalo delivery', () =
   assert.match(actions, /finish_tuition_zalo_send/)
   assert.match(actions, /sent.state === 'ACCEPTED'/)
   assert.match(actions, /p_outcome: sent\.state === 'ACCEPTED' \? 'SENT' : 'ERROR'/)
-  assert.match(actions, /templateId: TUITION_PROVIDER_TEMPLATE_ID/)
+  assert.match(actions, /templateId: notice\.templateId/)
   assert.match(actions, /sent.state === 'AMBIGUOUS'/)
   assert.equal(actions.includes('fetch('), false)
   const outbound = fs.readFileSync('lib/integrations/zalo/outbound.ts', 'utf8')
