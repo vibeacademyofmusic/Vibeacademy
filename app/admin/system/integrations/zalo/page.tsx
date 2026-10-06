@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { ZALO_TEMPLATE_LABELS } from '@/lib/integrations/zalo/outbound'
+import { prepareTuitionPaymentRequest } from '@/lib/integrations/tuition/payment-zbs'
 
 import { requireIntegrationAdmin } from '../access'
 
@@ -9,6 +10,21 @@ type TemplateRow = {
   provider_template_id: string | null
   status: string
   enabled: boolean
+  parameter_schema?: unknown
+  payload_schema?: unknown
+}
+
+const syntheticPaymentPreview = {
+  customerName: 'Phụ huynh thử',
+  studentName: 'Học viên thử',
+  invoiceCode: 'INV-SYNTHETIC-645',
+  packageName: '3 tháng',
+  packageAmount: 5500000,
+  paymentType: 'Đặt cọc 50%',
+  amountDue: 2750000,
+  deadline: '2026-11-15',
+  paymentLinkId: 'synthetic01',
+  checkoutUrl: 'https://pay.payos.vn/web/synthetic01',
 }
 
 function approvalLabel(status: string) {
@@ -20,8 +36,14 @@ function approvalLabel(status: string) {
 
 export default async function ZaloIntegrationPage() {
   const db = await requireIntegrationAdmin()
-  const templates = await db.from('notification_templates').select('template_key,provider_template_id,status,enabled').eq('provider', 'ZALO').order('template_key')
+  const templates = await db.from('notification_templates').select('template_key,provider_template_id,status,enabled,parameter_schema,payload_schema').eq('provider', 'ZALO').order('template_key')
   const rows = (templates.data || []) as TemplateRow[]
+  const paymentTemplate = rows.find(row => row.template_key === 'ZALO_TUITION_PAYMENT') ?? null
+  const paymentPreview = prepareTuitionPaymentRequest({
+    template: paymentTemplate,
+    input: syntheticPaymentPreview,
+    linkInvoiceCode: syntheticPaymentPreview.invoiceCode,
+  })
   return (
     <article className="min-w-0 space-y-5">
       <p><Link href="/admin/system/integrations">Tích hợp</Link></p>
@@ -57,6 +79,17 @@ export default async function ZaloIntegrationPage() {
             ))}
           </tbody>
         </table>
+      </section>
+      <section className="space-y-2 rounded border p-4">
+        <h2 className="font-semibold">Yêu cầu thanh toán — xem trước tổng hợp</h2>
+        <p>Mẫu đọc từ registry: {paymentPreview.templateId || 'Chưa có'}. Gửi đang tắt. Không tạo hóa đơn, link hay thanh toán.</p>
+        <p>Hạn 15/11/2026 trong xem trước này là dữ liệu thử, không phải hạn mặc định.</p>
+        <p>Kết quả: {paymentPreview.code}. Đã gửi: không. Đã thanh toán: không.</p>
+        {paymentPreview.parameters && (
+          <ul className="list-disc pl-5">
+            {Object.entries(paymentPreview.parameters).map(([key, value]) => <li key={key}>{key}: {value}</li>)}
+          </ul>
+        )}
       </section>
     </article>
   )

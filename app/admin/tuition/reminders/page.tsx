@@ -7,6 +7,7 @@ import SubmitButton from '../../finance/_components/SubmitButton'
 import { plans, debts } from '../data'
 import { reminders, kpis, timing, filters } from './data'
 import { generateReminders, resolveReminder } from './actions'
+import { RenewalPaymentPanel } from './RenewalPaymentPanel'
 export default async function ReminderPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams, db = await adminClient()
   let loaded
@@ -18,6 +19,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   const debtMap = new Map(debtRows.map(d => [d.enrollment_tuition_id, d]))
   return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Nhắc học phí</h1><Notice params={params} />
     <p>Hàng đợi nội bộ, chưa gửi Zalo hoặc email. Chỉ tạo cho kỳ đang trong thời gian học và ghi danh còn hoạt động. Lịch nhắc neo vào ngày bắt đầu kỳ, không dịch theo bảo lưu.</p>
+    <RenewalPaymentPanel />
     <Panel title="Tổng quan toàn hệ thống"><p className="text-sm">Các số liệu không thay đổi theo bộ lọc bên dưới. Tuần bắt đầu thứ Hai, ngày theo giờ Việt Nam.</p><div className="grid gap-3 sm:grid-cols-4"><p>Đến hạn tuần này: <strong>{counts.week}</strong></p><p>Sắp đến hạn tháng này: <strong>{counts.upcoming}</strong></p><p>Quá hạn nhắc: <strong>{counts.overdue}</strong></p><p>Đã gửi tháng này: <strong>{counts.sent}</strong></p></div></Panel>
     <form action={generateReminders}><SubmitButton>Tạo nhắc học phí còn thiếu</SubmitButton></form>
     <form className="grid gap-3 sm:grid-cols-4"><Select name="state" label="Thời điểm / trạng thái" options={filters} value={params.state} /><Select name="branch" label="Chi nhánh" options={branchRows} value={params.branch} /><Select name="plan" label="Gói học phí" options={planRows} value={params.plan} /><button className="rounded border p-2">Lọc nhắc học phí</button></form>

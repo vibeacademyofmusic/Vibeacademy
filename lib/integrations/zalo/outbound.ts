@@ -8,6 +8,8 @@ export const ZALO_TEMPLATE_LABELS: Record<string, string> = {
   ZALO_CLASS_ASSIGNED: 'Xác nhận xếp lớp',
   ZALO_LEARNING_REPORT_PUBLISHED: 'Báo cáo học tập',
   ZALO_TUITION_REMINDER: 'Nhắc học phí',
+  ZALO_TUITION_PAYMENT: 'Yêu cầu thanh toán học phí',
+  ZALO_TUITION_PAYMENT_CONFIRMATION: 'Xác nhận thanh toán học phí',
   ZALO_COURSE_EXPIRING: 'Sắp hết khóa',
 }
 
