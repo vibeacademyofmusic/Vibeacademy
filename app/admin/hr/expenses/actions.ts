@@ -11,6 +11,8 @@ const safeErrors: Record<string, string> = {
   EXPENSE_ACTIVE_EMPLOYEE_LINK_AND_OWN_PERMISSION_REQUIRED: 'Tài khoản chưa liên kết với quan hệ nhân sự đang hiệu lực hoặc chưa có quyền tự xem lương.',
   EXPENSE_APPROVED_OWN_TRIP_REQUIRED: 'Chuyến công tác không thuộc nhân viên hiện tại hoặc chưa được duyệt.',
   EXPENSE_TRIP_RESERVED_BY_ANOTHER_CLAIM: 'Chuyến công tác đã có bảng kê đang hiệu lực.',
+  EXPENSE_MONTH_ALREADY_CLAIMED: 'Bạn đã có bảng kê công tác phí cho tháng này. Mỗi tháng chỉ lập một bảng kê.',
+  EXPENSE_INVALID_MONTH: 'Chỉ được lập bảng kê cho tháng hiện tại hoặc tháng đã qua.',
   EXPENSE_CHANGED_RELOAD: 'Bảng kê đã thay đổi. Hãy tải lại trước khi tiếp tục.',
   EXPENSE_V2_ITEMS_LOCKED: 'Các khoản chi đã khóa ở trạng thái hiện tại.',
   EXPENSE_NONEMPTY_POSITIVE_CLAIM_REQUIRED: 'Cần ít nhất một khoản chi hợp lệ trước khi gửi duyệt.',
@@ -51,7 +53,13 @@ export async function expenseAction(form: FormData) {
   let rpc = ''
   let args: Record<string, unknown> = { p_key: requestKey }
 
-  if (action === 'create_v2') {
+  if (action === 'create_monthly_v2') {
+    const month = `${value(form, 'month')}-01`
+    const currency = value(form, 'currency').toUpperCase()
+    if (!validDate(month) || !/^[A-Z]{3}$/.test(currency)) fail('Kiểm tra tháng đề nghị và tiền tệ.')
+    rpc = 'create_employee_expense_claim_v2_monthly'
+    args = { ...args, p_month: month, p_currency: currency }
+  } else if (action === 'create_v2') {
     const month = `${value(form, 'month')}-01`
     const currency = value(form, 'currency').toUpperCase()
     const trip = value(form, 'trip')
