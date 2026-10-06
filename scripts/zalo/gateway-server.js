@@ -6,14 +6,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 
 const MAX_BODY_BYTES = 65536
-const RETRYABLE = new Set([
-  'unknown_tracking',
-  'send_not_accepted',
-  'apply_failed',
-  'APPLY_FAILED',
-  'IGNORED',
-  'unreadable',
-])
+const FORWARDABLE_EVENTS = new Set(['user_click_response_button', 'user_received_message'])
 const SECRET_KEYS = new Set(['access_token', 'refresh_token', 'app_secret', 'oa_secret', 'secret'])
 
 function readEnv(env) {
@@ -22,6 +15,21 @@ function readEnv(env) {
   const oaSecret = (env.ZALO_OA_SECRET_KEY || '').trim()
   if (!appId || !oaId || !oaSecret) return null
   return { appId, oaId, oaSecret }
+}
+
+function readForwardEnv(env) {
+  const raw = (env.GATEWAY_UPSTREAM_URL || '').trim()
+  if (!raw) return null
+  let url
+  try { url = new URL(raw) } catch { return null }
+  if (url.protocol !== 'https:' || url.username || url.password || url.hash) return null
+  const interval = Number(env.GATEWAY_FORWARD_INTERVAL_MS || 2000)
+  const timeout = Number(env.GATEWAY_FORWARD_TIMEOUT_MS || 8000)
+  return {
+    url: url.toString(),
+    intervalMs: Number.isInteger(interval) && interval >= 1000 ? interval : 2000,
+    timeoutMs: Number.isInteger(timeout) && timeout >= 1000 && timeout <= 30000 ? timeout : 8000,
+  }
 }
 
 function partyId(value) {
@@ -54,6 +62,10 @@ function send(res, status, payload) {
   res.end(body)
 }
 
+function ensureColumn(db, columns, name, ddl) {
+  if (!columns.some((column) => column.name === name)) db.exec(`ALTER TABLE webhook_events ADD COLUMN ${name} ${ddl}`)
+}
+
 function openStore(dbPath) {
   const { DatabaseSync } = require('node:sqlite')
   fs.mkdirSync(path.dirname(dbPath), { recursive: true })
@@ -72,18 +84,41 @@ function openStore(dbPath) {
     processed_at TEXT
   )`)
   const columns = db.prepare('PRAGMA table_info(webhook_events)').all()
-  if (!columns.some((column) => column.name === 'payload')) {
-    db.exec('ALTER TABLE webhook_events ADD COLUMN payload TEXT')
-  }
+  ensureColumn(db, columns, 'payload', 'TEXT')
+  ensureColumn(db, columns, 'signature', 'TEXT')
+  ensureColumn(db, columns, 'server_header', 'TEXT')
+  ensureColumn(db, columns, 'forward_attempts', 'INTEGER NOT NULL DEFAULT 0')
+  ensureColumn(db, columns, 'next_attempt_at', 'TEXT')
+  ensureColumn(db, columns, 'last_http_status', 'INTEGER')
+  ensureColumn(db, columns, 'last_error', 'TEXT')
+  ensureColumn(db, columns, 'forwarded_at', 'TEXT')
+
   const insert = db.prepare(`INSERT INTO webhook_events
-    (payload_digest, event_type, external_event_id, payload, status, outcome, received_at, processed_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
-  const find = db.prepare(`SELECT payload_digest, status, outcome, processed_at
+    (payload_digest, event_type, external_event_id, payload, status, outcome, received_at, processed_at,
+     signature, server_header, forward_attempts, next_attempt_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`)
+  const find = db.prepare(`SELECT id, payload_digest, status, outcome, processed_at
     FROM webhook_events WHERE payload_digest = ?`)
+  const pending = db.prepare(`SELECT id, payload_digest, event_type, external_event_id, payload, signature, server_header, forward_attempts
+    FROM webhook_events
+    WHERE processed_at IS NULL
+      AND payload IS NOT NULL
+      AND signature IS NOT NULL
+      AND outcome = 'queued'
+      AND (next_attempt_at IS NULL OR next_attempt_at <= ?)
+    ORDER BY id
+    LIMIT ?`)
+  const forwarded = db.prepare(`UPDATE webhook_events
+    SET outcome='forwarded', processed_at=?, forwarded_at=?, last_http_status=?, last_error=NULL
+    WHERE id=? AND processed_at IS NULL`)
+  const retry = db.prepare(`UPDATE webhook_events
+    SET forward_attempts=forward_attempts+1, next_attempt_at=?, last_http_status=?, last_error=?
+    WHERE id=? AND processed_at IS NULL`)
+
   return {
     save(event) {
       const now = new Date().toISOString()
-      const processedAt = RETRYABLE.has(event.outcome) ? null : now
+      const queued = event.outcome === 'queued'
       try {
         insert.run(
           event.payloadDigest,
@@ -93,7 +128,10 @@ function openStore(dbPath) {
           event.status,
           event.outcome,
           now,
-          processedAt,
+          queued ? null : now,
+          event.signature || null,
+          event.serverHeader || null,
+          queued ? now : null,
         )
         return { duplicate: false, status: event.status, outcome: event.outcome }
       } catch (error) {
@@ -105,6 +143,18 @@ function openStore(dbPath) {
           outcome: existing.outcome,
         }
       }
+    },
+    pending(limit = 20, now = new Date().toISOString()) {
+      return pending.all(now, Math.max(1, Math.min(Number(limit) || 20, 100)))
+    },
+    markForwarded(id, httpStatus) {
+      const now = new Date().toISOString()
+      forwarded.run(now, now, httpStatus, id)
+    },
+    markRetry(id, attempts, httpStatus, errorText) {
+      const delaySeconds = Math.min(300, Math.max(2, 2 ** Math.min(Number(attempts) + 1, 8)))
+      const next = new Date(Date.now() + delaySeconds * 1000).toISOString()
+      retry.run(next, httpStatus ?? null, String(errorText || 'UPSTREAM_FAILED').slice(0, 160), id)
     },
   }
 }
@@ -120,7 +170,7 @@ function externalEventId(body) {
   return null
 }
 
-function processWebhook({ rawBody, signature, env, store }) {
+function processWebhook({ rawBody, signature, serverHeader = null, env, store }) {
   if (!env) return { status: 503, body: { ok: false, error: 'ZALO_WEBHOOK_NOT_CONFIGURED' } }
   if (!rawBody || Buffer.byteLength(rawBody) > MAX_BODY_BYTES) {
     return { status: 400, body: { ok: false, error: 'MALFORMED_JSON' } }
@@ -172,9 +222,7 @@ function processWebhook({ rawBody, signature, env, store }) {
 
   const supported = eventName === 'user_click_response_button' || eventName === 'user_received_message'
     || eventName === 'user_send_text'
-  const outcome = supported && (eventName === 'user_click_response_button' || eventName === 'user_received_message')
-    ? 'unknown_tracking'
-    : null
+  const outcome = supported && FORWARDABLE_EVENTS.has(eventName) ? 'queued' : null
   let saved
   try {
     saved = store.save({
@@ -184,21 +232,77 @@ function processWebhook({ rawBody, signature, env, store }) {
       payload: rawBody,
       status: supported ? 'ACCEPTED' : 'UNSUPPORTED',
       outcome,
+      signature: String(signature || ''),
+      serverHeader: typeof serverHeader === 'string' ? serverHeader : null,
     })
   } catch {
     return { status: 500, body: { ok: false, error: 'WEBHOOK_NOT_RECORDED' } }
   }
-  if (saved.outcome && RETRYABLE.has(saved.outcome)) {
-    return { status: 503, body: { ok: false, error: 'WEBHOOK_PENDING', status: saved.outcome } }
-  }
+
+  // Once the signed provider event is durably stored, this gateway owns delivery.
+  // Zalo receives a fast 200 and the background worker retries staging independently.
   return {
     status: 200,
     body: {
       ok: true,
       duplicate: saved.duplicate,
       status: saved.status,
+      queued: saved.outcome === 'queued',
     },
   }
+}
+
+async function forwardPending(store, forwardEnv, transport = fetch, limit = 20) {
+  if (!forwardEnv) return { attempted: 0, forwarded: 0, failed: 0, disabled: true }
+  const rows = store.pending(limit)
+  let forwarded = 0
+  let failed = 0
+  for (const row of rows) {
+    let httpStatus = null
+    try {
+      const headers = {
+        'content-type': 'application/json; charset=utf-8',
+        'x-zevent-signature': row.signature,
+        'x-vibe-zalo-relay': 'vietnam-gateway',
+      }
+      if (row.server_header) headers['x-zevent-server'] = row.server_header
+      const response = await transport(forwardEnv.url, {
+        method: 'POST',
+        headers,
+        body: row.payload,
+        redirect: 'error',
+        signal: AbortSignal.timeout(forwardEnv.timeoutMs),
+      })
+      httpStatus = Number(response.status) || null
+      if (response.ok) {
+        store.markForwarded(row.id, httpStatus)
+        forwarded += 1
+        console.info(JSON.stringify({
+          component: 'zalo_gateway_forward',
+          event_id: row.id,
+          event_type: row.event_type,
+          external_event_id: row.external_event_id || null,
+          http_status: httpStatus,
+          outcome: 'forwarded',
+        }))
+        continue
+      }
+      failed += 1
+      store.markRetry(row.id, row.forward_attempts, httpStatus, `HTTP_${httpStatus ?? 'UNKNOWN'}`)
+    } catch (error) {
+      failed += 1
+      store.markRetry(row.id, row.forward_attempts, httpStatus, error instanceof Error ? error.name : 'UPSTREAM_FAILED')
+    }
+    console.info(JSON.stringify({
+      component: 'zalo_gateway_forward',
+      event_id: row.id,
+      event_type: row.event_type,
+      external_event_id: row.external_event_id || null,
+      http_status: httpStatus,
+      outcome: 'retry',
+    }))
+  }
+  return { attempted: rows.length, forwarded, failed, disabled: false }
 }
 
 function createServer(env, store) {
@@ -227,6 +331,7 @@ function createServer(env, store) {
     const result = processWebhook({
       rawBody,
       signature: req.headers['x-zevent-signature'],
+      serverHeader: req.headers['x-zevent-server'],
       env,
       store,
     })
@@ -260,10 +365,21 @@ if (require.main === module) {
     process.exit(1)
   }
   const dbPath = process.env.GATEWAY_DB || '/var/lib/vibe-zalo-gateway/events.db'
-  const server = createServer(env, openStore(dbPath))
+  const store = openStore(dbPath)
+  const forwardEnv = readForwardEnv(process.env)
+  const server = createServer(env, store)
   server.listen(3000, '127.0.0.1', () => {
-    console.info(JSON.stringify({ component: 'zalo_gateway', result: 'listening' }))
+    console.info(JSON.stringify({
+      component: 'zalo_gateway',
+      result: 'listening',
+      forwarding: Boolean(forwardEnv),
+    }))
   })
+  if (forwardEnv) {
+    const run = () => forwardPending(store, forwardEnv).catch(() => undefined)
+    run()
+    setInterval(run, forwardEnv.intervalMs)
+  }
 }
 
-module.exports = { processWebhook, readEnv, openStore, createServer }
+module.exports = { processWebhook, readEnv, readForwardEnv, openStore, createServer, forwardPending }
