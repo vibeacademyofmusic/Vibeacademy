@@ -191,3 +191,19 @@ test('send gate ignores legacy accepted sends after the 645192 cutover', () => {
   assert.match(page, /!notice\.replyChoice/)
   assert.match(page, /mẫu \$\{row\.templateId/)
 })
+
+
+test('accepted ZBS sends can be reconciled against the official phone delivery status API', () => {
+  const delivery = fs.readFileSync('lib/integrations/zalo/tuition-delivery-status.ts', 'utf8')
+  const actions = fs.readFileSync('app/admin/tuition/reminders/actions.ts', 'utf8')
+  const page = fs.readFileSync('app/admin/tuition/reminders/page.tsx', 'utf8')
+  const maintenance = fs.readFileSync('app/api/internal/zalo/maintenance/route.ts', 'utf8')
+  assert.match(delivery, /https:\/\/business\.openapi\.zalo\.me\/message\/status/)
+  assert.match(delivery, /message_id/)
+  assert.match(delivery, /phone/)
+  assert.match(delivery, /note_tuition_zalo_delivery/)
+  assert.match(delivery, /normalizeVnPhone/)
+  assert.match(actions, /checkTuitionZaloDelivery/)
+  assert.match(page, /Đối soát trạng thái phát/)
+  assert.match(maintenance, /reconcilePendingTuitionZaloDeliveries/)
+})
