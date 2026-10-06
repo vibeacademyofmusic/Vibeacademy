@@ -113,8 +113,18 @@ export async function createPayosPaymentLink(input: {
     cache: 'no-store',
   })
   if (!response.ok) throw new Error(`PAYOS_HTTP_${response.status}`)
-  const body = await response.json() as { code?: string; signature?: string; data?: Record<string, unknown> }
-  if (body.code !== '00') throw new Error(`PAYOS_API_${/^[0-9]+$/.test(body.code ?? '') ? body.code : 'REJECTED'}`)
+  const body = await response.json() as { code?: string; desc?: string; signature?: string; data?: Record<string, unknown> }
+  if (body.code !== '00') {
+    console.info(JSON.stringify({
+      component: 'payos_create_result',
+      orderCode: input.orderCode,
+      amount: input.amount,
+      httpStatus: response.status,
+      code: typeof body.code === 'string' ? body.code : null,
+      desc: typeof body.desc === 'string' ? body.desc.slice(0, 160) : null,
+    }))
+    throw new Error(`PAYOS_API_${/^[0-9]+$/.test(body.code ?? '') ? body.code : 'REJECTED'}`)
+  }
   const data = body.data ?? {}
   if (!body.signature || !payosSignatureMatches(data, body.signature, checksumKey)) throw new Error('PAYOS_SIGNATURE_REJECTED')
   if (body.code !== '00' || data.orderCode !== input.orderCode || Number(data.amount) !== input.amount
@@ -182,8 +192,18 @@ export async function readPayosPendingCheckout(input: { orderCode: number; amoun
     signal: AbortSignal.timeout(35_000), cache: 'no-store',
   })
   if (!response.ok) throw new Error(`PAYOS_HTTP_${response.status}`)
-  const body = await response.json() as { code?: string; signature?: string; data?: Record<string, unknown> }
-  if (body.code !== '00') throw new Error(`PAYOS_LOOKUP_${/^[0-9]+$/.test(body.code ?? '') ? body.code : 'REJECTED'}`)
+  const body = await response.json() as { code?: string; desc?: string; signature?: string; data?: Record<string, unknown> }
+  if (body.code !== '00') {
+    console.info(JSON.stringify({
+      component: 'payos_lookup_result',
+      orderCode: input.orderCode,
+      amount: input.amount,
+      httpStatus: response.status,
+      code: typeof body.code === 'string' ? body.code : null,
+      desc: typeof body.desc === 'string' ? body.desc.slice(0, 160) : null,
+    }))
+    throw new Error(`PAYOS_LOOKUP_${/^[0-9]+$/.test(body.code ?? '') ? body.code : 'REJECTED'}`)
+  }
   const data = body.data ?? {}
   if (!body.signature || !payosSignatureMatches(data, body.signature, env.PAYOS_CHECKSUM_KEY)) throw new Error('PAYOS_SIGNATURE_REJECTED')
   const id = typeof data.id === 'string' ? data.id : data.paymentLinkId
