@@ -140,6 +140,37 @@ test('renewal action ignores a submitted price and reuses one checkout', () => {
   assert.ok(registration > 0 && tuition > registration)
 })
 
+test('a rejected ready token is refreshed once before the payment template is posted', async () => {
+  const send = harness().load('../../../lib/integrations/tuition/payment-send.ts')
+  const calls = []
+  let infoCalls = 0
+  let renewals = 0
+  const parameters = {
+    customer_name: 'Phụ huynh', payment_status: 'Chờ thanh toán', student_name: 'Học viên', invoice_code: 'INV-2026-000347',
+    tuition_package: '3 tháng', package_amount: '5500000', payment_type: 'Đặt cọc 50%', amount_due: '2750000',
+    payment_deadline: '31/10/2026', payment_link_id: 'abc12345',
+  }
+  const result = await send.sendTuitionPaymentTemplate({
+    phone: '0901234567', templateId: '645028', trackingId: 'track1234', parameters,
+  }, { ZALO_PILOT_OUTBOUND: 'enabled', ZALO_APP_SECRET: 'secret' }, {
+    readCredential: async () => ({ access_token: 'stored', state: 'READY', expires_at: new Date(Date.now() + 3600000).toISOString() }),
+    renewCredential: async () => { renewals += 1; return { access_token: 'renewed' } },
+    transport: async (url, init) => {
+      calls.push(init.method)
+      if (init.method === 'GET') {
+        infoCalls += 1
+        return { status: 200, json: async () => infoCalls === 1 ? { error: -124 } : { error: 0, data: { status: 'ENABLE', templateId: 645028 } } }
+      }
+      assert.equal(JSON.parse(init.body).template_id, '645028')
+      return { status: 200, json: async () => ({ error: 0, data: { msg_id: 'msg123456' } }) }
+    },
+  })
+  assert.equal(result.outcome, 'ACCEPTED')
+  assert.equal(result.reason, 'ACCEPTED')
+  assert.equal(renewals, 1)
+  assert.deepEqual(calls, ['GET', 'GET', 'POST'])
+})
+
 test('tuition payOS return stays on the reminder page', () => {
   const payos = harness().load('../../../lib/integrations/tuition/renewal-payos.ts')
   const urls = payos.payosTuitionReturnUrls({ NEXT_PUBLIC_APP_URL: 'http://localhost:3000' })

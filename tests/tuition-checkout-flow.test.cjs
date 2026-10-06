@@ -11,7 +11,7 @@ function setup({ authorized = true, state = 'RESERVED', persistenceError = null,
   h.db.rpc = async (name, args) => {
     h.calls.push({ rpc: name, args })
     if (name === 'begin_tuition_renewal') return { data: { case_id: id(2), result: 'created' } }
-    if (name === 'has_permission') return { data: authorized }
+    if (name === 'has_permission' || name === 'tuition_reminder_prepare_allowed') return { data: authorized }
     throw Error('Notice unavailable')
   }
   const mocks = {
@@ -22,6 +22,7 @@ function setup({ authorized = true, state = 'RESERVED', persistenceError = null,
     '@/lib/integrations/tuition/checkout-link': harness().load('../../../lib/integrations/tuition/checkout-link.ts'),
     '@/lib/integrations/tuition/renewal-status': { PAYMENT_TEMPLATE_REQUEST: 'TEMPLATE' },
     '@/lib/integrations/tuition/payment-zbs': {},
+    '@/lib/integrations/tuition/payment-send': {},
     '@/lib/integrations/tuition/renewal-payos': { async openTuitionPayosCheckout(input, env, fresh) {
       providerCalls.push({ input, fresh })
       return checkoutError ? { error: checkoutError } : { checkout: { ...input, paymentLinkId: 'abcdefgh12345678', checkoutUrl: url, qrCode: '' } }

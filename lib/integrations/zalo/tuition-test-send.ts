@@ -106,9 +106,12 @@ async function deliverTuitionTemplate(
   if (info.body.error === -1241) return { state: 'ZALO_PROOF_INVALID' }
   if (tokenExpired(info.body)) {
     const refresh = deps.refreshCredential ?? (deps.readCredential ? null : async () => {
-      const { getZaloCredential } = await import('./oauth')
+      const { blockCredential, getZaloCredential, readCredential } = await import('./oauth')
       const { zaloServiceClient } = await import('./service')
-      return getZaloCredential(zaloServiceClient(), refreshEnv)
+      const admin = zaloServiceClient()
+      const current = await readCredential(admin, refreshEnv)
+      if (current?.state === 'READY') await blockCredential(admin, current, 'ZALO_TOKEN_INVALID', refreshEnv)
+      return getZaloCredential(admin, refreshEnv)
     })
     if (!refresh) return { state: 'ZALO_TOKEN_INVALID' }
     const refreshed = await refresh()

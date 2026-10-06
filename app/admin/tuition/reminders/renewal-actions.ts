@@ -134,6 +134,8 @@ export async function createTuitionRenewal(form: FormData) {
     return back(form, 'Hãy chọn gói, cách thanh toán và ngày hợp lệ.', 'error', reminderId)
   }
   const db = await signedInClient()
+  const allowed = await db.rpc('tuition_reminder_prepare_allowed', { p_reminder: reminderId })
+  if (allowed.error || allowed.data !== true) return back(form, 'Bạn không có quyền tạo gia hạn tại chi nhánh này.', 'error', reminderId)
   const begun = await db.rpc('begin_tuition_renewal', {
     p_reminder: reminderId,
     p_plan_code: plan,
@@ -217,23 +219,31 @@ export async function sendTuitionPaymentRequest(form: FormData) {
     return back(form, paymentNoticeReason(prepared.code === 'ELIGIBLE' ? 'LINK_INVOICE_MISMATCH' : prepared.code, prepared.templateId), 'error', reminderId)
   }
   if (!profile.data?.phone) return back(form, 'Người nhận chưa có số điện thoại. Chưa gửi.', 'error', reminderId)
+  const { zaloManualSendBlock } = await import('@/lib/integrations/zalo/service')
+  if (await zaloManualSendBlock()) return back(form, 'Cần cấp quyền lại cho Zalo trước khi gửi. Mở Kết nối Zalo và bấm Kết nối lại Zalo. Chưa gửi tin và chưa ghi đã thanh toán.', 'error', reminderId)
   const claim = await db.rpc('claim_tuition_payment_notice', { p_case: caseId })
   if (claim.error || claim.data !== 'CLAIMED') return back(form, paymentNoticeReason(String(claim.data ?? 'NOT_CLAIMED'), prepared.templateId), 'error', reminderId)
   const tracking = crypto.randomUUID().replaceAll('-', '')
   let outcome: 'ACCEPTED' | 'UNKNOWN' | 'REJECTED' = 'UNKNOWN'
+  let reason: 'LOCAL_CONTRACT' | 'TOKEN_INVALID' | 'TEMPLATE_REJECTED' | 'PROVIDER_REJECTED' | 'ACCEPTED' | 'UNKNOWN' = 'UNKNOWN'
   try {
-    outcome = await sendTuitionPaymentTemplate({ phone: profile.data.phone, templateId: prepared.templateId, trackingId: tracking, parameters: prepared.parameters })
+    const sent = await sendTuitionPaymentTemplate({ phone: profile.data.phone, templateId: prepared.templateId, trackingId: tracking, parameters: prepared.parameters })
+    outcome = sent.outcome
+    reason = sent.reason
   } catch {
     outcome = 'UNKNOWN'
   }
   const finished = await db.rpc('finish_tuition_payment_notice', {
     p_case: caseId,
     p_outcome: outcome,
-    p_error: outcome === 'REJECTED' ? 'REJECTED' : null,
+    p_error: outcome === 'ACCEPTED' ? null : reason,
     p_tracking: tracking,
   })
   if (finished.error || !finished.data) return back(form, 'Không ghi được kết quả gửi. Không bấm gửi lại trước khi đối soát.', 'error', reminderId)
   if (outcome === 'ACCEPTED') return back(form, 'Đã gửi yêu cầu thanh toán cho đúng hóa đơn này. Chưa ghi đã thanh toán.', 'success', reminderId)
+  if (reason === 'TOKEN_INVALID') return back(form, 'Kết nối Zalo không còn hiệu lực. Chưa gửi được tin. Hãy kết nối lại OA rồi bấm gửi một lần nữa.', 'error', reminderId)
+  if (reason === 'TEMPLATE_REJECTED') return back(form, 'Mẫu 645028 chưa ở trạng thái có thể gửi trên Zalo. Chưa gửi tin và chưa ghi đã thanh toán.', 'error', reminderId)
+  if (reason === 'LOCAL_CONTRACT') return back(form, 'Hồ sơ hoặc số điện thoại chưa đúng hợp đồng mẫu thanh toán. Chưa gửi tin.', 'error', reminderId)
   if (outcome === 'UNKNOWN') return back(form, paymentNoticeReason('ACCEPTANCE_UNKNOWN', prepared.templateId), 'error', reminderId)
-  return back(form, 'Zalo chưa nhận tin. Có thể gửi lại sau khi kiểm tra hồ sơ. Chưa ghi đã thanh toán.', 'error', reminderId)
+  return back(form, 'Zalo từ chối nội dung tin. Có thể gửi lại sau khi kiểm tra hồ sơ. Chưa ghi đã thanh toán.', 'error', reminderId)
 }

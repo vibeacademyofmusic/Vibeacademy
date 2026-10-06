@@ -1,5 +1,19 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
+const RENEWABLE_ZALO_STATES = new Set(['READY', 'NEEDS_REFRESH', 'REFRESHING', 'VERIFYING'])
+
+// Manual tuition sends may refresh a live credential. A rejected refresh token cannot.
+export async function zaloManualSendBlock() {
+    try {
+        const { readCredential } = await import('./oauth')
+        const credential = await readCredential(zaloServiceClient())
+        if (credential?.access_token && credential.refresh_token && RENEWABLE_ZALO_STATES.has(credential.state)) return null
+        return 'ZALO_RECONNECT_REQUIRED'
+    } catch {
+        return 'ZALO_RECONNECT_REQUIRED'
+    }
+}
+
 export function zaloServiceClient() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!url || !key)

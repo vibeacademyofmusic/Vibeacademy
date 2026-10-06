@@ -88,7 +88,11 @@ export function isPauseApprovalPath(pathname: string | null | undefined) {
   return pathname === '/admin/academic/pause-requests'
 }
 
-export type ShellMode = 'full' | 'business' | 'students' | 'business-students' | 'cashier' | 'academic'
+export function isTuitionCarePath(pathname: string | null | undefined) {
+  return pathname === '/admin/tuition/reminders'
+}
+
+export type ShellMode = 'full' | 'business' | 'students' | 'business-students' | 'cashier' | 'academic' | 'tuition'
 
 export function navigationForShell(businessOnly: boolean) {
   return businessOnly ? navigationGroups.filter(group => group.name === 'KINH DOANH') : navigationGroups
@@ -104,6 +108,7 @@ export function navigationForAccess(mode: ShellMode) {
   if (mode === 'students') return students
   if (mode === 'cashier') return [{ name: 'VẬN HÀNH', items: [{ name: 'Thu tiền mặt', href: '/admin/finance/payments' }] }]
   if (mode === 'academic') return [{ name: 'VẬN HÀNH', items: [{ name: 'Duyệt bảo lưu', href: '/admin/academic/pause-requests' }] }]
+  if (mode === 'tuition') return [{ name: 'VẬN HÀNH', items: [{ name: 'Nhắc học phí', href: '/admin/tuition/reminders' }] }]
   return [...business, ...students]
 }
 
