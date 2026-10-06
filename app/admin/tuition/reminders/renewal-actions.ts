@@ -79,7 +79,7 @@ async function markNotice(caseId: string) {
   return dispatch
 }
 
-async function activateCheckout(caseId: string, fresh = false): Promise<{ url?: string; error?: string }> {
+async function activateCheckout(caseId: string): Promise<{ url?: string; error?: string }> {
   const db = await signedInClient()
   // Check the same branch permission used by begin_tuition_renewal before any provider/service access.
   const renewal = await db.from('tuition_renewal_cases').select('branch_id,reminder_id').eq('id', caseId).maybeSingle()
@@ -94,7 +94,8 @@ async function activateCheckout(caseId: string, fresh = false): Promise<{ url?: 
     return url ? { url } : { error: 'Link payOS đã lưu không hợp lệ. Cần đối chiếu đơn trước khi thử lại.' }
   }
   if (order.state !== 'RESERVED') return { error: 'Đơn payOS hiện tại không thể tạo lại.' }
-  const opened = await openTuitionPayosCheckout({ orderCode: Number(order.order_code), amount: Number(order.amount), description: order.description }, process.env, fresh, renewal.data.reminder_id)
+  // A RESERVED row exists only in VIBE. Create the provider checkout; if a prior POST was ambiguous, the helper falls back to a safe GET by orderCode.
+  const opened = await openTuitionPayosCheckout({ orderCode: Number(order.order_code), amount: Number(order.amount), description: order.description }, process.env, true, renewal.data.reminder_id)
   if (!opened.checkout) return { error: opened.error ?? 'Chờ tạo thanh toán.' }
   const url = tuitionCheckoutUrl(opened.checkout.paymentLinkId, opened.checkout.checkoutUrl)
   if (!url) return { error: 'payOS trả về link không hợp lệ. Cần đối chiếu đơn trước khi thử lại.' }
@@ -156,7 +157,7 @@ export async function createTuitionRenewal(form: FormData) {
     return back(form, `Không tạo được gia hạn (${reason}). ${advice[reason] ?? 'Hãy tải lại và kiểm tra hồ sơ.'}`, 'error', reminderId)
   }
   if (payload.result === 'open_renewal') return back(form, 'Đã có gia hạn hoặc hóa đơn mở cho học viên này. Chưa tạo bản ghi mới.', 'error', reminderId)
-  const checkout = await activateCheckout(payload.case_id, payload.result === 'created')
+  const checkout = await activateCheckout(payload.case_id)
   if (!checkout.url) return back(form, checkout.error ?? 'Chưa tạo được checkout.', 'error', reminderId)
   return openCheckout(checkout.url)
 }
