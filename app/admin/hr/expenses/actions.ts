@@ -2,7 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { adminClient, uuidPattern, validDate } from '../../finance/operations'
+import { createClient } from '@/lib/supabase/server'
+import { uuidPattern, validDate } from '../../finance/operations'
 
 const base = '/admin/hr/expenses'
 const moneyPattern = /^\d{1,12}(\.\d{1,2})?$/
@@ -31,13 +32,17 @@ function messageFor(error: string) {
 }
 
 export async function expenseAction(form: FormData) {
-  const db = await adminClient()
+  const db = await createClient()
+  const identity = await db.auth.getClaims()
+  if (identity.error || !identity.data?.claims) redirect('/login')
   const action = value(form, 'action')
   const claim = value(form, 'claim')
+  const basePath = value(form, 'return_to') === '/my-expenses' ? '/my-expenses' : base
   const query = new URLSearchParams(uuidPattern.test(claim) ? { claim } : {})
+  if (basePath === base && value(form, 'view') === 'self') query.set('view', 'self')
   const fail = (message: string): never => {
     query.set('error', message)
-    redirect(`${base}?${query}`)
+    redirect(`${basePath}?${query}`)
   }
 
   const requestKey = value(form, 'key')
@@ -105,8 +110,9 @@ export async function expenseAction(form: FormData) {
   const response = result.data && typeof result.data === 'object' ? result.data as Record<string, unknown> : null
   if (typeof response?.claim_id === 'string' && uuidPattern.test(response.claim_id)) query.set('claim', response.claim_id)
   revalidatePath(base)
+  revalidatePath('/my-expenses')
   revalidatePath('/admin/hr')
   revalidatePath('/admin/payroll')
   query.set('success', 'Đã lưu với kiểm tra phiên bản và lịch sử. Thao tác này không xác nhận chi trả.')
-  redirect(`${base}?${query}`)
+  redirect(`${basePath}?${query}`)
 }

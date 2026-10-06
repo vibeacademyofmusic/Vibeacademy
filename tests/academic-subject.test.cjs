@@ -32,14 +32,14 @@ for (const rule of ['DIRECT_ASSESSMENT', 'MANUAL']) test(`edit form displays exp
   const h = harness({ curriculums: [{ id: id(1), name: 'Piano' }], curriculum_levels: [level], curriculum_subjects: [{ id: id(3), level_id: id(2), completion_rule: rule, name: 'Direct', is_required: true }] })
   const Page = h.load('../academic/[id]/levels/[levelId]/subjects/[subjectId]/edit/page.tsx').default
   const html = renderToStaticMarkup(await Page({ params: Promise.resolve({ id: id(1), levelId: id(2), subjectId: id(3) }), searchParams: Promise.resolve({}) }))
-  assert.match(html, /Đánh giá theo thành phần/)
+  assert.match(html, /Đánh giá theo nhóm đánh giá/)
   assert.match(html, /Đánh giá trực tiếp/)
-  assert.match(html, /không bắt buộc có thành phần con/)
+  assert.match(html, /không bắt buộc có nhóm đánh giá con/)
   assert.doesNotMatch(html, /value="MANUAL"/)
   assert.match(html, rule === 'DIRECT_ASSESSMENT' ? /value="DIRECT_ASSESSMENT" selected=""/ : /selected="" value=""|value=""[^>]*selected=""/)
 })
 test('assign action forwards inputs and exposes validation failure without success', async () => {
-  const h = harness({}, { message: 'A required subject has no required active components' })
+  const h = harness({ operational_curriculums: [{ id: id(1), code: 'PIANO', status: 'ACTIVE' }] }, { message: 'A required subject has no required active components' })
   const result = await redirected(h.load('../students/actions.ts').assignStudentAcademicProgram, { student_id: id(4), curriculum_id: id(1), level_id: id(2), started_at: '2026-09-01', is_primary: 'on' })
   assert.equal(result.searchParams.get('error'), 'A required subject has no required active components')
   assert.ok(!result.searchParams.has('success'))

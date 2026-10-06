@@ -4,7 +4,7 @@ const assert = require('node:assert/strict')
 const { harness, id, redirected, fixture, render } = require('./helpers/finance-operations.cjs')
 test('payment create uses Vietnam datetime and normalized currency/method', async () => {
   const h = harness(); await redirected(h.load('payments/actions.ts').createPayment, { idempotency_key: id(90), student_id: id(1), branch_id: id(2), amount: '123.45', currency: 'usd', payment_method: 'card', paid_at: '2026-09-15T07:30', reference: 'ref' })
-  assert.deepEqual(h.calls[1], { rpc: 'create_payment_once', args: { p_idempotency_key: id(90), p_student_id: id(1), p_branch_id: id(2), p_amount: '123.45', p_currency: 'USD', p_payment_method: 'CARD', p_paid_at: '2026-09-15T07:30:00+07:00', p_reference: 'ref', p_notes: null } })
+  assert.deepEqual(h.calls[1], { rpc: 'create_payment_once', args: { p_idempotency_key: id(90), p_student_id: id(1), p_branch_id: id(2), p_amount: '123.45', p_currency: 'USD', p_payment_method: 'CARD', p_paid_at: '2026-09-15T07:30:00+07:00', p_reference: 'ref', p_notes: null, p_cash_acknowledged: false } })
 })
 
 test('payment partial allocation delegates student/currency/balance authority to RPC', async () => {
@@ -35,17 +35,17 @@ test('payment list derives remaining and displays void warning in selected detai
 test('mutations reject anonymous and non-admin users before financial RPC', async () => {
   for (const [role, signedIn] of [[true, false], [false, true]]) {
     const h = harness({}, null, role, signedIn)
-    const url = await redirected(h.load('payments/actions.ts').createPayment, {})
-    assert.equal(url.pathname, '/login'); assert.ok(h.calls.every(c => c.rpc === 'has_role'))
+    const url = await redirected(h.load('payments/actions.ts').createPayment, { idempotency_key: id(90), student_id: id(1), branch_id: id(2), amount: '10', currency: 'VND', payment_method: 'CARD', paid_at: '2026-09-15T07:30' })
+    assert.equal(url.pathname, '/login'); assert.ok(!h.calls.some(c => c.rpc === 'create_payment_once'))
   }
 })
 
 test('invoice guided payment derives identity and currency server-side then opens allocation step',async()=>{
  const h=harness(fixture())
- const url=await redirected(h.load('payments/actions.ts').createInvoicePayment,{idempotency_key:id(90),invoice_id:id(2),student_id:id(40),branch_id:id(41),currency:'USD',amount:'100000',payment_method:'cash',paid_at:'2026-09-15T08:30',reference:'Desk'})
+ const url=await redirected(h.load('payments/actions.ts').createInvoicePayment,{idempotency_key:id(90),invoice_id:id(2),student_id:id(40),branch_id:id(41),currency:'USD',amount:'100000',payment_method:'cash',paid_at:'2026-09-15T08:30',reference:'Desk',cash_acknowledged:'yes'})
  assert.equal(url.searchParams.get('selected'),id(99));assert.equal(url.searchParams.get('invoice'),id(2))
  assert.match(url.searchParams.get('success'),/Bước 2/)
- assert.deepEqual(h.calls.find(c=>c.rpc==='create_payment_once').args,{p_idempotency_key:id(90),p_student_id:id(1),p_branch_id:id(3),p_currency:'VND',p_amount:'100000',p_payment_method:'CASH',p_paid_at:'2026-09-15T08:30:00+07:00',p_reference:'Desk',p_notes:null})
+ assert.deepEqual(h.calls.find(c=>c.rpc==='create_payment_once').args,{p_idempotency_key:id(90),p_student_id:id(1),p_branch_id:id(3),p_currency:'VND',p_amount:'100000',p_payment_method:'CASH',p_paid_at:'2026-09-15T08:30:00+07:00',p_reference:'Desk',p_notes:null,p_cash_acknowledged:true})
  assert.ok(!h.calls.some(c=>c.rpc==='allocate_payment_to_invoice'))
 })
 test('invoice guided payment rejects invalid amount and non-issued invoice',async()=>{
@@ -57,7 +57,7 @@ test('invoice guided payment rejects invalid amount and non-issued invoice',asyn
 })
 test('invoice guided payment failure never offers allocation of an unknown payment',async()=>{
  const h=harness(fixture(),{message:'private database info'})
- const url=await redirected(h.load('payments/actions.ts').createInvoicePayment,{idempotency_key:id(90),invoice_id:id(2),amount:'100',payment_method:'CASH',paid_at:'2026-09-15T08:30'})
+ const url=await redirected(h.load('payments/actions.ts').createInvoicePayment,{idempotency_key:id(90),invoice_id:id(2),amount:'100',payment_method:'CASH',paid_at:'2026-09-15T08:30',cash_acknowledged:'yes'})
  assert.ok(url.searchParams.has('error'));assert.equal(url.searchParams.has('selected'),false);assert.doesNotMatch(url.href,/private/)
 })
 test('invoice payment form and allocation retain the selected invoice',async()=>{

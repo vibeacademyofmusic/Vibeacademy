@@ -1,34 +1,61 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { requestClient } from '@/lib/auth/request'
+import { CrmLeadContent } from '../crm/CrmContent'
+import { RecruitmentShell } from './shell'
+import { registrationProgressLabel, staffFacingError } from './status'
+import styles from './workspace.module.css'
 
-export default async function RegistrationsPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function RegistrationsPage({ searchParams }: { searchParams: Promise<{ error?: string; tab?: string; [key: string]: string | undefined }> }) {
   const params = await searchParams
-  const db = await createClient()
+  if (params.workspace === 'crm' || params.tab === 'crm') {
+    return (
+      <RecruitmentShell title="CRM & Tuyển sinh" description="Theo dõi khách hàng, mức độ quan tâm và giai đoạn bán hàng. Đăng ký tại quầy là thao tác tiếp nhận riêng." current="crm">
+        <CrmLeadContent searchParams={Promise.resolve(params)} />
+      </RecruitmentShell>
+    )
+  }
+  const db = await requestClient()
   const { data, error } = await db.from('registration_applications')
-    .select('id, application_code, student_name, status, desired_start_date, branches(name)')
+    .select('id, application_code, student_name, status, desired_start_date, branches(name), student_placement_cases(status, scheduled_start_date)')
     .order('created_at', { ascending: false })
     .limit(100)
+  const review = (data ?? []).filter(row => row.status === 'PAID')
+  const notice = staffFacingError(params.error)
   return (
-    <div>
-      <p className="text-sm font-medium text-gray-500">Kinh doanh</p>
-      <div className="mt-1 flex items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold text-gray-950">Hồ sơ đăng ký</h1>
-        <Link href="/admin/business/registrations/new" className="rounded-lg bg-gray-950 px-3 py-2 text-sm text-white">Tạo hồ sơ</Link>
-      </div>
-      {params.error && <p className="mt-4 text-sm text-red-700">{params.error}</p>}
-      {error && <p className="mt-4 text-sm text-red-700">Không thể tải hồ sơ đăng ký.</p>}
-      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-50 text-left text-gray-500"><tr><th className="px-4 py-3">Mã</th><th className="px-4 py-3">Học viên</th><th className="px-4 py-3">Chi nhánh</th><th className="px-4 py-3">Trạng thái</th><th className="px-4 py-3">Ngày muốn học</th></tr></thead>
+    <RecruitmentShell title="CRM & Tuyển sinh" description="Tạo hồ sơ học viên tại quầy, chọn chương trình và theo dõi đến khi thanh toán đủ để chờ vào ca dạy." current="list">
+      {notice && <p className={styles.error} role="alert">{notice}{params.error && params.error !== notice && <span className={styles.diagnostics}> Mã tham chiếu nằm trong hồ sơ, không phải trạng thái thành công.</span>}</p>}
+      {error && <p className={styles.error} role="alert">Không tải được danh sách đăng ký.</p>}
+      <section className={styles.panel}>
+        <h2>Đăng ký đã tạo</h2>
+        <p className={styles.muted}>Mở một mã để xem học phí, thanh toán và kết quả. Danh sách này không gộp trạng thái CRM.</p>
+      </section>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead><tr><th>Mã</th><th>Học viên</th><th>Chi nhánh</th><th>Trạng thái</th><th>Ngày muốn học</th><th>Hành động</th></tr></thead>
           <tbody>
             {(data ?? []).map(row => {
               const branch = Array.isArray(row.branches) ? row.branches[0] : row.branches
-              return <tr key={row.id} className="border-t border-gray-100"><td className="px-4 py-3"><Link href={`/admin/business/registrations/${row.id}`} className="font-medium text-gray-950">{row.application_code}</Link></td><td className="px-4 py-3">{row.student_name || '—'}</td><td className="px-4 py-3">{branch?.name || '—'}</td><td className="px-4 py-3">{row.status}</td><td className="px-4 py-3">{row.desired_start_date || '—'}</td></tr>
+              const placement = Array.isArray(row.student_placement_cases) ? row.student_placement_cases[0] : row.student_placement_cases
+              return (
+                <tr key={row.id}>
+                  <td><Link href={`/admin/business/registrations/${row.id}`}>{row.application_code}</Link></td>
+                  <td>{row.student_name || '—'}</td>
+                  <td>{branch?.name || '—'}</td>
+                  <td><span className={styles.badge}>{registrationProgressLabel(row.status, placement?.status, placement?.scheduled_start_date)}</span></td>
+                  <td>{row.desired_start_date || '—'}</td>
+                  <td><Link href={`/admin/business/registrations/${row.id}`}>Mở hồ sơ</Link></td>
+                </tr>
+              )
             })}
           </tbody>
         </table>
-        {!data?.length && <p className="px-4 py-6 text-sm text-gray-500">Chưa có hồ sơ đăng ký.</p>}
+        {!error && !data?.length && <p className={styles.empty}>Chưa có hồ sơ đăng ký.</p>}
       </div>
-    </div>
+      <section className={styles.warn}>
+        <h2>Đối soát tài chính</h2>
+        <p>Hồ sơ đã nhận tiền nhưng chưa tạo học viên nằm ở đây. Hệ thống không tự hoàn tiền. Hủy hồ sơ sau khi đã nhận thanh toán bị chặn cho đến khi tài chính xử lý.</p>
+        {error ? <p>Chưa kiểm tra được hàng đợi vì danh sách hồ sơ lỗi.</p> : review.length === 0 ? <p>Không có hồ sơ đang chờ đối soát.</p> : <ul>{review.map(row => <li key={row.id}><Link href={`/admin/business/registrations/${row.id}`}>{row.application_code}</Link> · {row.student_name}</li>)}</ul>}
+      </section>
+    </RecruitmentShell>
   )
 }

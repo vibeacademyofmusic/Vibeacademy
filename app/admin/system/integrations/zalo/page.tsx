@@ -1,96 +1,120 @@
-import Link from 'next/link'
-
-import { ZALO_TEMPLATE_LABELS } from '@/lib/integrations/zalo/outbound'
-import { prepareTuitionPaymentRequest } from '@/lib/integrations/tuition/payment-zbs'
+import { readZaloConnectionView } from '@/lib/integrations/zalo/service'
+import { RegistrationRecovery } from './RegistrationRecovery'
+import {
+  entityLabel,
+  eventStatusLabel,
+  eventTypeLabel,
+  formatAdminTime,
+  linkStatusLabel,
+  maskOperationalText,
+  processingLabel,
+  readZaloAdminConfig,
+} from '@/lib/integrations/zalo/admin'
+import { zaloTemplateIsSendable } from '@/lib/integrations/zalo/outbound'
 
 import { requireIntegrationAdmin } from '../access'
+import { ZaloIntegrationView, type ZaloCustomerRow, type ZaloEventRow, type ZaloTemplateRow } from './view'
 
-type TemplateRow = {
+type Overview = {
+  total_events: number
+  events_today: number
+  accepted_events: number
+  pending_events: number
+  failed_events: number
+}
+
+type EventRecord = {
+  id: string
+  received_at: string
+  event_type: string
+  external_event_id: string | null
+  status: string
+  processing_state: string
+  processing_error: string | null
+}
+
+type CustomerRecord = {
+  link_id: string
+  entity_type: string
+  display_label: string | null
+  branch_name: string | null
+  linked_at: string | null
+  last_verified_at: string | null
+  link_status: string
+}
+
+type TemplateRecord = {
   template_key: string
+  provider: string
   provider_template_id: string | null
   status: string
   enabled: boolean
-  parameter_schema?: unknown
-  payload_schema?: unknown
+  payload_schema: Record<string, unknown> | null
 }
 
-const syntheticPaymentPreview = {
-  customerName: 'Phụ huynh thử',
-  studentName: 'Học viên thử',
-  invoiceCode: 'INV-SYNTHETIC-645',
-  packageName: '3 tháng',
-  packageAmount: 5500000,
-  paymentType: 'Đặt cọc 50%',
-  amountDue: 2750000,
-  deadline: '2026-11-15',
-  paymentLinkId: 'synthetic01',
-  checkoutUrl: 'https://pay.payos.vn/web/synthetic01',
+function first<T>(data: T[] | T | null) {
+  if (!data) return null
+  return Array.isArray(data) ? data[0] ?? null : data
 }
 
-function approvalLabel(status: string) {
-  if (status === 'APPROVED') return 'Đã duyệt'
-  if (status === 'PENDING') return 'Chờ duyệt'
-  if (status === 'DISABLED') return 'Tắt'
-  return 'Nháp'
-}
-
-export default async function ZaloIntegrationPage() {
+export default async function ZaloIntegrationPage({ searchParams }: { searchParams: Promise<{ result?: string; job?: string }> }) {
   const db = await requireIntegrationAdmin()
-  const templates = await db.from('notification_templates').select('template_key,provider_template_id,status,enabled,parameter_schema,payload_schema').eq('provider', 'ZALO').order('template_key')
-  const rows = (templates.data || []) as TemplateRow[]
-  const paymentTemplate = rows.find(row => row.template_key === 'ZALO_TUITION_PAYMENT') ?? null
-  const paymentPreview = prepareTuitionPaymentRequest({
-    template: paymentTemplate,
-    input: syntheticPaymentPreview,
-    linkInvoiceCode: syntheticPaymentPreview.invoiceCode,
-  })
+  const [overview, events, customers, templates, connection] = await Promise.all([
+    db.rpc('zalo_integration_overview'),
+    db.rpc('zalo_recent_events', { p_limit: 20 }),
+    db.rpc('zalo_linked_customers'),
+    db.from('notification_templates').select('template_key,provider,provider_template_id,status,enabled,payload_schema').eq('provider', 'ZALO').order('template_key'),
+    readZaloConnectionView(),
+  ])
+  const counts = first(overview.data as Overview[] | Overview | null)
+  const summary = {
+    total: Number(counts?.total_events ?? 0),
+    today: Number(counts?.events_today ?? 0),
+    accepted: Number(counts?.accepted_events ?? 0),
+    pending: Number(counts?.pending_events ?? 0),
+    failed: Number(counts?.failed_events ?? 0),
+  }
+  const eventRows: ZaloEventRow[] = ((events.data ?? []) as EventRecord[]).map(event => ({
+    id: event.id,
+    time: formatAdminTime(event.received_at),
+    type: eventTypeLabel(event.event_type),
+    externalId: event.external_event_id || '—',
+    status: eventStatusLabel(event.status),
+    processing: processingLabel(event.processing_state),
+    source: 'Webhook Zalo',
+    error: maskOperationalText(event.processing_error),
+  }))
+  const customerRows: ZaloCustomerRow[] = ((customers.data ?? []) as CustomerRecord[]).map(customer => ({
+    id: customer.link_id,
+    entity: entityLabel(customer.entity_type),
+    label: customer.display_label || '—',
+    branch: customer.branch_name || '—',
+    linkedAt: formatAdminTime(customer.linked_at),
+    verifiedAt: formatAdminTime(customer.last_verified_at),
+    status: linkStatusLabel(customer.link_status),
+  }))
+  const templateRows: ZaloTemplateRow[] = ((templates.data ?? []) as TemplateRecord[]).map(template => ({
+    key: template.template_key,
+    provider: template.provider,
+    templateId: template.provider_template_id || 'Chưa có',
+    status: template.status,
+    enabled: template.enabled ? 'Yes' : 'No',
+    payloadReady: template.payload_schema && Object.keys(template.payload_schema).length > 0
+      ? (zaloTemplateIsSendable(template) ? 'Sẵn sàng gửi' : 'Schema có, gửi đang tắt')
+      : 'Thiếu schema',
+  }))
+
   return (
-    <article className="min-w-0 space-y-5">
-      <p><Link href="/admin/system/integrations">Tích hợp</Link></p>
-      <h1 className="text-2xl font-bold">Zalo OA</h1>
-      <section className="space-y-2 rounded border p-4">
-        <h2 className="font-semibold">OUTBOUND MESSAGING</h2>
-        <p>Trạng thái hiện tại: Chưa kích hoạt</p>
-        <p>Lý do: OA package Cơ bản / Live OpenAPI credentials not configured</p>
-        <p>Bộ gửi Zalo trả về ZALO_OUTBOUND_NOT_CONFIGURED và không tạo tin SENT.</p>
-      </section>
-      <section className="space-y-3">
-        <h2 className="font-semibold">Mẫu thông báo</h2>
-        {templates.error && <p role="alert">Không tải được danh mục mẫu.</p>}
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b text-left">
-              <th className="py-2 pr-3">Template</th>
-              <th className="py-2 pr-3">Internal key</th>
-              <th className="py-2 pr-3">Template ID</th>
-              <th className="py-2 pr-3">Trạng thái duyệt</th>
-              <th className="py-2">Enabled</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(row => (
-              <tr key={row.template_key} className="border-b">
-                <td className="py-2 pr-3">{ZALO_TEMPLATE_LABELS[row.template_key] || row.template_key}</td>
-                <td className="py-2 pr-3">{row.template_key}</td>
-                <td className="py-2 pr-3">{row.provider_template_id || 'Chưa có'}</td>
-                <td className="py-2 pr-3">{approvalLabel(row.status)}</td>
-                <td className="py-2">{row.enabled ? 'Yes' : 'No'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <section className="space-y-2 rounded border p-4">
-        <h2 className="font-semibold">Yêu cầu thanh toán — xem trước tổng hợp</h2>
-        <p>Mẫu đọc từ registry: {paymentPreview.templateId || 'Chưa có'}. Gửi đang tắt. Không tạo hóa đơn, link hay thanh toán.</p>
-        <p>Hạn 15/11/2026 trong xem trước này là dữ liệu thử, không phải hạn mặc định.</p>
-        <p>Kết quả: {paymentPreview.code}. Đã gửi: không. Đã thanh toán: không.</p>
-        {paymentPreview.parameters && (
-          <ul className="list-disc pl-5">
-            {Object.entries(paymentPreview.parameters).map(([key, value]) => <li key={key}>{key}: {value}</li>)}
-          </ul>
-        )}
-      </section>
-    </article>
+    <>
+    <RegistrationRecovery searchParams={searchParams} />
+    <ZaloIntegrationView
+      config={{ ...readZaloAdminConfig(process.env, summary.total), accessTokenConfigured: connection.accessPresent, refreshTokenConfigured: connection.refreshPresent }}
+      summary={summary}
+      events={eventRows}
+      customers={customerRows}
+      templates={templateRows}
+      loadError={Boolean(overview.error || events.error || customers.error || templates.error)}
+    />
+    </>
   )
 }

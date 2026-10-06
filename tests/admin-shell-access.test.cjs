@@ -22,14 +22,11 @@ test('business shell navigation hides unaudited admin domains', () => {
   const hrefs = navigationForShell(true).flatMap(group => group.items.map(item => item.href))
   assert.deepEqual(hrefs, [
     '/admin/business',
-    '/admin/business/crm',
     '/admin/business/registrations',
-    '/admin/business/campaigns',
-    '/admin/business/reports',
-    '/admin/business/reactivation',
-    '/admin/business/instrument-customers',
+    '/admin/business/marketing',
+    '/admin/business/after-sales',
   ])
-  assert.ok(navigationForShell(false).some(group => group.name === 'TÀI CHÍNH'))
+  assert.ok(navigationForShell(false).some(group => group.name === 'VẬN HÀNH'))
 })
 
 function layout({ pathname, superAdmin = false, mayEnter = false, mayStudents = false, signedIn = true }) {
@@ -40,8 +37,8 @@ function layout({ pathname, superAdmin = false, mayEnter = false, mayStudents = 
       from: () => ({ select: () => ({ eq: () => ({ single: async () => ({ data: { full_name: 'Tester' } }) }) }) }),
     }) },
     'next/headers': { headers: async () => ({ get: key => key === 'x-vibe-pathname' ? pathname : null }) },
-    'next/navigation': { redirect: url => { const error = new Error('redirect'); error.url = url; throw error }, usePathname: () => pathname || '/login' },
-    'next/link': { default: ({ children, href }) => React.createElement('a', { href }, children) },
+    'next/navigation': { redirect: url => { const error = new Error('redirect'); error.url = url; throw error }, usePathname: () => pathname || '/login', useSearchParams: () => new URLSearchParams() },
+    'next/link': { default: ({ children, href, 'aria-current': current }) => React.createElement('a', { href, 'aria-current': current }, children) },
     '@/app/login/actions': { logout: async () => {} },
   }
   const cache = new Map()
@@ -83,7 +80,7 @@ test('branch admin with CRM permission reaches only business routes', async () =
   assert.match(allowed.html, /Business page/)
   assert.match(allowed.html, /Kinh doanh/)
   assert.doesNotMatch(allowed.html, /\/admin\/finance|\/admin\/payroll|\/admin\/academic|\/admin\/students|\/admin\/hr|\/admin\/branches/)
-  for (const pathname of ['/admin/finance', '/admin/payroll', '/admin/academic', '/admin/students', '/admin/hr', '/admin']) {
+  for (const pathname of ['/admin/finance', '/admin/payroll', '/admin/academic', '/admin/programs', '/admin/students', '/admin/hr', '/admin']) {
     const denied = await outcome({ pathname, mayEnter: true })
     assert.equal(decodeURIComponent(denied.url), '/login?error=Bạn không có quyền truy cập')
   }
@@ -96,7 +93,7 @@ test('student operations opens only the exact students list', async () => {
   assert.doesNotMatch(allowed.html, /\/admin\/finance|\/admin\/payroll|\/admin\/hr|\/admin\/academic|\/admin\/branches/)
   const detail = await outcome({ pathname: '/admin/students/student-1', mayStudents: true })
   assert.equal(decodeURIComponent(detail.url), '/login?error=Bạn không có quyền truy cập')
-  for (const pathname of ['/admin/finance', '/admin/payroll', '/admin/hr', '/admin', '/admin/business']) {
+  for (const pathname of ['/admin/finance', '/admin/payroll', '/admin/hr', '/admin', '/admin/business', '/admin/rooms', '/admin/branches', '/admin/notifications', '/admin/system/integrations']) {
     const denied = await outcome({ pathname, mayStudents: true })
     assert.equal(decodeURIComponent(denied.url), '/login?error=Bạn không có quyền truy cập')
   }
@@ -105,7 +102,7 @@ test('student operations opens only the exact students list', async () => {
 test('business and student permissions share a menu without opening other admin domains', async () => {
   const allowed = await outcome({ pathname: '/admin/business', mayEnter: true, mayStudents: true })
   assert.match(allowed.html, /\/admin\/students/)
-  assert.match(allowed.html, /\/admin\/business\/crm/)
+  assert.match(allowed.html, /\/admin\/business\/registrations/)
   assert.doesNotMatch(allowed.html, /\/admin\/finance|\/admin\/payroll|\/admin\/hr/)
 })
 
@@ -119,3 +116,13 @@ test('accounts without CRM shell permission are denied, including a missing path
     assert.ok(denied.url?.includes('/login'))
   }
 })
+
+ test('consolidated tabs obey existing server access boundaries', async () => {
+  const rooms = await outcome({ pathname: '/admin/rooms', superAdmin: true })
+  assert.doesNotMatch(rooms.html, /aria-label="Học viên và phòng học"/)
+  assert.match(rooms.html, /href="\/admin\/rooms"[^>]*aria-current="page"/)
+  const system = await outcome({ pathname: '/admin/system/integrations/zalo', superAdmin: true })
+  assert.match(system.html, /href="\/admin\/system\/integrations"[^>]*aria-current="page"/)
+  const restricted = await outcome({ pathname: '/admin/students', mayStudents: true })
+  assert.doesNotMatch(restricted.html, /href="\/admin\/(rooms|programs|courses|branches|notifications)/)
+ })

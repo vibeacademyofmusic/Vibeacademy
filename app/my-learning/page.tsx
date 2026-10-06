@@ -1,3 +1,4 @@
+import { loadVideoLinks } from '@/app/_components/academic-video-links/data'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -9,7 +10,7 @@ import FeedbackForm from './FeedbackForm'
 import ApprovedReport from './ApprovedReport'
 import type { Snapshot } from '@/app/admin/reports/learning/data'
 
-const tabs = { journey: 'Hành trình học tập', schedule: 'Lịch học', attendance: 'Điểm danh', reports: 'Báo cáo đã duyệt', debt: 'Công nợ hóa đơn', opening: 'Công nợ chuyển sang', credit: 'Tiền còn dư' }
+const tabs = { journey: 'Hành trình học tập', schedule: 'Lịch học', attendance: 'Điểm danh', reports: 'Báo cáo đã phát hành', feedback: 'Phản hồi và trao đổi', debt: 'Công nợ hóa đơn', opening: 'Công nợ chuyển sang', credit: 'Tiền còn dư' }
 type Tab = keyof typeof tabs
 type Student = { id: string; student_code: string; full_name: string }
 type Session = { session_id: string; starts_at: string; ends_at: string; class_name: string }
@@ -41,31 +42,32 @@ export default async function MyLearning({ searchParams }: { searchParams: Promi
   if (params.student && !students.length) notFound()
   const student = params.student ? students[0] : null
   const href = (nextPage: number, nextTab = tab) => `/my-learning?${new URLSearchParams({ ...(student ? { student: student.id } : {}), tab: nextTab, page: String(nextPage) })}`
-  const rpc = { journey: 'portal_academic_journey', schedule: 'portal_upcoming_sessions', attendance: 'student_attendance_history', reports: 'student_approved_reports', debt: 'student_debt_history', opening: 'student_opening_balances', credit: 'student_customer_credits' }[tab]
-  const loaded = student ? await db.rpc(rpc, { p_student: student.id, p_offset: offset, ...(['attendance', 'reports', 'debt'].includes(tab) ? { p_limit: 26 } : {}) }) : null
+  const rpc = { journey: 'portal_academic_journey', schedule: 'portal_upcoming_sessions', attendance: 'student_attendance_history', reports: 'student_approved_reports', feedback: 'family_feedback_list', debt: 'student_debt_history', opening: 'student_opening_balances', credit: 'student_customer_credits' }[tab]
+  const loaded = student ? await db.rpc(rpc, { p_student: student.id, ...(tab === 'feedback' ? {} : {p_offset: offset}), ...(['attendance', 'reports', 'debt'].includes(tab) ? { p_limit: 26 } : {}) }) : null
   if (loaded?.error) throw new Error('Không thể tải nội dung học tập. Vui lòng thử lại.')
   const data = loaded?.data || [], entries = data.slice(0, 25)
   const feedback = student && tab === 'attendance' ? await feedbackContext(db) : { roles: [], asOf: 0 }
+  const videos = student && tab === 'journey' ? Object.fromEntries(await Promise.all((entries as Program[]).map(async program => [program.program_id, await loadVideoLinks(student.id, program.program_id)]))) : {}
   const respondents = feedback.roles
-  return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-6 p-4 sm:p-8">
-    <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold">Hồ sơ học tập</h1><form action={logout}><button className="rounded border px-4 py-2">Đăng xuất</button></form></header>
-    <Link prefetch={false} href="/notifications">Thông báo của tôi</Link>
-    <Link prefetch={false} href="/learn">Học trực tuyến</Link>
+  return <main className="vibe-admin vibe-page mx-auto w-full min-w-0 max-w-5xl p-4 sm:p-8">
+    <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold">Hồ sơ học tập</h1><form action={logout}><button className="vibe-button">Đăng xuất</button></form></header>
+    <div className="vibe-actions"><Link className="vibe-button" prefetch={false} href="/notifications">Thông báo của tôi</Link><Link className="vibe-button" prefetch={false} href="/learn">Học trực tuyến</Link></div>
     {params.success === 'feedback' && <p role="status">Cảm ơn bạn đã gửi phản hồi.</p>}
     {params.error && <p role="alert">{params.error === 'feedback_duplicate' ? 'Bạn đã gửi phản hồi cho buổi học này.' : params.error === 'feedback_invalid' ? 'Vui lòng chọn điểm từ 1–5. Lý do chỉ được chọn trong nhóm phù hợp với điểm, và nhận xét tối đa 4.000 ký tự.' : 'Không thể gửi phản hồi. Hãy kiểm tra quyền tài khoản và điều kiện buổi học.'}</p>}
     {!student ? <section className="space-y-3"><h2 className="text-xl font-semibold">Học viên của bạn</h2>{!students.length && <p>Chưa có hồ sơ được phép xem.</p>}{students.slice(0, 25).map(s => <Link className="block rounded border p-4" key={s.id} prefetch={false} href={`/my-learning?student=${s.id}`}>{s.full_name} — {s.student_code}</Link>)}</section> : <>
       <Link prefetch={false} href="/my-learning">Chọn học viên khác</Link><h2 className="text-xl font-semibold">{student.full_name} — {student.student_code}</h2>
-      <nav aria-label="Hồ sơ học tập" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} aria-current={tab === key ? 'page' : undefined} className={`rounded border px-3 py-2 ${tab === key ? 'bg-slate-900 text-white' : ''}`} href={href(1, key as Tab)}>{title}</Link>)}</nav>
+      <nav aria-label="Hồ sơ học tập" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} aria-current={tab === key ? 'page' : undefined} className={`vibe-button ${tab === key ? 'vibe-button-primary' : ''}`} href={href(1, key as Tab)}>{title}</Link>)}</nav>
       <h2 className="text-xl font-semibold">{tabs[tab]}</h2>
       {!entries.length && <p>Chưa có dữ liệu được phép xem trong mục này.</p>}
-      {tab === 'journey' && <Journey programs={entries as Program[]}/>}
+      {tab === 'journey' && <Journey programs={entries as Program[]} studentId={student.id} videos={videos}/>}
       {tab === 'schedule' && (entries as Session[]).map(s => <article key={s.session_id} className="rounded border p-4">{s.class_name}<p>{time(s.starts_at)} – {time(s.ends_at)}</p></article>)}
       {tab === 'attendance' && (entries as Attendance[]).map(s => {
         const canRespond = respondents.length > 0 && s.session_status === 'COMPLETED' && ['PRESENT', 'LATE'].includes(s.attendance_status) && Date.parse(s.ends_at) <= feedback.asOf
         return <article key={s.attendance_id} className="space-y-3 rounded border p-4">{s.class_name}<p>{time(s.starts_at)} — {displayLabel(s.attendance_status)}</p>{canRespond && <details><summary className="cursor-pointer">Phản hồi buổi học</summary><p className="mt-2 text-sm">Buổi học hôm nay thế nào?</p><FeedbackForm student={student.id} session={s.session_id} respondents={respondents} /></details>}</article>
       })}
+      {tab === 'feedback' && (entries as {id:string;session_date:string;rating:number;comment:string;state:string}[]).map(f=><article key={f.id} className="vibe-card space-y-3"><p>{time(f.session_date)} · {f.rating}/5</p><p className="whitespace-pre-wrap">{f.comment}</p><Link href={`/my-learning/conversations/feedback/${f.id}`}>Xem trả lời / bổ sung phản hồi</Link></article>)}
       {tab === 'debt' && <><p className="text-sm">Các hóa đơn đã phát hành mà bạn được phép xem. Đây không phải tổng số dư tài khoản.</p>{(entries as Debt[]).map(d => <article key={d.invoice_id} className="rounded border p-4"><h3>{d.invoice_number}</h3><p>Tổng: {money(d.total_amount, d.currency)} · Đã phân bổ: {money(d.allocated_amount, d.currency)}</p><p>Còn phải trả: {money(d.outstanding_balance, d.currency)}</p></article>)}</>}
-      {tab === 'reports' && (entries as Report[]).map(r => <article key={r.report_id} className="space-y-2 rounded border p-4"><h3 className="font-semibold">{r.period_start} – {r.period_end}</h3><p>Đã duyệt</p><ApprovedReport snapshot={r.snapshot}/></article>)}
+      {tab === 'reports' && (entries as Report[]).map(r => <article key={r.report_id} className="space-y-4"><div className="vibe-card"><h3 className="text-lg font-semibold">{r.period_start} – {r.period_end}</h3><p className="vibe-status">Đã phát hành</p><div className="vibe-actions report-controls"><Link className="vibe-button vibe-button-primary" href={`/my-learning/reports/${r.report_id}/pdf`}>Mở / tải PDF</Link><Link className="vibe-button" href={`/my-learning/conversations/report/${r.report_id}`}>Gửi câu hỏi về báo cáo</Link></div></div><ApprovedReport snapshot={r.snapshot}/></article>)}
       {tab === 'opening' && (entries as Opening[]).map(o => <article key={o.receivable_id} className="rounded border p-4"><p>Công nợ chuyển sang ngày {o.opening_as_of_date}</p><p>Còn phải trả: {money(o.outstanding_balance, o.currency)}</p></article>)}
       {tab === 'credit' && <><p className="text-sm">Tiền đang giữ cho học viên, chưa tự động phân bổ sang học phí khác. Liên hệ quản lý để yêu cầu sử dụng hoặc hoàn tiền theo quy trình.</p>{(entries as Credit[]).map(c => <article key={c.credit_id} className="space-y-1 rounded border p-4"><p>Ban đầu: {money(c.original_amount, c.currency)}</p><p>Đã sử dụng: {money(c.applied_amount, c.currency)} · Đã hoàn: {money(c.refunded_amount, c.currency)}</p>{c.voided_amount > 0 && <p>Đã vô hiệu: {money(c.voided_amount, c.currency)}</p>}<p className="font-semibold">Còn dư: {money(c.remaining_credit, c.currency)}</p></article>)}</>}
     </>}

@@ -1,0 +1,27 @@
+{
+  "functions": {
+    "main_count": 515,
+    "fresh_count": 515,
+    "main_only": [
+      "public.registration_zalo_connection(p_registration uuid)"
+    ],
+    "fresh_only": [
+      "public.registration_zalo_connection(p_application uuid)"
+    ],
+    "different": []
+  },
+  "tables": {
+    "main_count": 172,
+    "fresh_count": 172,
+    "main_only": [],
+    "fresh_only": [],
+    "different": []
+  },
+  "policies": {
+    "main_count": 192,
+    "fresh_count": 192,
+    "main_only": [],
+    "fresh_only": [],
+    "different": []
+  }
+}

@@ -12,10 +12,10 @@ function transpile(relative, dependencies = {}) {
   const result = ts.transpileModule(source, { fileName: filename, compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX }, reportDiagnostics: true })
   const errors = (result.diagnostics || []).filter(d => d.category === ts.DiagnosticCategory.Error)
   assert.equal(errors.length, 0, errors.map(e => ts.flattenDiagnosticMessageText(e.messageText, '\n')).join('\n'))
-  const module = { exports: {} }
+  const compiled = { exports: {} }
   const execute = vm.runInThisContext('(function(require,module,exports){' + result.outputText + '\n})', { filename })
-  execute(name => { if (name in dependencies) return dependencies[name]; throw new Error('Unexpected runtime import: ' + name) }, module, module.exports)
-  return module.exports
+  execute(name => { if (name in dependencies) return dependencies[name]; throw new Error('Unexpected runtime import: ' + name) }, compiled, compiled.exports)
+  return compiled.exports
 }
 const model = transpile('app/admin/payroll/_ux/model.ts')
 const loader = transpile('app/admin/payroll/_ux/load.ts', {

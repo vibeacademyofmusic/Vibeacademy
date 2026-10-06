@@ -1,0 +1,388 @@
+{
+  "local_levels": [
+    {
+      "code": "PRE",
+      "subjects": 5,
+      "active_lessons": 130
+    },
+    {
+      "code": "GRADE_1",
+      "subjects": 4,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_2",
+      "subjects": 4,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_3",
+      "subjects": 4,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_4",
+      "subjects": 5,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_5",
+      "subjects": 5,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_6",
+      "subjects": 5,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_7",
+      "subjects": 7,
+      "active_lessons": 40
+    },
+    {
+      "code": "GRADE_8",
+      "subjects": 7,
+      "active_lessons": 40
+    }
+  ],
+  "staging_levels": [
+    {
+      "code": "PRE",
+      "subjects": 5,
+      "active_lessons": 130
+    },
+    {
+      "code": "GRADE_1",
+      "subjects": 5,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_2",
+      "subjects": 5,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_3",
+      "subjects": 5,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_4",
+      "subjects": 6,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_5",
+      "subjects": 6,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_6",
+      "subjects": 6,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_7",
+      "subjects": 8,
+      "active_lessons": 0
+    },
+    {
+      "code": "GRADE_8",
+      "subjects": 8,
+      "active_lessons": 0
+    },
+    {
+      "code": "DIPLOMA",
+      "subjects": 0,
+      "active_lessons": 0
+    }
+  ],
+  "cause": "Release foundation migration skips existing levels; staging Guitar Grade 1–8 retained legacy catalog instead of the newer local catalog.",
+  "missing_grade_lessons": 320,
+  "subject_identity_conflicts": [
+    "REPERTOIRE vs REPERTOIRE_PERFORMANCE",
+    "TECHNIQUE_FOUNDATION vs TECHNICAL_STUDIES",
+    "SIGHTREADING vs SIGHT_READING",
+    "AURAL vs AURAL_SKILLS"
+  ],
+  "progress_counts": {
+    "academic_mappings": 0,
+    "component_progress": 18,
+    "current_enrollments": 2,
+    "lessons": 0,
+    "placements": 0,
+    "registrations": 0,
+    "student_level_progress": 9,
+    "subject_progress": 15
+  },
+  "assessment_statuses": {
+    "components": [
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "BAROQUE_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "BAROQUE_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "CLASSICAL_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "CLASSICAL_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "CONTEMPORARY_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "CONTEMPORARY_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "ETUDES",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "ETUDES",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "SCALES_ARPEGGIOS",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "SCALES_ARPEGGIOS",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "SUPPLEMENTARY_TECHNIQUES",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "SUPPLEMENTARY_TECHNIQUES",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "BAROQUE_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "CLASSICAL_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "component": "CONTEMPORARY_REPERTOIRE",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "ETUDES",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "SCALES_ARPEGGIOS",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "component": "SUPPLEMENTARY_TECHNIQUES",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      }
+    ],
+    "levels": [
+      {
+        "code": "GRADE_1",
+        "count": 1,
+        "status": "COMPLETED"
+      },
+      {
+        "code": "GRADE_7",
+        "count": 1,
+        "status": "LOCKED"
+      },
+      {
+        "code": "GRADE_3",
+        "count": 1,
+        "status": "LOCKED"
+      },
+      {
+        "code": "GRADE_5",
+        "count": 1,
+        "status": "LOCKED"
+      },
+      {
+        "code": "GRADE_1",
+        "count": 1,
+        "status": "IN_PROGRESS"
+      },
+      {
+        "code": "GRADE_6",
+        "count": 1,
+        "status": "LOCKED"
+      },
+      {
+        "code": "GRADE_4",
+        "count": 1,
+        "status": "LOCKED"
+      },
+      {
+        "code": "GRADE_2",
+        "count": 1,
+        "status": "IN_PROGRESS"
+      },
+      {
+        "code": "GRADE_8",
+        "count": 1,
+        "status": "LOCKED"
+      }
+    ],
+    "subjects": [
+      {
+        "code": "TECHNICAL_STUDIES",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "AURAL_SKILLS",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "AURAL_SKILLS",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "SIGHT_READING",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "AURAL_SKILLS",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "SIGHT_READING",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "MUSIC_THEORY",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "SIGHT_READING",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "MUSIC_THEORY",
+        "count": 1,
+        "level_code": "GRADE_1",
+        "status": "PASS"
+      },
+      {
+        "code": "MUSIC_THEORY",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "REPERTOIRE_PERFORMANCE",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      },
+      {
+        "code": "TECHNICAL_STUDIES",
+        "count": 1,
+        "level_code": "GRADE_2",
+        "status": "NOT_STARTED"
+      }
+    ]
+  }
+}

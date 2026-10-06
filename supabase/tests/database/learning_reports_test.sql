@@ -1,4 +1,51 @@
 begin;
+
+-- Fixture prerequisite for the current enrollment guard. Does not change production rules.
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql security definer set search_path=public,pg_temp as $$
+declare c public.classes%rowtype; course public.courses%rowtype; level_id uuid; t uuid; r uuid; slot int;
+begin
+ select * into c from public.classes where id=p_class;
+ if not found or c.course_id is null or c.xmin::text is distinct from txid_current()::text then return; end if;
+ select * into course from public.courses where id=c.course_id;
+ if not found then return; end if;
+ level_id := course.level_id;
+ if level_id is null then
+   select id into level_id from public.curriculum_levels where curriculum_id=course.curriculum_id order by sequence_no limit 1;
+   if level_id is null then return; end if;
+   update public.courses set level_id=level_id where id=course.id and xmin::text=txid_current()::text;
+ end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,level_id) where id=c.id;
+ update public.students set default_branch_id=c.branch_id
+  where default_branch_id is null and status='ACTIVE' and xmin::text=txid_current()::text;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,level_id,date '2000-01-01','ACTIVE',true
+ from public.students s
+ where s.default_branch_id=c.branch_id and s.xmin::text=txid_current()::text
+   and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.status='ACTIVE' and (a.curriculum_id=course.curriculum_id or a.is_primary));
+ if not exists(select 1 from public.class_teachers where class_id=c.id and teacher_role='PRIMARY' and (is_active or ended_at is not null)) then
+   select id into t from public.teachers where teacher_code='FIX-'||c.id;
+   if t is null then
+     insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+     insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   end if;
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+ end if;
+ if not exists(select 1 from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id) then
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+ else
+   select id into r from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id limit 1;
+ end if;
+ if exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   update public.schedules set room_id=coalesce(room_id,r) where class_id=c.id and status='ACTIVE' and room_id is null;
+ else
+   slot := abs(hashtext(c.id::text));
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+end $$;
+
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 -- Every report query is scoped to these test enrollments, so existing local reports are preserved.
@@ -100,6 +147,7 @@ values
     'Attendance Test Student B'
   );
 
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 insert into public.enrollments (
   id,
   student_id,
@@ -163,6 +211,8 @@ values (
 
 insert into public.attendance_records (id, session_occurrence_id, enrollment_id, status)
 values ('a1000000-0000-0000-0000-000000000001', '91000000-0000-0000-0000-000000000001', '71000000-0000-0000-0000-000000000001', 'PRESENT');
+-- Reports count completed sessions only (20260928200000).
+select public.set_session_occurrence_status('91000000-0000-0000-0000-000000000001', 'COMPLETED');
 insert into auth.users (id) values ('b1000000-0000-0000-0000-000000000001'), ('b1000000-0000-0000-0000-000000000002');
 insert into public.roles (code, name) values ('SUPER_ADMIN', 'Admin') on conflict (code) do nothing;
 -- Authorization requires an active account as well as the role assignment.
@@ -205,6 +255,10 @@ select throws_ok($$select update_learning_report(id,version,'REGENERATE') from l
 reset role;
 insert into curriculum_subjects(id,level_id,family_code,code,name,completion_rule) values('d1000000-0000-0000-0000-000000000001','31000000-0000-0000-0000-000000000001','PIANO','REPORT-DIRECT','Direct assessment','DIRECT_ASSESSMENT');
 insert into curriculum_subject_components(subject_id,code,name) values('d1000000-0000-0000-0000-000000000001','IGNORED','Ignored direct component');
+delete from public.student_curriculum_enrollments existing
+where existing.student_id=(select student_id from public.enrollments where id='71000000-0000-0000-0000-000000000002')
+  and existing.curriculum_id='21000000-0000-0000-0000-000000000001'
+  and not exists (select 1 from public.enrollments class_enrollment where class_enrollment.student_curriculum_enrollment_id=existing.id);
 update enrollments set student_curriculum_enrollment_id=assign_student_academic_program(student_id,'21000000-0000-0000-0000-000000000001','31000000-0000-0000-0000-000000000001','2026-08-01',true) where id='71000000-0000-0000-0000-000000000002';
 set local role authenticated;
 select lives_ok($$select generate_learning_report('71000000-0000-0000-0000-000000000002','MONTHLY','2026-08-01','2026-08-31')$$,'second student independent');
@@ -221,8 +275,11 @@ select update_learning_report(id,version,'REGENERATE') from learning_reports whe
 select is((select draft_data->'academic'->>'current_grade' from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002') and enrollment_id='71000000-0000-0000-0000-000000000002'),'Attendance Test Level','academic context follows linked student program');
 select is((select draft_data->'academic'->'subjects'->0->>'status' from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002') and enrollment_id='71000000-0000-0000-0000-000000000002'),'NOT_STARTED','academic status captured without promotion');
 select is((select draft_data->'academic'->'subjects'->0->'components' from learning_reports where enrollment_id in ('71000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000002') and enrollment_id='71000000-0000-0000-0000-000000000002'),'[]'::jsonb,'direct assessment independent from components');
-insert into session_occurrences(schedule_id,occurrence_date,starts_at,ends_at) values
-('81000000-0000-0000-0000-000000000001','2026-08-31','2026-08-31 17:00:00+00','2026-08-31 18:00:00+00');
+insert into session_occurrences(id,schedule_id,occurrence_date,starts_at,ends_at) values
+('91000000-0000-0000-0000-000000000091','81000000-0000-0000-0000-000000000001','2026-09-01','2026-08-31 17:00:00+00','2026-08-31 18:00:00+00');
+insert into attendance_records(session_occurrence_id,enrollment_id,status) values
+('91000000-0000-0000-0000-000000000091','71000000-0000-0000-0000-000000000001','PRESENT');
+select public.set_session_occurrence_status('91000000-0000-0000-0000-000000000091','COMPLETED');
 select is((learning_report_source('71000000-0000-0000-0000-000000000001','2026-08-01','2026-08-31')->'attendance'->>'scheduled'),'1','Vietnam September 1 midnight excluded from August');
 select is((learning_report_source('71000000-0000-0000-0000-000000000001','2026-09-01','2026-09-30')->'attendance'->>'scheduled'),'1','Vietnam September 1 midnight included in September');
 insert into session_occurrences(schedule_id,occurrence_date,starts_at,ends_at,status) values
@@ -252,6 +309,8 @@ update user_roles set branch_id='11000000-0000-0000-0000-000000000001' where use
 select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','MONTHLY_REPORT'),true,'Active linked parent correct branch eligible');
 update student_parents set can_view_finance=false where parent_id='de910000-0000-4000-8000-000000000003';
 select is(notification_private.recipient_allowed('de910000-0000-4000-8000-000000000001','61000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000001','TUITION_REMINDER'),false,'Parent finance flag also gates notifications');
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
+update public.classes set class_type='GROUP', capacity=10 where id='51000000-0000-0000-0000-000000000001';
 insert into enrollments(student_id,class_id,started_at) values('61000000-0000-0000-0000-000000000002','51000000-0000-0000-0000-000000000001','2026-08-01');
 select lives_ok($$select enqueue_notification_event('SCHEDULE_CHANGED','91000000-0000-0000-0000-000000000001')$$,'Schedule notice resolves student and parent audience');
 select is((select count(*) from notification_jobs where entity_type='SCHEDULE_CHANGED' and recipient_id='de910000-0000-4000-8000-000000000001'),1::bigint,'Two children in same session create only one parent notice');
@@ -264,6 +323,16 @@ create function pg_temp.monthly_id(text) returns uuid language sql immutable as 
 insert into students(id,student_code,full_name)
 select pg_temp.monthly_id('s-'||code),'MONTHLY-'||code,'Monthly fixture '||code
 from unnest(array['day1','mid','early','cancel','dec','leap','future','legacy']) code;
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
+update public.schedules
+set room_id=coalesce(room_id,(select id from public.rooms where branch_id='11000000-0000-0000-0000-000000000001' order by code limit 1)),
+    timezone='Asia/Ho_Chi_Minh',
+    effective_from=date '2020-01-01',
+    effective_to=date '2099-12-31'
+where class_id='51000000-0000-0000-0000-000000000001' and status='ACTIVE';
+update public.class_teachers
+set is_active=true, ended_at=null, assigned_at=date '2020-01-01'
+where class_id='51000000-0000-0000-0000-000000000001' and teacher_role='PRIMARY';
 insert into enrollments(id,student_id,class_id,started_at,ended_at)
 select pg_temp.monthly_id(code),pg_temp.monthly_id('s-'||code),'51000000-0000-0000-0000-000000000001',started,ended
 from (values

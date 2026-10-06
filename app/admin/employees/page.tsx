@@ -2,7 +2,8 @@ import { EmployeeSections } from '../_components/vibe'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { employeeData, type Employment } from './data'
-import { createEmployee, updateEmployment, linkIdentity, configureUnit, updatePrivateProfile } from './actions'
+import { createEmployee, updateEmployment, configureUnit, updatePrivateProfile } from './actions'
+import { StaffPanels } from './StaffPanels'
 import { Field, Select, Panel, Table, Pager, LoadError, Notice, dateText, timeText } from '../finance/_components/ui'
 import SubmitButton from '../finance/_components/SubmitButton'
 import type { Params } from '../finance/operations'
@@ -23,13 +24,14 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
     <Field name="reason" label="Lý do / căn cứ"/>
   </>
   const latest = versions[0]
-  return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Nhân viên</h1><Notice params={params}/>
+  return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Hồ sơ nhân sự</h1><Notice params={params}/>
     <p>Mã nhân viên giữ nguyên khi chuyển đơn vị. Hồ sơ công việc không tự tạo tài khoản, cấp quyền đăng nhập hoặc thay đổi bảng lương.</p>
     <form className="grid gap-3 sm:grid-cols-3"><Select name="unit" label="Đơn vị hiện tại" options={unitOptions} value={params.unit}/><Select name="status" label="Trạng thái" options={statuses} value={params.status}/><button className="self-end rounded border p-2">Lọc nhân viên</button></form>
     <Table headers={['Mã', 'Họ tên', 'Đơn vị gốc', 'Đơn vị hiện tại', 'Trạng thái', 'Trả lương']} rows={loaded.data.map(e => [<Link key={e.id} prefetch={false} className="underline" href={'?selected=' + e.id}>{e.employee_code}</Link>, e.full_name || 'Chưa đến ngày hiệu lực', e.home_unit, e.unit_code || '—', statuses.find(s => s.id === e.employment_status)?.name || 'Chưa hiệu lực', payTypes.find(p => p.id === e.pay_type)?.name || '—'])}/>
     <Pager path="/admin/employees" params={params} {...loaded}/>
     {employee && latest && <Panel title={employee.employee_code}><EmployeeSections id={employee.id}/><div id="profile"/>
       <Link prefetch={false} className="underline" href={'/admin/employees/' + employee.id + '/compensation'}>Cấu hình lương, lịch sử và phiếu lương</Link><p>Ngày vào làm: {dateText(employee.hire_date)} • Đơn vị gốc: {employee.home_unit}. Phiên bản mới nhất có hiệu lực {dateText(latest.effective_on)}.</p>
+      <StaffPanels employeeId={employee.id} profileId={employee.profile_id} teacherId={employee.teacher_id} identityQuery={params.identity || ''} />
 
       <section className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/60 p-5">
         <div>
@@ -128,7 +130,6 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
       </section>
       <form id="roles" action={updateEmployment} className="grid gap-3 sm:grid-cols-2"><input type="hidden" name="employee_id" value={employee.id}/><input type="hidden" name="expected_version" value={latest.version}/>{fields(latest)}<Select name="unit_code" label="Đơn vị phân công" options={unitOptions} required value={latest.unit_code}/><Select name="employment_status" label="Trạng thái làm việc" options={statuses} required value={latest.employment_status}/><Field name="effective_on" label="Ngày hiệu lực (ngày kết thúc nếu nghỉ việc)" type="date" value={latest.effective_on}/><SubmitButton>Lưu phiên bản công việc</SubmitButton></form>
       <p className="text-sm">Lịch sử cũ được giữ nguyên. Ngày hiệu lực mới không được trước phiên bản mới nhất; chuyển đơn vị trong tương lai không đổi phân công hiện tại trước ngày đó.</p>
-      <details><summary>Liên kết hồ sơ / giáo viên hiện có</summary><form action={linkIdentity} className="grid gap-3 sm:grid-cols-2"><input type="hidden" name="employee_id" value={employee.id}/><Field name="profile_id" label="ID profile hiện có (tùy chọn)" required={false} value={employee.profile_id || ''}/><Field name="teacher_id" label="ID giáo viên hiện có (tùy chọn)" required={false} value={employee.teacher_id || ''}/><Field name="reason" label="Lý do đổi liên kết"/><SubmitButton>Lưu liên kết</SubmitButton></form></details>
       <h3 id="history" className="font-semibold">Lịch sử công việc — 50 phiên bản gần nhất</h3>
       <Table headers={['Phiên bản', 'Hiệu lực', 'Đơn vị', 'Nhóm', 'Trạng thái', 'Trả lương', 'Lý do']} rows={versions.map(v => [v.version, dateText(v.effective_on), v.unit_code, v.employee_group, statuses.find(s => s.id === v.employment_status)?.name, payTypes.find(p => p.id === v.pay_type)?.name, v.reason])}/>
       <h3 className="font-semibold">Nhật ký thay đổi — 50 mục gần nhất</h3><Table headers={['Thao tác', 'Lý do', 'Người thực hiện', 'Thời gian']} rows={loaded.audit.map(a => [a.action, a.reason, a.actor, timeText(a.created_at)])}/>
@@ -176,17 +177,10 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
           label="Số CCCD — 12 chữ số"
         />
 
-        <Field
-          name="profile_id"
-          label="ID profile hiện có (tùy chọn)"
-          required={false}
-        />
-
-        <Field
-          name="teacher_id"
-          label="ID giáo viên hiện có (tùy chọn)"
-          required={false}
-        />
+        <label className="vibe-field sm:col-span-2">
+          <span>Ảnh chân dung (JPG, PNG, WEBP, 400–4000 px, tối đa 2 MB)</span>
+          <input name="portrait" type="file" accept="image/jpeg,image/png,image/webp" />
+        </label>
 
         <SubmitButton>
           Tạo hồ sơ nhân viên

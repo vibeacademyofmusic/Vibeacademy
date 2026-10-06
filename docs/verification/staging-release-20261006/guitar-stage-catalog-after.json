@@ -1,0 +1,686 @@
+{
+  "levels": [
+    {
+      "code": "PRE",
+      "name": "Pre Grade",
+      "sequence": 1,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 50,
+          "code": "METHODE_BOOK",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 50,
+          "name": "Classical Guitar Method – Volume 1",
+          "required": false,
+          "sort": 0,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 50,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 50,
+          "name": "Classical Guitar Method – Volume 2",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Technique Foundation Pre",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading Pre",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural Pre",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_1",
+      "name": "Grade 1",
+      "sequence": 2,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 1",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 1",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 1",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 1",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 1",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_2",
+      "name": "Grade 2",
+      "sequence": 3,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 2",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 2",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 2",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 2",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 2",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_3",
+      "name": "Grade 3",
+      "sequence": 4,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 3",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 3",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 3",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 3",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 3",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_4",
+      "name": "Grade 4",
+      "sequence": 5,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 4",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 4",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 4",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 4",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "ENSEMBLE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 0,
+          "lessons": 0,
+          "name": "Ensemble",
+          "required": false,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 4",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_5",
+      "name": "Grade 5",
+      "sequence": 6,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 5",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 5",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 5",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 5",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "ENSEMBLE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 0,
+          "lessons": 0,
+          "name": "Ensemble",
+          "required": false,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 5",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_6",
+      "name": "Grade 6",
+      "sequence": 7,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 6",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 6",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 6",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 6",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "ENSEMBLE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 0,
+          "lessons": 0,
+          "name": "Ensemble",
+          "required": false,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 6",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_7",
+      "name": "Grade 7",
+      "sequence": 8,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 7",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 7",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 7",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 7",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "ENSEMBLE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 0,
+          "lessons": 0,
+          "name": "Ensemble",
+          "required": false,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 7",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_HISTORY",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 2,
+          "lessons": 0,
+          "name": "Music History",
+          "required": false,
+          "sort": 6,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MEDIA_PRODUCT",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 2,
+          "lessons": 0,
+          "name": "Media Product",
+          "required": false,
+          "sort": 7,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "GRADE_8",
+      "name": "Grade 8",
+      "sequence": 9,
+      "status": "ACTIVE",
+      "subjects": [
+        {
+          "active_lessons": 10,
+          "code": "REPERTOIRE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Repertoire 8",
+          "required": true,
+          "sort": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "TECHNIQUE_FOUNDATION",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 4,
+          "lessons": 10,
+          "name": "Technique Foundation 8",
+          "required": true,
+          "sort": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "SIGHTREADING",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Sightreading 8",
+          "required": true,
+          "sort": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 10,
+          "code": "AURAL",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 1,
+          "lessons": 10,
+          "name": "Aural 8",
+          "required": true,
+          "sort": 4,
+          "status": "ACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_THEORY",
+          "completion_rule": "DIRECT_ASSESSMENT",
+          "components": 0,
+          "lessons": 0,
+          "name": "Music Theory 8",
+          "required": true,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "ENSEMBLE",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 0,
+          "lessons": 0,
+          "name": "Ensemble",
+          "required": false,
+          "sort": 5,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MUSIC_HISTORY",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 2,
+          "lessons": 0,
+          "name": "Music History",
+          "required": false,
+          "sort": 6,
+          "status": "INACTIVE"
+        },
+        {
+          "active_lessons": 0,
+          "code": "MEDIA_PRODUCT",
+          "completion_rule": "ALL_REQUIRED_COMPONENTS",
+          "components": 2,
+          "lessons": 0,
+          "name": "Media Product",
+          "required": false,
+          "sort": 7,
+          "status": "INACTIVE"
+        }
+      ]
+    },
+    {
+      "code": "DIPLOMA",
+      "name": "Diploma",
+      "sequence": 10,
+      "status": "INACTIVE",
+      "subjects": null
+    }
+  ],
+  "program": {
+    "code": "GUITAR",
+    "created_at": "2026-08-31T16:06:09.343753+00:00",
+    "description": null,
+    "id": "7da80c79-695f-4d21-9ac5-a73a60340ea1",
+    "name": "Guitar",
+    "status": "ACTIVE",
+    "updated_at": "2026-08-31T16:06:09.343753+00:00"
+  }
+}

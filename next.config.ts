@@ -15,7 +15,18 @@ function localDevOrigin() {
 const devOrigin = localDevOrigin()
 
 const nextConfig: NextConfig = {
+  logging: { incomingRequests: { ignore: [/\/api\/integrations\/zalo\/oauth\/callback/, /\/r\/learning\//] } },
+  outputFileTracingIncludes: {
+    '/r/learning/*/pdf': ['./assets/fonts/NotoSans-Regular.ttf', './assets/reports/zbs-review-sample.pdf'],
+    '/admin/reports/learning/*': ['./assets/fonts/NotoSans-Regular.ttf'],
+  },
   ...(devOrigin ? { allowedDevOrigins: [devOrigin] } : {}),
+  async redirects() {
+    return [
+      { source: '/admin/reports/learning', destination: '/admin/students?tab=reports', permanent: false },
+      { source: '/admin/feedback', destination: '/admin/students?tab=feedback', permanent: false },
+    ]
+  },
 };
 
 export default nextConfig;

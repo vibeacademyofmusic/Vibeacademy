@@ -5,6 +5,16 @@ import {
     type Amount,
   } from '../../_lib/money'
 export { Modal, Drawer, Tabs } from './interactive'
+export {
+  OperationsFilterBar,
+  OpsTabs,
+  OpsMetricLink,
+  OpsStatusBadge,
+  opsStatusTone,
+  buildQuery,
+  type OpsOption,
+  type OpsFilterField,
+} from './operations'
 type Children = { children: ReactNode }
 export function AppPage({ children }: Children) { return <div className="vibe-page">{children}</div> }
 export function Eyebrow({ children }: Children) { return <p className="vibe-eyebrow">{children}</p> }
@@ -21,4 +31,4 @@ export function DataTable({ headers, rows }: { headers: string[]; rows: ReactNod
 export function FormField({ label, ...props }: InputHTMLAttributes<HTMLInputElement> & { label: string }) { return <label className="vibe-field"><span>{label}</span><input {...props}/></label> }
 export function SelectField({ label, children, ...props }: SelectHTMLAttributes<HTMLSelectElement> & { label: string }) { return <label className="vibe-field"><span>{label}</span><select {...props}>{children}</select></label> }
 export function MoneyDisplay({ value, currency = 'VND' }: { value: Amount; currency?: string }) { return <span className="vibe-money">{value == null ? 'Chưa tính' : formatMoney(value, currency)}</span> }
-export function EmployeeSections({ id }: { id: string }) { return <nav className="vibe-tabs" aria-label="Hồ sơ nhân viên">{[['Hồ sơ', `/admin/employees?selected=${id}#profile`], ['Vai trò & đơn vị', `/admin/employees?selected=${id}#roles`], ['Chấm công', `/admin/employees/attendance?employee=${id}`], ['Thu nhập & khấu trừ', `/admin/employees/${id}/compensation`], ['Lịch sử', `/admin/employees?selected=${id}#history`], ['Phiếu lương', `/admin/employees/${id}/compensation#payslips`]].map(([name, href]) => <Link prefetch={false} key={name} href={href}>{name}</Link>)}</nav> }
+export function EmployeeSections({ id }: { id: string }) { return <nav className="vibe-tabs" aria-label="Hồ sơ nhân viên">{[['Hồ sơ', `/admin/employees?selected=${id}#profile`], ['Vai trò & đơn vị', `/admin/employees?selected=${id}#roles`], ['Thẻ nhân sự', `/documents/staff-cards/${id}`], ['Chấm công', `/admin/employees/attendance?employee=${id}`], ['Thu nhập & khấu trừ', `/admin/employees/${id}/compensation`], ['Lịch sử', `/admin/employees?selected=${id}#history`], ['Phiếu lương', `/admin/employees/${id}/compensation#payslips`]].map(([name, href]) => <Link prefetch={false} key={name} href={href}>{name}</Link>)}</nav> }

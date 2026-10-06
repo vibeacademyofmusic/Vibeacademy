@@ -1,7 +1,7 @@
 // Public Zalo widget identifiers. The OA secret is never exported from this module.
 
-export const ZALO_PUBLIC_APP_ID = '1355275380325944240'
-export const ZALO_PUBLIC_OA_ID = '4520912928458797082'
+export const ZALO_PUBLIC_APP_ID = process.env.NEXT_PUBLIC_ZALO_APP_ID || '1355275380325944240'
+export const ZALO_PUBLIC_OA_ID = process.env.NEXT_PUBLIC_ZALO_OA_ID || '4520912928458797082'
 export const ZALO_WIDGET_CALLBACK = 'onVibeZaloConsent'
 export const ZALO_WIDGET_REASON =
   'VIBE Academy sử dụng Zalo để gửi xác nhận đăng ký, lịch học và thông báo học tập.'

@@ -13,7 +13,7 @@ function fail(message: string): never {
     : message.includes('UNAUTHORIZED') ? 'Bạn không có quyền thực hiện thao tác này.'
     : message.includes('INVALID') ? 'Thiếu thông tin bắt buộc.'
     : 'Không thực hiện được thao tác.'
-  redirect('/admin/business/campaigns?error=' + encodeURIComponent(text))
+  redirect('/admin/business/marketing?tab=campaigns&error=' + encodeURIComponent(text))
 }
 
 function day(value: FormDataEntryValue | null) {
@@ -52,8 +52,8 @@ export async function createCrmCampaign(formData: FormData) {
     p_utm_content: String(formData.get('utm_content') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/campaigns')
-  redirect('/admin/business/campaigns?success=' + encodeURIComponent('Đã tạo chiến dịch'))
+  revalidatePath('/admin/business/marketing')
+  redirect('/admin/business/marketing?tab=campaigns&success=' + encodeURIComponent('Đã tạo chiến dịch'))
 }
 
 export async function updateCrmCampaign(formData: FormData) {
@@ -76,8 +76,8 @@ export async function updateCrmCampaign(formData: FormData) {
     p_utm_content: String(formData.get('utm_content') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/campaigns')
-  redirect('/admin/business/campaigns?success=' + encodeURIComponent('Đã cập nhật chiến dịch'))
+  revalidatePath('/admin/business/marketing')
+  redirect('/admin/business/marketing?tab=campaigns&success=' + encodeURIComponent('Đã cập nhật chiến dịch'))
 }
 
 export async function setCrmCampaignStatus(formData: FormData) {
@@ -91,6 +91,6 @@ export async function setCrmCampaignStatus(formData: FormData) {
     p_status: String(formData.get('status') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/campaigns')
-  redirect('/admin/business/campaigns')
+  revalidatePath('/admin/business/marketing')
+  redirect('/admin/business/marketing?tab=campaigns')
 }

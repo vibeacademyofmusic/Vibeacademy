@@ -128,6 +128,19 @@ test('invoice template supports supplied asset URL and never invents a logo',()=
 })
 
 
+test('posted PayOS receipt prints the approved A5 tuition invoice', async () => {
+  const data = fixture()
+  data.payments = [{ ...data.payments[0], status: 'POSTED', payment_method: 'OTHER', reference: 'PAYOS:ref-confirmed' }]
+  data.refunds = [{ id: id(6), payment_id: id(4), amount: 100000, status: 'POSTED' }]
+  data.branches = [{ ...data.branches[0], address: 'Nguyễn Văn Cừ', phone: '0292 000 000' }]
+  const html = await document(harness(data), 'payment-invoices', id(4))
+  for (const text of ['HÓA ĐƠN HỌC PHÍ', 'HDNB-PAY-TEST', 'ĐÃ XÁC NHẬN', 'PayOS', 'PAYOS:ref-confirmed', '500.000 VND', '100.000 VND', '400.000 VND', 'size: A5 landscape; margin: 0', 'Nguyễn Văn Cừ']) assert.ok(html.includes(text), text)
+  assert.doesNotMatch(html, /CÒN PHẢI THU|HẠN THANH TOÁN/)
+  const voided = fixture()
+  voided.payments[0].status = 'VOIDED'
+  await assert.rejects(document(harness(voided), 'payment-invoices', id(4)), /NOT_FOUND|Not found/)
+})
+
 test('official invoice renders the supplied real public logo', async () => {
   const asset = fs.readFileSync('public/vibe-logo.png')
   assert.equal(asset.subarray(0, 8).toString('hex'), '89504e470d0a1a0a')

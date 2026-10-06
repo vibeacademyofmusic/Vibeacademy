@@ -1,5 +1,6 @@
 'use server'
 
+import { attendanceReturn } from './launcher-model'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -197,15 +198,11 @@ export async function generateSessions(
     !isValidIsoDate(fromDate) ||
     !isValidIsoDate(toDate)
   ) {
-    redirect(
-      '/admin/attendance?error=Please%20select%20a%20valid%20date%20range'
-    )
+    redirect(failPath(formData, 'Please select a valid date range'))
   }
 
   if (toDate < fromDate) {
-    redirect(
-      '/admin/attendance?error=End%20date%20cannot%20be%20before%20start%20date'
-    )
+    redirect(failPath(formData, 'End date cannot be before start date'))
   }
 
   const fromTime = new Date(
@@ -221,9 +218,7 @@ export async function generateSessions(
     (24 * 60 * 60 * 1000)
 
   if (rangeInDays > 366) {
-    redirect(
-      '/admin/attendance?error=Date%20range%20cannot%20exceed%20366%20days'
-    )
+    redirect(failPath(formData, 'Date range cannot exceed 366 days'))
   }
 
   const { data: insertedCount, error } =
@@ -241,9 +236,7 @@ export async function generateSessions(
       error
     )
 
-    redirect(
-      '/admin/attendance?error=Could%20not%20generate%20sessions'
-    )
+    redirect(failPath(formData, 'Could not generate sessions'))
   }
 
   const generated =
@@ -252,14 +245,24 @@ export async function generateSessions(
       : 0
 
   revalidatePath('/admin/attendance')
+  revalidatePath('/admin/classes')
+
+  const returnTo = String(formData.get('return_to') ?? '').trim()
+  const safeReturn = returnTo.startsWith('/admin/classes') ? returnTo : '/admin/classes?view=attendance'
 
   redirect(
-    `/admin/attendance?success=${encodeURIComponent(
+    `${safeReturn}${safeReturn.includes('?') ? '&' : '?'}success=${encodeURIComponent(
       `${generated} new session${
         generated === 1 ? '' : 's'
       } generated`
     )}`
   )
+}
+
+function failPath(formData: FormData, message: string) {
+  const returnTo = String(formData.get('return_to') ?? '').trim()
+  const base = returnTo.startsWith('/admin/classes') ? returnTo : '/admin/classes?view=attendance'
+  return `${base}${base.includes('?') ? '&' : '?'}error=${encodeURIComponent(message)}`
 }
 
 export async function saveAttendance(
@@ -278,6 +281,9 @@ export async function saveAttendance(
     )
   }
 
+  const returnTo = attendanceReturn(formData.get('return_to'))
+  const context = `return_to=${encodeURIComponent(returnTo)}&`
+
   const { data: occurrence } = await supabase
     .from('session_occurrences')
     .select(
@@ -294,7 +300,7 @@ export async function saveAttendance(
 
   if (occurrence.status !== 'SCHEDULED') {
     redirect(
-      `/admin/attendance/${occurrenceId}?error=Attendance%20can%20only%20be%20changed%20while%20the%20session%20is%20Scheduled`
+      `/admin/attendance/${occurrenceId}?${context}error=Attendance%20can%20only%20be%20changed%20while%20the%20session%20is%20Scheduled`
     )
   }
 
@@ -306,7 +312,7 @@ export async function saveAttendance(
 
   if (!schedule) {
     redirect(
-      `/admin/attendance/${occurrenceId}?error=Session%20schedule%20not%20found`
+      `/admin/attendance/${occurrenceId}?${context}error=Session%20schedule%20not%20found`
     )
   }
 
@@ -335,7 +341,7 @@ export async function saveAttendance(
     )
 
     redirect(
-      `/admin/attendance/${occurrenceId}?error=Could%20not%20load%20the%20session%20roster`
+      `/admin/attendance/${occurrenceId}?${context}error=Could%20not%20load%20the%20session%20roster`
     )
   }
 
@@ -398,7 +404,7 @@ export async function saveAttendance(
 
   if (records.length === 0) {
     redirect(
-      `/admin/attendance/${occurrenceId}?error=Select%20at%20least%20one%20attendance%20status`
+      `/admin/attendance/${occurrenceId}?${context}error=Select%20at%20least%20one%20attendance%20status`
     )
   }
 
@@ -413,20 +419,19 @@ export async function saveAttendance(
     console.error('Save attendance error:', error)
 
     redirect(
-      `/admin/attendance/${occurrenceId}?error=Could%20not%20save%20attendance`
+      `/admin/attendance/${occurrenceId}?${context}error=Could%20not%20save%20attendance`
     )
   }
 
   revalidatePath('/admin/attendance')
+  revalidatePath('/admin/students')
   revalidatePath(
     `/admin/attendance/${occurrenceId}`
   )
 
   redirect(
-    `/admin/attendance/${occurrenceId}?success=${encodeURIComponent(
-      `${records.length} attendance record${
-        records.length === 1 ? '' : 's'
-      } saved`
+    `/admin/attendance/${occurrenceId}?${context}success=${encodeURIComponent(
+      `Đã lưu điểm danh cho ${records.length} học viên`
     )}`
   )
 }
@@ -651,6 +656,10 @@ export async function rescheduleSession(
     ) {
       message = 'This room is already occupied at that time'
     } else if (
+      error.message.includes('two overlapping teaching shifts')
+    ) {
+      message = 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giờ khác.'
+    } else if (
       error.message.includes(
         'A teacher assigned to this class'
       )
@@ -857,6 +866,10 @@ export async function createMakeupSession(
       )
     ) {
       message = 'This room is already occupied at that time'
+    } else if (
+      error.message.includes('two overlapping teaching shifts')
+    ) {
+      message = 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giờ khác.'
     } else if (
       error.message.includes(
         'A teacher assigned to this class'

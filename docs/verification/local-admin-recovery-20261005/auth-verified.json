@@ -1,0 +1,16 @@
+{
+  "project": "local-54321",
+  "user_id": "25073c07-90f9-415a-8862-8dbdadd9c8b0",
+  "email": "admin@vibe.local",
+  "password_updated_at": "2026-10-05T11:15:38.864476Z",
+  "real_password_sign_in": "PASS",
+  "SUPER_ADMIN": "PASS",
+  "profile_status": "ACTIVE",
+  "verification_event": "LOCAL_RESET_VERIFIED",
+  "auth_log_status": {
+    "admin_update": 200,
+    "token": 200,
+    "logout": 204
+  },
+  "browser_authenticated_admin": "NOT_YET_VERIFIED"
+}

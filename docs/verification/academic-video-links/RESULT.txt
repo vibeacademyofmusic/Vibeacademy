@@ -1,0 +1,100 @@
+VIBE ACADEMY — ACADEMIC JOURNEY VIDEO LINKS
+Implementation candidate; target Mac runtime not updated.
+
+Base: dea6a230f368fde975e8f66e44ecdb70f402e938
+Source branch: codex/release-candidate-lint
+Candidate branch: codex/academic-journey-video-links
+Migration: 20261004183000_academic_video_links.sql
+
+USER FLOW
+Admin → Students → student profile → Học tập → program → Video học tập →
+Thêm link video → optional level/Lesson → save. Existing links support edit,
+explicit family sharing, external YouTube opening and removal confirmation.
+Teacher and family journeys load the same server-authorized link projection.
+
+SCOPE AND BEHAVIOR
+- YouTube URL storage only; no uploads, embeds, external metadata fetches or API credentials.
+- Watch/short/share/mobile/live/embed addresses normalize to a canonical watch URL.
+- Student curriculum enrollment is authoritative; an optional level must be in
+  that enrollment's journey, and the optional Lesson must belong to that level.
+- Default visibility: internal. The share checkbox publishes both link and note
+  to students/parents who already have academic access.
+- Existing mutation boundary preserved: SUPER_ADMIN. No new grants to branch
+  administrators, teachers, finance, students or parents.
+- Assigned teachers use the existing academic-read authorization function.
+- Parent/student access uses existing academic permission and relationship checks.
+- VIBE sharing never grants/revokes YouTube access. Video existence/privacy is
+  not automatically verified. Private YouTube videos may require Google login.
+- No writes to lesson completion, grades, scores, attendance, tuition or Zalo.
+- Duplicate canonical URL within an enrollment is rejected. Versions prevent
+  stale edits/removals. Removal is soft deletion; event history records the actor.
+- User text is escaped. Only normalized HTTPS YouTube links become anchors;
+  external links use noopener/noreferrer and no referrer.
+- Validation errors preserve entered values.
+
+VERIFICATION BOUNDARIES
+Application tests execute actual TypeScript components/actions with adapters.
+PostgreSQL tests execute the actual new migration in PGlite, including RLS,
+function grants, duplicate constraints, writes, version conflicts and audit rows.
+Existing Supabase authorization helper functions are synthetic fixture dependencies
+in those isolated SQL tests. These tests do NOT certify production branch,
+assignment or Auth behavior, or the full historical migration chain.
+
+Browser harness uses the actual new React components, Server Action functions
+and SQL migration with synthetic identities. It is NOT the Next.js/Supabase app.
+Verified: add → SQL persistence → reload; internal link hidden from parent;
+edit/share → parent visibility; remove → disappearance; invalid URL preserves form;
+no script/console errors. Synthetic hostname: 127.0.0.1:3000 within the test process.
+No real video was opened and no real student record or external system was changed.
+
+DESIGN CONSISTENCY
+Reused approved VIBE shared card, field, notice, badge, actions and modal components.
+Rendered at 1280x900 and 390x844. Navy text, existing restrained colors, white cards,
+consistent field/button styling and no horizontal page/modal overflow.
+Evidence: desktop.png, mobile-form.png, mobile-parent.png, browser-result.json.
+The complete existing student-profile shell on the Mac remains unverified.
+
+TEST COMMANDS
+npm ci
+node --test --test-concurrency=1 tests/academic-video-links.test.cjs tests/academic-video-links-db.test.cjs tests/academic-profile.test.cjs tests/family-portal.test.cjs
+npx next typegen
+npx tsc --noEmit
+npx next build --webpack
+
+PGlite is a pinned development dependency only. No new production dependency.
+Build in this workspace uses synthetic localhost Supabase values solely for
+compilation, not a real connection. The result is not a deployment artifact.
+
+OPTIONAL BROWSER REPRODUCTION
+Install esbuild and playwright-core into a separate tooling directory and set
+VIBE_VIDEO_TEST_TOOLS to it; set VIBE_VIDEO_CHROME to an installed Chromium binary.
+Run: node scripts/verification/academic-video-links-browser.cjs
+The script starts a disposable local harness, uses synthetic identities only,
+and closes it when finished. Do not deploy the harness or expose it publicly.
+
+TARGET INTEGRATION STILL REQUIRED
+The session cannot access /Users/macbookair/vibe-academy-system, the Mac's
+Supabase 127.0.0.1:54321 or the actual local app on port 3000. Therefore:
+- No target migration was applied.
+- No actual Supabase Auth/parent/teacher browser acceptance was claimed.
+- No push, deployment or production modification was performed.
+Apply and verify on the actual target before marking the feature ready there.
+
+RECORDED RESULTS
+- 65/65 Node checks passed (includes isolated PostgreSQL tests and existing
+  academic/family-portal regression tests). Complete output: tests.log.
+- Browser harness: PASS, eight recorded flow/design checks: browser-result.json.
+- Final Webpack build and TypeScript: PASS, build.log; standalone tsc also passed.
+- Lint of new code and changed family/teacher pages: no errors/warnings.
+- Existing AcademicPrograms.tsx has a pre-existing unused vietnamToday warning;
+  this change does not modify that helper.
+- git diff --check: PASS.
+- Agent-browser daemon was unavailable in this execution sandbox; browser
+  checks used Playwright with Chromium and the isolated local harness instead.
+- An intermediate parallel run produced an incomplete test log. Final tests
+  ran sequentially with a complete 65/65 summary; only that final log is evidence.
+
+READINESS
+IMPLEMENTED_AND_VERIFIED_IN_ISOLATED_WORKSPACE.
+NOT_APPLIED_OR_ACCEPTED_ON_MAC_LOCAL_3000.
+This does not change the overall system pilot GO/NO-GO decision.

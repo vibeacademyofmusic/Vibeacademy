@@ -12,8 +12,14 @@ const migration = fs.readFileSync('supabase/migrations/20260923050000_notificati
 const transpiled = ts.transpileModule(outboundSource, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText
+function loadPilot() {
+  const code = ts.transpileModule(fs.readFileSync('lib/integrations/zalo/pilot-outbound.ts', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText
+  const mod = { exports: {} }
+  new Function('module', 'exports', code)(mod, mod.exports)
+  return mod.exports
+}
 const loaded = { exports: {} }
-new Function('module', 'exports', 'require', transpiled)(loaded, loaded.exports, require)
+new Function('module', 'exports', 'require', transpiled)(loaded, loaded.exports, name => name === './pilot-outbound' ? loadPilot() : require(name))
 
 test('disabled Zalo adapter never reports a send', async () => {
   const result = await loaded.exports.sendZaloTemplateMessage({
@@ -22,7 +28,7 @@ test('disabled Zalo adapter never reports a send', async () => {
     parameters: { portal_url: '/my-learning' },
     idempotencyKey: 'domain:test',
   })
-  assert.deepEqual(result, { state: 'ZALO_OUTBOUND_NOT_CONFIGURED' })
+  assert.deepEqual(result, { state: 'ZALO_PILOT_OUTBOUND_DISABLED' })
   assert.equal(outboundSource.includes('fetch('), false)
   assert.equal(outboundSource.includes('ZALO_OA_ACCESS_TOKEN'), false)
   assert.equal(outboundSource.includes('ZALO_OA_REFRESH_TOKEN'), false)
@@ -37,17 +43,11 @@ test('worker refuses a Zalo job before any provider', () => {
 
 test('Zalo admin shows the disabled outbound catalogue and no secrets', () => {
   assert.match(navigation, /href: '\/admin\/system\/integrations'/)
-  assert.match(zaloPage, /Chưa kích hoạt/)
-  assert.match(zaloPage, /OA package Cơ bản/)
-  assert.match(zaloPage, /ZALO_TEMPLATE_LABELS/)
-  assert.match(zaloPage, /Template ID/)
-  assert.match(zaloPage, /Trạng thái duyệt/)
-  assert.match(zaloPage, /Enabled/)
-  assert.match(zaloPage, /approvalLabel/)
+  assert.match(zaloPage, /zaloTemplateIsSendable/)
+  assert.match(zaloPage, /readZaloAdminConfig/)
   for (const key of ['ZALO_REGISTRATION_CONFIRMED', 'ZALO_PAYMENT_CONFIRMED', 'ZALO_CLASS_ASSIGNED', 'ZALO_LEARNING_REPORT_PUBLISHED', 'ZALO_TUITION_REMINDER', 'ZALO_COURSE_EXPIRING']) {
     assert.match(outboundSource, new RegExp(key))
   }
-  assert.equal(outboundSource.includes('provider_template_id'), false)
   assert.equal(zaloPage.includes('ZALO_OA_ACCESS_TOKEN'), false)
   assert.equal(zaloPage.includes('ZALO_OA_REFRESH_TOKEN'), false)
   assert.equal(zaloPage.includes('ZALO_APP_SECRET'), false)

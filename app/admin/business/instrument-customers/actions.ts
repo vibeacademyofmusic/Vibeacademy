@@ -15,7 +15,7 @@ function fail(message: string): never {
     : message.includes('UNAUTHORIZED') ? 'Bạn không có quyền thực hiện thao tác này.'
     : message.includes('INVALID') ? 'Thiếu thông tin bắt buộc.'
     : 'Không thực hiện được thao tác.'
-  redirect('/admin/business/instrument-customers?error=' + encodeURIComponent(text))
+  redirect('/admin/business/after-sales?tab=instruments&error=' + encodeURIComponent(text))
 }
 
 async function client() {
@@ -36,8 +36,8 @@ export async function linkInstrumentCustomer(formData: FormData) {
     p_contact_phone: String(formData.get('contact_phone') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/instrument-customers')
-  redirect('/admin/business/instrument-customers?success=' + encodeURIComponent('Đã gắn khách mua đàn'))
+  revalidatePath('/admin/business/after-sales')
+  redirect('/admin/business/after-sales?tab=instruments&success=' + encodeURIComponent('Đã gắn khách mua đàn'))
 }
 
 export async function openWarrantyCase(formData: FormData) {
@@ -48,8 +48,8 @@ export async function openWarrantyCase(formData: FormData) {
     p_issue: String(formData.get('issue') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/instrument-customers')
-  redirect('/admin/business/instrument-customers?view=warranty')
+  revalidatePath('/admin/business/after-sales')
+  redirect('/admin/business/after-sales?tab=instruments&view=warranty')
 }
 
 export async function transitionWarrantyCase(formData: FormData) {
@@ -62,8 +62,8 @@ export async function transitionWarrantyCase(formData: FormData) {
     p_note: String(formData.get('note') ?? ''),
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/instrument-customers')
-  redirect('/admin/business/instrument-customers?view=warranty')
+  revalidatePath('/admin/business/after-sales')
+  redirect('/admin/business/after-sales?tab=instruments&view=warranty')
 }
 
 export async function addInstrumentFollowup(formData: FormData) {
@@ -78,6 +78,6 @@ export async function addInstrumentFollowup(formData: FormData) {
     p_next_on: datePattern.test(next) ? next : null,
   })
   if (error) fail(error.message)
-  revalidatePath('/admin/business/instrument-customers')
-  redirect('/admin/business/instrument-customers?view=care')
+  revalidatePath('/admin/business/after-sales')
+  redirect('/admin/business/after-sales?tab=instruments&view=care')
 }

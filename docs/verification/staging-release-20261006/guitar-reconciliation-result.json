@@ -1,0 +1,137 @@
+{
+  "project_ref": "owpfqwdrmyzcmjahehek",
+  "migration": "20261005215015",
+  "committed": true,
+  "transaction_result": {
+    "all_triggers_preserved": true,
+    "catalog": [
+      {
+        "active_lessons": 130,
+        "active_subjects": 5,
+        "code": "PRE",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_1",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_2",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_3",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_4",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_5",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_6",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_7",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 40,
+        "active_subjects": 4,
+        "code": "GRADE_8",
+        "status": "ACTIVE"
+      },
+      {
+        "active_lessons": 0,
+        "active_subjects": 0,
+        "code": "DIPLOMA",
+        "status": "INACTIVE"
+      }
+    ],
+    "migration": "20261005215015",
+    "owned_current_grades": 2,
+    "preserved_outside_progress": 0,
+    "protected_business_tables": 179
+  },
+  "independent_readback": {
+    "pre_exact_rows_unchanged": {
+      "levels": 1,
+      "subjects": 5,
+      "components": 5,
+      "items": 130
+    },
+    "program_and_enrollments_exactly_preserved": true,
+    "triggers_exactly_preserved": true,
+    "synthetic_progress_after": {
+      "level_progress": {
+        "IN_PROGRESS": 2
+      },
+      "subject_progress": {
+        "NOT_STARTED": 8
+      },
+      "component_progress": {
+        "NOT_STARTED": 8
+      },
+      "item_progress": {
+        "NOT_STARTED": 80
+      }
+    }
+  },
+  "checks": {
+    "isolated_rollback": "PASS",
+    "isolated_commit": "PASS",
+    "assessed_history_guard": "PASS: GUITAR_PROGRESS_RECONCILIATION_REQUIRED",
+    "two_idempotent_reruns": "PASS: no row changed or duplicated",
+    "staging_rollback_rehearsal": "PASS",
+    "staging_commit": "PASS",
+    "werner_regression_tests": "5/5 PASS"
+  },
+  "advisors": {
+    "levels": {
+      "WARN": 358
+    },
+    "types": {
+      "function_search_path_mutable": 8,
+      "authenticated_security_definer_function_executable": 349,
+      "auth_leaked_password_protection": 1
+    }
+  },
+  "hashes": {
+    "vibe-guitar-backup-20261006.private.json": "d1be168fd803d6b1cbabcf837c3a4724745e2c36be3796c71917a949f8a74fbd",
+    "commit.private.sql": "b39ebf902c06846d4c4ee3e8b9942e79c49a94cfa8fe69b295da7d855e526166",
+    "20261005215015_guitar_grade_catalog_reconciliation.sql": "5b0729c44f75a680d428ed34d0a86bf60b96e1d5259aa76f9e41b5d7a17ec94b"
+  },
+  "code_commit": "f47e43c6f12e32c77a1eb54ba97d0011c3aef875",
+  "ledger_readback": {
+    "guitar_reconciliation": 1,
+    "ledger_versions": 227,
+    "maximum_version": "20261006071000"
+  },
+  "browser": {
+    "session": "existing Safari Owner",
+    "program_active_lessons": 450,
+    "pre_active_subjects": 5,
+    "pre_active_lessons": 130,
+    "grade1_active_subjects": 4,
+    "grade1_active_lessons": 40,
+    "design_consistency": "PASS: rendered VIBE cards, typography, table and navy/gold styling"
+  }
+}

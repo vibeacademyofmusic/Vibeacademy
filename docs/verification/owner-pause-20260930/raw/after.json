@@ -1,0 +1,702 @@
+{
+  "roles": {
+    "count": 12,
+    "digest": "d5cef9b596c78aa8456206b1d81c4c84"
+  },
+  "rooms": {
+    "count": 7,
+    "digest": "fca068d25108edc672da2f2b80d7a0f4"
+  },
+  "classes": {
+    "count": 7,
+    "digest": "fd76d6aac0e011acb545fe3300e5cbfe"
+  },
+  "courses": {
+    "count": 3,
+    "digest": "f8c642ba48c308ad24de05850aca48a9"
+  },
+  "parents": {
+    "count": 16,
+    "digest": "de2f9b7457a30071c7ebfcef876d185e"
+  },
+  "refunds": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "branches": {
+    "count": 6,
+    "digest": "8782cf8161a94563fd68525178bedbe3"
+  },
+  "invoices": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payments": {
+    "count": 9,
+    "digest": "388051e15b845d917ccbff0dd4a8a2e0"
+  },
+  "profiles": {
+    "count": 38,
+    "digest": "b0ca8f30235ed261baf38f868269b271"
+  },
+  "students": {
+    "count": 522,
+    "digest": "54f5e6a60649e0a690a16898315e4ff3"
+  },
+  "teachers": {
+    "count": 7,
+    "digest": "d910b3347f06fa282772f0d304080cdd"
+  },
+  "crm_leads": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employees": {
+    "count": 2,
+    "digest": "61e8105fc65c2c2c27cf89990ea2b6b3"
+  },
+  "schedules": {
+    "count": 13,
+    "digest": "ef4962f47cd8175740dcd42a21016b7d"
+  },
+  "user_roles": {
+    "count": 37,
+    "digest": "261fba2b5f4ccd504e0bf66f40b1de28"
+  },
+  "curriculums": {
+    "count": 5,
+    "digest": "bf977244cefbd199dd06befd53ae0fa4"
+  },
+  "enrollments": {
+    "count": 11,
+    "digest": "fd2884b81841a4dc6c1511522cb13893"
+  },
+  "permissions": {
+    "count": 78,
+    "digest": "5ac485f9215c025a8449be011b2c6030"
+  },
+  "crm_campaigns": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "invoice_items": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tuition_plans": {
+    "count": 3,
+    "digest": "c69b70c358cb1a71dab038dcb03daa97"
+  },
+  "class_teachers": {
+    "count": 7,
+    "digest": "2091268ee6b8987beb44786d18aaa88a"
+  },
+  "employee_audit": {
+    "count": 17,
+    "digest": "1a653997c553c54ba26b8a68be59ea90"
+  },
+  "employee_trips": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_audit": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "makeup_credits": {
+    "count": 4,
+    "digest": "c13f15edb4eae5d26d925b3687839d9e"
+  },
+  "payroll_events": {
+    "count": 4,
+    "digest": "e29ce093180e0ed23b2a17c3cce408a9"
+  },
+  "absence_reports": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "crm_lead_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "inventory_items": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "lesson_feedback": {
+    "count": 2,
+    "digest": "e75b5f00733cd6d4d76877322c4b18d3"
+  },
+  "payroll_periods": {
+    "count": 1,
+    "digest": "30c0b0759ff1b5d0f1bebba704103a11"
+  },
+  "staff_portraits": {
+    "count": 2,
+    "digest": "530fe1a3a5a69d79a6815a0c543841e2"
+  },
+  "student_parents": {
+    "count": 18,
+    "digest": "23ec096fa915dbfbb4298bb93fcfdc43"
+  },
+  "customer_credits": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "instrument_units": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_reports": {
+    "count": 8,
+    "digest": "65f5b3117b2c5928e0aaef8a52f5e1c0"
+  },
+  "role_permissions": {
+    "count": 74,
+    "digest": "8b2e8e493be8c61b81cedcd0a285e271"
+  },
+  "teacher_branches": {
+    "count": 6,
+    "digest": "7c0de724c63fd4654d5bdda9eb500613"
+  },
+  "teacher_payrolls": {
+    "count": 1,
+    "digest": "67fabd87782602a6f5d6a0cf2b1e0bbb"
+  },
+  "curriculum_levels": {
+    "count": 38,
+    "digest": "e133d0b064c0295d04338d3e844e7a88"
+  },
+  "employee_versions": {
+    "count": 3,
+    "digest": "b302dd55d2a6ce8ccd0d6eb9240db243"
+  },
+  "enrollment_pauses": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "instrument_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "inventory_entries": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_journals": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_versions": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "migration_batches": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "notification_jobs": {
+    "count": 28,
+    "digest": "f2654b83ad481ec8a45ca901bc95e79f"
+  },
+  "opening_reversals": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tuition_reminders": {
+    "count": 2,
+    "digest": "1eec4219dcfdc8331410164809e088cf"
+  },
+  "attendance_records": {
+    "count": 26,
+    "digest": "9cc144ed50aa606aadb45ca1f1944160"
+  },
+  "enrollment_tuition": {
+    "count": 2,
+    "digest": "016a52cf4f8b1e1b78acb364c322d11f"
+  },
+  "notification_inbox": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "organization_units": {
+    "count": 3,
+    "digest": "643adc09c678ed8eecd355403bec058f"
+  },
+  "refund_allocations": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "staff_role_catalog": {
+    "count": 8,
+    "digest": "9ec69149eab42f8e3d0fb63629468f9b"
+  },
+  "tuition_zalo_sends": {
+    "count": 1,
+    "digest": "17733af4db7ea5e657458d2f0624ab69"
+  },
+  "curriculum_subjects": {
+    "count": 189,
+    "digest": "ac613fd30a42533fa14e35148c5ad696"
+  },
+  "inventory_movements": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "notification_events": {
+    "count": 45,
+    "digest": "58452ec37b1563bc469404eec996909e"
+  },
+  "opening_receivables": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "opening_settlements": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payment_allocations": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_adjustments": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_corrections": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "session_occurrences": {
+    "count": 32,
+    "digest": "e7a19f80919baa54d6b4f3d740616d18"
+  },
+  "zalo_owner_receipts": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "attendance_qr_tokens": {
+    "count": 2,
+    "digest": "3e2ae5d90738a7ff9bad08b615b73ec0"
+  },
+  "customer_credit_uses": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_time_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "instrument_catalogue": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assessments": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "migration_batch_rows": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tuition_zalo_replies": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_trip_reviews": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_disbursements": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_earning_lines": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tuition_zalo_consents": {
+    "count": 1,
+    "digest": "e3ea1720fe7122754d8b80a88af4a096"
+  },
+  "attendance_qr_sessions": {
+    "count": 2,
+    "digest": "cabf17ea66a71366ae83901776ad32fc"
+  },
+  "crm_reactivation_cases": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "customer_channel_links": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_access_grants": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_conversations": {
+    "count": 4,
+    "digest": "b5bc3addadea662a8dd261797cc5505c"
+  },
+  "learning_focus_options": {
+    "count": 10,
+    "digest": "4d9d0ebea64584d3be12698f0ba967c3"
+  },
+  "learning_report_events": {
+    "count": 29,
+    "digest": "0891604fb3d56aad76f44bd6e3a5fef3"
+  },
+  "lesson_feedback_events": {
+    "count": 4,
+    "digest": "29ac65021a171ba17a6414ceddb72948"
+  },
+  "migration_audit_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "notification_templates": {
+    "count": 10,
+    "digest": "2a6ba2ca624f0252958c9f8933b82b39"
+  },
+  "payment_entry_requests": {
+    "count": 1,
+    "digest": "ffaf8f1997fec9e40a2b803129f2959f"
+  },
+  "staff_position_catalog": {
+    "count": 3,
+    "digest": "dbe34b1788ed06cd620acc9796ad0db9"
+  },
+  "staff_role_assignments": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_level_progress": {
+    "count": 21,
+    "digest": "cf5b44b4710ecf056812adf56b38b163"
+  },
+  "crm_reactivation_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_expense_claims": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_leave_policies": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "enrollment_pause_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_homework_parts": {
+    "count": 24,
+    "digest": "bf2e8ca23dd053005575fb33ff9f4451"
+  },
+  "lesson_feedback_reasons": {
+    "count": 2,
+    "digest": "73df7b9a1c6c40e52ea246c28bd98d6d"
+  },
+  "student_placement_cases": {
+    "count": 6,
+    "digest": "c5fef2b69efd2dfd5b11030e0536b974"
+  },
+  "enrollment_shift_changes": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_academic_shadow": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_lesson_progress": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_theory_contents": {
+    "count": 87,
+    "digest": "c9cf9f2ca157e3d4326ef1ac515e7526"
+  },
+  "operating_expense_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "registration_momo_orders": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_placement_events": {
+    "count": 6,
+    "digest": "738c0e351e43dc3f919e108893038dcf"
+  },
+  "student_retention_alerts": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_retention_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_subject_progress": {
+    "count": 57,
+    "digest": "a51d13f17415cade1edac23714646233"
+  },
+  "enrollment_pause_requests": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "financial_approval_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "instrument_warranty_cases": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "migration_source_mappings": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "operating_expense_records": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_component_catalog": {
+    "count": 11,
+    "digest": "0b376ec323da468e537ddd8395fd41ee"
+  },
+  "payroll_period_actions_v2": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "registration_applications": {
+    "count": 8,
+    "digest": "e3beb381caea59c4266328840b69e8d5"
+  },
+  "registration_payos_orders": {
+    "count": 9,
+    "digest": "fa8612aab604829f526ba7913711cc9d"
+  },
+  "session_learning_journals": {
+    "count": 26,
+    "digest": "b1b8459c949ecede77b96c24ab669474"
+  },
+  "session_teacher_snapshots": {
+    "count": 24,
+    "digest": "cd9274980e78b60def7e5a7dc16f98e7"
+  },
+  "tuition_zalo_reply_states": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "curriculum_component_items": {
+    "count": 1440,
+    "digest": "504717066cb61db63749e7318357cfd5"
+  },
+  "instrument_warranty_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "integration_webhook_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_academic_mappings": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_attention_reasons": {
+    "count": 8,
+    "digest": "37b0643525d4a03415eca9cc99b5ae29"
+  },
+  "learning_practice_attempts": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_component_lines_v2": {
+    "count": 3,
+    "digest": "aa4a8715b7b07a5ad54aa51106e6e494"
+  },
+  "payroll_retroactive_claims": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "payroll_retroactive_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "registration_deposit_terms": {
+    "count": 7,
+    "digest": "fc2472c1bb1c5a28f72fe19d88b63d09"
+  },
+  "staff_position_assignments": {
+    "count": 2,
+    "digest": "a9f0982bb79f87074bc67c533e39204b"
+  },
+  "staff_teaching_assignments": {
+    "count": 1,
+    "digest": "48b7d659b4b1077789f6f3b1468161b4"
+  },
+  "student_component_progress": {
+    "count": 56,
+    "digest": "f7a22875e9a98260243b062067707d1f"
+  },
+  "teacher_compensation_rules": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tuition_plan_branch_prices": {
+    "count": 5,
+    "digest": "d977fc0b541747cd34179e8b0e601bd3"
+  },
+  "zalo_notification_attempts": {
+    "count": 5,
+    "digest": "2112572fc66d7d6d00df17647ebbe341"
+  },
+  "academic_operation_policies": {
+    "count": 1,
+    "digest": "02457a579eea48e114c948fe7a0a2d06"
+  },
+  "crm_lead_conversion_reviews": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_attendance_entries": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_attendance_reviews": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "financial_approval_requests": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "migration_rollback_requests": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "operating_expense_templates": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "session_teacher_assignments": {
+    "count": 19,
+    "digest": "6bc58dec87d802bf4d8c0f9dee2b1f89"
+  },
+  "employee_attendance_requests": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_expense_claim_lines": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assessment_attempts": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assessment_regrades": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_observation_options": {
+    "count": 56,
+    "digest": "8f89186e332cfb9c664949b87a1b810e"
+  },
+  "payroll_trip_cost_breakdowns": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "registration_momo_ipn_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "academic_operation_exceptions": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "curriculum_subject_components": {
+    "count": 144,
+    "digest": "514001dc9bdc7bd506340375f06556ec"
+  },
+  "employee_expense_claim_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "instrument_commercial_details": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "instrument_customer_followups": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assessment_overrides": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "staff_compensation_components": {
+    "count": 3,
+    "digest": "1c724aee45d059b5eeb7beb3e870a8ec"
+  },
+  "instrument_sale_customer_links": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_conversation_messages": {
+    "count": 32,
+    "digest": "4e15312c13325b85b5c4956f26b156f2"
+  },
+  "opening_receivable_corrections": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_curriculum_enrollments": {
+    "count": 21,
+    "digest": "aa69f097d7ff8458dfbe65676fa309f9"
+  },
+  "employee_attendance_scan_events": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "employee_expense_claim_items_v2": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "registration_application_events": {
+    "count": 31,
+    "digest": "8975748309786c378199d61ec59c101e"
+  },
+  "session_occurrence_participants": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_component_item_progress": {
+    "count": 560,
+    "digest": "e8abc93282435a82dead1f0531662687"
+  },
+  "registration_zalo_phone_consents": {
+    "count": 9,
+    "digest": "48c1e81b9a6c44b64680e8c89a371615"
+  },
+  "student_learning_journal_entries": {
+    "count": 26,
+    "digest": "3c42934f3364b7d9979facdf71fd6611"
+  },
+  "registration_payos_webhook_events": {
+    "count": 7,
+    "digest": "b45ffdff9f1c2649e65900057efe35b8"
+  },
+  "employee_attendance_qr_verifications": {
+    "count": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_journal_observation_selections": {
+    "count": 3,
+    "digest": "3227f6af5671dde04731c91801293453"
+  }
+}

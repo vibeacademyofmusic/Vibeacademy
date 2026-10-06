@@ -1,0 +1,105 @@
+Window: "VIBE Academy 🔊", App: Google Chrome.
+0 standard window VIBE Academy - Google Chrome - VIBE ACADEMY OF, URL: localhost:3000/admin/tuition/reminders?renew=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f, Secondary Actions: Raise
+	1 container VIBE Academy - Google Chrome - VIBE ACADEMY OF, URL: localhost:3000/admin/tuition/reminders?renew=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f
+		2 container
+			3 container
+				4 scroll area
+					5 HTML content VIBE Academy, URL: localhost:3000/admin/tuition/reminders?renew=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f
+						6 container Tạo gia hạn học phí
+							7 container
+								8 heading Tạo gia hạn học phí, Value: 2
+									9 text Tạo gia hạn học phí
+								10 button Đóng cửa sổ
+							11 container
+								12 text Xác nhận Zalo  ( ZALO-0907507918 ) ·  Vibe Academy Cần Thơ  ·  VIBE 3 MONTHS Kỳ hiện tại:  01/08/2026  →  31/10/2026 . Ngày bắt đầu kỳ mới dự kiến:  01/11/2026 . Phản hồi khách hàng:  Tiếp tục học . Xử lý nội bộ do nhân viên chọn, không tự lấy từ nút Tiếp tục học. Đã có gia hạn mở:  Chờ mẫu ZBS thanh toán . Hóa đơn  INV-2026-000347 . Đã thu  0 ₫ . Còn lại  5.500.000 ₫ .
+								13 content list
+									14 container
+										15 text 3 tháng  ·  Đặt cọc 50% :  5.500.000 ₫ · đến hạn 2.750.000 ₫
+									16 container
+										17 text 3 tháng  ·  Thanh toán 100% :  5.500.000 ₫ · đến hạn 5.500.000 ₫
+									18 container
+										19 text 1 năm  ·  Đặt cọc 50% :  16.500.000 ₫ · đến hạn 8.250.000 ₫
+									20 container
+										21 text 1 năm  ·  Thanh toán 100% :  16.500.000 ₫ · đến hạn 16.500.000 ₫
+								22 container
+									23 text Gói học phí
+									24 pop up button Gói học phí, Value: 3 tháng
+										25 (selected) 3 tháng
+								26 container
+									27 text Cách thanh toán
+									28 pop up button Cách thanh toán, Value: Đặt cọc 50%
+										29 (selected) Đặt cọc 50%
+								30 container
+									31 text Ngày bắt đầu kỳ mới
+									32 date picker Ngày bắt đầu kỳ mới, Value: 2026-11-01
+										33 container
+											34 stepper (settable, float) Day Ngày bắt đầu kỳ mới, Value: 1, Details: 01, Placeholder: dd
+											35 text /
+											36 stepper (settable, float) Month Ngày bắt đầu kỳ mới, Value: 11, Placeholder: mm
+											37 text /
+											38 stepper (settable, float) Year Ngày bắt đầu kỳ mới, Value: 2026, Placeholder: yyyy
+										39 pop up button Show date picker Ngày bắt đầu kỳ mới
+								40 container
+									41 text Hạn thanh toán
+									42 date picker Hạn thanh toán, Value: 2026-10-31
+										43 container
+											44 stepper (settable, float) Day Hạn thanh toán, Value: 31, Placeholder: dd
+											45 text /
+											46 stepper (settable, float) Month Hạn thanh toán, Value: 10, Placeholder: mm
+											47 text /
+											48 stepper (settable, float) Year Hạn thanh toán, Value: 2026, Placeholder: yyyy
+										49 pop up button Show date picker Hạn thanh toán
+								50 container
+									51 text Ghi chú nội bộ
+									52 text entry area (settable) Ghi chú nội bộ
+								53 button Tạo gia hạn học phí
+								54 button Mở / đối chiếu đơn payOS
+								55 button Gửi lại ZBS
+								56 link Mở payOS, Value: pay.payos.vn/web/6b73bf4a7b2e4be1bbdb1823c4988005
+								57 button Sao chép liên kết
+								58 link https://pay.payos.vn/web/6b73bf4a7b2e4be1bbdb1823c4988005, Value: pay.payos.vn/web/6b73bf4a7b2e4be1bbdb1823c4988005
+								59 text ZBS thanh toán:  AWAITING_TEMPLATE . Xác nhận sau thu:  NONE . Bắt đầu kỳ mới:  01/11/2026 . Sự kiện gần nhất:  ZBS_AWAITING_TEMPLATE . Mẫu ZBS mới: TUITION_PAYMENT_REQUEST, khóa ZALO_TUITION_PAYMENT. Tham số chữ: customer_name, payment_status, student_name, invoice_code, tuition_package, package_amount, payment_type, amount_due, payment_deadline. payment_status của tin yêu cầu là đúng chữ Chờ thanh toán. package_amount và amount_due là số nguyên VND, không thêm dấu hoặc chữ tiền. payment_deadline theo dd/MM/yyyy. Nút Thanh toán học phí dùng tham số payment_link_id và mở https://pay.payos.vn/web/<payment_link_id>. Không gửi nguyên checkoutU
+		60 container
+			61 container
+				62 toolbar
+					63 button Back
+					64 button (disabled) Forward
+					65 button Reload
+					66 container
+						67 pop up button View site information
+						68 text field (settable) Address and search bar, Value: localhost:3000/admin/tuition/reminders?renew=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f, Placeholder: Search Google or type a URL
+						69 button Bookmark this tab
+					70 pop up button Extensions
+					71 button Control your music, videos, and more
+					72 button VIBE ACADEMY OF
+					73 pop up button Chrome
+			74 container
+				75 pop up button Tab search
+				76 tab group
+					77 tab (settable, boolean) vibe-academy-staging | Vibe Academy | Supabase - Memory usage - 269 MB, Value: off
+						78 button Close
+					79 tab (settable, boolean) payOS - Memory usage - 107 MB, Value: off
+						80 button Close
+					81 tab (selected, settable, boolean) VIBE Academy - Memory usage - 178 MB, Value: on
+						82 button Close
+					83 tab (settable, boolean) Value: off, (48) Summer Vacation Marathon! ☀️🏖️ | Tom & Jerry Tales MEGA COMP | ‪@wbkids‬ - YouTube - Audio playing - Memory usage - 454 MB
+						84 button (disabled) Mute tab
+						85 button Close
+				86 button New Tab
+				87 button Open Gemini in Chrome
+	88 container
+		89 close button
+		90 zoom button
+91 menu bar
+	92 Chrome
+	93 File
+	94 Edit
+	95 View
+	96 History
+	97 Bookmarks
+	98 Profiles
+	99 Tab
+	100 Window
+	101 Help
+
+The focused UI element is 10 button Đóng cửa sổ

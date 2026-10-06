@@ -162,6 +162,12 @@ export async function assignTeacher(
         )
       }
 
+      if (error.message.includes('two overlapping')) {
+        redirect(
+          `/admin/classes/${classId}?error=` + encodeURIComponent('Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.')
+        )
+      }
+
       redirect(
         `/admin/classes/${classId}?error=Could%20not%20assign%20teacher`
       )
@@ -283,6 +289,7 @@ export async function enrollStudent(
       .select(`
         id,
         course_id,
+        curriculum_id,
         capacity,
         status
       `)
@@ -303,6 +310,21 @@ export async function enrollStudent(
       redirect(
         `/admin/classes/${classId}?error=Students%20cannot%20be%20enrolled%20in%20a%20completed%20or%20cancelled%20class`
       )
+    }
+
+    const { data: compatibility } = await supabase.rpc('class_enrollment_compatibility', {
+      p_class: classId,
+      p_student: studentId,
+    })
+    if (compatibility && compatibility !== 'IN_SCOPE') {
+      const messages: Record<string, string> = {
+        OUTSIDE_SCOPE: 'Học viên ngoài phạm vi trình độ của lớp',
+        WRONG_PROGRAM: 'Học viên không có chương trình Academic đúng curriculum của lớp',
+        ACADEMIC_PROGRAM_MISSING: 'Học viên chưa có chương trình Academic đang hoạt động',
+        CURRENT_LEVEL_MISSING: 'Học viên chưa có trình độ hiện tại trên chương trình Academic',
+        CLASS_SCOPE_UNCONFIGURED: 'Lớp chưa cấu hình phạm vi trình độ; không thể ghi danh mới',
+      }
+      redirect(`/admin/classes/${classId}?error=` + encodeURIComponent(messages[String(compatibility)] || String(compatibility)))
     }
 
     const { data: student } = await supabase
@@ -371,17 +393,20 @@ export async function enrollStudent(
       )
     }
 
-    const { data: course } = await supabase
-      .from('courses')
-      .select('id, curriculum_id')
-      .eq('id', classItem.course_id)
-      .maybeSingle()
+    const { data: course } = classItem.course_id
+      ? await supabase
+        .from('courses')
+        .select('id, curriculum_id')
+        .eq('id', classItem.course_id)
+        .maybeSingle()
+      : { data: null }
+    const programId = classItem.curriculum_id || course?.curriculum_id || null
 
     let academicEnrollmentId: string | null =
       existingEnrollment
         ?.student_curriculum_enrollment_id ?? null
 
-    if (course?.curriculum_id) {
+    if (programId) {
       const {
         data: academicEnrollments,
       } = await supabase
@@ -390,7 +415,7 @@ export async function enrollStudent(
         .eq('student_id', studentId)
         .eq(
           'curriculum_id',
-          course.curriculum_id
+          programId
         )
         .eq('status', 'ACTIVE')
         .order('is_primary', {

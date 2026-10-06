@@ -1,0 +1,52 @@
+{
+  "project": "vibeacademy-staging",
+  "projectId": "prj_3N4d2PSVZWv4L2Xf0BwsguZppdzu",
+  "functionDefaultRegions": [
+    "icn1"
+  ],
+  "serverlessFunctionRegion": "icn1",
+  "deploymentId": "dpl_Fa4MoNGDEJ4W8PoQofUkBYKFD38W",
+  "url": "vibeacademy-staging-4a4374kgs-vibeacademyofmusic.vercel.app",
+  "readyState": "READY",
+  "gitCommitSha": "341f5b329abc15237b42ea5d6306a8f99d1b844b",
+  "regions": null,
+  "createdAt": 1791279106259,
+  "aliases": [
+    {
+      "alias": "staging.vibe.edu.vn",
+      "deploymentId": "dpl_Fa4MoNGDEJ4W8PoQofUkBYKFD38W"
+    },
+    {
+      "alias": "vibeacademy-staging-git-codex-learnin-8cb2d7-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_E7n9CF8a7XBSwZwjayDwNKw3whrp"
+    },
+    {
+      "alias": "vibeacademy-staging-git-codex-release-c2cc5d-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_Giodf5goo5jvCgVeiw5wafNgMwUh"
+    },
+    {
+      "alias": "vibeacademy-staging-git-codex-counter-85ff6e-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_4D3sZ9Jfe2Y46gGvZfNLNqTcqVFh"
+    },
+    {
+      "alias": "vibeacademy-staging-git-codex-menu-tr-2d3fb5-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_9AhxdiiXWk5yy2QxSf2j7jt5zCfz"
+    },
+    {
+      "alias": "vibeacademy-staging-git-codex-registr-018e35-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_2Rdof1zzyrUxj8ZmSTzAwW5Fx7vu"
+    },
+    {
+      "alias": "vibeacademy-staging-git-staging-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_54JzzSNdpV95gsCGxqWTYNXDj995"
+    },
+    {
+      "alias": "vibeacademy-staging.vercel.app",
+      "deploymentId": "dpl_Fa4MoNGDEJ4W8PoQofUkBYKFD38W"
+    },
+    {
+      "alias": "vibeacademy-staging-vibeacademyofmusic.vercel.app",
+      "deploymentId": "dpl_Fa4MoNGDEJ4W8PoQofUkBYKFD38W"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 begin;
+create extension if not exists pgtap with schema extensions;
 
-select plan(6);
+select plan(7);
 
 -- ============================================================
 -- Fixtures
@@ -132,6 +133,33 @@ values
 on conflict (id) do nothing;
 
 
+insert into public.curriculum_subject_components (
+  id, subject_id, code, name, is_required, sort_order, status, completion_rule
+)
+values (
+  '66666666-6666-6666-6666-666666666661',
+  '55555555-5555-5555-5555-555555555551',
+  'ITEM_BLOCK',
+  'Item block',
+  true,
+  1,
+  'ACTIVE',
+  'ALL_REQUIRED_ITEMS'
+);
+
+insert into public.curriculum_component_items (
+  id, component_id, code, name, sort_order, is_required, status
+)
+values (
+  '77777777-7777-7777-7777-777777777771',
+  '66666666-6666-6666-6666-666666666661',
+  'ITEM_1',
+  'Item 1',
+  1,
+  true,
+  'ACTIVE'
+);
+
 -- ============================================================
 -- 1. Future academic assignment must succeed
 -- ============================================================
@@ -160,6 +188,17 @@ select is(
   ),
   ((now() at time zone 'Asia/Ho_Chi_Minh')::date + 7),
   'future academic enrollment start date is stored'
+);
+
+select is(
+  (
+    select status
+    from public.student_component_progress
+    where component_id = '66666666-6666-6666-6666-666666666661'
+    limit 1
+  ),
+  'NOT_STARTED',
+  'item seed may refresh a future component while it stays not started'
 );
 
 

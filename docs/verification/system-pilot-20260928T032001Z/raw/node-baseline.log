@@ -1,0 +1,1091 @@
+✔ direct assessment ignores components and retains fractional display (0.525792ms)
+✔ optional and inactive subjects do not dilute grade progress (0.122916ms)
+✔ component subjects use only required active components (0.093709ms)
+✔ no quarter rounding or premature completion at seven of eight components (0.086458ms)
+✔ missing required progress remains incomplete (0.0665ms)
+✔ completed grade is 100%; passing manual grade awaits database confirmation (0.059792ms)
+✔ renders both programs, primary first; completed history read-only, next grade start only (51.213708ms)
+✔ inconsistent current grade blocks start and reports mismatch (26.441084ms)
+✔ completed enrollment remains visible; no programs produces a safe empty state (38.782708ms)
+✔ all three awards are equally complete and preserve their display value (1.625166ms)
+✔ editable direct subjects expose precisely five choices and Save; record preserves Merit (26.609709ms)
+✔ component subject exposes only component editor and future grade stays locked (33.639208ms)
+✔ scheduled edit gate compares timestamps instead of timestamp versus calendar string (1.227125ms)
+Assign academic program error: { message: 'A required subject has no required active components' }
+✔ createCurriculumSubject preserves explicit DIRECT_ASSESSMENT and required flag (87.760459ms)
+✔ createCurriculumSubject preserves explicit ALL_REQUIRED_COMPONENTS and required flag (25.05175ms)
+✔ createCurriculumSubject rejects missing/unsupported method  (22.605833ms)
+✔ createCurriculumSubject rejects missing/unsupported method MANUAL (14.640042ms)
+✔ createCurriculumSubject rejects missing/unsupported method UNSUPPORTED (15.831458ms)
+✔ updateCurriculumSubject preserves explicit DIRECT_ASSESSMENT and required flag (13.896875ms)
+✔ updateCurriculumSubject preserves explicit ALL_REQUIRED_COMPONENTS and required flag (21.912042ms)
+✔ updateCurriculumSubject rejects missing/unsupported method  (11.9245ms)
+✔ updateCurriculumSubject rejects missing/unsupported method MANUAL (10.994792ms)
+✔ updateCurriculumSubject rejects missing/unsupported method UNSUPPORTED (12.060708ms)
+✔ edit form displays explicit methods without silently converting DIRECT_ASSESSMENT (29.608292ms)
+✔ edit form displays explicit methods without silently converting MANUAL (21.304959ms)
+✔ assign action forwards inputs and exposes validation failure without success (8.141708ms)
+✔ operations consolidation does not expose finance to student-only staff (13.432667ms)
+✔ menu targets existing standalone routes only (0.21475ms)
+✔ active menu chooses the most specific existing URL (0.209666ms)
+✔ HR groups staff, pay, and assignment without a separate teacher entry (11.1735ms)
+✔ business shell keeps unaudited admin routes out of the branch menu (23.077667ms)
+✔ unimplemented domains are omitted and existing finance routes are present (0.154375ms)
+✔ CRM aliases and registration share the consolidated navigation entry (0.12225ms)
+✔ approved tuition and payment group keeps six routes and precise active state (7.422584ms)
+✔ approved HR labels and deep links remain precise (8.017791ms)
+✔ HR sidebar renders exactly four direct links without nested links or controls (20.671917ms)
+✔ HR and recruitment use the same wrapping workspace tabs, mounted once (12.609167ms)
+✔ payroll retains its back link without a second cross-module navigation bar (0.268417ms)
+✔ training and system preserve local routes and exact active destinations (9.30375ms)
+✔ legacy embedded training URLs select the single canonical tab (9.476708ms)
+✔ program/course switches share the training bar and preserve existing search filters (6.021875ms)
+✔ room workspace does not repeat cross-module navigation as a dropdown (0.152708ms)
+✔ business shell accepts only the business route tree (0.415583ms)
+✔ business shell navigation hides unaudited admin domains (0.5065ms)
+✔ super admin reaches business and the rest of admin (105.934167ms)
+✔ branch admin with CRM permission reaches only business routes (208.369959ms)
+✔ student operations opens only the exact students list (167.990541ms)
+✔ business and student permissions share a menu without opening other admin domains (13.061708ms)
+✔ accounts without CRM shell permission are denied, including a missing path header (34.353459ms)
+✔ consolidated tabs obey existing server access boundaries (48.218333ms)
+✔ date validation, Vietnam default, and all server-side filters (43.985666ms)
+✔ return URL retains filters and rejects external or unrelated destinations (7.691416ms)
+✔ launcher renders canonical roster directly and forwards filters to bounded RPC (48.8195ms)
+✔ empty and failed queries show an explicit state without class detours (52.179875ms)
+✔ empty session result does not load attendance history (24.984125ms)
+✔ attendance query is restricted to visible sessions (3.113584ms)
+✔ missing deployed view reports schema update, without falling back to primary teacher (2.547125ms)
+✔ permission/network failures are not misdiagnosed as missing migrations (3.199833ms)
+✔ Aural module catalogue preserves approved Grade 1–3 structure (0.651792ms)
+✔ explicit draft roundtrip retains opaque asset identity and replay policy (0.297625ms)
+✔ change detection requires an ordered original/comparison pair (0.221333ms)
+✔ tonality is restricted to approved Grade 3D scope (0.094625ms)
+✔ echo requires bounded recording and private manual rubric, never an automatic score (0.137666ms)
+✔ metadata cannot smuggle public URLs, object paths, answer keys or approval (0.135416ms)
+✔ invalid media metadata, missing policies, oversized limits and duplicate choices fail closed (0.170834ms)
+✔ unauthenticated request stops before authorization RPCs (27.381167ms)
+✔ permission alone cannot open legacy admin actions to a new role (4.616417ms)
+✔ admin with denied permission cannot mutate (4.447625ms)
+✔ authorization RPC errors fail closed (2.583042ms)
+✔ active admin permission returns session client and forwards explicit branch scope (2.766583ms)
+✔ branch basic update forwards only safe fields; ignores forged branch/status/account (57.43125ms)
+✔ database cross-branch denial is not reported as success (13.245417ms)
+✔ client supplied admin role cannot bypass staff authentication (10.465708ms)
+✔ signed-out user cannot reach mutation RPC (10.216375ms)
+✔ invalid input is rejected before mutation RPC (7.581584ms)
+✔ cohort rates stay empty when the denominator is zero (0.350833ms)
+✔ missing or zero budget is not displayed as a cost (0.077333ms)
+✔ marketing opens the report tab unless that permission is missing (0.668708ms)
+✔ after-sales keeps the two relationships on separate tabs (0.209334ms)
+✔ old list routes redirect to the matching tab and keep supported filters (0.351333ms)
+✔ a workspace stays in the menu only when one of its tabs is allowed (0.089ms)
+(node:54196) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/app/admin/_lib/business-date.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ class teacher dates use the Vietnam business date (42.785625ms)
+✔ primary handoff gives the change date to the new teacher only (2.565917ms)
+✔ same-day start cannot be closed on the previous day (0.444417ms)
+✔ reassigning the same teacher does not overwrite the closed period (0.204666ms)
+✔ legacy CRM redirect preserves repeated parameters, search and lifecycle tabs (0.995208ms)
+✔ CRM filter retains workspace and counter explicitly selects academic subject (0.762667ms)
+✔ crm tabs are views of one pipeline (0.712791ms)
+✔ pipeline actions stay on the adjacent step (0.077875ms)
+✔ journey labels use registration and conversion facts (0.1035ms)
+✔ crm workspace does not offer a standalone learning-profile action (0.266625ms)
+✔ crm errors stay in Vietnamese (0.067208ms)
+✔ owner matrix produces 37 levels, 184 subjects and 2640 lessons (2.371958ms)
+✔ foundation and grade boundaries match the approved subject matrix (0.576791ms)
+✔ lesson keys are stable, unique and mapping remains explicitly unresolved (3.736667ms)
+✔ program hierarchy stays Curriculum, Level, Subject, Component, Lesson (0.751417ms)
+✔ level workspace lists subjects without turning a course into a level (0.083541ms)
+✔ one storage component stays a flat lesson list (0.070625ms)
+✔ multiple components keep separate lesson lists (0.058083ms)
+✔ lesson breadcrumb includes the assessment group only when it is academic (0.059958ms)
+✔ linked courses stay outside the academic tree (0.063333ms)
+✔ structure health stays separate from content readiness (0.120625ms)
+✔ inactive lessons stay out of active counts and rows page past 1000 (0.09325ms)
+✔ workspace uses the shared page shell and contained tables (0.189167ms)
+✔ credit application passes only approved target and amount, never client owner or balance (57.144791ms)
+✔ credit application rejects forged obligation kinds IDs and negative amounts (51.082917ms)
+✔ credit refund uses financial approval with Vietnam actual refund time (9.983167ms)
+✔ credit refund UI cannot offer duplicate allocation into a receivable (104.918209ms)
+✔ payment effective allocation total subtracts released credit without changing originals (14.1775ms)
+✔ credit detail renders remaining liability and explicit approval forms (37.007958ms)
+✔ learning admin denies non-admin before review mutation (52.286833ms)
+✔ learning review delegates independent reviewer to database (11.074042ms)
+✔ learning grant uses explicit Vietnam boundaries without price or tuition mutation (10.005375ms)
+✔ learning grant rejects invalid date before mutation (7.473417ms)
+✔ learner activity denies signed-out account (8.473292ms)
+✔ learner activity ignores forged student score and academic pass (8.868833ms)
+✔ foundation does not expose final assessment before policy engine (11.674334ms)
+✔ attendance request carries evidence in Vietnam time, never client checker or salary deduction (43.13875ms)
+✔ attendance review delegates maker checker to database (7.459292ms)
+✔ attendance actions deny unauthorized account before mutation (5.128875ms)
+✔ leave quota allows explicit zero but rejects omitted or fractional quota (16.20625ms)
+✔ calendar range handles year boundary and leap year (21.047ms)
+✔ employee attendance empty UI makes payroll limitation explicit (58.740625ms)
+✔ policy editing lives only on dedicated policy page and uses existing RPC (39.978541ms)
+✔ dedicated leave action reuses canonical attendance request and independent review (2.472167ms)
+✔ attendance and leave submission boundaries reject the other workflow status (13.901375ms)
+✔ loaders isolate leave requests before limiting and never load policy for attendance (8.21975ms)
+✔ summary counts only approved current shift evidence, no late deduction or rest absence (1.579417ms)
+✔ leave page explains pending approval and existing full-shift/past-date limitations (24.080041ms)
+✔ approved leave renders without policy editor, unpaid request controls or invented actual times (32.367125ms)
+✔ policy audit renders timestamp as Vietnam time, never reversed raw ISO date (28.3885ms)
+✔ employee creation delegates generated identity to database without auth provisioning (71.165041ms)
+✔ employment update sends expected version and effective date for database concurrency guard (23.771916ms)
+✔ employee actions reject unprivileged user and missing reason before mutation (31.100333ms)
+✔ employee list is bounded and supports unit and status filters (3.267875ms)
+✔ employee page separates personnel metadata from account permissions (77.520834ms)
+✔ dashboard source stays on the user client and omits forbidden KPIs (0.767875ms)
+✔ loader uses the Vietnam date, posted-tuition report, and separate receivables (100.820375ms)
+✔ zero queues and a failed optional query still render (76.48925ms)
+✔ mixed-currency overdue receivables are not shown as zero (28.217959ms)
+Expense Claim V2 UI/action source contract: PASS
+✔ tests/expense-claim-v2-ui.test.cjs (28.46225ms)
+✔ family portal rejects signed-out access before querying (75.961666ms)
+✔ unrelated student is not found before any journey or finance query (28.034792ms)
+✔ picker only renders server-authorized identities and paginates (28.08275ms)
+✔ selected tab loads only bounded attendance and uses Vietnam time (38.909708ms)
+✔ journey shows both programs and completed versus available without write actions (17.686208ms)
+✔ finance does not mislabel invoice subtotal as full customer balance (16.665417ms)
+✔ projection errors do not masquerade as an empty successful list (18.847ms)
+✔ teacher portal requires teacher role before data reads (3.919458ms)
+✔ teacher history uses actual-teaching projection and preserves bounded page (4.948333ms)
+✔ teacher feedback summary renders no respondent identity or private resolution (4.22275ms)
+✔ off-cycle self-read displays signed delta and never implies cash payout (41.698584ms)
+✔ feedback action delegates identity and eligibility to the canonical RPC (10.542458ms)
+✔ feedback reasons outside the rating band never reach the database (2.143959ms)
+✔ feedback invalid ratings never reach the database mutation (2.154875ms)
+✔ credit page keeps unapplied credit separate and provides no automatic allocation (15.951417ms)
+✔ approved report renders snapshot sections without private or unexpected summary fields (19.778958ms)
+✔ Vietnam month changes seven hours before UTC month boundary, including new year (12.773ms)
+✔ currency aggregation keeps VND and USD separate and handles numeric strings (2.399ms)
+✔ summary pagination includes all rows and discards incomplete results on page error (0.247834ms)
+✔ unavailable management report shows the safe error and no write controls (296.901458ms)
+✔ query failures are isolated and do not expose internals (187.279209ms)
+✔ overview loads the canonical report and selects only branch identity fields (170.758166ms)
+✔ invoice create uses exact RPC arguments, selects DRAFT result and revalidates all finance routes (38.761834ms)
+✔ invoice issue rejects reversed dates and impossible calendar dates before mutation (29.278042ms)
+✔ invoice issue passes dates and confirmation to existing workflow (9.508625ms)
+✔ cancel database error is safe and preserves selection; no invalidation on failure (9.271917ms)
+✔ invoice rendering includes derived debt, refund and overdue values with batched student lookup (70.58975ms)
+✔ payment status uses canonical net balance independently of overdue and lifecycle (0.098ms)
+✔ invoice detail separates derived payment status and links payment history and receipt (43.775459ms)
+✔ cancelled invoice offers history but no issue payment or cancellation mutations (38.176208ms)
+✔ paid invoice retains issued lifecycle and offers no payment action (37.969417ms)
+✔ payment create uses Vietnam datetime and normalized currency/method (73.119125ms)
+✔ payment partial allocation delegates student/currency/balance authority to RPC (22.699ms)
+✔ invalid amounts reject before RPC; wrong currency backend error is translated (89.684417ms)
+✔ void payment requires reason and confirmation; valid request calls void RPC (12.080208ms)
+✔ payment list derives remaining and displays void warning in selected detail (72.358333ms)
+✔ mutations reject anonymous and non-admin users before financial RPC (29.542541ms)
+✔ invoice guided payment derives identity and currency server-side then opens allocation step (11.477042ms)
+✔ invoice guided payment rejects invalid amount and non-issued invoice (42.25475ms)
+✔ invoice guided payment failure never offers allocation of an unknown payment (10.046333ms)
+✔ invoice payment form and allocation retain the selected invoice (76.620167ms)
+✔ selected POSTED summary uses original allocation reservation, including released credits (40.987458ms)
+✔ eligible invoice query excludes non-issued, settled, other student and currency invoices (29.984334ms)
+✔ single invoice prefills and caps amount at the smaller of outstanding and unallocated (66.724458ms)
+✔ equal balances expose explicit full allocation using the existing action and preserve selection (35.281916ms)
+✔ backend balance rejection is surfaced without losing selected payment (18.157792ms)
+✔ no eligible invoices has useful empty state; exhausted payment has no allocation form (64.479ms)
+✔ repeated partial allocation remains blocked and original history is visible (28.496541ms)
+✔ opening balance allocation and void forms remain usable and no manual invoice status control exists (40.854458ms)
+✔ fresh ledger data renders updated summary and history after allocation (55.888792ms)
+✔ payment entry errors retain request key and missing key cannot create cash (16.689084ms)
+✔ invoice entry offers existing money without creating another payment (33.113791ms)
+✔ invoice receipt choice submits allocation directly and returns to updated invoice (32.322542ms)
+✔ invoice receipt candidates exclude already allocated pair (25.905291ms)
+✔ receivables use backend status and keep summary currencies separate (118.605125ms)
+✔ refund creation and allocation explicitly preserve original payment/allocation IDs (59.232083ms)
+✔ over-refund is reported safely and never reported as success (16.669708ms)
+✔ void refund requires confirmation and reason (13.437458ms)
+✔ refund UI exposes original invoice allocation and explicit void warning (80.23325ms)
+✔ finance navigation exposes all implemented routes without prefetch (20.9255ms)
+✔ list pagination bounds rows and queries server-side filters (67.376583ms)
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `Workspace`. See https://react.dev/link/warning-keys for more information.
+✔ financial request carries idempotency and target but no client maker or approved status (60.19725ms)
+✔ correction sends corrected value and original line; database alone calculates delta (15.274583ms)
+✔ invalid correction identifiers amounts and run types are rejected before mutation (52.864334ms)
+✔ normal approval never auto-overrides and accepts no client approver (11.464542ms)
+✔ invalid emergency override is blocked and explicit override reason reaches RPC (10.420833ms)
+✔ cancel uses separate RPC and cannot carry an approval override (7.088458ms)
+✔ unauthorized finance workspace actions stop before financial RPC (6.924417ms)
+✔ pending own request displays source amounts and maker warning (75.483625ms)
+✔ posted correction displays immutable source and computed delta with no review form (55.623833ms)
+✔ issued invoice cancellation requests approval; forged draft status still calls guarded legacy RPC (13.622ms)
+✔ approval audit renders APPROVED before POSTED when timestamps are equal (34.8375ms)
+✔ finance payroll review shows scoped earning and adjustment details read-only (73.661375ms)
+Financial control tower UI contract: PASS
+✔ tests/financial-control-tower-ui.test.cjs (29.192709ms)
+Financial chart contract: PASS
+✔ tests/financial-management-charts.test.cjs (26.279833ms)
+Financial report document contract: PASS
+✔ tests/financial-management-report-document.test.cjs (26.126375ms)
+✔ tests/financial-management-report-v1.test.cjs (26.720375ms)
+✔ HR attendance page owns QR workspace (0.490584ms)
+✔ monthly matrix recognizes QR verification (0.098625ms)
+✔ attendance loader reads guarded QR verification RPC (0.13725ms)
+✔ scan page does not expose raw QR error codes by default (0.081208ms)
+✔ my attendance uses the guarded own-view RPC (0.4165ms)
+✔ QR scan URL prefers the configured app origin (105.652875ms)
+✔ QR admin UI uses VIBE design language (0.131333ms)
+✔ instrument mutation requires authenticated admin (53.388125ms)
+✔ instrument sale trusts database location and never accepts client actor or destination (11.155125ms)
+✔ instrument sale rejects negative or imprecise prices (34.592667ms)
+✔ instrument transfer omits monetary and warranty fields (6.173959ms)
+✔ instrument receipt delegates trace identity and cost without ledger duplication (6.086125ms)
+✔ inventory authenticates before mutation (52.730125ms)
+✔ inventory receipt delegates exact request to ledger and ignores actor and unused destination (12.537542ms)
+✔ inventory rejects invalid quantities without mutation (61.963ms)
+✔ inventory rejects transfer without distinct destination (13.375208ms)
+✔ inventory signed adjustment uses ledger with reason (5.147042ms)
+✔ stock posting returns to the actual branch and item (5.451791ms)
+✔ catalogue normalizes code without accepting caller creator (5.918084ms)
+✔ analytics distinguishes lesson acknowledgement, effective results and ungraded attempts (53.024166ms)
+✔ analytics selects one version and bounds catalogue query (13.1555ms)
+✔ invalid version makes no analytics request (10.712875ms)
+✔ analytics error is visible without fabricated zero results (9.034083ms)
+✔ analytics rejects non-admin before reading catalogue or RPC (11.546834ms)
+✔ assessment authoring denies non-admin before mutation (57.323125ms)
+✔ final authoring preserves approved limits and configured threshold (15.368417ms)
+✔ unsupported notation cannot be advertised as AUTO (10.699792ms)
+✔ approval never accepts forged reviewer identity (11.969708ms)
+✔ manual review sends marks not client-computed final score (8.290584ms)
+✔ anonymous student cannot start assessment (18.157875ms)
+✔ start uses canonical identity and attempt cap from database (16.140333ms)
+✔ submission uses protected snapshot and ignores forged question type/score (14.521333ms)
+✔ expiry preventing snapshot read prevents submission RPC (14.303959ms)
+✔ manual queue displays database overdue flag and private rubric to admin (51.741834ms)
+✔ notation submission strips forged fields and stores structured music (12.844791ms)
+✔ invalid notation cannot be submitted as valid structured response (11.38925ms)
+✔ regrade submits revision and idempotency key, never a caller supplied final score (9.532292ms)
+✔ regrade rejects invalid optimistic revision before mutation (6.779541ms)
+✔ multi-question authoring preserves ordered stable codes and separate manual rubric (6.255583ms)
+✔ duplicate, empty, malformed or excessive question lists fail before RPC (34.4505ms)
+✔ every manual question requires a rubric before creating the draft (5.437ms)
+✔ assessment author page exposes repeatable question controls and per-question rubric fields (22.877542ms)
+✔ Theory metadata matches approved source document fingerprint (1.681167ms)
+✔ Theory preserves all 87 module identifiers in exact Grade order (0.491209ms)
+✔ Missing MT5.15 remains source missing and metadata is not learner content (0.11625ms)
+✔ Question capability catalogue retains notation and manual types (0.056459ms)
+✔ Only structured choice types are advertised as automatic (0.06125ms)
+✔ Unsupported notation stays outside automatic capabilities (0.05175ms)
+✔ Browser-side model exposes no independent scoring function (0.05125ms)
+✔ progress draft is deterministic and does not score the student (0.399292ms)
+✔ repertoire context prioritizes technique, musicality, accuracy and rhythm (0.4635ms)
+✔ quick entry keeps stable codes out of academic progress (0.355292ms)
+generate_learning_report RPC error: {
+  message: 'Invalid closed report period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Enrollment does not overlap period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'First monthly report must cover the enrollment start calendar month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'First monthly report must start on the enrollment start date and end on the last day of the following month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report must cover a full calendar month',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report must stay within enrollment dates; use END_OF_COURSE for a shortened final period',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'Monthly report overlaps an existing report',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+generate_learning_report RPC error: {
+  message: 'private SQL detail',
+  code: undefined,
+  details: undefined,
+  hint: undefined
+}
+✔ report list filters branch status type month and bounded pagination (52.891416ms)
+✔ report list renders multiple branches and empty state (114.827458ms)
+✔ report ops dashboard exposes KPI tabs and needs view by default (34.864792ms)
+✔ report metrics use head counts without loading full payloads (11.69475ms)
+✔ generate sends only validated report context to RPC (24.363167ms)
+✔ invalid generation and unauthorized requests do not reach engine (34.291209ms)
+✔ ready and approval pass expected version; approval requires confirmation (37.191958ms)
+✔ reject fake SENT and safely surface engine lock (24.984625ms)
+✔ draft detail shows missing input attendance and editable summary (46.124791ms)
+✔ approved detail reads snapshot and hides editing actions (34.208375ms)
+✔ approved legacy V1 summary remains readable after V2 (40.9295ms)
+✔ review detail offers approve and return but no inline edit (29.340875ms)
+✔ print preview keeps the approved snapshot and marks controls for exclusion (36.830125ms)
+✔ first monthly suggestions handle day one, mid-month, leap day and year rollover (0.212375ms)
+✔ selected enrollment prefills first-period dates and enrollment lower bound (25.952875ms)
+✔ existing monthly history suggests following calendar month including cancelled (143.763541ms)
+✔ other enrollment or END_OF_COURSE history does not replace first monthly default (45.233667ms)
+✔ early-ended and future enrollments explain why suggested monthly report is unavailable (53.393666ms)
+✔ first extended period action forwards validated inputs without calendar-month-only rejection (10.75725ms)
+✔ known generation errors have Vietnamese explanations and unknown errors stay private (100.085167ms)
+✔ approved official document exposes confirmed publish only and never refreshes snapshot (28.75025ms)
+✔ publish action requires confirmation and forwards version to existing engine (28.200833ms)
+✔ published report has disabled delivery controls with real student and active parent contacts (28.736083ms)
+✔ draft and review do not expose delivery controls (62.934333ms)
+✔ missing recipients and missing snapshot fail safely (60.839625ms)
+✔ repeated delivery page loads cannot enqueue, send, or mutate frozen content (62.895792ms)
+✔ delivery history uses actual records, preserves mock and queued distinctions, filters other reports (39.276458ms)
+✔ V2 academic document renders all seven summaries, maps enums, and handles direct assessment (29.261625ms)
+✔ official print content excludes internal notes, delivery and administration (34.417125ms)
+✔ official layout loads screen stylesheet and paper separates toolbar from content (29.190584ms)
+✔ academic award labels retain Pass Merit Distinction and legacy safety (34.442125ms)
+✔ shadow mapping requires explicit confirmation before mutation (49.52225ms)
+✔ shadow mapping sends only IDs and evidence, never Academic status or student (9.7485ms)
+✔ non-admin cannot configure a shadow mapping (7.240667ms)
+✔ reconciliation exposes differences and only offers same-Grade requirement (21.204084ms)
+✔ CSV preserves Vietnamese text, quoted newlines and exact monetary strings (0.925541ms)
+✔ missing class stays empty for database review, never fabricated by parser (0.151042ms)
+✔ duplicate source references and malformed CSV fail before staging (0.408958ms)
+✔ CSV limits reject oversized sources and more than 500 students (3.883708ms)
+✔ review sends mapped fields and version but never trusted approval flags (36.838625ms)
+✔ import only passes row reference and version to atomic database RPC (21.267916ms)
+✔ missing confirmation and unauthorized account cannot call import RPC (29.307458ms)
+✔ NEEDS_REVIEW page displays raw source but offers no import action (64.56025ms)
+✔ batch import selects only READY rows, caps work and stops on first failed unit (10.672583ms)
+✔ rollback blocker is displayed as a denial, not a success (13.995916ms)
+✔ batch sign-off uses server-side reconciliation RPC with explicit reason (9.574ms)
+✔ L01 create calls the guarded lesson function with a normalized code (44.198917ms)
+✔ L02 edit does not send a new component parent (21.258875ms)
+✔ L03 L04 reorder sends direction and reloads program health (30.113958ms)
+✔ L06 retire uses the lifecycle function and keeps a Vietnamese guard (14.10525ms)
+✔ LSEC06 invalid code never reaches the database function (15.695709ms)
+✔ missing component explains the parent blocker (19.686083ms)
+✔ L11 L12 subject page keeps groups and a flat storage parent (155.044084ms)
+✔ L13 lesson breadcrumb includes the assessment group only when it is visible (26.969542ms)
+✔ L14 L15 health and content stay separate from lesson writes (2.368584ms)
+✔ L16 lesson counts still page past the 1000-row cap (0.171084ms)
+✔ lesson code suggestion follows the Lnn repository sequence (0.096208ms)
+✔ feedback list applies server filters and pagination (60.834667ms)
+✔ feedback list shows low rating and multiple branches (72.067917ms)
+✔ empty feedback list is explicit (48.188417ms)
+✔ feedback page exposes class filter and shared ops chrome (31.132708ms)
+✔ feedback class filter scopes by enrollment ids (12.025875ms)
+✔ detail renders all dimensions context and resolution history (32.601208ms)
+✔ resolution passes version and note through guarded RPC (12.495542ms)
+✔ resolution rejects missing note and unauthorized user (7.423458ms)
+✔ resolved feedback supports reopening but keeps original rating (40.171625ms)
+✔ submission action uses current auth and ignores claimed respondent user ID (2.32575ms)
+✔ rating selects the matching predefined reason set (1.364667ms)
+✔ submission rejects invalid optional ratings and unauthenticated caller (2.173958ms)
+✔ only explicit HTTP loopback endpoints are allowed (0.684916ms)
+✔ bootstrap refuses a nonlocal URL before any network request (0.393625ms)
+✔ every request is pinned to local origin and redirects are forbidden (0.120791ms)
+✔ email is configurable; no force, URL, password, or credential overrides (0.115167ms)
+✔ a refused target exits nonzero with the exact refusal message (43.886708ms)
+✔ preview refuses unverified builds and accepts a matching completed build (47.92925ms)
+✔ preview rejects edited, added, deleted source and environment changes (159.54375ms)
+✔ preview rejects a replaced build artifact (31.11175ms)
+✔ preview refuses active or incomplete builds even when an old valid build exists (61.416042ms)
+✔ S01 remote target refused (0.789834ms)
+✔ S02 S03 S04 S05 S06 S07 S08 catalog counts (3.200208ms)
+✔ S09 no forbidden extra subjects (0.670458ms)
+✔ S10 second-run idempotent (0.900417ms)
+✔ S11 non-test data untouched (0.089875ms)
+✔ S12 cleanup TEST-only (0.276541ms)
+✔ S13 Pre first and S14 Grade 8 last (0.380375ms)
+✔ S15 valid status and completion constraints (0.41525ms)
+✔ dry-run prints the approved totals and does not open a client (0.349875ms)
+✔ every request is pinned to local origin (0.213ms)
+✔ NAV: class ops lists live under Học viên, rooms stay in Vận hành (46.688875ms)
+✔ UI: workspace modes and mixed-level copy exist (0.308666ms)
+✔ MIX: enrollment uses Academic Program level and blocks outside scope (0.294541ms)
+✔ ATT: attendance detail shows Academic Program current Level (0.198625ms)
+✔ ATT: generator remains idempotent conflict target (0.650417ms)
+✔ MIX: course.level_id not treated as student level in ops model (0.152625ms)
+✔ list routes redirect into the Học viên tabs (0.167ms)
+✔ same canonical compatibility drives list and linked overview; students deduplicated across classes/pages (190.048416ms)
+✔ branch filter excludes other classes and canonical compatible result removes warning (30.035916ms)
+✔ RPC errors do not silently present a clean work queue (17.941959ms)
+✔ overview retains missing-scope and partially marked attendance queues (12.697084ms)
+✔ acceptance invokes authoritative assignment/start and never directly sets current_level_id (0.679375ms)
+✔ attendance loads only its workspace and hides writes without management permission (50.5375ms)
+(node:54376) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/lib/integrations/momo/signature.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ create request uses the documented MoMo field order (1.030792ms)
+✔ IPN requires a valid HMAC and rejects changed amount or nonnumeric payload (0.243458ms)
+✔ notation retains pitch spelling instead of equating enharmonic notes (0.810958ms)
+✔ notation rejects arbitrary pitch strings and out of range octave (0.124ms)
+✔ dotted and double dotted durations are exact fractions (0.114208ms)
+✔ triplet group totals exactly one quarter note (0.454084ms)
+✔ duplet group totals exactly a dotted quarter (0.116417ms)
+✔ incomplete and overfull measures do not silently pass duration validation (0.095791ms)
+✔ complete common time measure accepts four crotchets (0.144042ms)
+✔ rest has duration but cannot carry a pitch (0.078625ms)
+✔ duplicate ids and overlapping tuplets are rejected (0.10325ms)
+✔ beams require adjacent short notes and exclude rests (0.181875ms)
+✔ ties require identical written pitches in consecutive events (0.124875ms)
+✔ slur permits different pitches without treating them as tied duration (0.083375ms)
+✔ triad spelling is canonicalized without changing pitch identity (0.100083ms)
+✔ unsupported clefs and malformed schema fail closed (0.085416ms)
+✔ payload is bounded and unknown scoring fields are discarded (0.0895ms)
+✔ notation has readable pitch duration clef and meter alternative (0.156083ms)
+✔ beamed notes cannot request contradictory stem directions (0.076208ms)
+✔ notification action authenticates before mutation (51.622417ms)
+✔ enqueue ignores client payload recipient and mock mode (10.493042ms)
+✔ invalid notification action makes no mutation (7.681625ms)
+✔ retry delegates state validation and does not create a new job (7.874458ms)
+✔ queue filters and pagination do not load full history (45.632708ms)
+✔ mock queue is labeled and never offers live in-app delivery (26.920541ms)
+✔ unconfigured provider fails closed without SENT (0.561167ms)
+✔ Zalo channel fails closed with typed outbound code (0.08925ms)
+✔ mock confirms success with stable idempotency receipt (0.434708ms)
+✔ mock refuses live job (0.108208ms)
+✔ provider failure is sanitized (0.127125ms)
+✔ provider response without confirmation cannot mark SENT (0.068833ms)
+✔ unclaimed job never calls provider (0.06525ms)
+✔ database acknowledgement failure does not resend or falsely record failure (0.165666ms)
+✔ opening correction submits target value only; database owns delta and approval (58.12775ms)
+✔ opening correction rejects invalid values before financial mutation (53.708166ms)
+✔ opening allocation delegates to existing payment allocation RPC extension (23.589ms)
+✔ refund page renders opening allocation without an invoice relationship (75.730417ms)
+✔ opening approval displays original, previous, corrected and delta separately (51.146ms)
+Operating expense V1 UI/action source contract: PASS
+✔ tests/operating-expenses-v1-ui.test.cjs (29.308458ms)
+✔ Payslip totals preserve signed adjustments and reconcile net (30.291208ms)
+✔ Approved snapshot renders rate, ratio, identity and totals without reading live compensation (124.709958ms)
+✔ Denied payslip projection does not render salary (57.652708ms)
+✔ Payslip mismatch refuses display (46.322458ms)
+✔ Invoice uses engine total, locked discount and current receivable (55.5445ms)
+✔ Void receipt preserves original payment amount and reference (51.474833ms)
+✔ Refund displays existing maker checker and approved amount (43.487583ms)
+✔ Credit statement uses canonical allocation refund and remaining values (45.859167ms)
+✔ Finance document denies unrelated account before reading documents (45.422292ms)
+✔ Finance document denies anonymous user (37.054625ms)
+✔ Missing or RLS-hidden document returns not found (43.157875ms)
+✔ Compensation action sends reason and effective dates to canonical wrapper (17.28875ms)
+✔ Invalid compensation form never calls mutating RPC (8.888667ms)
+✔ Print routes have standalone shell, A4 CSS and hidden actions (0.193875ms)
+✔ official invoice uses English headings and dynamic document data (57.418208ms)
+✔ missing contact and discount data are not invented (37.456541ms)
+✔ invoice template supports supplied asset URL and never invents a logo (5.741375ms)
+✔ official invoice renders the supplied real public logo (49.36625ms)
+(node:54383) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/lib/integrations/payos/client.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ valid signed checkout is accepted (10.108542ms)
+✔ provider rejection is diagnosable without disclosing raw provider text (0.36175ms)
+✔ HTTP authentication failures preserve a safe diagnostic code (0.159625ms)
+✔ unsigned and tampered checkout responses are rejected (0.238125ms)
+✔ signed wrong amount is rejected (0.541625ms)
+✔ signed lookalike payment domain is rejected (0.18425ms)
+✔ invalid amount makes no network request (0.102708ms)
+✔ return URL uses configured application and validates protocol (0.462666ms)
+✔ array signatures follow provider canonical sorting and null handling (0.111041ms)
+✔ signed paid response requires an explicit matching transaction amount (0.318916ms)
+✔ missing transaction amount cannot fall back to the order total (0.167208ms)
+✔ multiple transactions cannot be recorded as one payment (0.219834ms)
+✔ wrong order cannot be reconciled (0.232542ms)
+(node:54384) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/lib/integrations/payos/client.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ payment link signature uses the documented payOS field order (0.628667ms)
+✔ webhook sample is recognized and a changed amount is not (0.071167ms)
+✔ webhook signature rejects a tampered amount (0.212708ms)
+✔ configuration guard names only the missing payOS variables (0.895542ms)
+✔ webhook route accepts the payOS sample before any payment RPC (0.294459ms)
+✔ checkout action ignores a browser amount and the page does not treat return query as paid (0.396625ms)
+✔ unauthenticated caller cannot query provider or write receipts (30.885458ms)
+✔ inaccessible branch/order cannot use service authority (5.635458ms)
+✔ provider outage does not crash registration detail or write a receipt (4.847042ms)
+✔ authorized matching confirmation invokes receipt RPC once (3.34975ms)
+Payroll Disbursement V2 UI/action source contract: PASS
+✔ tests/payroll-disbursements-v2-ui.test.cjs (28.009166ms)
+✔ money parse decimal .10 (1.243833ms)
+✔ money parse integer (0.13075ms)
+✔ money parse negative (0.210375ms)
+✔ money parse trailing zero (0.18325ms)
+✔ money parse large exact string (0.160542ms)
+✔ unknown money is not zero: null (0.12825ms)
+✔ unknown money is not zero: undefined (0.049708ms)
+✔ unknown money is not zero:  (0.039542ms)
+✔ unknown money is not zero: NaN (0.045292ms)
+✔ unknown money is not zero: Infinity (0.087417ms)
+✔ unknown money is not zero: 1e4 (0.044709ms)
+✔ unknown money is not zero: 1,000 (0.032792ms)
+✔ unknown money is not zero: 1.000.000 (0.02575ms)
+✔ unknown money is not zero: 0.123 (0.025625ms)
+✔ unknown money is not zero: false (0.023375ms)
+✔ unknown money is not zero: 9007199254740991 (0.023541ms)
+✔ sum decimal exact (0.088292ms)
+✔ sum unknown fails closed (0.033625ms)
+✔ format VND decimal and negative (0.321042ms)
+✔ snapshot is not changed by projection (14.164625ms)
+✔ V2 net always reads stored v2 field, not legacy gross (0.451833ms)
+✔ missing V2 net does not fall back to gross (0.464625ms)
+✔ unchanged sources do not falsely flag modified (0.292584ms)
+✔ new fixed component warns without changing net (0.282167ms)
+✔ one-day fixed config is reported (0.691833ms)
+✔ out-of-period config excluded (0.280083ms)
+✔ different branch excluded (0.192167ms)
+✔ same-code overlapping fixed config flagged (0.217292ms)
+✔ combined and old insurance overlapping flagged (0.176583ms)
+✔ separate historical insurance codes allowed to coexist (2.239916ms)
+✔ inactive insurance does not conflict with combined (0.158167ms)
+✔ changed rate/amount is reported without rewriting stored result (0.139334ms)
+✔ changed effective date is reported (0.134917ms)
+✔ removed config retained in calculated detail (0.138625ms)
+✔ missing source snapshot does not assert matched (0.144875ms)
+✔ source failure hides derived insurance, not stored total (0.078542ms)
+✔ changed payable total inconsistent with source is flagged (0.130666ms)
+✔ cancelled bonus never counted as active twice (0.129125ms)
+✔ source currency mismatch is flagged (0.149375ms)
+✔ draft with old results is not labelled newly calculated (0.1395ms)
+✔ V1 totals and history retain legacy sources (0.124042ms)
+✔ empty summary is unknown, not all zero (0.053084ms)
+✔ Vietnamese name search handles accents and employee codes (0.467041ms)
+✔ currency/type filters never sum unlike currency (0.201666ms)
+✔ readComplete handles server cap smaller than request and >1000 rows (0.4105ms)
+✔ readComplete allows a genuine empty result (0.355625ms)
+✔ readComplete refuses missing count (0.202458ms)
+✔ readComplete refuses query failure instead of zero (0.053625ms)
+✔ readComplete refuses duplicate rows (0.048917ms)
+✔ readComplete detects changing count during load (0.047917ms)
+✔ readComplete detects truncated data before expected count (0.045208ms)
+✔ readComplete bounds maximum response (0.048167ms)
+✔ workspace reads real projection from exact tables and keeps scope (1.776041ms)
+✔ workspace incomplete evidence does not replace saved totals (0.356375ms)
+✔ workspace event failure is separate from salary data (0.300291ms)
+✔ workspace invalid period never queries (0.058625ms)
+✔ workspace changed version during load is rejected (0.17ms)
+✔ workspace flags configured person missing from payroll, not fake zero employee (0.450583ms)
+✔ index groups currencies separately and uses V2 net (0.408708ms)
+✔ index empty draft does not invent payable zero (0.101208ms)
+✔ index missing payroll source fails whole monetary view (0.080542ms)
+✔ TypeScript syntax: Dialog.tsx (7.281666ms)
+✔ TypeScript syntax: Index.tsx (8.078208ms)
+✔ TypeScript syntax: Preview.tsx (4.62025ms)
+✔ TypeScript syntax: Workflow.tsx (3.084625ms)
+✔ TypeScript syntax: Workspace.tsx (21.252083ms)
+✔ TypeScript syntax: load.ts (7.154417ms)
+✔ TypeScript syntax: model.ts (10.28ms)
+✔ TypeScript syntax: preview-actions.ts (1.778334ms)
+✔ source loader has no database write or RPC call (0.218834ms)
+✔ workflow preserves current action, version, note, confirm and override contracts (0.095333ms)
+✔ finance route retains financeContext, never adminClient invocation (0.115625ms)
+✔ admin routes retain authenticated adminClient (0.131625ms)
+✔ production UI does not embed demo salary, person or fake success state (0.512417ms)
+✔ single scoped CSS does not modify global body or sidebar (0.097666ms)
+✔ base breakdown inconsistency cannot hide inside other earnings (0.242083ms)
+✔ line for a different employee is flagged (0.139583ms)
+✔ header for a different branch is flagged (0.124375ms)
+✔ component label does not inherit Object prototype values (0.024833ms)
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `Workspace`. See https://react.dev/link/warning-keys for more information.
+✔ generation uses period only; no client salary calculation (64.83275ms)
+✔ compensation rule carries effective dates and pay type (19.264333ms)
+✔ adjustment is separate RPC with reason (15.872792ms)
+✔ approval requires confirmation and version (22.164083ms)
+✔ unauthorized actions blocked before payroll RPC (12.032917ms)
+✔ server-side period and teacher filters are bounded (32.439833ms)
+✔ dashboard renders separate branches and currencies (78.174208ms)
+✔ teacher detail traces session and separate adjustments (62.348917ms)
+✔ finalized period hides generate and transitions (63.506708ms)
+✔ finalized teacher detail hides adjustment form (46.618083ms)
+✔ emergency approval requires an explicit type and nonblank reason (7.631625ms)
+✔ normal approval never silently requests emergency override (7.450542ms)
+✔ emergency form explains separation and displays audited reason (83.085875ms)
+✔ employee monthly action sends no calculated salary from browser (7.178ms)
+✔ per-session rule requires a class type and preserves effective dates (8.551708ms)
+✔ evidence deduction passes evidence and retry key, not checker identity (7.4225ms)
+✔ employee detail displays frozen minute ratio and evidence selector (70.8455ms)
+✔ trip costs keep separate allowance transport and lodging amounts (7.479334ms)
+node:internal/modules/cjs/loader:1568
+  throw err;
+  ^
+
+Error: Cannot find module './business/workspaces'
+Require stack:
+- /Users/macbookair/vibe-academy-system/tests/programs-workspace.test.cjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at eval (eval at load (/Users/macbookair/vibe-academy-system/tests/programs-workspace.test.cjs:11:3), <anonymous>:17:22)
+    at load (/Users/macbookair/vibe-academy-system/tests/programs-workspace.test.cjs:11:53) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/macbookair/vibe-academy-system/tests/programs-workspace.test.cjs'
+  ]
+}
+
+Node.js v24.20.0
+✖ tests/programs-workspace.test.cjs (169.448208ms)
+✔ registration is a business route and students stay one menu item (0.44425ms)
+✔ students page derives current and waiting without a second student table (0.436916ms)
+✔ won lead can open a prefilled registration and completion stays reviewed (0.089333ms)
+(node:54391) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/app/admin/session-teachers/model.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ control center exposes four operational areas (0.437625ms)
+✔ page does not invent a zero when the source fails (0.116542ms)
+✔ filters and pagination stay in the query string (0.082875ms)
+✔ assignment still goes through set_session_teacher (0.462583ms)
+✔ rules (32.921041ms)
+✔ substitute assignment delegates to canonical RPC (50.931084ms)
+✔ removal is audited via same RPC (10.4005ms)
+✔ invalid assignment and non-admin rejected (15.972125ms)
+✔ session panel and journal display actual substitute (49.932416ms)
+✔ fixed component BASE_SALARY uses guarded V2 RPC, correct positive shape (10.611ms)
+✔ fixed component POSITION_PAY uses guarded V2 RPC, correct positive shape (0.540208ms)
+✔ fixed component BUSINESS_TRIP_ALLOWANCE uses guarded V2 RPC, correct positive shape (0.452667ms)
+✔ fixed component SOCIAL_LABOR_INSURANCE uses guarded V2 RPC, correct positive shape (0.473709ms)
+✔ session shape with class_type all (0.443667ms)
+✔ session shape with class_type ONE_ON_ONE (0.361875ms)
+✔ session shape with class_type GROUP (0.355375ms)
+✔ invalid amount rejected without write: "" (0.356875ms)
+✔ invalid amount rejected without write: "0" (0.367417ms)
+✔ invalid amount rejected without write: "-100000" (0.414375ms)
+✔ invalid amount rejected without write: "100.000" (0.366959ms)
+✔ invalid amount rejected without write: "100,000" (0.297416ms)
+✔ invalid amount rejected without write: "1e5" (0.280916ms)
+✔ invalid amount rejected without write: "100000 VND" (0.267417ms)
+✔ invalid amount rejected without write: "1.234" (0.324166ms)
+✔ invalid amount rejected without write: "1000000000000" (0.291625ms)
+✔ invalid amount rejected without write: "NaN" (0.295541ms)
+✔ validation: invalid employee (0.296541ms)
+✔ validation: invalid branch (0.323042ms)
+✔ validation: missing reason (0.264458ms)
+✔ validation: oversized reason (0.35575ms)
+✔ validation: invalid date (0.465583ms)
+✔ validation: reversed dates (0.569917ms)
+✔ validation: invalid currency (0.882708ms)
+✔ validation: fixed class type (0.311458ms)
+✔ validation: invalid session class (0.320541ms)
+✔ forbidden recurring code FIXED_PAY (0.339792ms)
+✔ forbidden recurring code BONUS (0.259458ms)
+✔ forbidden recurring code TRAVEL_EXPENSE (0.287917ms)
+✔ catalog is authoritative: {"status":"INACTIVE"} (0.293417ms)
+✔ catalog is authoritative: {"recurring_configurable":false} (0.300167ms)
+✔ catalog is authoritative: {"default_calculation_method":"PERCENTAGE"} (0.257916ms)
+✔ catalog is authoritative: {"default_calculation_method":"PER_HOUR"} (0.285042ms)
+✔ catalog is authoritative: {"category":"REIMBURSEMENT"} (0.278916ms)
+✔ catalog read failure does not write (0.28175ms)
+✔ RPC overlap remains error, not success (0.400791ms)
+✔ RPC unauthorized remains error; no privilege bypass (0.286333ms)
+✔ ALREADY_CONFIGURED response reports no new row (0.302667ms)
+✔ invalid or mismatched RPC response is not success (0.79775ms)
+✔ transport failure reports uncertain result (0.333ms)
+✔ auth redirect is not swallowed (0.305416ms)
+✔ views revalidated but payroll generator never called (0.296917ms)
+✔ Staff page queries V2 configs for employee and shows stored values (1.263ms)
+✔ only current supported catalog codes appear as component options (0.467167ms)
+✔ form field names match new action; legacy form is absent (0.473417ms)
+✔ non-admin sees data but no write form (0.351166ms)
+✔ failed role check does not expose form (0.380625ms)
+✔ V2 payroll summary uses v2_net_amount not legacy gross_amount (0.364334ms)
+✔ missing teacher profile hides session form only (0.396084ms)
+✔ no Staff config insert/update/delete or automatic generation in source (0.123959ms)
+✔ historical insurance rejected for new config: SOCIAL_INSURANCE (0.306834ms)
+✔ historical insurance rejected for new config: LABOR_INSURANCE (0.27375ms)
+✔ teaching badges keep the subject and positions stay VAS VAM VAH (0.855666ms)
+✔ portrait inspection accepts a real image header and rejects the wrong file (0.29675ms)
+✔ staff card and legacy teacher route do not expose private HR data (2.335167ms)
+✔ SH01 ALL_REQUIRED_COMPONENTS without a required active component is incomplete (0.503125ms)
+✔ SH02 ALL_REQUIRED_COMPONENTS with a required active component passes the subject gate (0.08225ms)
+✔ SH03 DIRECT_ASSESSMENT with zero components is structurally valid (0.059916ms)
+✔ SH04 MANUAL with zero components is structurally valid (0.048083ms)
+✔ SH05 ALL_REQUIRED_ITEMS component with no required lesson is incomplete (0.060292ms)
+✔ SH06 DIRECT_ASSESSMENT component with zero lessons is not invalid (0.058875ms)
+✔ SH07 inactive component does not satisfy the required active gate (0.057333ms)
+✔ SH08 optional component does not satisfy the required active gate (0.043792ms)
+✔ SH09 program summary propagates a real structural failure (0.065166ms)
+✔ SH10 program summary does not mark a direct assessment subject incomplete (0.149833ms)
+✔ UI01 direct assessment does not force a component layer (0.085ms)
+✔ UI02 component-based subject shows assessment groups (0.0615ms)
+✔ UI03 multi-component subject keeps grouping (0.049084ms)
+✔ UI04 component is never labeled as Level (0.105708ms)
+✔ UI05 program summary stays Program Level Subject Lesson (0.091ms)
+✔ UI06 internal component editor remains available and writes completion rule (0.067583ms)
+✔ UI07 component results stay in progress and report contracts (0.218666ms)
+✔ shared student operations primitives exist (0.466292ms)
+✔ students reports and feedback share vibe ops chrome (0.358125ms)
+✔ learning report list migration enriches ops columns (0.427708ms)
+(node:54397) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/macbookair/vibe-academy-system/app/operations/teacher/sessions/%5Bid%5D/model.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/macbookair/vibe-academy-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ TSW33-40 one session shows a lane per student (1.431125ms)
+✔ TSW teaching helpers count individuals and keep absent feedback optional (22.568167ms)
+✔ pilot lesson blueprint preserves source lesson count and first five module order (1.03825ms)
+✔ pilot draft derives immutable catalogue metadata instead of caller titles and order (60.530208ms)
+✔ pilot cannot expand beyond approved first five or accept duplicate modules (42.725791ms)
+✔ each lesson requires all authoring sections (6.917333ms)
+✔ unprivileged author cannot create theory draft (7.196083ms)
+✔ author page keeps missing source visible and only exposes numeric Grade 1 choices (23.969208ms)
+✔ pilot original draft stays unpublished without fabricated human approvals (0.398541ms)
+✔ draft retains five source modules and all twelve distinct lesson objectives (0.420834ms)
+✔ all original notation examples parse with exact rhythm and accessible alternatives (0.763958ms)
+✔ private draft questions have unique identities, real keys or manual rubrics, never fake automatic notation grades (0.308083ms)
+✔ checkpoint policies remain formative with explicit Grade 1 threshold (0.0585ms)
+✔ selected musical golden examples preserve middle C and two crotchet beats of semiquavers (0.131584ms)
+✔ tuition list shows money, dates and student with bounded query (125.369625ms)
+✔ term detail exposes 5 pause extension days and discount before invoice (49.0105ms)
+✔ any invoice including CANCELLED locks discount and links financial context (40.759666ms)
+✔ tuition filters and second page applied server side (19.051917ms)
+✔ create validates input before mutation (13.20875ms)
+✔ create uses RPC and never submits client price snapshots (8.737959ms)
+✔ edit discount uses guarded RPC and auth blocks non admins (10.487584ms)
+✔ calendar month filters cross year and dates measure entitlement not raw pause totals (9.295084ms)
+✔ reminder timing respects inclusive calendar windows (55.133ms)
+✔ reminder server filters status branch plan and pagination (42.123958ms)
+✔ queue renders distinct branches and currencies with no send button (56.375875ms)
+✔ skip and cancel go through resolution RPC with reason (23.369542ms)
+✔ fake sent and missing reasons rejected without RPC (13.8095ms)
+✔ generation has no caller supplied date or delivery status; admin required (9.111042ms)
+✖ Zalo lives under Hệ thống → Tích hợp and stays out of other shells (0.411625ms)
+✔ config status is boolean and never returns secret values (0.173042ms)
+✔ operational text hides token-shaped values (0.200167ms)
+✔ integration page masks config, summarizes events, and refuses other roles (60.238667ms)
+✔ registration card shows current persisted link state and never activates from UI alone (7.352084ms)
+✔ registration page reads the scoped connection and new files do not embed secrets (0.749375ms)
+✔ two simulated cycles consume replacement refresh tokens; restarted manager ignores old env (20.525625ms)
+✔ concurrent preflights reuse winning refresh rather than consume again (2.218917ms)
+✔ idle scheduled check and downtime recovery use same manager without notification traffic (0.4075ms)
+✔ ownership guard prevents independent manager from calling provider (0.095416ms)
+✔ expired in-flight lock after process death becomes uncertain without reusing token (0.347292ms)
+✔ OAuth uses unique PKCE and one-use user-bound state; callback replay and wrong OA fail (0.88025ms)
+✔ reconnection racing with a newer credential version cannot replace it (0.179833ms)
+✔ callback route requires admin; maintenance checks secret; scheduler never dispatches notifications (1.303166ms)
+✔ legacy UID path cannot send without a durable claim (10.665084ms)
+NOTICE:  extension "pgtap" already exists, skipping
+✔ local channel recovery: late consent, full payment, gate and duplicate protections (rollback) (94.233208ms)
+NOTICE:  extension "pgtap" already exists, skipping
+✔ main local PostgreSQL: payment, durable recovery and permissions (rolled back) (86.540667ms)
+✔ expired access rotates once, verifies OA, persists pair/expiry/version; restart ignores stale env (2.226958ms)
+✔ missing refresh remains blocked without network or bootstrap overwrite (0.305333ms)
+✔ invalid/consumed refresh response -14014 blocks reuse (0.1835ms)
+✔ invalid/consumed refresh response -14001 blocks reuse (0.128708ms)
+✔ two concurrent processes share claim; only one consumes refresh (3.244125ms)
+✔ refresh timeout is durable unknown and never consumes same refresh twice (0.26025ms)
+✔ rotation persistence failure blocks sends; no provider refresh retry (202.295166ms)
+✔ lost commit acknowledgement recovered by readback without another rotation (203.720958ms)
+✔ crash after rotation persisted before verification resumes verification after restart (1.3765ms)
+✔ wrong OA after rotation stays blocked while recovered pair is retained (1.21475ms)
+✔ late credential writer cannot overwrite a newer version (0.432125ms)
+✔ phone -1241 proof failure distinguished from invalid token; proof uses sent token (1.988875ms)
+✔ definitive rejection then concurrent manual/worker recovery sends once and duplicate callback cannot resend (2.488042ms)
+✔ timeout never sends a second request (0.517583ms)
+✔ accepted-write-failure never sends a second request (0.361541ms)
+✔ known invalid authentication does not claim another send or consume retry count (0.55425ms)
+✔ OA and ZBS diagnostics preserve separate proof/permission codes (0.403083ms)
+✔ Z1-APP01 POSTED payment queues Zalo job at authoritative boundary (0.490208ms)
+✔ Z1-APP02 idempotency key includes payment recipient template channel (0.0735ms)
+✔ Z1-APP03 / Z1-APP04 partial payment / invoice PAID not required (0.121833ms)
+✔ Z1-APP05 provider disabled never reports SENT (0.15125ms)
+✔ Z1-APP06 no phone matching in recipient resolution (0.145375ms)
+✔ Z1-APP07 two eligible parents fan out (0.055416ms)
+✔ Z1-APP08 secrets absent from client bundle paths (0.2985ms)
+✔ Z1-APP09 / Z1-APP10 existing IN_APP and queue still present (0.101167ms)
+✔ template registry seed stays fail-closed until Owner id (0.115792ms)
+✔ verified deposit threshold creates one phone confirmation and one mocked send (74.370708ms)
+✔ vietnamese phones normalize to the country-code form and mask (0.459833ms)
+✔ phone sender uses msg_id and does not call without a token (0.618709ms)
+✔ phone rejection, OA-only error, and timeout stay distinct (0.23875ms)
+✔ unarmed gate and a failed claim make no provider call (0.249792ms)
+✔ one claimed phone job records acceptance and a timeout is not retried (0.691959ms)
+✔ unknown provider responses stay ambiguous (0.266875ms)
+✔ dispatcher records safe provider codes and reports database failure (1.151584ms)
+✔ rendered recovery controls: SEND (3.979958ms)
+✔ rendered recovery controls: RETRY (0.349125ms)
+✔ rendered recovery controls: BLOCKED (0.277291ms)
+✔ rendered recovery controls: ACCEPTED (0.276083ms)
+✔ rendered recovery controls: UNCERTAIN (0.243292ms)
+✔ rendered recovery controls: DELIVERED (0.171334ms)
+✔ blocked → consent/gate corrected → eligible → click → accepted; check never sends (5.64175ms)
+✔ double clicks share CAS; replay after rejection cannot consume another attempt (2.008334ms)
+✔ permissions fail before credential or network access (0.448ms)
+✔ unknown response remains protected; no resend or fabricated delivery (1.207958ms)
+✔ shared OA ownership blocker never consumes send allowance (0.499875ms)
+NOTICE:  extension "pgtap" already exists, skipping
+✔ real PostgreSQL: two processes, encrypted rotation, restart and second cycle with no browser (1907.65475ms)
+✔ private storage and OAuth state access restrictions, expiry/replay and identity binding (57.212041ms)
+✔ template 640377 stays blocked without credentials or a send flag (0.745042ms)
+✔ mocked Zalo UID send covers denial, expiry, rejection, and acceptance (0.612ms)
+✔ payOS completion dispatches only an armed allowlisted job (0.21375ms)
+✔ public proxy forwards only payOS and Zalo callbacks (0.34575ms)
+✔ deposit wording stays outside the template parameter (0.241416ms)
+✔ valid webhook envelope is accepted once (1.195667ms)
+✔ invalid signature is rejected and not stored (0.159666ms)
+✔ malformed JSON is rejected (0.076208ms)
+✔ duplicate delivery does not process twice (0.154375ms)
+✔ unsupported event is stored and still returns 200 (0.13125ms)
+✔ accepted response does not expose the fixture secret or payload (0.082917ms)
+✔ signed secret material is refused before persistence (0.072541ms)
+✔ handler source does not hard-code ids, secrets, or a live Zalo call (0.171667ms)
+✔ signed interaction with explicit matching OA is accepted; conflicting OA and absent MAC stay rejected (0.152875ms)
+ℹ tests 743
+ℹ suites 0
+ℹ pass 740
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26436.793459
+
+✖ failing tests:
+
+test at tests/programs-workspace.test.cjs:1:1
+✖ tests/programs-workspace.test.cjs (169.448208ms)
+  'test failed'
+
+test at tests/teacher-session-workspace.test.cjs:11:1
+✖ TSW33-40 one session shows a lane per student (1.431125ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /Ca dạy/. Input:
+  
+  "import { isAfterSalesPath, isMarketingPath } from './business/workspaces'\n" +
+    '\n' +
+    'export const trainingTabs: { name: string; href: string; studentTab?: string }[] = [\n' +
+    "  { name: 'Học viên', href: '/admin/students' },\n" +
+    "  { name: 'Chương trình học', href: '/admin/programs' },\n" +
+    "  { name: 'Khóa học', href: '/admin/programs?view=courses' },\n" +
+    "  { name: 'Ca dạy', href: '/admin/classes', studentTab: 'teaching-shifts' },\n" +
+    "  { name: 'Lịch học', href: '/admin/schedule', studentTab: 'schedule' },\n" +
+    "  { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },\n" +
+    "  { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },\n" +
+    "  { name: 'Báo cáo học tập', href: '/admin/reports/learning' },\n" +
+    "  { name: 'Phản hồi buổi học', href: '/admin/feedback' },\n" +
+    '  // Rooms belongs to the student workspace, never a separate sidebar group.\n' +
+    "  { name: 'Phòng học', href: '/admin/rooms' },\n" +
+    ']\n' +
+    '\n' +
+    "export const studentTabs = trainingTabs.filter(tab => ['/admin/students', '/admin/rooms'].includes(tab.href))\n" +
+    '\n' +
+    'export const systemTabs = [\n' +
+    "  { name: 'Chi nhánh', href: '/admin/branches' },\n" +
+    "  { name: 'Thông báo', href: '/admin/notifications' },\n" +
+    "  { name: 'Tích hợp', href: '/admin/system/integrations' },\n" +
+    "  { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' },\n" +
+    ']\n' +
+    '\n' +
+    'export const navigationGroups: { name: string; items: NavigationItem[] }[] = [\n' +
+    "  { name: 'TỔNG QUAN', items: [{ name: 'Bảng điều khiển', href: '/admin' }] },\n" +
+    "  { name: 'VẬN HÀNH', items: [\n" +
+    "    { name: 'Đào tạo', href: '/admin/students' },\n" +
+    "    { name: 'Tổng quan tài chính', href: '/admin/finance' },\n" +
+    "    { name: 'Học phí & Thanh toán', href: '/admin/finance/invoices', hideChildren: true, children: [\n" +
+    "      { name: 'Hóa đơn', href: '/admin/finance/invoices' },\n" +
+    "      { name: 'Học phí', href: '/admin/tuition' },\n" +
+    "      { name: 'Thanh toán', href: '/admin/finance/payments' },\n" +
+    "      { name: 'Công nợ', href: '/admin/finance/receivables' },\n" +
+    "      { name: 'Hoàn tiền', href: '/admin/finance/refunds' },\n" +
+    "      { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },\n" +
+    '    ] },\n' +
+    "    { name: 'Số dư khách hàng', href: '/admin/finance/credits' },\n" +
+    "    { name: 'Chi phí vận hành', href: '/admin/finance/operating-expenses' },\n" +
+    '  ] },\n' +
+    "  { name: 'HR', items: [\n" +
+    "    { name: 'Tổng quan HR', href: '/admin/hr' },\n" +
+    "    { name: 'Nhân sự & nghỉ phép', href: '/admin/employees', hideChildren: true, children: [\n" +
+    "      { name: 'Hồ sơ nhân viên', href: '/admin/employees' },\n" +
+    "      { name: 'Chấm công', href: '/admin/hr/attendance' },\n" +
+    "      { name: 'Yêu cầu nghỉ phép', href: '/admin/employees/leave-requests' },\n" +
+    "      { name: 'Chính sách nghỉ phép', href: '/admin/employees/leave-policies' },\n" +
+    '    ] },\n' +
+    "    { name: 'Lương & chi trả', href: '/admin/payroll', hideChildren: true, children: [\n" +
+    "      { name: 'Mẫu lương & cấu hình', href: '/admin/hr/templates' },\n" +
+    "      { name: 'Kỳ lương', href: '/admin/payroll' },\n" +
+    "      { name: 'Công tác phí', href: '/admin/hr/expenses' },\n" +
+    "      { name: 'Phiếu lương & chi trả', href: '/admin/hr/payslips' },\n" +
+    '    ] },\n' +
+    "    { name: 'Phân công và đối soát', href: '/admin/session-teachers', hideChildren: true, children: [\n" +
+    "      { name: 'Phân công nhân viên', href: '/admin/session-teachers' },\n" +
+    "      { name: 'Đối soát', href: '/admin/hr/teaching' },\n" +
+    '    ] },\n' +
+    '  ] },\n' +
+    "  { name: 'KINH DOANH', items: [\n" +
+    "    { name: 'Điều hành kinh doanh', href: '/admin/business' },\n" +
+    "    { name: 'CRM & Tuyển sinh', href: '/admin/business/registrations' },\n" +
+    "    { name: 'Báo cáo marketing', href: '/admin/business/marketing' },\n" +
+    "    { name: 'Sau bán hàng', href: '/admin/business/after-sales' },\n" +
+    '  ] },\n' +
+    "  { name: 'HỆ THỐNG', items: [\n" +
+    "    { name: 'Kho sách và vật tư', href: '/admin/inventory' },\n" +
+    "    { name: 'Nhạc cụ theo serial', href: '/admin/instruments' },\n" +
+    "    { name: 'Hệ thống', href: '/admin/branches' },\n" +
+    '  ] },\n' +
+    ']\n' +
+    '// Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.\n' +
+    '// Existing learning report URLs remain under the training workspace.\n' +
+    'export function isBusinessShellPath(pathname: string | null | undefined) {\n' +
+    "  return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))\n" +
+    '}\n' +
+    '\n' +
+    'export function isStudentOpsPath(pathname: string | null | undefined) {\n' +
+    "  return pathname === '/admin/students'\n" +
+    '}\n' +
+    '\n' +
+    "export type ShellMode = 'full' | 'business' | 'students' | 'business-students'\n" +
+    '\n' +
+    'export function navigationForShell(businessOnly: boolean) {\n' +
+    "  return businessOnly ? navigationGroups.filter(group => group.name === 'KINH DOANH') : navigationGroups\n" +
+    '}\n' +
+    '\n' +
+    'export function navigationForAccess(mode: ShellMode) {\n' +
+    "  if (mode === 'full') return navigationGroups\n" +
+    "  const business = navigationGroups.filter(group => group.name === 'KINH DOANH')\n" +
+    '  const students = navigationGroups\n' +
+    "    .filter(group => group.name === 'VẬN HÀNH')\n" +
+    "    .map(group => ({ ...group, items: group.items.filter(item => item.href === '/admin/students') }))\n" +
+    "  if (mode === 'business') return business\n" +
+    "  if (mode === 'students') return students\n" +
+    '  return [...business, ...students]\n' +
+    '}\n' +
+    '\n' +
+    'export type NavigationChild = { name: string; href: string }\n' +
+    'export type NavigationItem = { name: string; href: string; children?: NavigationChild[]; hideChildren?: boolean }\n' +
+    '\n' +
+    'function navigationLeaves() {\n' +
+    '  return navigationGroups.flatMap(group => group.items.flatMap(item => item.children?.length ? item.children : [item]))\n' +
+    '}\n' +
+    '\n' +
+    'export function activeNavigationHref(pathname: string) {\n' +
+    '  const section = workspaceSection(pathname)\n' +
+    "  if (section === 'training') return '/admin/students'\n" +
+    "  if (section === 'system') return '/admin/branches'\n" +
+    "  if (pathname === '/admin/business/crm' || pathname.startsWith('/admin/business/crm/')) return '/admin/business/registrations'\n" +
+    "  if (pathname === '/admin/employees/attendance' || pathname.startsWith('/admin/employees/attendance/')) {\n" +
+    "    return '/admin/hr/attendance'\n" +
+    '  }\n' +
+    "  if (pathname === '/admin/academic' || pathname.startsWith('/admin/academic/') || pathname === '/admin/courses' || pathname.startsWith('/admin/courses/')) {\n" +
+    "    return '/admin/programs'\n" +
+    '  }\n' +
+    "  if (pathname === '/admin/rooms' || pathname.startsWith('/admin/rooms/')) return '/admin/rooms'\n" +
+    "  if (isMarketingPath(pathname)) return '/admin/business/marketing'\n" +
+    "  if (isAfterSalesPath(pathname)) return '/admin/business/after-sales'\n" +
+    '  if (\n' +
+    "    pathname === '/admin/classes' || pathname.startsWith('/admin/classes/')\n" +
+    "    || pathname === '/admin/schedule' || pathname.startsWith('/admin/schedule/')\n" +
+    "    || pathname === '/admin/attendance' || pathname.startsWith('/admin/attendance/')\n" +
+    "    || pathname === '/admin/reports/learning' || pathname.startsWith('/admin/reports/learning/')\n" +
+    "    || pathname === '/admin/feedback' || pathname.startsWith('/admin/feedback/')\n" +
+    '  ) {\n' +
+    "    return '/admin/students'\n" +
+    '  }\n' +
+    '  return navigationLeaves()\n' +
+    "    .filter(item => pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href + '/')))\n" +
+    '    .sort((a, b) => b.href.length - a.href.length)[0]?.href\n' +
+    '}\n' +
+    '\n' +
+    'export function activeNavigationParent(pathname: string) {\n' +
+    '  const leaf = activeNavigationHref(pathname)\n' +
+    '  if (!leaf) return undefined\n' +
+    '  for (const group of navigationGroups) {\n' +
+    '    for (const item of group.items) {\n' +
+    '      if (item.children?.some(child => child.href === leaf)) return item.href\n' +
+    '    }\n' +
+    '  }\n' +
+    '  return leaf\n' +
+    '}\n' +
+    'function inRoute(pathname: string, href: string) {\n' +
+    "  return pathname === href.split('?')[0] || pathname.startsWith(href.split('?')[0] + '/')\n" +
+    '}\n' +
+    '\n' +
+    'function activeTab(pathname: string, tabs: { href: string }[]) {\n' +
+    '  return tabs.filter(tab => inRoute(pathname, tab.href))\n' +
+    '    .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? null\n' +
+    '}\n' +
+    '\n' +
+    "export function workspaceSection(pathname: string): 'training' | 'system' | null {\n" +
+    "  if (inRoute(pathname, '/admin/academic') || inRoute(pathname, '/admin/courses')) return 'training'\n" +
+    "  if (activeTab(pathname, trainingTabs) || activeTab(pathname, studentTabs)) return 'training'\n" +
+    "  if (activeTab(pathname, systemTabs)) return 'system'\n" +
+    '  return null\n' +
+    '}\n' +
+    '\n' +
+    '// Menu visibility follows the existing server-side shell boundary. Grouping\n' +
+    '// rooms under students must never grant room access to student-placement staff.\n' +
+    'export function workspaceTabsForAccess(pathname: string, mode: ShellMode) {\n' +
+    '  const section = workspaceSection(pathname)\n' +
+    "  if (mode === 'full') {\n" +
+    "    return section === 'training' ? trainingTabs : section === 'system' ? systemTabs : []\n" +
+    '  }\n' +
+    "  return (mode === 'students' || mode === 'business-students') && isStudentOpsPath(pathname)\n" +
+    "    ? trainingTabs.filter(tab => tab.href === '/admin/students' || tab.studentTab).map(tab => ({ ...tab, activeHref: tab.href, href: tab.studentTab ? `/admin/students?tab=${tab.studentTab}` : tab.href }))\n" +
+    '    : []\n' +
+    '}\n' +
+    '\n' +
+    'export function activeWorkspaceTab(pathname: string, view?: string | null, tab?: string | null) {\n' +
+    "  if (pathname === '/admin/students') {\n" +
+    "    const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }\n" +
+    "    return aliases[tab || ''] || '/admin/students'\n" +
+    '  }\n' +
+    "  if (pathname === '/admin/programs') return view === 'courses' ? '/admin/programs?view=courses' : '/admin/programs'\n" +
+    "  if (inRoute(pathname, '/admin/academic')) return '/admin/programs'\n" +
+    "  if (inRoute(pathname, '/admin/courses')) return '/admin/programs?view=courses'\n" +
+    "  if (inRoute(pathname, '/admin/rooms')) return '/admin/rooms'\n" +
+    "  if (inRoute(pathname, '/admin/students')) return '/admin/students'\n" +
+    '  return activeTab(pathname, [...trainingTabs, ...systemTabs])\n' +
+    '}\n' +
+    '\n' +
+    'export function activeStudentTab(pathname: string) {\n' +
+    '  return activeTab(pathname, studentTabs)\n' +
+    '}\n' +
+    '\n' +
+    '// Preserve the existing program/course search filters when the shared bar\n' +
+    '// replaces the former local mode switch. Selection/health filters are view-specific.\n' +
+    'export function workspaceTabHref(pathname: string, search: { get(key: string): string | null }, href: string) {\n' +
+    "  if (pathname !== '/admin/programs' || href.split('?')[0] !== '/admin/programs') return href\n" +
+    "  const query = new URLSearchParams(href.split('?')[1] || '')\n" +
+    "  for (const key of ['q', 'stat"... 154 more characters
+  
+      at TestContext.<anonymous> (/Users/macbookair/vibe-academy-system/tests/teacher-session-workspace.test.cjs:38:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "import { isAfterSalesPath, isMarketingPath } from './business/workspaces'\n\nexport const trainingTabs: { name: string; href: string; studentTab?: string }[] = [\n  { name: 'Học viên', href: '/admin/students' },\n  { name: 'Chương trình học', href: '/admin/programs' },\n  { name: 'Khóa học', href: '/admin/programs?view=courses' },\n  { name: 'Ca dạy', href: '/admin/classes', studentTab: 'teaching-shifts' },\n  { name: 'Lịch học', href: '/admin/schedule', studentTab: 'schedule' },\n  { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },\n  { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },\n  { name: 'Báo cáo học tập', href: '/admin/reports/learning' },\n  { name: 'Phản hồi buổi học', href: '/admin/feedback' },\n  // Rooms belongs to the student workspace, never a separate sidebar group.\n  { name: 'Phòng học', href: '/admin/rooms' },\n]\n\nexport const studentTabs = trainingTabs.filter(tab => ['/admin/students', '/admin/rooms'].includes(tab.href))\n\nexport const systemTabs = [\n  { name: 'Chi nhánh', href: '/admin/branches' },\n  { name: 'Thông báo', href: '/admin/notifications' },\n  { name: 'Tích hợp', href: '/admin/system/integrations' },\n  { name: 'Chuyển dữ liệu học viên', href: '/admin/migration' },\n]\n\nexport const navigationGroups: { name: string; items: NavigationItem[] }[] = [\n  { name: 'TỔNG QUAN', items: [{ name: 'Bảng điều khiển', href: '/admin' }] },\n  { name: 'VẬN HÀNH', items: [\n    { name: 'Đào tạo', href: '/admin/students' },\n    { name: 'Tổng quan tài chính', href: '/admin/finance' },\n    { name: 'Học phí & Thanh toán', href: '/admin/finance/invoices', hideChildren: true, children: [\n      { name: 'Hóa đơn', href: '/admin/finance/invoices' },\n      { name: 'Học phí', href: '/admin/tuition' },\n      { name: 'Thanh toán', href: '/admin/finance/payments' },\n      { name: 'Công nợ', href: '/admin/finance/receivables' },\n      { name: 'Hoàn tiền', href: '/admin/finance/refunds' },\n      { name: 'Nhắc học phí', href: '/admin/tuition/reminders' },\n    ] },\n    { name: 'Số dư khách hàng', href: '/admin/finance/credits' },\n    { name: 'Chi phí vận hành', href: '/admin/finance/operating-expenses' },\n  ] },\n  { name: 'HR', items: [\n    { name: 'Tổng quan HR', href: '/admin/hr' },\n    { name: 'Nhân sự & nghỉ phép', href: '/admin/employees', hideChildren: true, children: [\n      { name: 'Hồ sơ nhân viên', href: '/admin/employees' },\n      { name: 'Chấm công', href: '/admin/hr/attendance' },\n      { name: 'Yêu cầu nghỉ phép', href: '/admin/employees/leave-requests' },\n      { name: 'Chính sách nghỉ phép', href: '/admin/employees/leave-policies' },\n    ] },\n    { name: 'Lương & chi trả', href: '/admin/payroll', hideChildren: true, children: [\n      { name: 'Mẫu lương & cấu hình', href: '/admin/hr/templates' },\n      { name: 'Kỳ lương', href: '/admin/payroll' },\n      { name: 'Công tác phí', href: '/admin/hr/expenses' },\n      { name: 'Phiếu lương & chi trả', href: '/admin/hr/payslips' },\n    ] },\n    { name: 'Phân công và đối soát', href: '/admin/session-teachers', hideChildren: true, children: [\n      { name: 'Phân công nhân viên', href: '/admin/session-teachers' },\n      { name: 'Đối soát', href: '/admin/hr/teaching' },\n    ] },\n  ] },\n  { name: 'KINH DOANH', items: [\n    { name: 'Điều hành kinh doanh', href: '/admin/business' },\n    { name: 'CRM & Tuyển sinh', href: '/admin/business/registrations' },\n    { name: 'Báo cáo marketing', href: '/admin/business/marketing' },\n    { name: 'Sau bán hàng', href: '/admin/business/after-sales' },\n  ] },\n  { name: 'HỆ THỐNG', items: [\n    { name: 'Kho sách và vật tư', href: '/admin/inventory' },\n    { name: 'Nhạc cụ theo serial', href: '/admin/instruments' },\n    { name: 'Hệ thống', href: '/admin/branches' },\n  ] },\n]\n// Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.\n// Existing learning report URLs remain under the training workspace.\nexport function isBusinessShellPath(pathname: string | null | undefined) {\n  return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))\n}\n\nexport function isStudentOpsPath(pathname: string | null | undefined) {\n  return pathname === '/admin/students'\n}\n\nexport type ShellMode = 'full' | 'business' | 'students' | 'business-students'\n\nexport function navigationForShell(businessOnly: boolean) {\n  return businessOnly ? navigationGroups.filter(group => group.name === 'KINH DOANH') : navigationGroups\n}\n\nexport function navigationForAccess(mode: ShellMode) {\n  if (mode === 'full') return navigationGroups\n  const business = navigationGroups.filter(group => group.name === 'KINH DOANH')\n  const students = navigationGroups\n    .filter(group => group.name === 'VẬN HÀNH')\n    .map(group => ({ ...group, items: group.items.filter(item => item.href === '/admin/students') }))\n  if (mode === 'business') return business\n  if (mode === 'students') return students\n  return [...business, ...students]\n}\n\nexport type NavigationChild = { name: string; href: string }\nexport type NavigationItem = { name: string; href: string; children?: NavigationChild[]; hideChildren?: boolean }\n\nfunction navigationLeaves() {\n  return navigationGroups.flatMap(group => group.items.flatMap(item => item.children?.length ? item.children : [item]))\n}\n\nexport function activeNavigationHref(pathname: string) {\n  const section = workspaceSection(pathname)\n  if (section === 'training') return '/admin/students'\n  if (section === 'system') return '/admin/branches'\n  if (pathname === '/admin/business/crm' || pathname.startsWith('/admin/business/crm/')) return '/admin/business/registrations'\n  if (pathname === '/admin/employees/attendance' || pathname.startsWith('/admin/employees/attendance/')) {\n    return '/admin/hr/attendance'\n  }\n  if (pathname === '/admin/academic' || pathname.startsWith('/admin/academic/') || pathname === '/admin/courses' || pathname.startsWith('/admin/courses/')) {\n    return '/admin/programs'\n  }\n  if (pathname === '/admin/rooms' || pathname.startsWith('/admin/rooms/')) return '/admin/rooms'\n  if (isMarketingPath(pathname)) return '/admin/business/marketing'\n  if (isAfterSalesPath(pathname)) return '/admin/business/after-sales'\n  if (\n    pathname === '/admin/classes' || pathname.startsWith('/admin/classes/')\n    || pathname === '/admin/schedule' || pathname.startsWith('/admin/schedule/')\n    || pathname === '/admin/attendance' || pathname.startsWith('/admin/attendance/')\n    || pathname === '/admin/reports/learning' || pathname.startsWith('/admin/reports/learning/')\n    || pathname === '/admin/feedback' || pathname.startsWith('/admin/feedback/')\n  ) {\n    return '/admin/students'\n  }\n  return navigationLeaves()\n    .filter(item => pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href + '/')))\n    .sort((a, b) => b.href.length - a.href.length)[0]?.href\n}\n\nexport function activeNavigationParent(pathname: string) {\n  const leaf = activeNavigationHref(pathname)\n  if (!leaf) return undefined\n  for (const group of navigationGroups) {\n    for (const item of group.items) {\n      if (item.children?.some(child => child.href === leaf)) return item.href\n    }\n  }\n  return leaf\n}\nfunction inRoute(pathname: string, href: string) {\n  return pathname === href.split('?')[0] || pathname.startsWith(href.split('?')[0] + '/')\n}\n\nfunction activeTab(pathname: string, tabs: { href: string }[]) {\n  return tabs.filter(tab => inRoute(pathname, tab.href))\n    .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? null\n}\n\nexport function workspaceSection(pathname: string): 'training' | 'system' | null {\n  if (inRoute(pathname, '/admin/academic') || inRoute(pathname, '/admin/courses')) return 'training'\n  if (activeTab(pathname, trainingTabs) || activeTab(pathname, studentTabs)) return 'training'\n  if (activeTab(pathname, systemTabs)) return 'system'\n  return null\n}\n\n// Menu visibility follows the existing server-side shell boundary. Grouping\n// rooms under students must never grant room access to student-placement staff.\nexport function workspaceTabsForAccess(pathname: string, mode: ShellMode) {\n  const section = workspaceSection(pathname)\n  if (mode === 'full') {\n    return section === 'training' ? trainingTabs : section === 'system' ? systemTabs : []\n  }\n  return (mode === 'students' || mode === 'business-students') && isStudentOpsPath(pathname)\n    ? trainingTabs.filter(tab => tab.href === '/admin/students' || tab.studentTab).map(tab => ({ ...tab, activeHref: tab.href, href: tab.studentTab ? `/admin/students?tab=${tab.studentTab}` : tab.href }))\n    : []\n}\n\nexport function activeWorkspaceTab(pathname: string, view?: string | null, tab?: string | null) {\n  if (pathname === '/admin/students') {\n    const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }\n    return aliases[tab || ''] || '/admin/students'\n  }\n  if (pathname === '/admin/programs') return view === 'courses' ? '/admin/programs?view=courses' : '/admin/programs'\n  if (inRoute(pathname, '/admin/academic')) return '/admin/programs'\n  if (inRoute(pathname, '/admin/courses')) return '/admin/programs?view=courses'\n  if (inRoute(pathname, '/admin/rooms')) return '/admin/rooms'\n  if (inRoute(pathname, '/admin/students')) return '/admin/students'\n  return activeTab(pathname, [...trainingTabs, ...systemTabs])\n}\n\nexport function activeStudentTab(pathname: string) {\n  return activeTab(pathname, studentTabs)\n}\n\n// Preserve the existing program/course search filters when the shared bar\n// replaces the former local mode switch. Selection/health filters are view-specific.\nexport function workspaceTabHref(pathname: string, search: { get(key: string): string | null }, href: string) {\n  if (pathname !== '/admin/programs' || href.split('?')[0] !== '/admin/programs') return href\n  const query = new URLSearchParams(href.split('?')[1] || '')\n  for (const key of ['q', 'stat"... 154 more characters,
+    expected: /Ca dạy/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/zalo-admin-ui.test.cjs:44:1
+✖ Zalo lives under Hệ thống → Tích hợp and stays out of other shells (0.411625ms)
+  TypeError: Cannot read properties of undefined (reading 'href')
+      at TestContext.<anonymous> (/Users/macbookair/vibe-academy-system/tests/zalo-admin-ui.test.cjs:46:67)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)

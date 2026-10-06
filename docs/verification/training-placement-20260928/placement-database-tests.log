@@ -1,0 +1,171 @@
+BEGIN
+NOTICE:  extension "pgtap" already exists, skipping
+CREATE EXTENSION
+ no_plan 
+---------
+(0 rows)
+
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 4
+INSERT 0 4
+           lives_ok           
+------------------------------
+ ok 1 - one-to-one first seat
+(1 row)
+
+       throws_ok        
+------------------------
+ ok 2 - one-to-one full
+(1 row)
+
+            lives_ok             
+---------------------------------
+ ok 3 - adjacent periods allowed
+(1 row)
+
+            throws_ok            
+---------------------------------
+ ok 4 - student overlap rejected
+(1 row)
+
+        lives_ok         
+-------------------------
+ ok 5 - group final seat
+(1 row)
+
+     throws_ok     
+-------------------
+ ok 6 - group full
+(1 row)
+
+                    throws_ok                    
+-------------------------------------------------
+ ok 7 - duplicate retry cannot create enrollment
+(1 row)
+
+INSERT 0 1
+         throws_ok         
+---------------------------
+ ok 8 - pause retains seat
+(1 row)
+
+UPDATE 1
+                   throws_ok                    
+------------------------------------------------
+ ok 9 - started membership cannot rewrite class
+(1 row)
+
+UPDATE 1
+          is          
+----------------------
+ ok 10 - room overlap
+(1 row)
+
+UPDATE 1
+                                 is                                  
+---------------------------------------------------------------------
+ ok 11 - future class boundary beyond next fortnight remains checked
+(1 row)
+
+UPDATE 1
+UPDATE 1
+UPDATE 1
+           is            
+-------------------------
+ ok 12 - teacher overlap
+(1 row)
+
+UPDATE 1
+UPDATE 1
+                  is                   
+---------------------------------------
+ ok 13 - missing schedule is not clear
+(1 row)
+
+                   ok                   
+----------------------------------------
+ ok 14 - internal timetable not exposed
+(1 row)
+
+UPDATE 1
+UPDATE 1
+          throws_ok           
+------------------------------
+ ok 15 - wrong branch profile
+(1 row)
+
+UPDATE 1
+UPDATE 1
+              throws_ok              
+-------------------------------------
+ ok 16 - before class start rejected
+(1 row)
+
+UPDATE 1
+UPDATE 1
+                              is                              
+--------------------------------------------------------------
+ ok 17 - future teacher is not incorrectly treated as current
+(1 row)
+
+UPDATE 1
+INSERT 0 1
+                      is                      
+----------------------------------------------
+ ok 18 - rescheduled slot replaces recurrence
+(1 row)
+
+                                    is                                     
+---------------------------------------------------------------------------
+ ok 19 - rescheduled actual time resolves conflict during effective window
+(1 row)
+
+                         is                         
+----------------------------------------------------
+ ok 20 - later recurring conflict is still detected
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 1
+                              is                              
+--------------------------------------------------------------
+ ok 21 - explicit makeup roster conflicts with new membership
+(1 row)
+
+                       is                        
+-------------------------------------------------
+ ok 22 - makeup does not include nonparticipants
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+              set_config              
+--------------------------------------
+ b9000000-0000-4000-8000-000000000099
+(1 row)
+
+INSERT 0 105
+                                 is                                 
+--------------------------------------------------------------------
+ ok 23 - all choices after first 100 remain reachable by pagination
+(1 row)
+
+ finish 
+--------
+ 1..23
+(1 row)
+
+ROLLBACK

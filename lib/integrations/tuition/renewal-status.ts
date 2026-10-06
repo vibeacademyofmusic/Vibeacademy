@@ -58,8 +58,13 @@ export function paymentTemplateGate(template: {
 }
 
 export function paymentNoticeReason(code: string | null | undefined, templateId: string | null | undefined) {
-  if (code === 'ELIGIBLE') return `Mẫu ZALO_TUITION_PAYMENT ${templateId || ''} đã bật. Hồ sơ giữ lại sẽ gửi khi nhân viên bấm gửi lại. Bật mẫu không tự gửi.`
+  if (code === 'ELIGIBLE') return `Mẫu ZALO_TUITION_PAYMENT ${templateId || ''} đã bật cho gửi thủ công. Bấm gửi mới tạo tin. Bật mẫu không tự gửi và không ghi đã thanh toán.`
   if (code === 'ZBS_SEND_DISABLED') return `Mẫu ZALO_TUITION_PAYMENT ${templateId || ''} đã cấu hình. Gửi đang tắt. Chưa gửi tin và chưa ghi đã thanh toán.`
+  if (code === 'ALREADY_RECORDED' || code === 'ALREADY_ACCEPTED') return 'Tin yêu cầu thanh toán đã được ghi nhận. Không gửi lại.'
+  if (code === 'UNKNOWN_NOT_RETRIED' || code === 'ACCEPTANCE_UNKNOWN') return 'Lần gửi trước chưa rõ kết quả. Không gửi lại.'
+  if (code === 'LINK_INVOICE_MISMATCH') return 'Link thanh toán không thuộc hóa đơn đang chọn. Chưa gửi.'
+  if (code === 'DUPLICATE_HELD') return 'Yêu cầu này đang được giữ. Chưa gửi thêm.'
+  if (code === 'NOT_CLAIMED') return 'Một lượt gửi khác đang xử lý hồ sơ này. Chưa gửi thêm.'
   if (code === 'ZBS_TEMPLATE_REQUIRED') return 'Mẫu yêu cầu thanh toán chưa có mã Zalo đã duyệt. Chưa gửi.'
   return 'Chưa gửi yêu cầu thanh toán. Chưa ghi đã thanh toán.'
 }

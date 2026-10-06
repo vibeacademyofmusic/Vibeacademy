@@ -1,0 +1,164 @@
+- complementary:
+  - link "VIBE Academy":
+    - /url: /admin
+    - img "VIBE Academy"
+  - paragraph: Hệ thống quản lý
+  - navigation "Điều hướng quản trị":
+    - region "TỔNG QUAN":
+      - heading "TỔNG QUAN" [level=2]
+      - list:
+        - link "Bảng điều khiển":
+          - /url: /admin
+    - region "VẬN HÀNH":
+      - heading "VẬN HÀNH" [level=2]
+      - list:
+        - link "Đào tạo":
+          - /url: /admin/students
+        - link "Tổng quan tài chính":
+          - /url: /admin/finance
+        - link "Học phí & Thanh toán":
+          - /url: /admin/finance/invoices
+        - link "Số dư khách hàng":
+          - /url: /admin/finance/credits
+        - link "Chi phí vận hành":
+          - /url: /admin/finance/operating-expenses
+    - region "HR":
+      - heading "HR" [level=2]
+      - list:
+        - link "Tổng quan HR":
+          - /url: /admin/hr
+        - link "Nhân sự & nghỉ phép":
+          - /url: /admin/employees
+        - link "Lương & chi trả":
+          - /url: /admin/payroll
+        - link "Phân công và đối soát":
+          - /url: /admin/session-teachers
+    - region "KINH DOANH":
+      - heading "KINH DOANH" [level=2]
+      - list:
+        - link "Điều hành kinh doanh":
+          - /url: /admin/business
+        - link "CRM & Tuyển sinh":
+          - /url: /admin/business/registrations
+        - link "Báo cáo marketing":
+          - /url: /admin/business/marketing
+        - link "Sau bán hàng":
+          - /url: /admin/business/after-sales
+    - region "HỆ THỐNG":
+      - heading "HỆ THỐNG" [level=2]
+      - list:
+        - link "Kho sách và vật tư":
+          - /url: /admin/inventory
+        - link "Nhạc cụ theo serial":
+          - /url: /admin/instruments
+        - link "Hệ thống":
+          - /url: /admin/branches
+  - paragraph: Đăng nhập với tài khoản
+  - paragraph: TEST VIBE-EXEC-20260930 ADMIN
+  - paragraph: Quản trị viên cấp cao
+  - button "Đăng xuất"
+- banner:
+  - paragraph: Hệ thống Vibe Academy
+  - paragraph: Quản trị
+  - generic: TEST VIBE-EXEC-20260930 ADMIN
+- main:
+  - navigation "Đào tạo":
+    - link "Học viên":
+      - /url: /admin/students
+    - link "Chương trình học":
+      - /url: /admin/programs
+    - link "Ca dạy":
+      - /url: /admin/classes
+    - link "Lịch học":
+      - /url: /admin/schedule
+    - link "Điểm danh":
+      - /url: /admin/attendance
+    - link "Cảnh báo chuyên cần":
+      - /url: /admin/attendance/retention
+    - link "Báo cáo học tập":
+      - /url: /admin/reports/learning
+    - link "Phản hồi buổi học":
+      - /url: /admin/feedback
+    - link "Phòng học":
+      - /url: /admin/rooms
+  - heading "Học viên" [level=1]
+  - paragraph: Quản lý hồ sơ, ca dạy, lịch học, điểm danh và quá trình học tập của học viên.
+  - text: Danh sách học viên
+  - combobox "Danh sách học viên":
+    - option "Tổng quan học viên"
+    - option "Học viên đang hoạt động"
+    - option "Chờ vào ca dạy" [selected]
+  - button "Xem"
+  - heading "Đã vào ca dạy – chờ bắt đầu" [level=1]
+  - paragraph: Ca dạy đã xác nhận. Học viên chưa tính là đang học cho đến ngày bắt đầu.
+  - link "Tạo hồ sơ thủ công":
+    - /url: /admin/students?tab=students&view=records
+  - link "Học viên đang hoạt động 1":
+    - /url: /admin/students?tab=students
+    - paragraph: Học viên đang hoạt động
+    - strong: "1"
+  - link "Chờ vào ca dạy 0":
+    - /url: /admin/students?tab=waiting
+    - paragraph: Chờ vào ca dạy
+    - strong: "0"
+  - link "Đã vào ca dạy – chờ bắt đầu 1":
+    - /url: /admin/students?tab=students&lifecycle=future
+    - paragraph: Đã vào ca dạy – chờ bắt đầu
+    - strong: "1"
+  - link "Đang bảo lưu 0":
+    - /url: /admin/students?tab=students&lifecycle=paused
+    - paragraph: Đang bảo lưu
+    - strong: "0"
+  - generic: Bộ môn
+  - combobox "Bộ môn":
+    - option "Tất cả bộ môn" [selected]
+    - option "TEST execution curriculum"
+  - generic: Chi nhánh
+  - combobox "Chi nhánh":
+    - option "Tất cả" [selected]
+    - option "TEST execution branch A"
+    - option "TEST execution branch B"
+    - option "Vibe Academy Cần Thơ"
+  - generic: Tìm học viên
+  - searchbox "Tìm học viên"
+  - button "Lọc"
+  - link "Xóa lọc":
+    - /url: /admin/students?tab=students&lifecycle=future
+  - table:
+    - rowgroup:
+      - row "Học viên Chi nhánh Chương trình / Bộ môn Grade Ca dạy Giáo viên chính Ngày bắt đầu Trạng thái Hành động":
+        - columnheader "Học viên"
+        - columnheader "Chi nhánh"
+        - columnheader "Chương trình / Bộ môn"
+        - columnheader "Grade"
+        - columnheader "Ca dạy"
+        - columnheader "Giáo viên chính"
+        - columnheader "Ngày bắt đầu"
+        - columnheader "Trạng thái"
+        - columnheader "Hành động"
+    - rowgroup:
+      - 'row "TEST UI EXEC 20260930 TEST execution branch A TEST legacy bridge (fixture only) TEST Grade 1 TEST execution class TEST execution teacher 2026-10-07 Đã vào ca dạy – chờ bắt đầu VIBE-EXEC-20260930 · TEST execution class Giáo viên hôm nay: TEST VIBE-EXEC-20260930 TEACHER · TEST execution branch A · Phòng: TEST execution room Thứ 4 08:00–09:00 · 60 phút · TEST execution curriculum · TEST Grade 1 2/5 học viên · Đang hoạt động 2026-10-07 Đổi ca dạy Hủy vào ca dạy"':
+        - cell "TEST UI EXEC 20260930":
+          - link "TEST UI EXEC 20260930":
+            - /url: /admin/students/a697e932-e33c-4513-a610-0d9adaaf665e
+        - cell "TEST execution branch A"
+        - cell "TEST legacy bridge (fixture only)"
+        - cell "TEST Grade 1"
+        - cell "TEST execution class"
+        - cell "TEST execution teacher"
+        - cell "2026-10-07"
+        - cell "Đã vào ca dạy – chờ bắt đầu":
+          - generic: Đã vào ca dạy – chờ bắt đầu
+        - 'cell "VIBE-EXEC-20260930 · TEST execution class Giáo viên hôm nay: TEST VIBE-EXEC-20260930 TEACHER · TEST execution branch A · Phòng: TEST execution room Thứ 4 08:00–09:00 · 60 phút · TEST execution curriculum · TEST Grade 1 2/5 học viên · Đang hoạt động 2026-10-07 Đổi ca dạy Hủy vào ca dạy"':
+          - 'radio "VIBE-EXEC-20260930 · TEST execution class Giáo viên hôm nay: TEST VIBE-EXEC-20260930 TEACHER · TEST execution branch A · Phòng: TEST execution room Thứ 4 08:00–09:00 · 60 phút · TEST execution curriculum · TEST Grade 1 2/5 học viên · Đang hoạt động" [checked]'
+          - text: VIBE-EXEC-20260930 · TEST execution class
+          - generic: "Giáo viên hôm nay: TEST VIBE-EXEC-20260930 TEACHER · TEST execution branch A · Phòng: TEST execution room"
+          - generic: Thứ 4 08:00–09:00 · 60 phút · TEST execution curriculum · TEST Grade 1
+          - generic: 2/5 học viên · Đang hoạt động
+          - textbox "Ngày bắt đầu": 2026-10-07
+          - textbox "Lý do"
+          - button "Đổi ca dạy"
+          - textbox "Lý do hủy"
+          - button "Hủy vào ca dạy"
+- button "Open Next.js Dev Tools":
+- alert: Học viên

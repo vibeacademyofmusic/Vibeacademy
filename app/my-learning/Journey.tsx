@@ -1,3 +1,5 @@
+import VideoLinks from '@/app/_components/academic-video-links/VideoLinks'
+import type { VideoLinkContext } from '@/lib/academic-video-links'
 import { gradeProgressPercent } from '@/app/admin/students/[id]/academic-progress'
 import { displayLabel } from '@/lib/display'
 
@@ -5,10 +7,11 @@ type Component = { id: string; name: string; status: string; is_required: boolea
 type Subject = Component & { completion_rule: string; components: Component[] }
 export type Program = { program_id: string; curriculum: string; status: string; is_primary: boolean; current_level_id: string | null; levels: { id: string; name: string; status: string; subjects: Subject[] }[] }
 
-export default function Journey({ programs }: { programs: Program[] }) {
+export default function Journey({ programs, studentId, videos = {} }: { programs: Program[]; studentId?: string; videos?: Record<string, VideoLinkContext> }) {
   return <div className="space-y-5">{programs.map(program => <section key={program.program_id} className="space-y-3 rounded border p-4">
     <h3 className="text-lg font-semibold">{program.curriculum}{program.is_primary && ' — Chương trình chính'}</h3>
     <p>{displayLabel(program.status)}</p>
+    {studentId && videos[program.program_id] && <VideoLinks studentId={studentId} enrollmentId={program.program_id} context={videos[program.program_id]}/>}
     {program.levels.map(level => {
       const percent = gradeProgressPercent(level.status, level.subjects)
       return <details key={level.id} open={level.status === 'IN_PROGRESS'} className="rounded border p-3">

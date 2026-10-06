@@ -1,0 +1,209 @@
+- complementary:
+  - link "VIBE Academy":
+    - /url: /admin
+    - img "VIBE Academy"
+  - paragraph: Hệ thống quản lý
+  - navigation "Điều hướng quản trị":
+    - region "TỔNG QUAN":
+      - heading "TỔNG QUAN" [level=2]
+      - list:
+        - link "Bảng điều khiển":
+          - /url: /admin
+    - region "VẬN HÀNH":
+      - heading "VẬN HÀNH" [level=2]
+      - list:
+        - link "Đào tạo":
+          - /url: /admin/students
+        - link "Tổng quan tài chính":
+          - /url: /admin/finance
+        - link "Học phí & Thanh toán":
+          - /url: /admin/finance/invoices
+        - link "Số dư khách hàng":
+          - /url: /admin/finance/credits
+        - link "Chi phí vận hành":
+          - /url: /admin/finance/operating-expenses
+    - region "HR":
+      - heading "HR" [level=2]
+      - list:
+        - link "Tổng quan HR":
+          - /url: /admin/hr
+        - link "Nhân sự & nghỉ phép":
+          - /url: /admin/employees
+        - link "Lương & chi trả":
+          - /url: /admin/payroll
+        - link "Phân công và đối soát":
+          - /url: /admin/session-teachers
+    - region "KINH DOANH":
+      - heading "KINH DOANH" [level=2]
+      - list:
+        - link "Điều hành kinh doanh":
+          - /url: /admin/business
+        - link "CRM & Tuyển sinh":
+          - /url: /admin/business/registrations
+        - link "Báo cáo marketing":
+          - /url: /admin/business/marketing
+        - link "Sau bán hàng":
+          - /url: /admin/business/after-sales
+    - region "HỆ THỐNG":
+      - heading "HỆ THỐNG" [level=2]
+      - list:
+        - link "Kho sách và vật tư":
+          - /url: /admin/inventory
+        - link "Nhạc cụ theo serial":
+          - /url: /admin/instruments
+        - link "Hệ thống":
+          - /url: /admin/branches
+  - paragraph: Đăng nhập với tài khoản
+  - paragraph: TEST VIBE-EXEC-20260930 ADMIN
+  - paragraph: Quản trị viên cấp cao
+  - button "Đăng xuất"
+- banner:
+  - paragraph: Hệ thống Vibe Academy
+  - paragraph: Quản trị
+  - generic: TEST VIBE-EXEC-20260930 ADMIN
+- main:
+  - navigation "Đường dẫn":
+    - link "Kinh doanh":
+      - /url: /admin/business
+    - generic: /
+    - link "CRM & Tuyển sinh":
+      - /url: /admin/business/registrations
+    - generic: /
+    - generic: DK-20260930-1AA582D3FCC5
+  - paragraph: Kinh doanh
+  - heading "DK-20260930-1AA582D3FCC5" [level=1]
+  - paragraph: TEST execution branch A · Đã vào ca dạy
+  - navigation "CRM và tuyển sinh":
+    - link "Đăng ký tại quầy":
+      - /url: /admin/business/registrations/new
+    - link "CRM":
+      - /url: /admin/business/registrations?workspace=crm
+    - link "Danh sách đăng ký":
+      - /url: /admin/business/registrations
+  - list "Tiến trình đăng ký":
+    - generic: Đã qua · 1
+    - strong: Bản nháp
+    - generic: Đã qua · 2
+    - strong: Đã nộp
+    - generic: Đã qua · 3
+    - strong: Đã xác minh
+    - generic: Đã qua · 4
+    - strong: Thanh toán
+    - generic: Đã qua · 5
+    - strong: Xác nhận thanh toán
+    - generic: Hiện tại · 6
+    - strong: Chờ vào ca dạy
+  - heading "Hồ sơ" [level=2]
+  - term: Học viên
+  - definition: TEST VIBE EXEC 20260930 Student · 2015-01-01 · Chưa đánh dấu trên 18 tuổi
+  - term: Phụ huynh
+  - definition: TEST VIBE EXEC Parent · 84900000001
+  - term: Địa chỉ nhà
+  - definition: TEST isolated address
+  - term: Số Zalo
+  - definition: "84900000001"
+  - term: Chương trình
+  - definition: TEST execution curriculum
+  - term: Trình độ
+  - definition: TEST Grade 1
+  - term: Môn học
+  - definition: Chưa chọn. Môn học gắn khi vào ca, không chọn ở bước thông tin.
+  - term: Muốn bắt đầu
+  - definition: 2026-09-30 · TEST Wednesday 08:00
+  - term: Xếp lớp
+  - definition: Đã vào ca dạy
+  - heading "Học phí đã chốt" [level=2]
+  - term: Chi nhánh
+  - definition: TEST execution branch A
+  - term: Cách thu
+  - definition: Thanh toán đủ
+  - term: Giá niêm yết
+  - definition: 12.000.000 ₫
+  - term: Giảm giá đã duyệt
+  - definition: Không
+  - term: Học phí đã chốt
+  - definition: 12.000.000 ₫
+  - term: Phải thu ngay
+  - definition: 12.000.000 ₫
+  - term: Đã nhận, đã xác thực
+  - definition: 12.000.000 ₫
+  - term: Học phí còn lại
+  - definition: 0 ₫
+  - term: Học phí đã thu đủ
+  - definition: Đã thu đủ
+  - heading "Bước tiếp theo" [level=2]
+  - generic: ID công nợ học phí nội bộ đã phát hành
+  - textbox "ID công nợ học phí nội bộ đã phát hành": 3dfbc2bb-be0b-41ba-b23a-8f8e704daf07
+  - paragraph: Chỉ phân bổ sau khi lớp và kỳ học phí đã tạo công nợ. Đây không phải hóa đơn thuế điện tử. Mỗi phiếu thu chỉ phân bổ một lần.
+  - button "Phân bổ thanh toán vào công nợ nội bộ"
+  - list:
+    - listitem: 07:40:21 30/9/26 (UTC+7) · Tạo hồ sơ → Bản nháp
+    - listitem: 07:41:17 30/9/26 (UTC+7) · Nộp hồ sơ → Đã nộp
+    - listitem: 07:41:17 30/9/26 (UTC+7) · Xác minh hồ sơ → Đã xác minh
+    - listitem: 07:43:37 30/9/26 (UTC+7) · Hoàn tất đăng ký → Chờ vào ca dạy
+    - listitem: 07:43:37 30/9/26 (UTC+7) · Mở chờ xếp lớp → Chờ vào ca dạy
+    - listitem: 07:44:37 30/9/26 (UTC+7) · Tạo ghi danh
+  - heading "Kết quả" [level=2]
+  - paragraph: "Đăng ký: đã hoàn tất. Học phí: đã thu đủ. Đây là hai việc khác nhau."
+  - paragraph:
+    - text: Mã hồ sơ DK-20260930-1AA582D3FCC5. Mã học viên VIBE-000025.
+    - link "Mở học viên":
+      - /url: /admin/students/2aa35959-5998-480b-925e-22e1ee44b610
+  - paragraph:
+    - link "Mở hàng chờ vào ca dạy":
+      - /url: /admin/students?tab=waiting
+  - list:
+    - listitem: payOS đã xác thực · 260925102 · 12.000.000 ₫
+  - paragraph: "Hồ sơ chờ lớp: Đã vào ca dạy"
+  - paragraph:
+    - text: "Công nợ nội bộ INV-2026-000004: còn 0 ₫ / 12.000.000 ₫."
+    - link "Mở hóa đơn kỳ học phí":
+      - /url: /admin/finance/invoices?selected=3dfbc2bb-be0b-41ba-b23a-8f8e704daf07
+  - paragraph:
+    - link "Mở phiếu thu":
+      - /url: /admin/finance/payments?selected=83f68a6f-50f6-4ee5-a298-932d8a34888c#payment-detail
+    - text: ·
+    - link "Xem / In hóa đơn A5":
+      - /url: /documents/finance/payment-invoices/83f68a6f-50f6-4ee5-a298-932d8a34888c
+  - paragraph: "Đã phân bổ vào công nợ: 12.000.000 ₫"
+  - heading "Zalo" [level=2]
+  - paragraph: "Trạng thái thông báo: Chưa gửi. Xếp hàng hoặc đã ánh xạ mẫu không có nghĩa là đã gửi tới phụ huynh."
+  - status: Thông báo chưa được gửi tới Zalo. Trạng thái thanh toán và đăng ký được theo dõi riêng.
+  - paragraph: Thiếu đồng ý nhận tin cho số điện thoại. Thanh toán không thay thế sự đồng ý nhận thông báo.
+  - status: Cổng gửi mẫu tin đang tắt. Mẫu được duyệt không đồng nghĩa đã bật gửi.
+  - paragraph: "Mẫu 640377: đã duyệt trong danh mục. Điều kiện gửi được kiểm tra theo hồ sơ và kết nối."
+  - paragraph: "Zalo chấp nhận tin: chưa · Zalo đã phát tới máy: chưa."
+  - paragraph: Nội dung dự kiến gửi sau khi khoản thu được xác thực và hồ sơ hoàn tất. Bản xem trước không xác nhận đã nhận tiền hoặc đã gửi tin.
+  - generic: "Phụ huynh: TEST VIBE EXEC Parent"
+  - generic: "Mã hồ sơ: DK-20260930-1AA582D3FCC5"
+  - generic: "Học viên: TEST VIBE EXEC 20260930 Student"
+  - generic: "Chương trình: TEST execution curriculum"
+  - generic: "Chi nhánh: TEST execution branch A"
+  - generic: "Mã đơn: DK-20260930-1AA582D3FCC5"
+  - generic: "Trạng thái thu dự kiến trong tin: Đã thanh toán đủ"
+  - generic "Chi tiết điều kiện và lịch sử gửi"
+  - paragraph: "Số đã đồng ý: Chưa ghi nhận · Số gắn với thông báo: Chưa cập nhật."
+  - paragraph: Chưa có xác nhận đồng ý nhận tin hợp lệ cho số nhận tin.
+  - paragraph: Chưa xác nhận MAIN là nơi duy nhất quản lý gia hạn cho ứng dụng và OA này.
+  - paragraph: "Số lần thử gửi: 0/5. Kiểm tra điều kiện không gửi tin."
+  - button "Gửi thông báo" [disabled]
+  - button "Kiểm tra lại điều kiện"
+  - link "Kiểm tra kết nối OA dùng chung":
+    - /url: /admin/system/integrations/zalo
+  - heading "Zalo qua số điện thoại" [level=2]
+  - paragraph: Chỉ gửi khi hồ sơ hoàn tất, khoản thu được xác thực và có đồng ý hợp lệ cho đúng số nhận tin. Lưu đồng ý sẽ kiểm tra lại điều kiện, chưa gửi tin.
+  - status: Chưa có đồng ý còn hiệu lực. Chỉ ghi nhận sau khi phụ huynh xác nhận.
+  - generic: Số điện thoại nhận thông báo
+  - textbox "Số điện thoại nhận thông báo":
+    - /placeholder: Nhập đúng số phụ huynh đã đồng ý
+  - generic: Nguồn xác nhận
+  - combobox "Nguồn xác nhận":
+    - option "Chọn nguồn xác nhận thực tế" [disabled] [selected]
+    - option "Trao đổi trực tiếp"
+    - option "Cuộc gọi với phụ huynh"
+    - option "Văn bản / tin nhắn của phụ huynh"
+  - checkbox "Tôi xác nhận phụ huynh đã đồng ý nhận thông báo giao dịch Zalo qua đúng số này (zbs-phone-v1)."
+  - text: Tôi xác nhận phụ huynh đã đồng ý nhận thông báo giao dịch Zalo qua đúng số này (zbs-phone-v1).
+  - button "Ghi nhận đồng ý"
+- button "Open Next.js Dev Tools":
+- alert: VIBE Academy

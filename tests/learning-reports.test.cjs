@@ -14,7 +14,18 @@ test('report list filters branch status type month and bounded pagination',async
 test('report list renders multiple branches and empty state',async()=>{
  const h=harness({learning_report_list:[{...report,student_name:'Student A',student_code:'A',branch_name:'Cần Thơ'},{...report,id:id(2),student_name:'Student B',student_code:'B',branch_name:'Hà Nội'}]})
  const html=renderToStaticMarkup(await h.load(base+'page.tsx').default({searchParams:Promise.resolve({})}));assert.match(html,/Cần Thơ/);assert.match(html,/Hà Nội/)
- const empty=harness();assert.match(renderToStaticMarkup(await empty.load(base+'page.tsx').default({searchParams:Promise.resolve({})})),/Chưa có dữ liệu/)
+ const empty=harness();assert.match(renderToStaticMarkup(await empty.load(base+'page.tsx').default({searchParams:Promise.resolve({})})),/Không có báo cáo cần xử lý/)
+})
+test('report ops dashboard exposes KPI tabs and needs view by default',async()=>{
+ const h=harness({learning_report_list:[{...report,student_name:'Student A',student_code:'A',branch_name:'Cần Thơ'}]})
+ const html=renderToStaticMarkup(await h.load(base+'page.tsx').default({searchParams:Promise.resolve({})}))
+ for (const text of ['Cần xử lý','Bản nháp','Chờ duyệt','Đã duyệt','Quá hạn','Chi nhánh','Ca dạy']) assert.ok(html.includes(text), text)
+})
+test('report metrics use head counts without loading full payloads',async()=>{
+ const h=harness()
+ await h.load(base+'data.ts').reportMetrics(h.db,{branch:id(2)})
+ assert.ok(h.calls.some(c=>c.table==='learning_report_list'&&String(c.fields).includes('id')))
+ assert.ok(h.calls.every(c=>c.table!=='learning_report_list'||!String(c.fields||'').includes('draft_data')))
 })
 test('generate sends only validated report context to RPC',async()=>{
  const h=harness();await redirected(h.load(base+'actions.ts').generateReport,{enrollment_id:id(1),type:'MONTHLY',start:'2026-08-01',end:'2026-08-31',snapshot_data:'fake'})
@@ -40,7 +51,9 @@ test('draft detail shows missing input attendance and editable summary',async()=
     assert.match(html,/Kết quả \/ tiến bộ nổi bật/);
     assert.match(html,/Kế hoạch tháng tiếp theo/);
     assert.match(html,/Lưu nhận xét/);
-    assert.match(html,/Chuyển chờ duyệt/)
+    assert.match(html,/Chuyển chờ duyệt/);
+    assert.match(html,/1\. Student Overview/);
+    assert.match(html,/7\. Academic Status/)
    })
 
    test('approved detail reads snapshot and hides editing actions',async()=>{
@@ -90,6 +103,13 @@ test('first monthly suggestions handle day one, mid-month, leap day and year rol
   assert.deepEqual(monthlyPeriod(start),{start,end,first:true})
  assert.deepEqual(monthlyPeriod('2026-09-20','2026-10-31'),{start:'2026-11-01',end:'2026-11-30',first:false})
  assert.deepEqual(monthlyPeriod('2025-01-20','2025-12-31'),{start:'2026-01-01',end:'2026-01-31',first:false})
+})
+test('closed report periods move from trong hạn to cảnh báo then quá hạn', () => {
+ const { reportTiming } = harness().load(base+'periods.ts')
+ assert.equal(reportTiming('2026-09-22','2026-09-29'),'TRONG_HAN')
+ assert.equal(reportTiming('2026-08-31','2026-09-29'),'CANH_BAO')
+ assert.equal(reportTiming('2026-06-30','2026-09-29'),'QUA_HAN')
+ assert.equal(reportTiming('2026-09-29','2026-09-29'),null)
 })
 const enrollment = {id:id(8),started_at:'2025-09-20',ended_at:null,students:{full_name:'Midmonth student',student_code:'MID'},classes:{name:'Piano',branches:{name:'Test branch'}}}
 async function renderCreation(e, reports=[]) {
@@ -142,7 +162,8 @@ async function officialReport(status, extra = {}, fixtures = {}) {
 }
 test('approved official document exposes confirmed publish only and never refreshes snapshot', async () => {
  const {h,html} = await officialReport('APPROVED')
- for (const text of ['LEARNING PROGRESS REPORT','STUDENT INFORMATION','ATTENDANCE SUMMARY','ACADEMIC PROGRESS','AUTHORIZED ACADEMIC APPROVAL','PUBLISH REPORT']) assert.ok(html.includes(text))
+ for (const text of ['LEARNING PROGRESS REPORT','Báo cáo học tập kỳ tháng 8','ATTENDANCE SUMMARY','ACADEMIC PROGRESS','AUTHORIZED ACADEMIC APPROVAL','PUBLISH REPORT']) assert.ok(html.includes(text))
+ assert.doesNotMatch(html,/STUDENT INFORMATION/)
  assert.match(html,/name="action" value="PUBLISH"/); assert.match(html,/<input(?=[^>]*name="confirm")(?=[^>]*required)[^>]*>/)
  assert.doesNotMatch(html,/SEND EMAIL|SEND ZALO|textarea/)
  assert.ok(!h.calls.some(c=>c.rpc==='update_learning_report'||c.rpc==='learning_report_source'))
@@ -153,8 +174,9 @@ test('publish action requires confirmation and forwards version to existing engi
  assert.ok(!h.calls.some(c=>c.rpc==='update_learning_report'))
  await redirected(h.load(base+'actions.ts').updateReport,{id:id(1),version:4,action:'PUBLISH',confirm:'yes'})
  assert.equal(h.calls.at(-1).args.p_action,'PUBLISH'); assert.equal(h.calls.at(-1).args.p_version,4)
+ assert.equal(h.afters.length,1)
 })
-test('published report has disabled delivery controls with real student and active parent contacts',async()=>{
+test('published report shows gated ZBS delivery and actual student and active parent contacts',async()=>{
  const {html,h}=await officialReport('PUBLISHED',{sent_at:'2026-09-16T00:00:00Z'},{
   students:[{id:id(20),user_id:id(22),full_name:'Real Student',email:'student@example.test',phone:'0900000000'}],
   student_parents:[{student_id:id(20),parent_id:id(23),is_active:true,valid_from:null,valid_until:null},{student_id:id(20),parent_id:id(24),is_active:false}],
@@ -162,9 +184,9 @@ test('published report has disabled delivery controls with real student and acti
   profiles:[{id:id(25),full_name:'Real Parent',phone:'0911111111',status:'ACTIVE'},{id:id(26),full_name:'Inactive relation',status:'ACTIVE'}],
  })
  assert.match(html,/Real Student/);assert.match(html,/student@example.test/);assert.match(html,/Real Parent/);assert.doesNotMatch(html,/Inactive relation/)
- assert.match(html,/<button[^>]*disabled=""[^>]*>SEND EMAIL/);assert.match(html,/<button[^>]*disabled=""[^>]*>SEND ZALO/)
- assert.match(html,/EMAIL PROVIDER NOT CONFIGURED/);assert.match(html,/ZALO PROVIDER NOT CONFIGURED/)
- assert.match(html,/NOT_SENT/);assert.doesNotMatch(html,/PUBLISH REPORT|textarea/)
+ assert.match(html,/Gửi ZBS đang tắt/);assert.match(html,/Email chưa được cấu hình/)
+ assert.match(html,/Tạo đường dẫn PDF/);assert.match(html,/không cần đăng nhập/)
+ assert.match(html,/Chưa có bản ghi gửi/);assert.doesNotMatch(html,/PUBLISH REPORT|textarea/)
  assert.ok(!h.calls.some(c=>c.rpc==='enqueue_notification_event'||c.rpc==='update_learning_report'))
 })
 test('draft and review do not expose delivery controls',async()=>{
@@ -175,7 +197,7 @@ test('draft and review do not expose delivery controls',async()=>{
 })
 test('missing recipients and missing snapshot fail safely',async()=>{
  const {html}=await officialReport('PUBLISHED')
- assert.match(html,/Không có thông tin người nhận/);assert.match(html,/No eligible email recipient/)
+ assert.match(html,/Không có thông tin người nhận/);assert.match(html,/không tự chứng minh có kết nối Zalo/)
  const missing=await officialReport('APPROVED',{snapshot_data:null,draft_data:{...snapshot,student:{name:'DO NOT PRINT DRAFT',code:'X'}}})
  assert.match(missing.html,/Approved snapshot unavailable/);assert.doesNotMatch(missing.html,/DO NOT PRINT DRAFT/)
 })
@@ -183,16 +205,17 @@ test('repeated delivery page loads cannot enqueue, send, or mutate frozen conten
  const frozen=structuredClone(snapshot), original=JSON.stringify(frozen)
  for(let n=0;n<2;n++) {
   const {h}=await officialReport('PUBLISHED',{snapshot_data:frozen})
-  assert.deepEqual(h.calls.filter(c=>c.rpc).map(c=>c.rpc),['has_role'])
+  assert.deepEqual(h.calls.filter(c=>c.rpc).map(c=>c.rpc),['has_role','learning_report_link_manage'])
+  assert.equal(h.calls.find(c=>c.rpc==='learning_report_link_manage').args.p_action,'READ')
  }
  assert.equal(JSON.stringify(frozen),original)
 })
 test('delivery history uses actual records, preserves mock and queued distinctions, filters other reports',async()=>{
  const jobs=[{id:id(30),entity_type:'LEARNING_REPORT',entity_id:id(1),recipient_id:id(25),channel:'EMAIL',delivery_mode:'MOCK',status:'SENT',created_at:snapshot.as_of,sent_at:snapshot.as_of,provider_receipt:'mock-receipt'},
- {id:id(31),entity_type:'LEARNING_REPORT',entity_id:id(1),recipient_id:id(25),channel:'ZALO',delivery_mode:'LIVE',status:'PENDING',created_at:snapshot.as_of,sent_at:null,provider_receipt:null},
+ {id:id(31),entity_type:'LEARNING_REPORT_PUBLISHED',entity_id:id(1),recipient_id:null,channel:'ZALO',delivery_mode:'LIVE',status:'QUEUED',error_code:'REPORT_TEMPLATE_NOT_READY',created_at:snapshot.as_of,sent_at:null,provider_receipt:null},
  {id:id(32),entity_type:'LEARNING_REPORT',entity_id:id(90),recipient_id:id(25),channel:'EMAIL',status:'SENT',provider_receipt:'OTHER REPORT'}]
  const {html}=await officialReport('PUBLISHED',{}, {notification_jobs:jobs})
- assert.match(html,/DELIVERY HISTORY/);assert.match(html,/mock-receipt/);assert.match(html,/EMAIL · MOCK/);assert.match(html,/PENDING/);assert.doesNotMatch(html,/OTHER REPORT/)
+ assert.match(html,/DELIVERY HISTORY/);assert.match(html,/mock-receipt/);assert.match(html,/EMAIL · MOCK/);assert.match(html,/Chờ mẫu ZBS được duyệt và bật/);assert.doesNotMatch(html,/OTHER REPORT/)
 })
 test('V2 academic document renders all seven summaries, maps enums, and handles direct assessment',async()=>{
  const teacher_summary=Object.fromEntries(['achievement','difficulty','intervention','next_month_plan','practice_consistency','lesson_preparation','learning_attitude'].map(k=>[k,`V2-${k}`]))
@@ -216,7 +239,7 @@ test('official print content excludes internal notes, delivery and administratio
  assert.match(fs.readFileSync('app/admin/reports/learning/[id]/layout.tsx','utf8'),/import '.\/print.css'/)
  const {html}=await officialReport('APPROVED',{}, {profiles:[{id:id(21),full_name:'Academic Approver'}]})
  assert.match(html,/Academic Approver/)
- const paperStart=html.indexOf('<article class="academic-document learning-report-paper"')
+ const paperStart=html.indexOf('<article class="academic-document learning-report-paper academic-cover-sheet"')
  assert.ok(paperStart>html.indexOf('learning-report-toolbar'))
  const paper=html.slice(paperStart,html.indexOf('</article>',paperStart))
  assert.doesNotMatch(paper,/PUBLISH REPORT|PRINT \/ PDF|<form/)
@@ -231,3 +254,44 @@ test('official print content excludes internal notes, delivery and administratio
  const {html}=await officialReport('APPROVED',{snapshot_data:{...snapshot,academic:{...snapshot.academic,subjects:statuses.map(status=>({name:'Subject',grade:'Grade 1',status,score:null,is_required:true,completion_rule:'DIRECT_ASSESSMENT',components:[]}))}}})
  for(const label of ['Pass','Merit','Distinction','Needs Review','Exempt']) assert.ok(html.includes('>'+label+'<'))
  })
+
+
+test('published portal renders V2 and legacy public summaries without internal notes',()=>{
+ const h=harness();const Page=h.load('../../my-learning/ApprovedReport.tsx').default
+ for(const summary of [{achievement:'Approved achievement',difficulty:'Approved difficulty',next_month_plan:'Approved plan'},{general_comment:'Legacy comment',strengths:'Legacy strength'}]){
+  const html=renderToStaticMarkup(Page({snapshot:{...snapshot,teacher_summary:{...summary,internal_note:'PRIVATE ADMIN NOTE'}}}))
+  for(const value of Object.values(summary))assert.ok(html.includes(value))
+  assert.doesNotMatch(html,/PRIVATE ADMIN NOTE|Chưa có nhận xét/)
+ }
+ const empty=renderToStaticMarkup(Page({snapshot}));assert.match(empty,/Chưa có nhận xét/)
+})
+test('approved print includes shared lesson videos and the family portal does not yet',()=>{
+ const videos=[{title:'TEST — Biểu diễn Piano 2A',url:'https://www.youtube.com/watch?v=TESTVIDEO01',note:'Ghi chú video',level_name:'Pre Grade',lesson_name:'Piano Adventures 2A · L01'}]
+ const Document=harness().load(base+'[id]/ReportDocument.tsx').default
+ const html=renderToStaticMarkup(Document({report:{...report,status:'APPROVED',approved_at:snapshot.as_of,snapshot_data:{...snapshot,videos}}}))
+ assert.match(html,/LESSON VIDEOS/)
+ assert.match(html,/href="https:\/\/www\.youtube\.com\/watch\?v=TESTVIDEO01"/)
+ assert.match(html,/target="_blank"/)
+ assert.match(html,/>TEST — Biểu diễn Piano 2A<\/a>/)
+ assert.doesNotMatch(html,/>LINK</)
+ const legacy=renderToStaticMarkup(Document({report:{...report,status:'APPROVED',approved_at:snapshot.as_of,snapshot_data:snapshot}}))
+ assert.doesNotMatch(legacy,/LESSON VIDEOS/)
+ const portal=renderToStaticMarkup(harness().load('../../my-learning/ApprovedReport.tsx').default({snapshot:{...snapshot,videos,teacher_summary:{achievement:'Approved achievement'}}}))
+ assert.doesNotMatch(portal,/TESTVIDEO01|LESSON VIDEOS/)
+ assert.match(portal,/Approved achievement/)
+})
+test('draft print uses the original branded document without approval or internal notes',()=>{
+ const Document=harness().load(base+'[id]/ReportDocument.tsx').default
+ const html=renderToStaticMarkup(Document({report:{...report,admin_note:'PRIVATE_INTERNAL_NOTE'},draftPreview:true}))
+ assert.match(html,/learning-report-paper/)
+ assert.match(html,/LEARNING PROGRESS REPORT/)
+ assert.match(html,/BẢN NHÁP — CHƯA DUYỆT/)
+ assert.doesNotMatch(html,/AUTHORIZED ACADEMIC APPROVAL|PRIVATE_INTERNAL_NOTE/)
+})
+test('draft preview cannot replace an approved frozen snapshot',()=>{
+ const Document=harness().load(base+'[id]/ReportDocument.tsx').default
+ const html=renderToStaticMarkup(Document({report:{...report,status:'APPROVED',snapshot_data:{...snapshot,student:{name:'FROZEN_NAME',code:'A'}},draft_data:{...snapshot,student:{name:'CHANGED_DRAFT',code:'B'}}},draftPreview:true}))
+ assert.match(html,/FROZEN_NAME/)
+ assert.doesNotMatch(html,/CHANGED_DRAFT|BẢN NHÁP/)
+ assert.match(html,/AUTHORIZED ACADEMIC APPROVAL/)
+})

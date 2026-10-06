@@ -1,0 +1,51 @@
+✔ createCurriculumSubject preserves explicit DIRECT_ASSESSMENT and required flag (1508.531792ms)
+✔ createCurriculumSubject preserves explicit ALL_REQUIRED_COMPONENTS and required flag (289.484416ms)
+✔ createCurriculumSubject rejects missing/unsupported method  (118.625834ms)
+✔ createCurriculumSubject rejects missing/unsupported method MANUAL (125.799917ms)
+✔ createCurriculumSubject rejects missing/unsupported method UNSUPPORTED (200.649916ms)
+✔ updateCurriculumSubject preserves explicit DIRECT_ASSESSMENT and required flag (284.923125ms)
+✔ updateCurriculumSubject preserves explicit ALL_REQUIRED_COMPONENTS and required flag (55.640833ms)
+✔ updateCurriculumSubject rejects missing/unsupported method  (105.463167ms)
+✔ updateCurriculumSubject rejects missing/unsupported method MANUAL (100.294292ms)
+✔ updateCurriculumSubject rejects missing/unsupported method UNSUPPORTED (90.510292ms)
+✔ edit form displays explicit methods without silently converting DIRECT_ASSESSMENT (320.148458ms)
+✔ edit form displays explicit methods without silently converting MANUAL (322.135625ms)
+✖ assign action forwards inputs and exposes validation failure without success (227.056792ms)
+✔ Book B preserves all 50 authored entries and all source pages except duplicate 49 (3.505917ms)
+✔ import reuses ten draft IDs, adds 40 and preserves progression; rerun changes nothing (9436.864458ms)
+✔ existing authored draft refuses import and rolls back (3013.982625ms)
+✔ draft reconciliation preserves content, IDs, rules, other subjects and progression, then reruns without changes (9430.557917ms)
+✔ reconciliation refuses authored rather than hiding an operational subject (2850.072542ms)
+✔ reconciliation refuses history rather than hiding an operational subject (1912.1315ms)
+✔ reconciliation refuses required rather than hiding an operational subject (1501.717959ms)
+✔ reconciliation refuses video rather than hiding an operational subject (1840.788583ms)
+✔ active incomplete technique still fails the academic rule; reconciliation does not weaken validation (0.915625ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 21
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18594.957334
+
+✖ failing tests:
+
+test at tests/academic-subject.test.cjs:41:1
+✖ assign action forwards inputs and exposes validation failure without success (227.056792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Chỉ được ghi danh vào Piano, Guitar, Violin hoặc Trống'
+  - 'A required subject has no required active components'
+  
+      at TestContext.<anonymous> (/Users/macbookair/vibe-academy-system/tests/academic-subject.test.cjs:44:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Chỉ được ghi danh vào Piano, Guitar, Violin hoặc Trống',
+    expected: 'A required subject has no required active components',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

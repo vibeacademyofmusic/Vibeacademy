@@ -6,7 +6,7 @@ import { logout } from '@/app/login/actions'
 
 const tabs = { schedule: 'Lịch dạy', classes: 'Lớp đang phụ trách', history: 'Buổi đã thực dạy', journals: 'Nhật ký được phép xem', feedback: 'Tổng hợp phản hồi' }
 type Tab = keyof typeof tabs
-type Session = { session_id: string; class_name: string; starts_at: string; ends_at: string; status: string }
+type Session = { session_id: string; class_name: string; starts_at: string; ends_at: string; status: string; room_name: string | null; roster_count: number }
 type Class = { class_id: string; code: string; name: string }
 type Journal = { journal_id: string; class_name: string; starts_at: string; content: string; repertoire: string; skills: string; homework: string; observation: string; is_author: boolean }
 type Feedback = { month: string; response_count: number; overall_average: number }
@@ -33,7 +33,7 @@ export default async function TeacherPortal({ searchParams }: { searchParams: Pr
     <nav aria-label="Giáo viên" className="flex flex-wrap gap-2">{Object.entries(tabs).map(([key, title]) => <Link key={key} prefetch={false} href={href(1, key as Tab)} aria-current={tab === key ? 'page' : undefined} className={`rounded border px-3 py-2 ${tab === key ? 'bg-slate-900 text-white' : ''}`}>{title}</Link>)}</nav>
     <h2 className="text-xl font-semibold">{tabs[tab]}</h2>
     {!entries.length && <p>Chưa có dữ liệu được phép xem trong mục này.</p>}
-    {['schedule', 'history'].includes(tab) && (entries as Session[]).map(s => <article key={s.session_id} className="rounded border p-4"><h3>{s.class_name}</h3><p>{time(s.starts_at)} – {time(s.ends_at)}</p><p>{displayLabel(s.status)}</p><Link prefetch={false} href={`/operations/teacher/sessions/${s.session_id}`}>Xem điểm danh</Link></article>)}
+    {['schedule', 'history'].includes(tab) && (entries as Session[]).map(s => <article key={s.session_id} className="rounded border p-4"><h3>{s.class_name}</h3><p>{time(s.starts_at)} – {time(s.ends_at)} · {s.room_name ?? 'Chưa xếp phòng'} · {s.roster_count} học viên</p><p>{displayLabel(s.status)}</p><Link prefetch={false} href={`/operations/teacher/sessions/${s.session_id}`}>{s.status === 'SCHEDULED' ? 'Mở ca dạy' : 'Xem ca dạy'}</Link></article>)}
     {tab === 'classes' && (entries as Class[]).map(c => <article key={c.class_id} className="rounded border p-4">{c.code} — {c.name}</article>)}
     {tab === 'journals' && (entries as Journal[]).map(j => <article key={j.journal_id} className="space-y-2 rounded border p-4"><h3 className="font-semibold">{j.class_name} — {time(j.starts_at)}</h3>{j.is_author && <p>Nhật ký do bạn viết</p>}<p className="whitespace-pre-wrap">{j.content}</p>{j.repertoire && <p>Tác phẩm: {j.repertoire}</p>}{j.skills && <p>Kỹ năng: {j.skills}</p>}{j.homework && <p>Bài tập: {j.homework}</p>}</article>)}
     {tab === 'feedback' && <><p className="text-sm">Tổng hợp phản hồi về buổi bạn thực dạy. Phản hồi không tự động thay đổi lương.</p>{(entries as Feedback[]).map(f => <article key={f.month} className="rounded border p-4">{f.month.slice(0, 7)} — {f.response_count} phản hồi · Trung bình {f.overall_average}/5</article>)}</>}

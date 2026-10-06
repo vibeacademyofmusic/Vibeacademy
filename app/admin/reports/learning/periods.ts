@@ -14,6 +14,23 @@ export function monthlyPeriod(startedAt: string, latestEnd?: string) {
     first: true,
   }
 }
+
+export type ReportTiming = 'TRONG_HAN' | 'CANH_BAO' | 'QUA_HAN'
+
+export const reportTimingLabels: Record<ReportTiming, string> = {
+  TRONG_HAN: 'Trong hạn',
+  CANH_BAO: 'Cảnh báo',
+  QUA_HAN: 'Quá hạn',
+}
+
+// After a period closes, 14 days stay in deadline, the next 16 days warn, then the report is overdue.
+export function reportTiming(periodEnd: string, today: string): ReportTiming | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(periodEnd) || !/^\d{4}-\d{2}-\d{2}$/.test(today) || periodEnd >= today) return null
+  const days = Math.round((Date.parse(today + 'T00:00:00Z') - Date.parse(periodEnd + 'T00:00:00Z')) / 86400000)
+  if (days <= 14) return 'TRONG_HAN'
+  if (days <= 30) return 'CANH_BAO'
+  return 'QUA_HAN'
+}
 export const generationErrors: Record<string, string> = {
   'Invalid closed report period': 'Kỳ báo cáo không hợp lệ hoặc chưa kết thúc. Ngày kết thúc phải trước hôm nay theo giờ Việt Nam.',
   'Enrollment does not overlap period': 'Kỳ báo cáo không thuộc thời gian ghi danh hoặc ghi danh chưa có ngày bắt đầu.',

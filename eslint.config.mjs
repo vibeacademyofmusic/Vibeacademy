@@ -8,9 +8,9 @@ const eslintConfig = defineConfig([
   {
     // Node test/bootstrap entry points intentionally use CommonJS.
     files: [
-      "scripts/local-bootstrap-admin.cjs",
-      "tests/local-bootstrap-admin.test.cjs",
-      "tests/academic-profile.test.cjs",
+      "scripts/**/*.cjs",
+      "scripts/**/*.js",
+      "tests/**/*.cjs",
     ],
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },

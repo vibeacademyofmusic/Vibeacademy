@@ -1,0 +1,5567 @@
+{
+  "mode": "APPLIED_LOCAL",
+  "target": {
+    "api": "http://127.0.0.1:54321",
+    "container": "supabase_db_vibe-academy-system",
+    "databasePort": "54322"
+  },
+  "backup": "/var/folders/gl/_pjb8wqs24n1rnjn3s03ypqm0000gn/T/vibe-curriculum-20261005-S9cLPJ/catalog-before.dump",
+  "backup_scope": "Five curriculum tables; not a full system recovery backup",
+  "changes": [
+    {
+      "id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "kind": "program",
+      "detail": {
+        "code": "PIANO"
+      }
+    },
+    {
+      "id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "kind": "level",
+      "detail": {
+        "code": "PRE_STEP"
+      }
+    },
+    {
+      "id": "6b1e302e-4673-4818-8f91-7a07577046b7",
+      "kind": "subject",
+      "detail": {
+        "code": "METHODE_BOOK"
+      }
+    },
+    {
+      "id": "5054f5d9-0ab4-41cc-8e45-ab3a6c41966a",
+      "kind": "component",
+      "detail": {
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "99808b3c-9814-4829-9598-0123723f9929",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "049ae355-8432-4502-a2d5-d35b317f67a4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "6cebf07d-9482-4278-b3f9-02ba0e0c74d7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "4c0df2ff-ae53-4cfa-9269-c90d89bb3cac",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "3e54c45a-668a-40d9-b6b5-a1fbfdc4ffdb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "2c546bdf-64fc-4a4e-802b-5495b46eb316",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "cc368823-5cd4-47c2-a1ce-883749da43ad",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "a879706f-b0d5-43ec-bd91-a814d8353785",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "ade85e2e-b446-4f88-a54f-bf3c89342dce",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "3667ed5c-65b1-4c5f-a6ad-359d39c52c85",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7"
+      }
+    },
+    {
+      "id": "b1c8d779-0cee-45a1-893c-5e49e6036845",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "d912f529-56d0-4005-9340-91c0bc5a4444",
+      "kind": "component",
+      "detail": {
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "7373cd44-c8fb-4112-87a3-a1acf950e21c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "d6afa373-6354-4dd9-b7c9-8a1cc5dfd3aa",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "28b2d078-b6f4-4d06-8af1-75d94938aa78",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "1945be5a-da02-4bdd-8669-0d09f0a060bb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "02c4f146-9b54-4564-b9e4-f2d0c4d6aa29",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "f08a4854-b7ee-4bdf-a21f-462d65af702a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "cfae026b-7f35-42d7-9183-59cef6c73241",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "94e8a2b1-2c08-4626-94db-17c57f2dfa90",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "ba165e17-6ae4-4d30-83eb-be7ad9217a0f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "7852c06e-e522-4ea4-8dc5-e200f3fb6622",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845"
+      }
+    },
+    {
+      "id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "58aff7a0-d63a-49dd-9c5c-ce4c8cb54917",
+      "kind": "component",
+      "detail": {
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "45270710-88f4-46d3-8680-1a84d643f55f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "50ad510a-77d9-4025-8653-b2ed91910757",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "910dc138-581a-4c5d-bb7e-6d4b178cb378",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "4fbc844d-27f0-46d0-b6d6-cabed633f574",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "a5a9e7b2-cec8-41a3-9ad1-d3b806e127d4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "f7053ec7-1f0e-41de-af64-8c398a3ecb78",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "60131966-ee0c-4958-b518-da467ed92776",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "2a6d904b-4432-4fb2-a8ed-ba4cb9c493dc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "cef7db85-ebd2-483a-928e-d12c68cd1717",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "524b40ff-33e5-4f2e-8934-c0354499498b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d"
+      }
+    },
+    {
+      "id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "263145f3-3f0c-4a55-9d1a-20a1273fc66d",
+      "kind": "component",
+      "detail": {
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "c2a2620f-8569-4459-9c5e-c598801f922d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "f81db9b8-f8cb-4cd3-9290-15555261faa0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "07be064a-65e3-43c5-8213-ad116e7bb9a4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "d8a627d2-caac-4a5b-948c-9b78d9f75c1e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "8259f8bc-f720-422c-b1dc-0824663b73e2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "7f9e4cca-cb78-49fa-bc82-abb59901eab1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "fc25d87d-0162-467d-b8a8-ab48368b5dd2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "9fe6f80b-0c45-498b-9010-de4d2dbcb76d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "41124f39-937c-4841-b199-6ad197d00c23",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "25cc8a60-6c20-4bcd-a073-0bb14c6b463c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14"
+      }
+    },
+    {
+      "id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "kind": "level",
+      "detail": {
+        "code": "PRE"
+      }
+    },
+    {
+      "id": "4ef70031-84a0-47f1-9811-d9cc67868e64",
+      "kind": "subject",
+      "detail": {
+        "code": "METHODE_BOOK"
+      }
+    },
+    {
+      "id": "ba947757-5b78-4e1f-af1d-e9329e70be2c",
+      "kind": "component",
+      "detail": {
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "e8c8e23f-dd34-4391-a767-e2efc8554be6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "4d455f17-9ae5-4248-93de-ebc559f37645",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "6e01f369-1cf8-41c1-8ba9-af8376aec9e9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "0171ec84-f8b9-43e4-ae50-b3f21b01c450",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "d0f835c1-f09d-49d2-a3c2-b0e278f20deb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "08c18cd6-4efa-4a19-a3ad-566417a7f8e6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "09c2901e-4e02-4d54-8c0b-6a9d11e6147a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "891d4b20-07ec-4ac9-8b32-65a49e118541",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "2632c536-53d9-4cd6-8dc7-aec9ab6dcf9c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "94de77b4-deee-413c-bb3d-05fb8e0b1118",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64"
+      }
+    },
+    {
+      "id": "e7219608-6a2c-42f1-a313-8a300a625bd1",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "f1b22b77-876b-4eb6-880c-6fb09773f44b",
+      "kind": "component",
+      "detail": {
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "c374fb39-db29-43de-b2e9-be2e2de7ce18",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "400149af-58b3-41e6-814f-5a42ad2cd48c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "fcee6f86-8394-404f-9c82-099aaa8e1e3a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "b90b0592-3ab9-46bc-a85b-08b240af3d02",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "d172e189-d0b8-4af0-97f9-24dce699e46b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "1f84db8d-b336-4dd0-9cdc-f415a3fce308",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "e53d73f1-5840-463b-afa3-ff4ea3482a34",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "eb34e778-e243-41ee-9c1c-317ee6cda0c7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "bc3fb73e-4be0-41fa-8122-d04200e8aa59",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "6ff0350e-f0e9-4a7a-9c9b-d12d4f8b67ff",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1"
+      }
+    },
+    {
+      "id": "9e7f85e7-fcab-4377-8a11-d237547252be",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "235d3598-483b-4edd-ae4b-6c9e9ccef95b",
+      "kind": "component",
+      "detail": {
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "3fdc3b33-ed29-4c26-a420-8ee49c85daeb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "fe9852be-8f5e-4389-9cae-002f8b66d755",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "7340b450-4cbd-412b-b074-d521bc82c667",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "24892ba3-1b65-4ed2-a4bb-115f2ab4794e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "ac0b25e4-4437-464e-b922-afe2aa51fb92",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "3f52b1ff-805b-40e8-8e1f-f839fdeeb977",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "aa6e6410-357d-42f3-9349-1296120f6c05",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "05660351-8ddc-4ab7-9da8-7db090d49558",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "ef34864a-bcb7-44b0-a2ff-0e377b8aa9a4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "1749b8ed-057e-43be-a3b3-54ef7ed43a52",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be"
+      }
+    },
+    {
+      "id": "6b77b302-4164-4156-aab3-6c6355e7e038",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "d8c6df66-4afc-42fc-ba02-a9b475b0a946",
+      "kind": "component",
+      "detail": {
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "e6504a81-1ff2-4cd1-b9e4-d6e5ae331794",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "3ee38410-5a9a-4e14-b35b-0710ccc92bcc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "12daac11-df2c-4eda-8543-55a5be6841ff",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "9702bf94-9529-40b6-95be-66da9093dd83",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "3321c313-43b7-4eb4-8a47-fc599982da32",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "cde6787e-f0a8-43f6-b09f-7bd7457add39",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "a58aa6a9-e33e-4cdd-9911-8352db8d9b3e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "283055ec-bf37-40ad-bb07-b0029d494f7a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "cf1d99fd-749a-411f-9866-a1f00ee222f7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "a2e73850-0254-416e-b7dc-0c48048f95dc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038"
+      }
+    },
+    {
+      "id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "kind": "program",
+      "detail": {
+        "code": "VIOLIN"
+      }
+    },
+    {
+      "id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "kind": "level",
+      "detail": {
+        "code": "PRE"
+      }
+    },
+    {
+      "id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5",
+      "kind": "subject",
+      "detail": {
+        "code": "METHODE_BOOK"
+      }
+    },
+    {
+      "id": "f6806e14-1d51-48dc-877a-3364e8321c13",
+      "kind": "component",
+      "detail": {
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "f7a8b911-c568-4ee7-87b7-fafb544e88bd",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "1c22f361-f839-48e6-84c6-e5e684557d37",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "bc48d0b6-78e6-42df-b762-54ac0b52a7e8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "1ae88177-5ebd-4709-8d9b-78c1f9a84425",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "0b1ad9a3-c5c1-4bf2-8016-0fd7fe0ec1fb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "2ac2b75e-73be-4adb-a733-19d62f519d7e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "39977f15-202a-48ae-97f9-32d21c19eb10",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "1def0df5-c564-42ea-96a1-cbe4e016ba91",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "1499f66c-6325-4f1b-8f0b-155292b89ea1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "e7c01360-38cc-4422-be17-70995608a83b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5"
+      }
+    },
+    {
+      "id": "38d2590a-3121-4d23-8504-f31de5b850ca",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "b4ac076d-db23-475a-8a81-9c6c5f7d6244",
+      "kind": "component",
+      "detail": {
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "d1c00f67-5f6b-46d6-a596-258e21765753",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "004bcf2e-abb7-41d1-9762-956e88cd172d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "4b988ef3-3c26-44e0-a569-4ffe43508f0c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "d3c29cfd-0f06-4d02-a4f9-1847f33c7ce7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "da57a8f3-191d-4648-bccf-bfc960dc7dca",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "fdb1830a-631b-4317-b114-0673053b8446",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "2e9ab089-782d-45eb-b0b4-578108e21bbb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "e15116dc-1b6a-4bf5-944c-96fdb464cedb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "fba10bd5-2d7a-4970-8429-773d63250a48",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "5d397bac-a502-4fb9-a8dc-c8ee3fae7e33",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca"
+      }
+    },
+    {
+      "id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "62d96cff-e692-441e-b86d-36e64cf97b0a",
+      "kind": "component",
+      "detail": {
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "f785c28e-b7e8-4421-aaa3-292f34da3fc2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "f0f6eff1-7d24-4e9b-9c19-4cf1fcc1a2f8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "a7516172-daba-4df7-a8d0-a0097df7adc2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "10e0513a-a859-4572-8a92-1d48ab352468",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "b71b3a46-ede9-4b0d-9038-cd09b0e35f69",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "0a9d0a3e-8981-4aca-a4af-97268b2ba52e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "1c8277cf-195b-4ada-8efe-d184a48828c5",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "a6e51881-c2eb-4ebc-ae11-86a8bb343272",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "13ed09b5-c577-46c8-8a33-084cff4e6642",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "1faa6734-fb12-4d2c-8dc5-cfff12854d77",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd"
+      }
+    },
+    {
+      "id": "fee73fa9-2b6a-487e-a033-c24b59649372",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "5e292fea-892c-4edc-99d0-9d5ca85fd779",
+      "kind": "component",
+      "detail": {
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "29bcf9d6-5ad5-4656-8cf0-6f9bb29ade06",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "bef6bc9f-8795-45cb-b97a-e8db17c90393",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "7bd68214-d6b0-486d-b962-63d24bf54feb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "219c30a2-474c-47bb-90e7-3fa6895b601a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "a2c2934e-5b43-4d25-88a9-25bad7109f12",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "30407d64-28c7-464d-a56c-ff3735c4c612",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "4f07713b-7c84-4cc8-8180-a0b7811d1110",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "625cb72d-dce2-4354-b8a0-6aff10df8929",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "d1b55a0e-120a-4cf1-8729-479899606670",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "d50ddf1a-a76a-4eda-ac17-2e656214b778",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372"
+      }
+    },
+    {
+      "id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "kind": "level",
+      "detail": {
+        "code": "G1"
+      }
+    },
+    {
+      "id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "4af074b1-c237-4859-a87b-a20f93974e5a",
+      "kind": "component",
+      "detail": {
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "91da99b0-e5aa-4012-99b6-9ff825d64b2d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "c25e2b5e-7363-4bae-923e-4f3727060de5",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "4898812b-3872-45fd-991b-4fde56910d68",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "b4ce51ec-7cc2-471c-a20d-8824acc3ed52",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "7377fb4a-4410-401d-a528-b2cb01c78aca",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "e0a37f91-50e3-40e6-9572-93fbb26e6a49",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "2d357008-ce2f-4d2b-8552-ee48e4fb0897",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "11be2b86-76cd-4c4e-b1de-cb88930376b4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "0f4b3219-5850-4243-a6bf-9ee46e0bd4c9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "1e8bfe97-0467-4f4d-be1e-b7506d26deab",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e"
+      }
+    },
+    {
+      "id": "9579c292-7103-46ea-a7e7-4b92771dee2f",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "00de046b-d5e6-441f-9f38-d5cc8ee523ab",
+      "kind": "component",
+      "detail": {
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "e27be0ca-a789-4583-9b88-e934115f3bb3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "bb61550f-7924-424a-b03b-91e4a5064cc0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "b2028a7a-2036-4789-ba0d-2cac9b99a081",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "684f0f59-b219-435a-ac5b-88fb507e90b2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "78c9061b-d733-4df3-b046-6c37f7f5a7ac",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "6de8fe87-b7c8-4357-9409-7f3c6c1f4612",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "6294aa2c-2c00-4514-b675-37535d114737",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "3a4a32f0-6927-4c9a-8993-9c9b98f09f64",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "64808e6b-425a-44e0-b79a-63c0545cdd47",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "3b167359-5d20-4fdd-b3a8-7b9f31cf85fa",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f"
+      }
+    },
+    {
+      "id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "1232504b-21db-400f-af40-320bce7cdaca",
+      "kind": "component",
+      "detail": {
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "e21f38bb-f1a4-4cb2-9232-5109b3bed051",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "96d06ad7-0f7e-4254-aa0d-ca4fc664b067",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "c223fd50-78f0-4ebd-9715-6a557b7c6ff9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "426032c1-5e29-474d-830e-1892659c7bcf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "beb9d25f-83ca-4c2f-aef7-889da288b1da",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "312fa95f-ffbf-42eb-9a00-af8de726b91e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "b64eefce-5bf9-4795-a28a-11258eaa8746",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "cc09da37-4124-4df3-9571-a3860ec6279e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "018ce541-cabd-4859-a37f-80f4b43c74bf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "f80749fd-4fd9-4a8a-b5a4-145333a3fca2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7"
+      }
+    },
+    {
+      "id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "67b4e7e6-3e5e-4474-adac-7ae46fcbbc4b",
+      "kind": "component",
+      "detail": {
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "163f1bab-0f06-4de2-aa96-91206bf9526d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "fea9a916-166f-4ab8-9fdc-5b6daed9c34a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "ec8b68ec-6a97-4443-8993-8b845fa609b8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "94190098-fffd-4ee7-9e8f-caf376129930",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "49d2f09b-5b6f-4b65-9653-be52c32d65ff",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "deb860ef-0fd6-4e6d-b4c0-01848373f1c4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "dbaf334a-d88c-4bfa-94bf-9177601e9b15",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "3e0095d3-bee7-4e34-aa89-2dc6c572d5ce",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "53159586-a15d-4861-a5d1-efbdddedcee4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "91b23339-6172-4400-8fc7-6dff2827be83",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5"
+      }
+    },
+    {
+      "id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "kind": "level",
+      "detail": {
+        "code": "G2"
+      }
+    },
+    {
+      "id": "d6e84a36-2ee4-4bef-9835-04371e12ed70",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "f147d7b3-5e5d-4a82-94a9-e70b97b34316",
+      "kind": "component",
+      "detail": {
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "e8ab0ab6-cad6-4c54-a302-5e14a4b8fc0d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "a35a31ed-0d5c-4bba-99d4-83d0f2aa0821",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "c2b023f8-e8d5-4d58-951f-45e975415a6e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "7e78760b-005e-4cd0-a7f5-2178359d54d2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "a926c407-65b5-4a01-b9cc-9e6df5138eca",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "efac905e-3550-479c-b35d-dea11dce4639",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "3e492bea-7019-434e-a6ea-f01cdc759a2e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "671f0a2b-954c-4773-9d7f-606f89c2e6cb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "fbd943fd-d8b5-4668-8989-cbbf48817aeb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "b224d0a8-8448-4caf-b572-e4eaf39335b8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70"
+      }
+    },
+    {
+      "id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "10c7d498-ae2d-4750-bbbb-83ebc6a719ad",
+      "kind": "component",
+      "detail": {
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "03d2b83e-a023-4c9c-97d1-d2bbd473f995",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "594849b7-d660-4bd1-b0ed-df1fdcb9cdba",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "83affa01-bbee-4668-81d5-ed823238ecbd",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "c44ee020-344c-4a5f-b66e-d0ee77d13bb3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "3286bb90-e23b-485b-9c00-3728434ffce1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "790c3a95-d3e5-4251-a080-93a983975f03",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "7c35debd-9df9-4c1d-8c5e-2b98d0788c1a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "3ea00203-2765-4c4c-b52e-331f1605a3bc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "3a3e9cf7-5f2d-4cee-ad52-f40820b059de",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "65d93457-46fc-4330-8174-9aaee6349b89",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738"
+      }
+    },
+    {
+      "id": "adc4b25f-8912-485e-8494-4077e7cba5fe",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "3781093c-b8ac-443e-a0f3-e93737204e8f",
+      "kind": "component",
+      "detail": {
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "a9cbf627-961f-4361-9e00-95f684065e16",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "71af3e1d-e4a0-4e04-a662-57fd01240a78",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "6062973d-4d32-46b1-b213-b3d15a6e32d9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "21147f3d-7c04-40b5-9c8f-3133df07a122",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "1559850d-f00d-4bed-bad8-1218d7977ea2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "b0079af7-25d2-474a-8168-599681f7e888",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "233d4266-ffea-411b-ad0a-959305267406",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "e1722571-9d7f-479e-afe2-54b4c4c8e3a3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "47107b3e-5b11-4dc8-9e58-d7b72b9c8fdf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "32d6c3d7-94aa-47ac-96f2-4c4e615d90e7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe"
+      }
+    },
+    {
+      "id": "9580c351-ee3b-4ea3-a31d-f8054274965d",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "a9d87673-2129-4cdd-a0df-bd5a629e7f79",
+      "kind": "component",
+      "detail": {
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "6b9e4f09-c93d-4e47-93cc-a8ade81a95d3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "444bf461-2751-4b6d-a554-d69eaea305b6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "a015d74f-86ea-4b81-bd1a-ea25b4a5aa60",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "f2922249-cb9b-41f1-bc32-dd58e5184793",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "912da2ff-caf5-48ce-96b6-d4e674c44c94",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "04ac8026-3621-413d-8759-c1c22d4c3d46",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "124d7e22-c150-4ce3-a86b-077f4d5999c5",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "cc3a17f0-d41d-46ec-a834-296201c13e14",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "80369d77-3209-486b-a97b-861e0e2eb444",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "101b2933-45c6-4194-b23d-147161d60770",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d"
+      }
+    },
+    {
+      "id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "kind": "level",
+      "detail": {
+        "code": "G3"
+      }
+    },
+    {
+      "id": "c857d54b-c7e9-4881-8720-5f04259be55b",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "2d9568e9-cc24-484e-b1dd-31b14ed6a8f7",
+      "kind": "component",
+      "detail": {
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "85fd1ab2-d394-4c3a-b32c-c63f8560323c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "54f60cb2-17c7-483b-aa21-f66387046503",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "5985801d-d1f8-487d-99fc-3999b9956710",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "923044d9-6927-4b57-b73b-bbe3a1ccc3bc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "98fe7a49-c5f2-4e40-bd14-64a2e3ddce08",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "7b26c278-2afb-4b93-9f92-58e545f183a8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "c89814cf-4d24-463a-8878-f4ee690a3a8d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "174ff31c-f935-44e8-b84e-ff93c3a4f758",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "a74e721e-f67c-41fd-bf7e-dc3fa5624d86",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "a3a78321-faac-45f6-918b-d0f732ac7e83",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b"
+      }
+    },
+    {
+      "id": "5c83e9c4-bc14-4d94-8694-499d807a4013",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "9db8d7a7-e914-46ef-8491-aa44eb60c759",
+      "kind": "component",
+      "detail": {
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "9cd16fcb-5345-4ddd-8662-a5a31bf09685",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "f417098a-3c61-4482-95a3-701f18b2a59d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "c6a67acc-51d7-4ab2-b53e-41ffe93377b9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "bcb6cf08-8118-449f-8528-15fa0a3e8ca0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "7236e7f9-ae04-4f31-b4ee-4a790d31cd47",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "115a501b-5f6a-4bd0-9b7b-9d389e642ae4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "4837941b-0f6f-426c-94c7-5f2a76e3e7b8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "5b9f9243-8943-4017-bf23-7206ef09b07c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "9e53e307-60c7-48ab-8df4-aa2b80715504",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "703681b1-a5b3-4a6c-b1e3-a091029064ed",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013"
+      }
+    },
+    {
+      "id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "b31d5783-c03f-46b1-9c96-f5915ab2db88",
+      "kind": "component",
+      "detail": {
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "0ee2d738-9cef-4a46-8023-3b41f7898093",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "9c455e8b-aca5-447f-abe4-fcb64d05976a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "ed529347-6b7f-4faf-afd3-326e5e3bcb93",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "45a320a8-9b93-4451-a223-28527eed19e8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "eac55490-4237-466e-b761-ea0977af3b95",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "9c076025-c9d6-460f-9bba-b7f7a81a0c82",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "35e374cf-f279-45db-b778-971b87e7925a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "2c8d7bff-ddd6-4f15-ad4e-0c3fc08c33a8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "2509d1b3-61b2-4d81-a640-b7e918539620",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "e401b0d3-42f3-4c70-bcb1-8613a42a8434",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84"
+      }
+    },
+    {
+      "id": "b177bd05-c38a-4264-8ef3-ec786940cb45",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "67106793-d77a-4b62-b9bc-d2ec25ccc35d",
+      "kind": "component",
+      "detail": {
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "561aa2bc-a87a-4bbb-82a1-bb0c5f1aa170",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "9231b96b-3abe-476d-b09f-cc4c04f5d135",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "c368098a-cafc-4bea-bd82-61594fca3555",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "c4317129-8310-457d-9953-2043591e25a0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "0de4f51e-be39-4c3f-a646-0a637c0cdf4c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "75f4a889-da4b-4c2d-a8cd-f1f2e08a5d4f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "9dabc6c6-984e-4c3a-ac10-026d33ec9d99",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "913dab02-badf-4cf9-9b37-1ec8da0c0e91",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "4deb2095-42f2-44b3-8a7e-6903f58f37ff",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "643d52d3-49e9-4b6b-8079-a95fc4d213ad",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45"
+      }
+    },
+    {
+      "id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "kind": "level",
+      "detail": {
+        "code": "G4"
+      }
+    },
+    {
+      "id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "c15a0c11-45ba-4968-841c-ef1f7747b801",
+      "kind": "component",
+      "detail": {
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "6d7d4576-6591-4457-833f-78bdee2e943d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "69fe5f28-5146-47c7-9d58-87788f234bd7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "0ec34df5-dcca-4022-b3a6-de19f2cfc5a3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "97a3fa6c-5df0-44b2-b07d-da336dad4f1e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "6903299a-6fdd-4bc4-8a31-07a08ae25827",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "b7498612-1e41-45a2-85a4-7a86305ad029",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "33a45ee8-568e-4be1-97a9-5f4e84db3637",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "2edb5401-a767-4c27-bbcc-eef0cc1c0468",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "086ef4ef-c421-40e2-ad90-5adaf4ede81f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "1eb07cc2-b406-4190-801b-4e50671fb9ed",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e"
+      }
+    },
+    {
+      "id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "317bfb79-785b-4623-95ca-37d0431675e9",
+      "kind": "component",
+      "detail": {
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "f0cb148f-021a-4db3-b069-924d1a1f866c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "79488241-803a-4fb4-aa5a-cc2f0832a8eb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "091ce810-0506-4d5a-8251-d602816d1a6b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "dfb5312b-e8a2-4acc-93f0-004fe212a390",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "db53c694-0f56-46bc-8812-11ae3d7dfcd9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "c0b804cd-ec69-43cf-acc0-1d6a258ccff1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "b7a76dd4-8a21-428a-a8fd-a0e850e71315",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "b955e315-1c07-4498-97bd-270ecc46a38b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "d8a39034-23a2-453a-a8b3-7505a9cc1a89",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "545061ae-070d-4f63-9a44-4d898fd2daf6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b"
+      }
+    },
+    {
+      "id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "97a7c658-a99f-4e73-b080-33e8c5e74e92",
+      "kind": "component",
+      "detail": {
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "52083488-70c1-4578-8eb2-03e20a9e19e3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "f632184e-6448-491f-97ea-b9429c7454fa",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "450319c0-a773-4c6f-adce-daaea2dacb7f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "da74dfea-2df2-4335-b968-7cf97ea92c44",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "3ad11f30-c359-4eed-9526-dc3f9cc7152d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "f53074b1-98ca-4d18-9f55-cf3751aae0af",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "dc012793-ab9c-4398-a618-95e1d9fbf514",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "1aa00937-1ba5-45b9-9cb6-b48dae2a399b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "15a0a5c9-2d8f-4b58-a56e-daa2c113da9a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "4888bc16-7935-4010-82e3-3cc14b5bc1c6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7"
+      }
+    },
+    {
+      "id": "dfd66610-f102-4dad-956f-29bca5be49ab",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "8db7af10-b56f-4e9c-8444-9f88fe85c4ca",
+      "kind": "component",
+      "detail": {
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "5e15dd69-8612-4848-b9c0-915674c6a3f1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "7499c4ff-92a7-4692-a876-8a2b1997ce19",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "df619493-422d-4cb1-99e4-8c2dddc35d06",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "6d7fecf1-737b-4bc4-bc90-b194b8baacb0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "ac89d416-e932-4d2c-84ab-0bfc976e7ac4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "d4ac28b6-1015-43c2-97c8-ae6bbeb6c6f1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "fece44b4-4b1e-423a-9bd3-e5c4d5fb63e8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "e047c4f2-e66f-4da1-9bd0-0aae411ca8b4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "d374d2b1-b5fa-4b36-a81e-1a3b1baf2432",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "62c7e21e-a82b-446a-918e-3fe9fe817fea",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab"
+      }
+    },
+    {
+      "id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940",
+      "kind": "subject",
+      "detail": {
+        "code": "ENSEMBLE"
+      }
+    },
+    {
+      "id": "47c46d78-c639-41ff-8ef2-6333180c56e7",
+      "kind": "component",
+      "detail": {
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "1d1ae7e8-06cb-4429-9ab6-1244570f5c25",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "92d4ea7c-3cc6-4e5d-9cf2-afbb7a96cc12",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "ce49463c-b7ab-4e00-8594-728e6aa90cef",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "0178cc95-4f61-40bf-be67-4c0b4566dc60",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "67fbb0c5-42c5-4f93-b238-a283e7d0efef",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "311672b6-5581-4414-a123-b5a4a78a96aa",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "698879fe-2825-4be7-b2f8-a4bb57219823",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "e147572d-effb-46ea-9d94-504de2fefb10",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "af5f56d5-6d37-46f0-b9d0-5eb3164f53b0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "90d08d04-433f-45b7-b119-141159326eca",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940"
+      }
+    },
+    {
+      "id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "kind": "level",
+      "detail": {
+        "code": "G5"
+      }
+    },
+    {
+      "id": "ae0702ae-e8ac-4516-a35b-170c548d1196",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "ade1a8bd-30ac-4323-8c25-04830496d416",
+      "kind": "component",
+      "detail": {
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "356b47de-58fd-4833-a4d2-f019419d5f79",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "3b81890a-6707-4c0d-925b-1c0c2aeaf5b4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "96e0eec1-e222-4892-a1f7-78de66bdc5a6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "d93743e2-70cf-4f48-bc8f-edefafce3c14",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "c2d80a2f-3998-4fd3-b2fd-f518af2cfca7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "f8d69cf9-63b3-4d6e-a1e9-c2490715be97",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "6e88f6dc-665f-4d47-9ab8-b0a9b06badda",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "fdda9e86-e2a0-4f1c-b6d3-4d21ea942831",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "7f7ce8a0-b2de-42ef-904f-da328b60a754",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "9ba95b0a-dafa-473f-85d6-09d52bfc7917",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196"
+      }
+    },
+    {
+      "id": "857951c4-d447-47ba-8fde-34dc71e9ae60",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "b7b779d9-ea10-4ac8-a1cf-71361e8007bf",
+      "kind": "component",
+      "detail": {
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "d74c3acb-4576-428f-83be-21bc87d0f946",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "8e3e464a-1639-4cd9-81b9-e691ddbe6227",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "d502f5c5-8188-46a4-9cfb-22fd84fc81d0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "e6b73585-d6aa-4cf5-ae19-dd01b03fa796",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "2e93803c-786b-4701-9f8f-fe3b8a09537a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "2ae6fd77-d7c4-4be7-93cf-cfb494498440",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "da6ffde5-f87d-48a9-ac2a-3cd86d46231a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "5425573a-8c27-4b7e-bff6-62869f48578a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "b817c43a-6360-4e6c-b114-eafbf0c10076",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "1a4778b0-9ac3-43d0-aed4-a8af2386fd12",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60"
+      }
+    },
+    {
+      "id": "cb971d50-d922-49c9-a0d9-ef7f31902a94",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "9c60dd9a-635b-4b16-ab0f-991dd63e8db5",
+      "kind": "component",
+      "detail": {
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "c486ef5a-a705-4483-b508-1043d2b3504b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "21a5fe48-cbc2-4df5-a18a-bce323ac8afe",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "211a9883-197b-4fd9-9a56-6d8eee0f42af",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "c7488ea3-8628-4bb2-8857-e2c748bad4fc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "9c6e56eb-a1a7-49f3-825b-5f172de431bc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "a259d89d-dc79-4d0b-af74-5289b8be4bb0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "831b9215-3ce7-4f1e-bb9d-97023340ec83",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "8de4d320-3d77-4310-bf57-1199cd4c11b8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "2a3f4cba-70dd-4103-8988-f009a66a34d7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "29d453ce-eb91-4e3d-8562-d4d6e5527f85",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94"
+      }
+    },
+    {
+      "id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "ae51819b-fee2-441a-9a2f-366d3d3423ca",
+      "kind": "component",
+      "detail": {
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "1e23efc3-1268-4ecc-ab61-0c7df15a95f5",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "460ac6a8-f007-43f4-9914-9591375033ad",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "2f0bdf71-f2ed-420d-81f8-ea0892b39ecf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "443b398a-bfdf-457b-a633-ea263d2aff8d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "6741c983-0aa9-4df6-9149-1c56b2822c75",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "ce725986-316e-4d7b-ba09-59a67b65cc98",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "5031b134-04c2-4eb5-b4f2-42c9fedc7b94",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "58cc4c47-e83c-4945-9b4d-5e2c8199cdd4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "166dd90b-a277-4514-b170-a4d582a18724",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "0d5246f5-0058-44a4-89ad-f30743d56733",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d"
+      }
+    },
+    {
+      "id": "fca153a7-649d-4c1f-8b16-d2c44059d460",
+      "kind": "subject",
+      "detail": {
+        "code": "ENSEMBLE"
+      }
+    },
+    {
+      "id": "8bb47e16-5ea8-4e07-9c41-690e8f82a543",
+      "kind": "component",
+      "detail": {
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "29721de1-7cec-4e70-a384-6384662fc288",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "fc499ca8-8c43-46c5-819e-3182e680c1ca",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "43a1c0dc-3cfe-4e39-8cbe-6cdcbcef7bcf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "53aebf8e-fa4e-44be-a18a-9b3239655ef7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "3469b37f-4b2e-4936-accf-e5aa82e813dc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "7389fc55-983d-4c10-a65e-2ca4567b8748",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "319292d1-25fe-4b67-8b51-c266451301ef",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "cc049afd-ba9a-45cf-8cc1-05af488ac209",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "71b9d611-6ecd-424a-89a9-465b0bc042e7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "bc67523d-becc-407c-b685-4e58046c580a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460"
+      }
+    },
+    {
+      "id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "kind": "level",
+      "detail": {
+        "code": "G6"
+      }
+    },
+    {
+      "id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "48b329cc-d46a-43a3-92af-03075b9ba955",
+      "kind": "component",
+      "detail": {
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "3cad4abc-7226-47b8-8a93-f75573ef3b91",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "f800b175-16a7-461e-a1f6-6b5d53eefc64",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "eb72c95b-e9dd-4805-937b-9eb988b97f2d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "80ec8c76-6ce6-453e-806e-7f4c1511d467",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "80d56569-c0ef-4428-a798-d5af9c062ea1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "64bf2655-e2f7-468c-a260-7f22cdaa978d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "07fc7ab9-9327-4d1a-a8b1-d8b23e9793aa",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "d935d223-e6e0-45e2-b83d-2210f3098d59",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "ebb669a4-3932-4ab9-85cd-51cf98aa86bf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "c60b56b6-861c-4aee-8e81-da0f3147c252",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a"
+      }
+    },
+    {
+      "id": "a0395099-5590-486e-8116-f088734482a3",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "225c5731-1d1b-4d39-99a2-cc75e60dd859",
+      "kind": "component",
+      "detail": {
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "cb0a82e6-da33-4f81-9132-be169d6e3e3a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "1a465cf6-020f-475a-abb5-683dcf762374",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "9c059eb8-71b3-4ea0-b9e9-c19723b6a679",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "2e4188a5-f3f0-4c86-ac70-1674c834925d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "d954fc3f-d89a-4861-8638-a4091ecb69e8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "274ff2c1-cb2a-4f9a-9315-79ebde8185b8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "513cbf4c-5649-417c-9208-3720676968e0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "3fcbb1ab-9948-41db-8878-de0643cad842",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "9caa9ccf-a5de-43bb-b863-949123885024",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "8c99c320-35e9-4092-9e94-5203da0f65a5",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "a0395099-5590-486e-8116-f088734482a3"
+      }
+    },
+    {
+      "id": "d16a1d70-e314-4963-bd7b-487263db8cf0",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "cee086ae-24f0-4cfc-8494-c8c82dad273d",
+      "kind": "component",
+      "detail": {
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "9dcc345b-abdb-4d0c-afa0-60f4e4e68ea9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "2c00b1a6-4bbe-48ac-b331-48e4da7c05f8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "090b5809-2f54-4b82-910e-bbf485aa2d24",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "b0842978-759d-455c-a039-4ad21df71376",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "7e763fa6-6eb9-40bd-a29e-a584cec12646",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "97c6d7a2-3477-456c-9b92-606f44c24a58",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "8f7ca928-a9e6-46a7-87e6-52216d3feaba",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "3b81ecd4-bbad-4806-8ddf-509a60d9f289",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "544e174e-67f4-4f68-8680-4b0c2c9ad8b2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "23951775-9e9f-4972-a3f2-da6950377488",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0"
+      }
+    },
+    {
+      "id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "b225c9a9-2013-4361-ba22-5d64a299266a",
+      "kind": "component",
+      "detail": {
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "f0ccf118-da6f-4a51-bb85-75c73ac6f202",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "e97d8f2a-47e3-44bf-a912-b045e0dc549a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "b6f7dac1-c2b3-48c5-a2a7-58ad74f4fbdf",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "171e8659-c681-431b-9917-308965ebf23e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "fec73da1-6011-4ec9-982d-9f6d7904d334",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "56b79385-4066-4c60-82e9-fe398f4298de",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "a98e2c95-e046-4e8d-bf8a-a059794fd40e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "c57b79d5-846c-4e16-9098-f4731a92e0b9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "e92a5d4d-8397-4464-83aa-985cf5e1bbec",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "9bc7b562-dc45-4269-b7e0-7eb6933359f9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35"
+      }
+    },
+    {
+      "id": "a7801216-989a-4bb4-847d-b55c3701dbdd",
+      "kind": "subject",
+      "detail": {
+        "code": "ENSEMBLE"
+      }
+    },
+    {
+      "id": "529f959b-f3a7-47f3-988a-03603cf54860",
+      "kind": "component",
+      "detail": {
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "de2e5a7b-eda5-4249-9b2a-043858a42dc1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "ee6c3d4a-e19f-4042-954e-1db5aee659c6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "6c92194d-0365-4a6a-8c95-910fa2fcc0e7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "90afa6ee-6f23-414c-a213-2ff0ce338c5b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "292cb10d-3ffd-4b4c-95c7-b702eea0f77b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "22b4f004-a18b-40d1-8321-af86862ccb9c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "757122f4-fedc-4f40-a3a7-ef74ac00d917",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "d8fdb26e-99d0-410b-b223-d8cd1b84b356",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "57744b54-473d-4cf4-9a7d-f852c64d8cbc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "93b47ba5-ab90-441d-9175-0040511a41e9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd"
+      }
+    },
+    {
+      "id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "kind": "level",
+      "detail": {
+        "code": "G7"
+      }
+    },
+    {
+      "id": "5ad32771-ab7a-4ff5-b670-855612e16703",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "bb9882b3-9f9c-4897-89f4-365243081271",
+      "kind": "component",
+      "detail": {
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "df1309d1-f689-4066-bd5b-ad4f60672171",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "87ef0d58-381f-4c4c-ae17-49b7e2c4d1bc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "fa4da3fd-cc26-42e5-84e7-f04607780a0f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "d22aa57c-7af9-472f-bf6c-8ef50ee8e5e2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "bb9a4d2a-d6ed-4d2a-b730-225a6994dd84",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "debd8935-9ee3-47b1-9096-d2c2ce808f1f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "81bf30de-8877-4458-af8d-fa7ca5965d9a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "6338c548-19a2-4bf1-87df-3bde41f0a514",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "1ab31d9f-d923-4cb1-ae08-f35c2fefaaa1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "a7181bf9-0e19-4552-9c1c-65a9e8b263ee",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703"
+      }
+    },
+    {
+      "id": "5e8d8d3e-4402-429f-ad53-d243198f23bc",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "5b201b9e-1466-4699-8d1a-7038691f12d1",
+      "kind": "component",
+      "detail": {
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "ab79d02b-fe67-4d81-9811-2a1234c8766d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "94031617-f0f6-420d-ac4a-fc24f982d476",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "4e287517-e43d-4925-998e-2330d4531b64",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "5798d281-56c8-494b-99e6-da0005dc565b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "ee1c2f00-1101-49e7-97cd-e6cfae9a078f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "19f48e5b-9c97-4deb-bb8c-7484d221e05d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "24b11ffe-8f2f-4547-b972-596556d91ea3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "d86b4d18-2ea8-4d1c-a8ee-f2e7aefcda60",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "c7eb1041-4d46-4dff-8e77-d36bb5f3fc89",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "d79fcac8-28da-46b0-b81a-f4ac2d7d2385",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc"
+      }
+    },
+    {
+      "id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "260f782f-f805-4166-a516-e6db78aabf4e",
+      "kind": "component",
+      "detail": {
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "4d03e6cd-b334-42a1-8e79-fbe8a46d943f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "7915d570-0868-48c0-97a8-99a712a51b97",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "acfbb5eb-7690-4d3c-a49f-cbe63af6e621",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "0a6b7cbe-ba43-4a96-9e30-a82348ed129d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "6b9b47de-63fd-4b1a-88fa-dafcdc88ae75",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "527779aa-2b80-4bbb-9da9-fc6464b0143e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "46b5fe74-32ab-455e-9c4f-c210ffa2187a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "5a38b1fb-0880-4628-a3b8-006c530ecf88",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "af1cfc6a-96fa-4b82-a7ef-b1cbea66f393",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "5b425cb7-c50e-4aea-95d0-e9172794a75d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7"
+      }
+    },
+    {
+      "id": "b29d8850-cb35-4608-9cf1-d74a27e429b3",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "f966c192-443f-4cb2-8301-cb14a648b4eb",
+      "kind": "component",
+      "detail": {
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "938f8ba1-a9c2-4700-860d-89f5f730b20b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "d9fe37f6-f942-40aa-9081-bf05886f28e3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "903e2e8e-84b0-4cb5-92d1-baf06c5b9850",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "a1fcca66-a0ce-4fed-84d6-9aa9b5383afc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "94662bf3-932d-45f8-84a4-03c086ea4042",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "7a531697-8c22-4402-a96d-165741a26158",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "dd0db6f6-3cc3-46ab-8338-3116a5c117db",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "b4353879-adad-4c6a-9306-8f8a596e91ce",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "3e34b42d-db68-4416-bf3f-0537c4b89a6e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "a3edd797-cc4f-4cfe-910c-e251423653ca",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3"
+      }
+    },
+    {
+      "id": "70a31fce-7cd8-4928-ae77-29950763a28d",
+      "kind": "subject",
+      "detail": {
+        "code": "ENSEMBLE"
+      }
+    },
+    {
+      "id": "3ea06546-ac96-4ffe-a913-645c002d04bb",
+      "kind": "component",
+      "detail": {
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "d2999acf-ff03-4559-9b53-a22f0218adb6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "b415f723-699e-4331-9e21-e7f5f9017d25",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "b8d843ed-5103-4173-b885-1457bf33b632",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "37192be8-0fc1-4339-b6ac-7728d7419953",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "76008401-6067-4376-bb05-113213c72a7b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "2fb15678-c445-4aeb-87c6-def165e19922",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "4ee906f6-99df-4995-ba2e-b26ea12ed17f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "90d64141-fb58-4823-aa48-5a803e4b6079",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "93efb138-381e-45d2-9930-c86b6d26d477",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "8da6909a-b8ef-4400-9832-6597c60268ad",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d"
+      }
+    },
+    {
+      "id": "44792eff-1861-44f5-8a5e-1646e4d71eeb",
+      "kind": "subject",
+      "detail": {
+        "code": "MUSIC_HISTORY"
+      }
+    },
+    {
+      "id": "947ead0a-d0ba-4ccb-9b5b-670283dc1666",
+      "kind": "component",
+      "detail": {
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "143d1c39-da5b-4ecf-aa73-66078290889c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "b01eee3c-5abd-4ed0-9130-ac6b3ae49d1a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "46923a25-b4cd-4ef8-af5a-1f6c9527c334",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "9ba0b0bf-9b3b-4a07-a5fb-8c2e7d58929e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "600292b7-eada-4ad2-a9e6-b1429112edee",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "86764f14-fe3c-4bad-b13d-a484ff78c750",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "f113283d-7c03-4033-95cb-a273e3c690c8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "fc8e425b-a4d3-4158-8b2d-5e9749a4296e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "1e977070-ebaa-4ff4-a26e-f51b6b12421f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "09424039-c99e-4269-ac47-cbacc0014fb8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb"
+      }
+    },
+    {
+      "id": "ef86262d-256b-4809-986f-3c26442f1038",
+      "kind": "subject",
+      "detail": {
+        "code": "MEDIA_PRODUCT"
+      }
+    },
+    {
+      "id": "c342ef42-3a0f-4691-a4ad-629c9a2b63ff",
+      "kind": "component",
+      "detail": {
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "544a0cbd-9f32-406e-9999-0c6d9840dfd2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "c8df3503-189c-4000-9c0e-389566636866",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "0066b355-d6c4-41dd-8b89-02d1373501d7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "337d2be4-e0bc-42b9-ad47-0bc09f9241ce",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "7e3a89db-9722-4044-abf0-67cd72e4baf5",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "36125e36-4c30-44de-b9e9-2003b60f031b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "a775615b-7416-4654-b80d-2ec29a0d5827",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "52b3c997-1b69-47cf-a87b-b12c7c7873f1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "9a97bc82-0087-4cbd-bf5b-7b3a1c2d8ec8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "2df3e7da-502b-4784-a99b-ff660a2a0fd6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "ef86262d-256b-4809-986f-3c26442f1038"
+      }
+    },
+    {
+      "id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "kind": "level",
+      "detail": {
+        "code": "G8"
+      }
+    },
+    {
+      "id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c",
+      "kind": "subject",
+      "detail": {
+        "code": "REPERTOIRE"
+      }
+    },
+    {
+      "id": "44b0af35-7b4b-4b44-8717-c36573be84c5",
+      "kind": "component",
+      "detail": {
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "06f3c1ba-799c-446f-865f-48533f68ca97",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "49e98bac-b741-4372-9189-f967a6d3baa9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "0e9f3877-2ea8-4489-a7ef-abff70f64c1e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "eea68ac2-5a38-4aad-8f37-1c8f514b49b8",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "38beebcf-85d8-4b65-a918-12789c70f0b9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "af0cf16d-1a3c-492d-9030-e7cf12b33885",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "b4574c57-6183-4885-94f7-172113e2dd43",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "f296e71b-9e8d-46d9-bd5b-ab1b5bc9ba6b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "8ca2b4b0-ad9d-423c-85da-f04ac8b8e6c6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "b487584c-37d5-413d-8306-13e997cc4417",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c"
+      }
+    },
+    {
+      "id": "0e8833df-17d4-4184-ad2c-1a126256ae4b",
+      "kind": "subject",
+      "detail": {
+        "code": "TECHNIQUE_FOUNDATION"
+      }
+    },
+    {
+      "id": "0485ef7d-c1a3-4fa4-b209-1bcf78f8f9f9",
+      "kind": "component",
+      "detail": {
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "0d133c1a-ed0b-4a5d-a726-7bedc54c1c33",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "b6dc76b2-5e05-4cc5-9b23-f40fe36be12e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "4e72cda1-1b14-4f65-a73a-5aa8be156850",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "4f475259-dab6-4cca-a69e-2f3d05d26a81",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "1669c07c-b316-404f-9316-53b293cbb41e",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "f9226efd-11c6-4127-a079-0c9302f7b336",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "c9114d47-831e-4cd8-aace-9791b169fc59",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "0587ddf0-bdfe-4f18-a475-17e79dc7db53",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "1c1259cb-23ea-4584-9ccf-af63a1122ea7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "d6f36e8f-9af0-4439-a80b-34881ad5ff0d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b"
+      }
+    },
+    {
+      "id": "e3471225-b54d-4dbf-a28b-b939021cafa0",
+      "kind": "subject",
+      "detail": {
+        "code": "AURAL"
+      }
+    },
+    {
+      "id": "700f81da-0b65-468a-af61-3d20b3eb6d06",
+      "kind": "component",
+      "detail": {
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "36985004-7ec8-4271-84a4-3657b57f6833",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "6fa6d414-7360-4e21-b93f-0f342d644589",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "653f6cf0-ac64-41c3-b4ad-c4b42168211b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "2b4cae31-a47f-404d-b74e-3d97d09e77f0",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "bb08f5b5-9023-472d-b3b7-da86c28f2c4a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "95672d54-08b0-4082-970f-b89c0290cdc7",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "9ad01de4-a04e-4d05-a944-408d56922968",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "74a188dc-4e81-4ba2-b4e8-36f0ff0ebf52",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "7073195c-8d8b-4e55-8cf6-50c8c0591906",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "f9a4a631-be64-4406-9a71-dd51e1acfb80",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0"
+      }
+    },
+    {
+      "id": "ad393b3f-e38e-463a-b5ba-ea77f050225f",
+      "kind": "subject",
+      "detail": {
+        "code": "SIGHT_READING"
+      }
+    },
+    {
+      "id": "fcc71475-5500-4350-a063-0e937c8c3e01",
+      "kind": "component",
+      "detail": {
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "74a50d96-a0d4-474f-8ae1-946e36f09a9a",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "40957cbf-9611-4dd4-bc27-98ca52b565a6",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "9c2a7f08-8034-4152-ade7-f4e1ad461673",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "d2cc2d8f-f096-45cb-acaa-f9bc22ebc323",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "72a49b32-4113-42d7-94cf-1ca66758ee57",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "8e2cfd9a-7af2-4ebb-a876-47b534c446cd",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "e7b57866-d785-4d05-99d8-9c36c4efbf34",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "27e158f8-ffc7-4cd5-b532-a83a029bfb03",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "4a3464fe-367e-4bde-8037-28aee78c4722",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "d55697fc-19d3-426f-a645-6edaa3d87440",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f"
+      }
+    },
+    {
+      "id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec",
+      "kind": "subject",
+      "detail": {
+        "code": "ENSEMBLE"
+      }
+    },
+    {
+      "id": "9d536eea-1869-409e-9359-8cb61c0f9fa9",
+      "kind": "component",
+      "detail": {
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "9c1f340c-29c8-426e-a55b-63fe8ddeed64",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "a6f680fc-e8cd-4000-be59-791622d8193d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "ceee9dbf-142a-4081-83af-ebffdaaf53d1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "b617ac29-b6d8-473a-87ea-5fa84a5e069f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "08ad77a8-654f-4208-897d-fc7439397cab",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "0c7d9915-bf57-4b5b-92d0-1467d42b11ee",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "80056236-1e44-4338-81c8-e8cd1f1ef428",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "05dd7e5d-8e15-49e0-a0ca-776210b3039c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "0bcbabe8-2032-4397-8ea5-32d4231ddb91",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "4c477251-88cd-4327-a7b5-d5daa344475b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec"
+      }
+    },
+    {
+      "id": "18817634-9979-492a-92c1-dc78e24aa292",
+      "kind": "subject",
+      "detail": {
+        "code": "MUSIC_HISTORY"
+      }
+    },
+    {
+      "id": "48a7f93e-65d0-4ad2-9d9a-648461b6f93f",
+      "kind": "component",
+      "detail": {
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "c10670c9-80c8-4953-bb4c-03376ec1bdc2",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "4a0470f9-252b-4bd4-b5dc-9ecfda76b898",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "6541b86f-a298-47ee-8933-ed3ad4e054bb",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "b943aec3-29ed-4ee9-9a60-1482e2fee497",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "0a75bb2c-4319-4d77-a9b3-4e16a402f277",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "ce3481be-bcd2-4e0f-a107-7dbde96833c9",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "ffbdafb5-d0c4-41a4-9bc4-d97614fa1053",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "e6aa2870-518b-4648-98c1-7c420078baf1",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "9d3316fe-63ac-4247-a9d4-16979295e2c3",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "26e8d95e-550e-4a96-a8d7-829adb3b961b",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "18817634-9979-492a-92c1-dc78e24aa292"
+      }
+    },
+    {
+      "id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb",
+      "kind": "subject",
+      "detail": {
+        "code": "MEDIA_PRODUCT"
+      }
+    },
+    {
+      "id": "1db88f55-3aa7-46f5-8b53-73c1af607769",
+      "kind": "component",
+      "detail": {
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "60fdbe32-c2d4-472e-9258-39c9c97b498c",
+      "kind": "lesson",
+      "detail": {
+        "code": "L01",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "3aadee46-6f53-4548-b17c-ef661df22d11",
+      "kind": "lesson",
+      "detail": {
+        "code": "L02",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "84aaa380-088a-4234-9fde-f299a6fc95dc",
+      "kind": "lesson",
+      "detail": {
+        "code": "L03",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "42bc3467-e3d3-4ff7-93d8-91fff1175d5f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L04",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "3efb9826-0668-4183-b04a-e162f096c5a4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L05",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "ed14c107-4daa-452e-911c-359e23bd905d",
+      "kind": "lesson",
+      "detail": {
+        "code": "L06",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "1a8e2bb5-8b22-4875-af1a-d0d3f63ba93f",
+      "kind": "lesson",
+      "detail": {
+        "code": "L07",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "f8a83a7f-204e-4c08-b9a3-f93cb6d40b51",
+      "kind": "lesson",
+      "detail": {
+        "code": "L08",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "8c872518-e035-4479-9840-0b412c7e5b28",
+      "kind": "lesson",
+      "detail": {
+        "code": "L09",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    },
+    {
+      "id": "1c20dcb4-36d5-4316-ac74-cdbcf0786eb4",
+      "kind": "lesson",
+      "detail": {
+        "code": "L10",
+        "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb"
+      }
+    }
+  ],
+  "subjects": [
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/b1c8d779-0cee-45a1-893c-5e49e6036845?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/2ff7d6ce-d6b7-40fc-a714-eb86e728d09d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/64c18e3c-0012-4ef2-be4e-98e6d0bb9f14?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/e7219608-6a2c-42f1-a313-8a300a625bd1?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/9e7f85e7-fcab-4377-8a11-d237547252be?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/6b77b302-4164-4156-aab3-6c6355e7e038?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/4a9a1903-bab3-4812-b71a-9ed7e8b961e5?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/38d2590a-3121-4d23-8504-f31de5b850ca?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/7588ef78-ea3e-4746-96c2-eda11f9dc5cd?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/fee73fa9-2b6a-487e-a033-c24b59649372?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/9579c292-7103-46ea-a7e7-4b92771dee2f?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/d905cb86-18b7-49ba-9ad8-32118ef0cbc7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/29fb5da5-fb33-4bde-af4c-167aeae14cd5?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/d6e84a36-2ee4-4bef-9835-04371e12ed70?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/fc846cc4-cbc6-495d-b59b-baffd7c7b738?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/adc4b25f-8912-485e-8494-4077e7cba5fe?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/9580c351-ee3b-4ea3-a31d-f8054274965d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/c857d54b-c7e9-4881-8720-5f04259be55b?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/5c83e9c4-bc14-4d94-8694-499d807a4013?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/2ff44186-3e05-4dc0-b33f-1c76dbf14b84?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/b177bd05-c38a-4264-8ef3-ec786940cb45?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/0a951180-ffc0-447f-8ed6-2e0d55657ac7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/dfd66610-f102-4dad-956f-29bca5be49ab?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/07c2c6a0-2184-40a0-b77b-db1ca75b6940?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/ae0702ae-e8ac-4516-a35b-170c548d1196?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/857951c4-d447-47ba-8fde-34dc71e9ae60?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/cb971d50-d922-49c9-a0d9-ef7f31902a94?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/6b943886-679f-4a1e-9bbe-dfbd97271c7d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/fca153a7-649d-4c1f-8b16-d2c44059d460?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/253a38c5-dedd-4b7a-9ed2-52016cbd657a?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "a0395099-5590-486e-8116-f088734482a3",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/a0395099-5590-486e-8116-f088734482a3?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/d16a1d70-e314-4963-bd7b-487263db8cf0?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/6ceb3886-d26e-4bc9-bdc0-bbeed5613e35?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/a7801216-989a-4bb4-847d-b55c3701dbdd?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/5ad32771-ab7a-4ff5-b670-855612e16703?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/5e8d8d3e-4402-429f-ad53-d243198f23bc?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/0b7dd20a-529b-4ca8-971c-1ac900920ad7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/b29d8850-cb35-4608-9cf1-d74a27e429b3?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/70a31fce-7cd8-4928-ae77-29950763a28d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/44792eff-1861-44f5-8a5e-1646e4d71eeb?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ef86262d-256b-4809-986f-3c26442f1038",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/ef86262d-256b-4809-986f-3c26442f1038?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/0e8833df-17d4-4184-ad2c-1a126256ae4b?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/e3471225-b54d-4dbf-a28b-b939021cafa0?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/ad393b3f-e38e-463a-b5ba-ea77f050225f?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/3c640ec1-9e3e-4b1a-8330-6b4f48de4bec?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "18817634-9979-492a-92c1-dc78e24aa292",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/18817634-9979-492a-92c1-dc78e24aa292?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb",
+      "after_count": 10,
+      "before_count": 0,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/5c477659-95dd-4f0d-8c81-81c4ff55f6eb?lessons=all",
+      "preserved_more_than_ten": false
+    }
+  ],
+  "content_state": "LESSON_SLOTS_ONLY_NOT_APPROVED_TEACHING_CONTENT",
+  "progress_unchanged": true,
+  "reportPath": "/var/folders/gl/_pjb8wqs24n1rnjn3s03ypqm0000gn/T/vibe-curriculum-20261005-S9cLPJ/import-report.json"
+}

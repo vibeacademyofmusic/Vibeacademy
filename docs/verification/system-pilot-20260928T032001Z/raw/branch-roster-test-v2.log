@@ -1,0 +1,30 @@
+✔ operations consolidation does not expose finance to student-only staff (14.226083ms)
+✔ menu targets existing standalone routes only (0.206667ms)
+✔ active menu chooses the most specific existing URL (0.2235ms)
+✔ HR groups staff, pay, and assignment without a separate teacher entry (11.811542ms)
+✔ business shell keeps unaudited admin routes out of the branch menu (22.225042ms)
+✔ unimplemented domains are omitted and existing finance routes are present (0.62825ms)
+✔ CRM aliases and registration share the consolidated navigation entry (0.280583ms)
+✔ approved tuition and payment group keeps six routes and precise active state (8.647667ms)
+✔ approved HR labels and deep links remain precise (6.955708ms)
+✔ HR sidebar renders exactly four direct links without nested links or controls (23.118ms)
+✔ HR and recruitment use the same wrapping workspace tabs, mounted once (13.942875ms)
+✔ payroll retains its back link without a second cross-module navigation bar (0.28825ms)
+✔ training and system preserve local routes and exact active destinations (12.754667ms)
+✔ legacy embedded training URLs select the single canonical tab (14.36975ms)
+✔ program/course switches share the training bar and preserve existing search filters (8.149917ms)
+✔ room workspace does not repeat cross-module navigation as a dropdown (0.18275ms)
+✔ date validation, Vietnam default, and all server-side filters (47.385875ms)
+✔ return URL retains filters and rejects external or unrelated destinations (8.569167ms)
+✔ launcher renders canonical roster directly and forwards filters to bounded RPC (50.293ms)
+✔ empty and failed queries show an explicit state without class detours (61.793917ms)
+✔ branch roster is readable without exposing admin mutation controls (86.906083ms)
+✔ forged session is denied before any session rows are loaded (63.470792ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 476.200209

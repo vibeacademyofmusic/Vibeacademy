@@ -1,0 +1,490 @@
+{
+  "mode": "DRY_RUN_ROLLED_BACK",
+  "target": {
+    "api": "http://127.0.0.1:54321",
+    "container": "supabase_db_vibe-academy-system",
+    "databasePort": "54322"
+  },
+  "changes": [],
+  "subjects": [
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "6b1e302e-4673-4818-8f91-7a07577046b7",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/6b1e302e-4673-4818-8f91-7a07577046b7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "b1c8d779-0cee-45a1-893c-5e49e6036845",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/b1c8d779-0cee-45a1-893c-5e49e6036845?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "2ff7d6ce-d6b7-40fc-a714-eb86e728d09d",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/2ff7d6ce-d6b7-40fc-a714-eb86e728d09d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "831b658f-cb87-4452-b58c-fb2b37d01454",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "64c18e3c-0012-4ef2-be4e-98e6d0bb9f14",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/831b658f-cb87-4452-b58c-fb2b37d01454/subjects/64c18e3c-0012-4ef2-be4e-98e6d0bb9f14?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "4ef70031-84a0-47f1-9811-d9cc67868e64",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/4ef70031-84a0-47f1-9811-d9cc67868e64?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "e7219608-6a2c-42f1-a313-8a300a625bd1",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/e7219608-6a2c-42f1-a313-8a300a625bd1?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "9e7f85e7-fcab-4377-8a11-d237547252be",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/9e7f85e7-fcab-4377-8a11-d237547252be?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "4e53e66d-dd5c-4361-998b-7813fd31dcd6",
+      "program_id": "7de89db6-e01c-4794-ae03-dbfc40713fd7",
+      "subject_id": "6b77b302-4164-4156-aab3-6c6355e7e038",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/7de89db6-e01c-4794-ae03-dbfc40713fd7/levels/4e53e66d-dd5c-4361-998b-7813fd31dcd6/subjects/6b77b302-4164-4156-aab3-6c6355e7e038?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "4a9a1903-bab3-4812-b71a-9ed7e8b961e5",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/4a9a1903-bab3-4812-b71a-9ed7e8b961e5?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "38d2590a-3121-4d23-8504-f31de5b850ca",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/38d2590a-3121-4d23-8504-f31de5b850ca?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "7588ef78-ea3e-4746-96c2-eda11f9dc5cd",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/7588ef78-ea3e-4746-96c2-eda11f9dc5cd?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "654893fe-6bc1-4ab6-a226-caf9ab493b4c",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "fee73fa9-2b6a-487e-a033-c24b59649372",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/654893fe-6bc1-4ab6-a226-caf9ab493b4c/subjects/fee73fa9-2b6a-487e-a033-c24b59649372?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ee1f06df-cbe8-41b8-828b-f809244a8f0e",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/ee1f06df-cbe8-41b8-828b-f809244a8f0e?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "9579c292-7103-46ea-a7e7-4b92771dee2f",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/9579c292-7103-46ea-a7e7-4b92771dee2f?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "d905cb86-18b7-49ba-9ad8-32118ef0cbc7",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/d905cb86-18b7-49ba-9ad8-32118ef0cbc7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "b037bf76-90ba-4745-821b-29082b8b483a",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "29fb5da5-fb33-4bde-af4c-167aeae14cd5",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/b037bf76-90ba-4745-821b-29082b8b483a/subjects/29fb5da5-fb33-4bde-af4c-167aeae14cd5?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "d6e84a36-2ee4-4bef-9835-04371e12ed70",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/d6e84a36-2ee4-4bef-9835-04371e12ed70?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "fc846cc4-cbc6-495d-b59b-baffd7c7b738",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/fc846cc4-cbc6-495d-b59b-baffd7c7b738?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "adc4b25f-8912-485e-8494-4077e7cba5fe",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/adc4b25f-8912-485e-8494-4077e7cba5fe?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "39badd25-b298-4bdd-989e-9c73087cb8a1",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "9580c351-ee3b-4ea3-a31d-f8054274965d",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/39badd25-b298-4bdd-989e-9c73087cb8a1/subjects/9580c351-ee3b-4ea3-a31d-f8054274965d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "c857d54b-c7e9-4881-8720-5f04259be55b",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/c857d54b-c7e9-4881-8720-5f04259be55b?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5c83e9c4-bc14-4d94-8694-499d807a4013",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/5c83e9c4-bc14-4d94-8694-499d807a4013?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "2ff44186-3e05-4dc0-b33f-1c76dbf14b84",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/2ff44186-3e05-4dc0-b33f-1c76dbf14b84?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "14baf0d2-ab88-4aee-a815-cee7cbc092d5",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "b177bd05-c38a-4264-8ef3-ec786940cb45",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/14baf0d2-ab88-4aee-a815-cee7cbc092d5/subjects/b177bd05-c38a-4264-8ef3-ec786940cb45?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "8eaabe11-8bcc-4b15-9f04-b6b872a03d1e",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/8eaabe11-8bcc-4b15-9f04-b6b872a03d1e?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/1dc3d7c4-b56f-46d1-a02f-6e86d48f4d1b?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "0a951180-ffc0-447f-8ed6-2e0d55657ac7",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/0a951180-ffc0-447f-8ed6-2e0d55657ac7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "dfd66610-f102-4dad-956f-29bca5be49ab",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/dfd66610-f102-4dad-956f-29bca5be49ab?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "59928209-78dd-4a69-9b4e-4d4ebc07df94",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "07c2c6a0-2184-40a0-b77b-db1ca75b6940",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/59928209-78dd-4a69-9b4e-4d4ebc07df94/subjects/07c2c6a0-2184-40a0-b77b-db1ca75b6940?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ae0702ae-e8ac-4516-a35b-170c548d1196",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/ae0702ae-e8ac-4516-a35b-170c548d1196?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "857951c4-d447-47ba-8fde-34dc71e9ae60",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/857951c4-d447-47ba-8fde-34dc71e9ae60?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "cb971d50-d922-49c9-a0d9-ef7f31902a94",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/cb971d50-d922-49c9-a0d9-ef7f31902a94?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "6b943886-679f-4a1e-9bbe-dfbd97271c7d",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/6b943886-679f-4a1e-9bbe-dfbd97271c7d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "1f693753-bd74-4090-875a-76eadd62fa4d",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "fca153a7-649d-4c1f-8b16-d2c44059d460",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/1f693753-bd74-4090-875a-76eadd62fa4d/subjects/fca153a7-649d-4c1f-8b16-d2c44059d460?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "253a38c5-dedd-4b7a-9ed2-52016cbd657a",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/253a38c5-dedd-4b7a-9ed2-52016cbd657a?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "a0395099-5590-486e-8116-f088734482a3",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/a0395099-5590-486e-8116-f088734482a3?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "d16a1d70-e314-4963-bd7b-487263db8cf0",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/d16a1d70-e314-4963-bd7b-487263db8cf0?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "6ceb3886-d26e-4bc9-bdc0-bbeed5613e35",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/6ceb3886-d26e-4bc9-bdc0-bbeed5613e35?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "3c87f972-a6ab-4a9f-9365-55fcc6d21e67",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "a7801216-989a-4bb4-847d-b55c3701dbdd",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/3c87f972-a6ab-4a9f-9365-55fcc6d21e67/subjects/a7801216-989a-4bb4-847d-b55c3701dbdd?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5ad32771-ab7a-4ff5-b670-855612e16703",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/5ad32771-ab7a-4ff5-b670-855612e16703?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5e8d8d3e-4402-429f-ad53-d243198f23bc",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/5e8d8d3e-4402-429f-ad53-d243198f23bc?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "0b7dd20a-529b-4ca8-971c-1ac900920ad7",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/0b7dd20a-529b-4ca8-971c-1ac900920ad7?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "b29d8850-cb35-4608-9cf1-d74a27e429b3",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/b29d8850-cb35-4608-9cf1-d74a27e429b3?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "70a31fce-7cd8-4928-ae77-29950763a28d",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/70a31fce-7cd8-4928-ae77-29950763a28d?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "44792eff-1861-44f5-8a5e-1646e4d71eeb",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/44792eff-1861-44f5-8a5e-1646e4d71eeb?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "11feaa50-6371-49a2-8f39-12dcf6c48e00",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ef86262d-256b-4809-986f-3c26442f1038",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/11feaa50-6371-49a2-8f39-12dcf6c48e00/subjects/ef86262d-256b-4809-986f-3c26442f1038?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "2ad7bc8d-3bef-4419-836a-097d319c8c4c",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/2ad7bc8d-3bef-4419-836a-097d319c8c4c?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "0e8833df-17d4-4184-ad2c-1a126256ae4b",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/0e8833df-17d4-4184-ad2c-1a126256ae4b?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "e3471225-b54d-4dbf-a28b-b939021cafa0",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/e3471225-b54d-4dbf-a28b-b939021cafa0?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "ad393b3f-e38e-463a-b5ba-ea77f050225f",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/ad393b3f-e38e-463a-b5ba-ea77f050225f?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "3c640ec1-9e3e-4b1a-8330-6b4f48de4bec",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/3c640ec1-9e3e-4b1a-8330-6b4f48de4bec?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "18817634-9979-492a-92c1-dc78e24aa292",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/18817634-9979-492a-92c1-dc78e24aa292?lessons=all",
+      "preserved_more_than_ten": false
+    },
+    {
+      "level_id": "9cd10fa2-328a-4147-bdad-d23ea5a8c495",
+      "program_id": "5131353d-2b02-402f-8029-9534f8e93440",
+      "subject_id": "5c477659-95dd-4f0d-8c81-81c4ff55f6eb",
+      "after_count": 10,
+      "before_count": 10,
+      "authoring_path": "/admin/academic/5131353d-2b02-402f-8029-9534f8e93440/levels/9cd10fa2-328a-4147-bdad-d23ea5a8c495/subjects/5c477659-95dd-4f0d-8c81-81c4ff55f6eb?lessons=all",
+      "preserved_more_than_ten": false
+    }
+  ],
+  "content_state": "LESSON_SLOTS_ONLY_NOT_APPROVED_TEACHING_CONTENT",
+  "progress_unchanged": true
+}

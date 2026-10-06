@@ -6,6 +6,7 @@ const path = require('node:path')
 const ts = require('typescript')
 const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
+const { resolveModule } = require('./helpers/resolve-module.cjs')
 
 const now = new Date('2026-09-22T03:00:00.000Z')
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
@@ -66,7 +67,10 @@ function loadDashboard(options = {}) {
     auth: { getClaims: async () => ({ data: { claims: { sub: 'admin' } }, error: null }) },
     rpc: async (name, args) => {
       calls.push({ rpc: name, args })
+      if (failing.has(name)) return { data: null, error: { message: 'query failed' } }
       if (name === 'has_role') return { data: true, error: null }
+      if (name === 'count_current_student_enrollments') return { data: 1, error: null }
+      if (name === 'count_paused_student_enrollments') return { data: (rows.enrollment_pauses ?? []).length, error: null }
       if (name === 'get_financial_management_report') return { data: options.report === undefined ? report() : options.report, error: options.reportError ?? null }
       if (name === 'crm_business_snapshot') return { data: options.crm ?? [
         { metric: 'follow_up_overdue', value: 2 },
@@ -119,12 +123,7 @@ function loadDashboard(options = {}) {
     const req = name => {
       if (name in mocks) return mocks[name]
       if (name.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
-      if (name.startsWith('.') || name.startsWith('@/')) {
-        const base = path.resolve(path.dirname(file), name)
-        if (fs.existsSync(base + '.ts')) return load(base + '.ts')
-        if (fs.existsSync(base + '.tsx')) return load(base + '.tsx')
-        if (fs.existsSync(path.join(base, 'index.tsx'))) return load(path.join(base, 'index.tsx'))
-      }
+      if (name.startsWith('.') || name.startsWith('@/')) return load(resolveModule(file, name))
       return require(name)
     }
     new Function('require', 'module', 'exports', output)(req, compiled, compiled.exports)
@@ -141,7 +140,7 @@ test('dashboard source stays on the user client and omits forbidden KPIs', () =>
   assert.doesNotMatch(source, /UNMARKED|attendance rate|tỷ lệ chuyên cần/i)
   assert.match(source, /businessDate/)
   assert.match(source, /get_financial_management_report|loadFinancialManagementReport/)
-  assert.match(fs.readFileSync('app/admin/layout.tsx', 'utf8'), /has_role/)
+  assert.match(fs.readFileSync('app/admin/layout.tsx', 'utf8'), /requestRole\('SUPER_ADMIN'\)/)
   assert.match(fs.readFileSync('app/admin/layout.tsx', 'utf8'), /crm_shell_may_enter/)
 })
 
@@ -207,7 +206,7 @@ test('zero queues and a failed optional query still render', async () => {
   assert.match(zeroHtml, /Không có hàng đợi đang chờ/)
   assert.match(zeroHtml, />0</)
 
-  const failed = loadDashboard({ failing: ['students'] })
+  const failed = loadDashboard({ failing: ['students', 'count_current_student_enrollments'] })
   const partial = await failed.dashboard.loadExecutiveDashboard(now)
   const failedHtml = renderToStaticMarkup(await failed.page.default())
   assert.equal(partial.students.active, null)

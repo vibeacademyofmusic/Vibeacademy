@@ -100,7 +100,7 @@ export default function Workspace({ data, workflow, finance = false, initialQuer
     ;(e.currentTarget.parentElement?.children[next] as HTMLButtonElement | undefined)?.focus()
   }
   return <div className={styles.root}>
-    <nav className={styles.moduleNav} aria-label="Công và lương"><Link prefetch={false} href={back}>← {finance ? 'Phê duyệt tài chính' : 'Các kỳ lương'}</Link>{!finance && <><Link prefetch={false} href="/admin/employees">Cấu hình nhân viên</Link><Link prefetch={false} href="/admin/employees/attendance">Chấm công nhân viên</Link></>}</nav>
+    <div className={styles.moduleNav}><Link prefetch={false} href={back}>← {finance ? 'Phê duyệt tài chính' : 'Các kỳ lương'}</Link></div>
     <header className={styles.heading}><div><div className={styles.eyebrow}>01 / Kỳ lương</div><h1>Kỳ lương tháng {month}</h1><p className={styles.sub}>{data.branchName} · {dateText(data.head.starts_on)}–{dateText(data.head.ends_on)} · Phiên bản {data.head.version}</p><div className={styles.statusbar}><Tone tone={closed ? 'green' : 'blue'}>{statusLabels[data.head.status] || data.head.status}</Tone>{countIssues > 0 && <Tone tone="warning">Cần đối chiếu nguồn</Tone>}<Tone>Chi trả: chưa đối soát ở màn này</Tone></div></div><div className={styles.actions}>
       {data.head.status === 'FINALIZED' && (
         <Link

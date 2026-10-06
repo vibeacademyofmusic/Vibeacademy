@@ -1,0 +1,90 @@
+# Consolidated execution — 30 September 2026
+
+## Latest Owner browser continuation
+
+The Owner two-request pause workflow is now verified on localhost: both requests appeared, one was approved and one rejected through the UI, reload and database actor/timestamp checks passed, unauthorized STAFF access and repeat mutations were blocked, and exact synthetic cleanup returned every public table to its prior count/digest. See [actual results and evidence](../owner-pause-20260930/RESULT.md). This supersedes the sign-in/browser blockers below; it does not certify the full product or recovery.
+
+The remaining SQL failures are **not all fixture-only**: individual reruns show the full-class list/mutation inconsistency and paused legacy import/guard conflict. No permissions or assertions were weakened. Recovery remains incomplete and separate from this browser PASS.
+
+## Continuation from `3193b84`
+
+Rechecked before this pass. Branch `codex/release-candidate-lint`, HEAD `3193b84`, app still `next-server` on port 3000, Supabase `127.0.0.1:54321`, ledger max `20260930153000` (189 rows). Recovery database `vibe_recovery_20260930` still exists and was not used as the app database. The controlled window `cb9062` is still `http://localhost:3000/login`. No password was requested and no session was bypassed, so pause-approval and cashier browser journeys are not accepted.
+
+### SQL fixtures
+
+The previous 42 failures were rerun on the app database inside each file’s transaction and rolled back. They were not product-permission defects. The enrollment guard now requires a class level range, a student program, a primary teacher and a timetable before a new active enrollment. Twenty-one files now pass after adding that prerequisite only for rows created in the test transaction. The list is [sql-fixture-rerun.txt](raw/sql-fixture-rerun.txt).
+
+Twenty-one still fail. They were not marked pass and no grant was widened:
+
+- Missing local wrappers that the tests call after enrollment succeeds: `pg_temp.void_payment`, `pg_temp.create_refund`, `pg_temp.cancel_invoice`. Direct void remains closed by the approval workflow. These wrappers were not recreated as a bypass.
+- `PLACEMENT_CLASS_FULL` on makeup fixtures whose class capacity does not cover the rows the test inserts.
+- `PLACEMENT_START_DENIED` where the fixture start date is before the class start.
+- `PLACEMENT_CLASS_DENIED` in the branch-scope fixture.
+- A second academic-program insert collides with the fixture program in the parent-history and teacher-history files.
+- Later assertions still fail in learning reports, lesson feedback, learning observation, shadow mapping, legacy pause import, invoice cancellation, payment void, and the student-ops full-class option.
+
+### Recovery, still incomplete
+
+Database restore into `vibe_recovery_20260930` remains the earlier isolated restore: about 3.1 seconds for the database load, separate from any complete recovery time. `authenticated` can execute `create_payment_once` on both source and restored databases. Counts and the payment-amount checksum still match. Three restore errors are now classified:
+
+- `schema "public" already exists` is a collision with the schema created before restore. It is not a missing table.
+- Nine `permission denied to change default privileges` errors mean the local `postgres` role cannot replay default-privilege statements. Object grants were not broadened to hide that.
+- `vault.secrets` does not exist because the vault extension object was not part of the restored schemas. The secret rows were not loaded. No secret value was printed.
+
+Storage metadata is two `staff-portraits` objects, 8,347 bytes and 398,812 bytes. The bytes exist on the storage volume and were copied privately with SHA-256 `b484a6ecf3868f3abff5100993cdadaa82d09a93045f499c47b45e49450597cd` and `47736d803e97b4bd106b3937f330bd09795dee76cbac25b605cbe566619dfe53`. They were not restored through an isolated Storage API. A synthetic login through an isolated Auth service was not run, because the only Auth API on port 54321 serves the main database. Recovery stays incomplete.
+
+### Acceptance matrix and rehearsal
+
+The 105-case identities stay in [acceptance-source.md](../system-pilot-20260928T032001Z/acceptance-source.md) and the 28 September results in [SYSTEM_TEST_RESULTS.md](../system-pilot-20260928T032001Z/SYSTEM_TEST_RESULTS.md). Those statuses were not relabeled as current PASS. No 60-minute rehearsal and no human UAT were started, because browser sign-in, the remaining SQL failures and complete recovery have not passed.
+
+Decision for this local continuation: **NO-GO**.
+
+## Continuation after the owner cashier decision
+
+Runtime checked again before this change. Branch `codex/release-candidate-lint`, HEAD `c9dd28e`, app `next-server` on port 3000, Supabase host `127.0.0.1:54321`, database container `supabase_db_vibe-academy-system`. The working tree already had unrelated observability and backup files; those were not reset. The previous report below remains the evidence for `963f427` / `c9dd28e`. It is not evidence for the cashier change.
+
+The owner decision in this execution replaces the earlier “decide reception payments” blocker. A narrow `CASHIER` role now has only `finance.cash.record` plus branch student lookup. `FINANCE` also receives cash recording, non-cash recording and reconciliation. `BRANCH_ADMIN` does not. Cash requires `p_cash_acknowledged = true`. PayOS and MoMo cannot be marked verified through `create_payment_once`. Posted receipts are still not silently edited. Direct void remains behind the existing financial-approval function.
+
+Local ledger on the app database now ends at `20260930153000` after applying the already reviewed pause migrations `20260929220000`, `20260930100000`, `20260930101000` and the new cashier migration. No production or staging database was changed.
+
+Cashier SQL, rolled back on the app database: 14/14 allow and deny checks in [cashier_cash_receipt_test.sql](../../../supabase/tests/database/cashier_cash_receipt_test.sql). Covered assigned cashier, missing acknowledgement, repeated key, changed amount, bank transfer, PayOS, forged student, other branch, branch admin, revoked assignment, and direct void. Payment action tests: 39/39 in `tests/finance-payment-operations.test.cjs` and `tests/admin-navigation.test.cjs`.
+
+Pause approval UI is at `/admin/academic/pause-requests` and calls `decide_enrollment_pause`. The controlled browser is on `http://localhost:3000/login` and has not completed an authenticated click-through in this continuation, so browser approval is not accepted yet.
+
+The previously classified 42 SQL fixture failures were not rewritten and were not rerun after this migration. They remain fixture blockers, not a new cashier defect.
+
+Recovery database `vibe_recovery_20260930` was created beside the app database and restored from a private custom dump. Source and restored counts match: auth users 38, students 522, enrollments 11, payments 9, storage metadata rows 2, `finance_private` functions 17, migration `20260930153000`, payment-amount checksum `ed13277cccc56d784cc0f00ef88fe46e`. Dump `~/.vibe-private/local-recovery-20260930/app-with-private.dump`, SHA-256 `43279da4a51e22b26bfe6b7907a2cde45cdd8a62331c0760789db71e0944f6fe`, 3,394,044 bytes. Dump about 0.6s, restore about 3.1s. Restore still reported 11 errors: existing `public` schema, default-privilege changes, and missing `vault.secrets`. Storage file bytes, realtime, and a live sign-in through an isolated Auth API were not restored. This is local database evidence, not cloud recovery and not an RTO/RPO commitment.
+
+No 60-minute rehearsal and no human UAT were run. The original 105-case matrix remains [acceptance-source.md](../system-pilot-20260928T032001Z/acceptance-source.md) and [SYSTEM_TEST_RESULTS.md](../system-pilot-20260928T032001Z/SYSTEM_TEST_RESULTS.md). Those historical statuses were not re-marked PASS. Decision for this local continuation: **NO-GO** for pilot operations. Cashier and pause screens are not a deployment approval.
+
+## Earlier same-day evidence
+
+Final implementation commit: **963f427**, following **7448a00**. Local execution only. No push, deployment, shared migration, staging account or real message. Older deployed Preview remains **fed93be** and is not evidence for these fixes.
+
+## Completed and verified
+
+- Fixed pending pause approval rejecting its own request. Ordinary previews still include all pending requests; only the locked request being decided is excluded by an inaccessible internal helper. Authorization runs before every decision, including retries. Verified pending and repeated unauthorized approval denial for STAFF, BRANCH_ADMIN, FINANCE, TEACHER, PARENT and anon; unchanged persisted pending state; valid SUPER_ADMIN approval; one existing pause returned on retry; ordinary overlap denial; cancellation; unchanged payments and invoice. [14 passing authenticated workflow checks](raw/persisted-workflows.json), [outcome](raw/persisted-workflows.log), [record IDs](raw/workflow-records.json).
+- Fixed actual catalogue permission defects with forward migrations: 18 unintended anonymous definer execute grants revoked, 21 trusted search paths pinned, six authenticated TRUNCATE grants removed. Existing application role definitions and business permissions were not expanded. Direct authenticated access to the new private helper and anonymous approval execution are denied. [Migration ledger and privilege evidence](raw/final-migration-privileges.log), [affected regression](raw/affected-regression.log).
+- Committed the required pause/makeup foundation together with the repairs, making the migration chain reproducible. A fresh disposable Supabase project on 573xx replayed all **193 migrations** normally. Real Auth and Storage components exist; the earlier platform probe verified normal password sign-in and a private 38-byte object byte/checksum roundtrip with unauthorized read denied. The 563xx execution stack retained its synthetic records while both repairs applied transactionally; its original 191-entry ledger was not falsely repaired after direct SQL rehearsal. Original 543xx database was not migrated. [193 pinned file hashes](raw/final-migration-manifest.json), [platform proof](raw/platform.json), [preserving upgrade procedure](UPGRADE.md).
+- Resumed the controlled Chrome session. The user's normal authenticated protected navigation was verified before synthetic tests; no personal passwords, cookies or tokens were requested, copied or inspected. Isolated browser tests used separate synthetic actors through normal sign-in on port 3001. Authentication and navigation, rather than cookie inspection, establish browser acceptance.
+- Completed browser intake: created, submitted, verified and quoted `45702ffd-c2d7-4909-a2ff-b2e81697939c` for **12,000,000 VND**, no discount. Unpaid completion was denied. A synthetic trusted-server payOS event completed it, replay returned ALREADY_PAID, and the browser displayed student VIBE-000046. Browser placement persisted exactly one enrollment `d90a47a7-c07e-4a69-a7f0-d179ca48ab21`, correct class/branch, starting 07 October. Initial form interaction problems were resolved by verifying date values and loopback development assets; they are not an unresolved product defect. [Browser intake](raw/browser-new-intake.txt), [placement](raw/browser-placement.txt), [server boundary and ownership](raw/browser-payment-fixture.json), [persisted placement](raw/browser-final-persistence.log).
+- Browser profile edit persisted the exact synthetic note. Registration outcomes, tuition, finance totals, cash A5 document, completed excused attendance, completed makeup and cancelled pause history rendered against saved records. The completed attendance form correctly remained locked. Browser allocation replay retained exactly one **12,000,000 VND** allocation. Cash receipt PAY-2026-000022 remains **100,000 VND**, owned by the expected SUPER_ADMIN actor; gateway receipts have null `created_by` at the trusted-server boundary and correct student/branch snapshots. Changed cash amount and another administrator reusing its key are rejected. [Independent persistence reads](raw/browser-persistence.log), [attendance](raw/browser-attendance.txt), [makeup](raw/browser-makeup.txt), [cash document](raw/synthetic-cash-receipt.jpg).
+- Demonstrated reception denial in both layers: normal STAFF sign-in succeeded, `/admin/finance/payments` visibly returned **“Bạn không có quyền truy cập”**; authenticated `create_payment_once` returned **SUPER_ADMIN role required** and added zero rows. FINANCE, BRANCH_ADMIN, TEACHER and PARENT were also denied by the RPC. Operational gap: reception cannot independently record counter payments under current policy. No administrator access or replacement policy was invented. [Browser denial](raw/reception-payment-denied.jpg).
+- External fetch/TCP guard and `ZALO_PILOT_OUTBOUND=disabled` stayed active. Browser “Gửi thông báo” was disabled. Final database read: **seven notification jobs, zero attempts, zero sent timestamps, zero provider IDs**. Synthetic server events exercise the local trusted boundary; real checkout networking and webhook signature verification are not claimed. [Final guard tests: 13/13](raw/final-outbound-guards.log), [final persisted outbound counts](raw/browser-final-persistence.log).
+- Rendered verification confirms navy text, restrained gold separators and white document/cards on the tested desktop views. [Saved profile](raw/synthetic-profile-saved.jpg), [A5 document](raw/synthetic-cash-receipt.jpg), [browser outcome](raw/browser-result.jpg). No production UI components were redesigned; no mobile-wide visual acceptance is claimed.
+
+## Regression evidence and diagnosis
+
+Affected SQL: **7 files / 181 assertions PASS**, including pause engine, tuition effective end, cash integrity and security/authorization catalogues. Only missing class scope, academic path and schedule prerequisites were added to the three affected test fixtures; assertions and production guards stayed intact. Two older tests depended on absent TEST_GUITAR demo data; supplying that documented local prerequisite made **2 files / 60 assertions PASS**. [Affected run](raw/affected-regression.log), [demo dependency proof](raw/demo-dependency-regression.log).
+
+Final broad run remains **FAIL: 100 files, 1,722 executed assertions**. There are **42 aborting files**, individually listed with source excerpts and classifications: 38 missing class-scope prerequisites, two direct missing schedules, student_ops_shell with initial PLACEMENT_SCHEDULE_UNKNOWN and later missing schedules, and legacy_migration_review with an initial CLASS_SCOPE_UNCONFIGURED import failure followed by rollback/assertion cascades. These fixture failures do not demonstrate a permission defect, and the blocked assertions remain unverified. Five earlier aborting files are resolved. Persistent-stack counter-intake phone-count contamination was absent on the pristine stack; it is not a product duplicate-count regression. [Exact final failures](raw/final-broad-regression.log), [per-file investigation](raw/sql-failure-investigation.json).
+
+Focused script lint and TypeScript check pass. Working-tree business-lock checks pass **112/112**; the guard/Zalo checks pass **13/13**. Older isolated Zalo SQL checks remain **67 PASS**. Unrelated pre-existing observability/instrumentation changes and backups were preserved separately; these working-tree checks are not a clean committed release build or deployed Preview acceptance.
+
+## Exact remaining blockers
+
+- The 42 older SQL fixtures above require individual prerequisite corrections and reruns before the broad gate can pass. Subsequent assertions in those files are not certified.
+- The tracked browser app exposes the legacy direct-create/cancel pause screen, not a request/approval screen for the new RPC workflow. New approval authorization and state are verified through authenticated API/persistence tests; browser approval-click acceptance cannot be claimed for an absent screen. Attendance/makeup business mutations have authenticated API coverage plus browser persisted-state/lock verification, not a fresh teacher form submission in this run.
+- Full source recovery and a preserving source upgrade cannot be certified without the complete consistent recovery set. Public database metadata is not Storage file bytes. Auth identities, private functions, migration history, original ACL/RLS and the separate byte manifest remain prerequisites; clean platform creation does not replace them. No functions were manually skipped as an upgrade solution.
+
+The reception-payment decision above is superseded by the cashier continuation at the top of this file. Sign-in on the local login window is still required before the pause approval screen can be accepted in the browser. No credential is requested here.

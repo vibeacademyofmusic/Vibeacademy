@@ -1,0 +1,84 @@
+Window: "VIBE Academy 🔊", App: Google Chrome.
+0 standard window VIBE Academy - Google Chrome - VIBE ACADEMY OF, URL: localhost:3000/admin/tuition/reminders?zalo=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f, Secondary Actions: Raise
+	1 container VIBE Academy - Google Chrome - VIBE ACADEMY OF, URL: localhost:3000/admin/tuition/reminders?zalo=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f
+		2 container
+			3 container
+				4 scroll area
+					5 HTML content VIBE Academy, URL: localhost:3000/admin/tuition/reminders?zalo=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f
+						6 container Gửi thông báo học phí
+							7 container
+								8 heading Gửi thông báo học phí, Value: 2
+									9 text Gửi thông báo học phí
+								10 button Đóng cửa sổ
+							11 container
+								12 container
+									13 text Xác nhận Zalo  ( ZALO-0907507918 ) ·  Vibe Academy Cần Thơ  ·  01/08/2026  →  31/10/2026
+								14 container
+									15 text Người nhận:  Phụ huynh Zalo thử  ·  •••••••918
+								16 text Trạng thái gửi: Đã phát đến máy Đơn giá theo số điện thoại:  400  VND/tin. Đường dẫn nút: không có. Phản hồi: Tiếp tục học 20:36 3/10/26
+								17 text VIBE - Nhắc học phí và xác nhận tiếp tục học
+Quý khách Phụ huynh Zalo thử, Vibe Academy thông báo sắp kết thúc khoá học của học viên Xác nhận Zalo, mã học viên ZALO-0907507918, kỳ học 01/08/2026-31/10/2026. Học phí cần gia hạn là: 5500000 đồng. Hạn thanh toán: 31/10/2026. Vui lòng xác nhận kế hoạch học tập của bạn để nhà trường có thể sắp xếp chương trình và kế hoạch tiếp theo cho mình. Vui lòng xác nhận bên dưới.
+Nút phản hồi: Tiếp tục học
+Nút phản hồi: Dừng học
+Không có đường dẫn. Hai nút nằm trong tin Za
+								18 container
+									19 text Đã ghi nhận đồng ý cho đúng học viên này lúc  00:06 3/10/26 . Phạm vi: một học viên. Nguồn:  xác nhận trực tiếp . Người ghi nhận:  Local Developer Admin .
+								20 content list
+									21 container
+										22 AXListMarker • 
+										23 text Gửi theo lịch đang tắt. Gửi thật thủ công đã bật. Chưa gửi tồn đọng và không có gửi hàng loạt.
+								24 link Hủy, Value: localhost:3000/admin/tuition/reminders
+								25 button Xác nhận gửi cho học viên này
+								26 container
+									27 text Lịch sử gửi:  Đã phát đến máy · 97be9bf2e4114e92b89635fc17c34fce . Đã tiếp nhận nghĩa là Zalo đã nhận tin, chưa phải đã tới máy. Đã phát đến máy là Zalo xác nhận tin đã tới điện thoại. Mẫu đang dùng nhận Tiếp tục học hoặc Dừng học. Yêu cầu khác chỉ áp dụng khi mẫu thay thế được duyệt và đưa vào sử dụng. Mỗi dòng giữ đúng chữ Zalo trả về, kèm thời điểm.
+								28 text Lịch sử phản hồi:
+								29 content list
+									30 container
+										31 AXListMarker • 
+										32 text Tiếp tục học  ·  20:36 3/10/26  · nhận  20:48 3/10/26  ·  97be9bf2e4114e92b89635fc17c34fce  ·  Zalo ZBS
+								33 container
+									34 text Gửi thật thủ công đã bật cho đúng một học viên đã đủ điều kiện. Gửi theo lịch vẫn tắt. Không gửi hàng loạt.  Tiếp tục học, Yêu cầu khác và Dừng học chỉ ghi nhận ý định.
+		35 container
+			36 container
+				37 toolbar
+					38 button Back
+					39 button (disabled) Forward
+					40 button Reload
+					41 container
+						42 pop up button View site information
+						43 text field (settable) Address and search bar, Value: localhost:3000/admin/tuition/reminders?zalo=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f, Placeholder: Search Google or type a URL
+						44 button Bookmark this tab
+					45 pop up button Extensions
+					46 button Control your music, videos, and more
+					47 button VIBE ACADEMY OF
+					48 pop up button Chrome
+			49 container
+				50 pop up button Tab search
+				51 tab group
+					52 tab (settable, boolean) vibe-academy-staging | Vibe Academy | Supabase - Memory usage - 269 MB, Value: off
+						53 button Close
+					54 tab (settable, boolean) payOS - Memory usage - 107 MB, Value: off
+						55 button Close
+					56 tab (selected, settable, boolean) VIBE Academy - Memory usage - 171 MB, Value: on
+						57 button Close
+					58 tab (settable, boolean) Value: off, (48) Summer Vacation Marathon! ☀️🏖️ | Tom & Jerry Tales MEGA COMP | ‪@wbkids‬ - YouTube - Audio playing - Memory usage - 454 MB
+						59 button (disabled) Mute tab
+						60 button Close
+				61 button New Tab
+				62 button Open Gemini in Chrome
+	63 container
+		64 close button
+		65 zoom button
+66 menu bar
+	67 Chrome
+	68 File
+	69 Edit
+	70 View
+	71 History
+	72 Bookmarks
+	73 Profiles
+	74 Tab
+	75 Window
+	76 Help
+
+The focused UI element is 10 button Đóng cửa sổ

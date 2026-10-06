@@ -1,0 +1,57 @@
+BEGIN
+NOTICE:  extension "pgtap" already exists, skipping
+CREATE EXTENSION
+INSERT 0 4
+INSERT 0 4
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+on
+INSERT 0 2
+
+INSERT 0 4
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ok 1 - Anonymous cannot read the Zalo overview
+ok 2 - Anonymous cannot read Zalo events
+ok 3 - Anonymous cannot read Zalo customers
+ok 4 - Anonymous cannot read a registration Zalo status
+ok 5 - Webhook credential cannot list linked customers
+ok 6 - Browser role still cannot update webhook events
+ok 7 - Browser role still cannot delete webhook events
+ok 8 - Raw payload stays hidden
+ok 9 - Event history does not return the payload
+ok 10 - Registration status does not return the Zalo user id
+ok 11 - Customer list does not return the Zalo user id
+ok 12 - Customer labels are not resolved from a phone number
+de992000-0000-4000-8000-000000000002
+ok 13 - Branch admin cannot open the integration overview
+ok 14 - Branch admin cannot list webhook events
+ok 15 - Branch admin cannot list every Zalo customer
+ok 16 - Branch registration reader sees an active Zalo connection
+ok 17 - Branch reader never receives even the masked provider identity
+ok 18 - Registration without a channel is not connected
+ok 19 - Unknown registration returns no status
+de992000-0000-4000-8000-000000000003
+ok 20 - Another branch cannot read this registration Zalo status
+de992000-0000-4000-8000-000000000001
+ok 21 - Overview counts every stored event
+ok 22 - Overview counts events received today
+ok 23 - Overview counts accepted events
+ok 24 - Overview counts events still waiting
+ok 25 - Overview counts events with a processing error
+ok 26 - Recent events return metadata only
+ok 27 - A processing error is a failed state
+ok 28 - The operational error text is available to super admin
+ok 29 - Linked customers include registration, parent, and student
+ok 30 - Registration label uses the student name
+ok 31 - Registration label keeps its branch
+ok 32 - Parent label uses the profile name
+ok 33 - A revoked student link stays visible as revoked
+ok 34 - Event history refuses an empty page
+1..34
+ROLLBACK

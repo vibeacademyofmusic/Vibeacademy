@@ -1,0 +1,20 @@
+✔ only the exact value enabled opens the pilot gate (0.780417ms)
+✔ pilot control missing makes zero provider calls (3.753708ms)
+✔ pilot control missing-preview makes zero provider calls (0.439208ms)
+✔ pilot control empty makes zero provider calls (0.319833ms)
+✔ pilot control false makes zero provider calls (2.798ms)
+✔ pilot control malformed-true makes zero provider calls (0.304ms)
+✔ pilot control malformed-yes makes zero provider calls (0.219959ms)
+✔ pilot control malformed-case makes zero provider calls (0.22425ms)
+✔ pilot control malformed-space makes zero provider calls (0.255083ms)
+✔ pilot control disabled makes zero provider calls (0.28475ms)
+✔ explicitly enabled opens the direct send gate and still does not mark delivered (0.666584ms)
+✔ tuition reminder action sends only through the blocked outbound adapter (0.412667ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 393.800459

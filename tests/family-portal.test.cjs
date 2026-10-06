@@ -10,7 +10,7 @@ const { resolveModule } = require('./helpers/resolve-module.cjs')
 const student = { id: '81000000-0000-4000-8000-000000000001', full_name: 'Learner One', student_code: 'L1' }
 function harness(fixtures = {}, signedIn = true, error = null, route = 'app/my-learning/page.tsx') {
   const calls = []
-  const db = { auth: { getClaims: async () => ({ data: signedIn ? { claims: { sub: 'user' } } : null }) }, rpc: async (name, args) => { calls.push({ name, args }); return { data: fixtures[name] || [], error } } }
+  const db = { auth: { getClaims: async () => ({ data: signedIn ? { claims: { sub: 'user' } } : null }) }, rpc: async (name, args) => { calls.push({ name, args }); return { data: fixtures[name] || (name === 'academic_video_link_context' ? { can_manage: false, links: [], levels: [], lessons: [] } : []), error } } }
   const mocks = {
     '@/lib/supabase/server': { createClient: async () => db },
     '@/app/login/actions': { logout: async () => {} },

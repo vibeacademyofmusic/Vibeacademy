@@ -5,14 +5,17 @@ import { requireIntegrationAdmin } from './access'
 export default async function IntegrationsPage() {
   await requireIntegrationAdmin()
   return (
-    <article className="min-w-0 space-y-5">
-      <h1 className="text-2xl font-bold">Tích hợp</h1>
-      <p>Kết nối bên ngoài của VIBE. Thông tin bí mật không hiển thị tại đây.</p>
-      <section className="rounded border p-4">
-        <h2 className="font-semibold">Zalo OA</h2>
-        <p className="mt-2">Nhận sự kiện và chuẩn bị mẫu thông báo. Gửi tin đang tắt.</p>
-        <Link className="mt-3 inline-block rounded border px-3 py-2" href="/admin/system/integrations/zalo">Mở Zalo OA</Link>
-      </section>
-    </article>
+    <div>
+      <p className="text-sm font-medium text-gray-500">Hệ thống</p>
+      <h1 className="mt-1 text-3xl font-bold">Tích hợp</h1>
+      <p className="mt-2 max-w-2xl text-sm text-gray-600">Kênh kết nối bên ngoài. Chỉ xem trạng thái, chưa gửi tin.</p>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <Link href="/admin/system/integrations/zalo" className="rounded-2xl border border-gray-200 bg-white p-5">
+          <p className="text-xs font-semibold tracking-wide text-gray-500">ZALO OA</p>
+          <h2 className="mt-2 text-xl font-semibold">Zalo Official Account</h2>
+          <p className="mt-2 text-sm text-gray-600">Vibe Academy · theo dõi webhook và khách hàng đã liên kết.</p>
+        </Link>
+      </div>
+    </div>
   )
 }

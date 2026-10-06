@@ -135,7 +135,7 @@ function ExecutiveDashboardView({ data }: { data: ExecutiveDashboard }) {
               <div className={styles.row}><span>Chưa có giáo viên</span><strong className={emphasis(data.lessons.unassigned, true)}>{countText(data.lessons.unassigned)}</strong></div>
             </div>
             <Link className={styles.button} href={data.links.attendance} prefetch={false}>Mở điểm danh</Link>
-            <Link className={`${styles.button} ${styles.buttonQuiet}`} href="/admin/session-teachers" prefetch={false}>Phân công giáo viên</Link>
+            <Link className={`${styles.button} ${styles.buttonQuiet}`} href="/admin/session-teachers" prefetch={false}>Phân công nhân viên</Link>
           </div>
         </section>
       </section>

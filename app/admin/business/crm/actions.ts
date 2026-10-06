@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-import { crmError } from './model'
+import { crmError, sourceLabel } from './model'
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -26,7 +26,7 @@ function back(lead: string, error?: string) {
 export async function createCrmLead(formData: FormData) {
   const client = await db()
   const birth = String(formData.get('student_date_of_birth') ?? '').trim()
-  const { error } = await client.rpc('create_crm_lead', {
+  const { error } = await client.rpc('create_crm_lead_with_interest', {
     p_request: crypto.randomUUID(),
     p_branch: String(formData.get('branch_id') ?? ''),
     p_full_name: String(formData.get('full_name') ?? ''),
@@ -37,8 +37,9 @@ export async function createCrmLead(formData: FormData) {
     p_student_date_of_birth: datePattern.test(birth) ? birth : null,
     p_program_interest: String(formData.get('program_interest') ?? ''),
     p_instrument_interest: String(formData.get('instrument_interest') ?? ''),
-    p_source_type: 'MANUAL',
+    p_source_type: sourceLabel[String(formData.get('source_type') ?? '')] ? String(formData.get('source_type')) : 'MANUAL',
     p_owner: null,
+    p_interest_level: String(formData.get('interest_level') ?? 'REFERENCE'),
   })
   if (error) redirect('/admin/business/crm?error=' + encodeURIComponent(crmError(error.message)))
   revalidatePath('/admin/business/crm')
@@ -143,6 +144,18 @@ export async function reviewCrmLead(formData: FormData) {
     p_student: uuidPattern.test(student) ? student : null,
     p_parent: uuidPattern.test(parent) ? parent : null,
     p_note: String(formData.get('note') ?? ''),
+  })
+  back(lead, error ? crmError(error.message) : undefined)
+}
+
+export async function setCrmLeadInterest(formData: FormData) {
+  const client = await db()
+  const { lead, version, request } = ids(formData)
+  const { error } = await client.rpc('set_crm_lead_interest', {
+    p_request: request,
+    p_lead: lead,
+    p_version: version,
+    p_interest_level: String(formData.get('interest_level') ?? ''),
   })
   back(lead, error ? crmError(error.message) : undefined)
 }

@@ -31,7 +31,7 @@ export default async function QrAttendanceShell() {
 
   const branches: Branch[] =
     Array.isArray(data)
-      ? data.map((row: any) => ({
+      ? data.map((row: { id: unknown; name?: unknown; code?: unknown }) => ({
           id: String(row.id),
           name: String(
             row.name

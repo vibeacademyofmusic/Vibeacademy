@@ -13,6 +13,7 @@ import {
   zaloCallbackCanActivate,
 } from '@/lib/integrations/zalo/widget-public'
 import { refreshRegistrationZaloLink, requestRegistrationZaloLink } from '../actions'
+import styles from '../workspace.module.css'
 
 export type ZaloConnectionView = {
   link_status: string
@@ -36,9 +37,11 @@ function when(value: string | null) {
 export function ZaloConnectionCard({
   applicationId,
   connection,
+  testRecipient = false,
 }: {
   applicationId: string
   connection: ZaloConnectionView
+  testRecipient?: boolean
 }) {
   const router = useRouter()
   const [checking, setChecking] = useState(false)
@@ -78,8 +81,8 @@ export function ZaloConnectionCard({
   }, [connection.external_link_key, showWidget])
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5 text-sm">
-      <h2 className="font-semibold">KẾT NỐI ZALO</h2>
+    <section className={styles.card}>
+      <h2>Kết nối Zalo</h2>
       {status === 'ACTIVE' ? (
         <div className="mt-3 space-y-2">
           <p className="inline-flex rounded-full bg-emerald-50 px-2 py-1 text-emerald-800">Đã kết nối</p>
@@ -101,10 +104,10 @@ export function ZaloConnectionCard({
       ) : (
         <div className="mt-3 space-y-3">
           <p className="font-medium">CHƯA KẾT NỐI</p>
-          <p className="text-gray-600">Kết nối Zalo để nhận xác nhận đăng ký, lịch học và các thông báo từ VIBE Academy.</p>
+          <p className="text-gray-600">{testRecipient ? 'Người nhận thử nghiệm chỉ là tài khoản Zalo do chủ hệ thống chỉ định, gắn với hồ sơ này sau khi Zalo gửi webhook widget_interaction_accepted. Bấm nút hoặc số điện thoại không phải đồng ý. Chưa xếp hàng và chưa gửi.' : 'Kết nối Zalo để nhận xác nhận đăng ký, lịch học và các thông báo từ VIBE Academy.'}</p>
           <form action={requestRegistrationZaloLink}>
             <input type="hidden" name="application_id" value={applicationId} />
-            <button className="rounded-lg bg-gray-950 px-3 py-2 text-sm text-white">Kết nối Zalo</button>
+            <button className={styles.buttonPrimary}>Kết nối Zalo</button>
           </form>
         </div>
       )}
@@ -122,7 +125,7 @@ export function ZaloConnectionCard({
       {status !== 'ACTIVE' && status !== 'NONE' ? (
         <form action={refreshRegistrationZaloLink} className="mt-4">
           <input type="hidden" name="application_id" value={applicationId} />
-          <button className="rounded-lg border border-gray-300 px-3 py-2">Kiểm tra trạng thái</button>
+          <button className={styles.button}>Kiểm tra trạng thái</button>
         </form>
       ) : null}
       {showWidget ? <Script src="https://sp.zalo.me/plugins/sdk.js" strategy="afterInteractive" /> : null}

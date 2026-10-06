@@ -1,8 +1,9 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AcademicTrail } from '@/app/admin/programs/trail'
 
 import { createClient } from '@/lib/supabase/server'
 import { updateCurriculumSubjectComponent } from '@/app/admin/academic/actions'
+import { componentRuleLabel } from '@/app/admin/programs/model'
 
 type EditComponentPageProps = {
   params: Promise<{
@@ -66,7 +67,7 @@ export default async function EditComponentPage({
   const { data: component } = await supabase
     .from('curriculum_subject_components')
     .select(
-      'id, subject_id, code, name, is_required, sort_order, status'
+      'id, subject_id, code, name, is_required, sort_order, status, completion_rule'
     )
     .eq('id', componentId)
     .eq('subject_id', subject.id)
@@ -78,14 +79,12 @@ export default async function EditComponentPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <Link
-          href={`/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${subject.id}`}
-          className="text-sm font-medium text-gray-500 hover:text-gray-900"
-        >
-          ← Back to {subject.name}
-        </Link>
-      </div>
+      <AcademicTrail items={[
+        { label: curriculum.name, href: `/admin/academic/${curriculum.id}` },
+        { label: level.name, href: `/admin/academic/${curriculum.id}/levels/${level.id}` },
+        { label: subject.name, href: `/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${subject.id}` },
+        { label: component.name },
+      ]} />
 
       <div className="mb-8">
         <p className="text-sm font-medium text-gray-500">
@@ -93,7 +92,7 @@ export default async function EditComponentPage({
         </p>
 
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
-          Edit Component
+          Chỉnh sửa nhóm đánh giá
         </h1>
 
         <p className="mt-2 text-sm text-gray-500">
@@ -141,7 +140,7 @@ export default async function EditComponentPage({
               htmlFor="code"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Component Code *
+              Mã nhóm đánh giá *
             </label>
 
             <input
@@ -158,7 +157,7 @@ export default async function EditComponentPage({
               htmlFor="name"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Component Name *
+              Tên nhóm đánh giá *
             </label>
 
             <input
@@ -175,7 +174,7 @@ export default async function EditComponentPage({
               htmlFor="sort_order"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Order *
+              Thứ tự *
             </label>
 
             <input
@@ -189,6 +188,23 @@ export default async function EditComponentPage({
             />
           </div>
 
+          <div>
+            <label htmlFor="completion_rule" className="mb-2 block text-sm font-medium text-gray-700">
+              Cách hoàn thành *
+            </label>
+            <select
+              id="completion_rule"
+              name="completion_rule"
+              required
+              defaultValue={component.completion_rule}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
+            >
+              <option value="DIRECT_ASSESSMENT">Đánh giá trực tiếp</option>
+              <option value="ALL_REQUIRED_ITEMS">Hoàn thành từ Lesson bắt buộc</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-400">{componentRuleLabel(component.completion_rule)}</p>
+          </div>
+
           <label className="flex items-center gap-3">
             <input
               type="checkbox"
@@ -199,7 +215,7 @@ export default async function EditComponentPage({
             />
 
             <span className="text-sm font-medium text-gray-700">
-              Required component
+              Nhóm đánh giá bắt buộc
             </span>
           </label>
 
@@ -207,7 +223,7 @@ export default async function EditComponentPage({
             type="submit"
             className="rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800"
           >
-            Save Changes
+            Lưu thay đổi
           </button>
         </form>
       </section>

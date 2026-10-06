@@ -1,3 +1,4 @@
+import { requestClient } from '@/lib/auth/request'
 import { createClient } from '@/lib/supabase/server'
 import { readAll } from '../finance/data'
 import { loadFinancialManagementReport } from '../finance/management-report/data'
@@ -132,6 +133,17 @@ function availableMoney(metric: MetricValue | null | undefined, currency: string
   return moneyValue(metric.value, currency)
 }
 
+async function countsByStatus(
+  rows: Promise<{ status: string }[] | null>,
+  statuses: readonly string[],
+): Promise<(number | null)[]> {
+  const loaded = await rows
+  if (!loaded) return statuses.map(() => null)
+  const totals = new Map<string, number>()
+  for (const row of loaded) totals.set(row.status, (totals.get(row.status) ?? 0) + 1)
+  return statuses.map(status => totals.get(status) ?? 0)
+}
+
 async function exactCount(db: DB, table: string, apply: (query: CountQuery) => CountQuery): Promise<number | null> {
   const selected = db.from(table).select('id', { count: 'exact', head: true }) as unknown as CountQuery
   const result = await apply(selected)
@@ -156,7 +168,7 @@ function branchText(ids: string[], names: Map<string, string>) {
 export async function loadExecutiveDashboard(now = new Date()): Promise<ExecutiveDashboard> {
   const today = businessDate(now)
   const monthStart = `${today.slice(0, 7)}-01`
-  const db = await createClient()
+  const db = await requestClient()
   const names = new Map<string, string>()
 
   const [
@@ -164,7 +176,8 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     sessions,
     studentCounts,
     admittedThisMonth,
-    pauses,
+    activeEnrollmentCount,
+    pausedEnrollmentCount,
     remindersPending,
     alerts,
     reportsReadyForReview,
@@ -185,11 +198,13 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     readAll<{ session_id: string; branch_id: string; status: string; occurrence_type: string; teacher_id: string | null }>((from, to) =>
       db.from('session_actual_teachers').select('session_id, branch_id, status, occurrence_type, teacher_id').eq('occurrence_date', today).order('session_id').range(from, to),
     ),
-    Promise.all(studentStatuses.map(status => exactCount(db, 'students', query => query.eq('status', status)))),
-    exactCount(db, 'students', query => query.gte('admission_date', monthStart).lte('admission_date', today)),
-    readAll<{ enrollment_id: string }>((from, to) =>
-      db.from('enrollment_pauses').select('enrollment_id').eq('status', 'ACTIVE').lte('starts_on', today).gte('ends_on', today).order('id').range(from, to),
+    countsByStatus(
+      readAll<{ status: string }>((from, to) => db.from('students').select('status').order('id').range(from, to)),
+      studentStatuses,
     ),
+    exactCount(db, 'students', query => query.gte('admission_date', monthStart).lte('admission_date', today)),
+    db.rpc('count_current_student_enrollments', { p_branch: null, p_search: null, p_class: null, p_teacher: null }),
+    db.rpc('count_paused_student_enrollments', { p_branch: null, p_search: null, p_class: null, p_teacher: null }),
     exactCount(db, 'tuition_reminders', query => query.eq('status', 'PENDING')),
     readAll<{ branch_id: string }>((from, to) =>
       db.from('student_retention_alerts').select('branch_id').in('status', ['NEW', 'CONTACTED', 'FOLLOW_UP']).order('id').range(from, to),
@@ -199,7 +214,10 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     exactCount(db, 'lesson_feedback', query => query.eq('is_low_rating', true).in('resolution_status', ['NEEDS_REVIEW', 'IN_REVIEW'])),
     exactCount(db, 'payroll_periods', query => query.eq('status', 'REVIEW')),
     exactCount(db, 'learning_access_grants', query => query.is('revoked_at', null).lte('valid_from', now.toISOString()).gt('valid_until', now.toISOString())),
-    Promise.all(staffStatuses.map(status => exactCount(db, 'employee_attendance_current', query => query.eq('work_date', today).eq('status', status)))),
+    countsByStatus(
+      readAll<{ status: string }>((from, to) => db.from('employee_attendance_current').select('status').eq('work_date', today).order('id').range(from, to)),
+      staffStatuses,
+    ),
     readAll<{ id: string }>((from, to) => db.from('employee_attendance_requests').select('id').order('id').range(from, to)),
     readAll<{ request_id: string }>((from, to) => db.from('employee_attendance_reviews').select('request_id').order('id').range(from, to)),
     readAll<{ branch_id_snapshot: string | null; currency: string; outstanding_balance: Amount }>((from, to) =>
@@ -231,16 +249,13 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     attendance.excused = 0
   } else if (sessions) {
     const ids = sessionList.map(row => row.session_id)
-    const marks: { status: string }[] = []
-    let marksFailed = false
-    for (let index = 0; index < ids.length && !marksFailed; index += 80) {
-      const slice = ids.slice(index, index + 80)
-      const page = await readAll<{ status: string }>((from, to) =>
-        db.from('attendance_records').select('status').in('session_occurrence_id', slice).order('id').range(from, to),
-      )
-      if (!page) marksFailed = true
-      else marks.push(...page)
-    }
+    const slices: string[][] = []
+    for (let index = 0; index < ids.length; index += 80) slices.push(ids.slice(index, index + 80))
+    const pages = await Promise.all(slices.map(slice => readAll<{ status: string }>((from, to) =>
+      db.from('attendance_records').select('status').in('session_occurrence_id', slice).order('id').range(from, to),
+    )))
+    const marksFailed = pages.some(page => !page)
+    const marks = marksFailed ? [] : pages.flatMap(page => page ?? [])
     if (!marksFailed) {
       attendance.present = marks.filter(row => row.status === 'PRESENT').length
       attendance.late = marks.filter(row => row.status === 'LATE').length
@@ -285,7 +300,8 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
 
   const staffAttendance = Object.fromEntries(staffStatuses.map((status, index) => [status, staffCounts[index]])) as Record<string, number | null>
   const student = Object.fromEntries(studentStatuses.map((status, index) => [status, studentCounts[index]])) as Record<(typeof studentStatuses)[number], number | null>
-  const pausedEnrollmentsToday = pauses ? new Set(pauses.map(row => row.enrollment_id)).size : null
+  const lifecycleActive = activeEnrollmentCount.error ? null : activeEnrollmentCount.data ?? 0
+  const pausedEnrollmentsToday = pausedEnrollmentCount.error ? null : pausedEnrollmentCount.data ?? 0
   const retentionOpen = alerts ? alerts.length : null
 
   const actions: ActionItem[] = []
@@ -411,7 +427,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     lessons,
     attendance,
     students: {
-      active: student.ACTIVE,
+      active: lifecycleActive,
       inactive: student.INACTIVE,
       paused: student.PAUSED,
       graduated: student.GRADUATED,
@@ -448,7 +464,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     links: {
       attendance: `/admin/attendance?date=${today}`,
       finance: `/admin/finance?month=${today.slice(0, 7)}`,
-      studentsActive: '/admin/students?status=ACTIVE',
+      studentsActive: '/admin/students?tab=students',
       receivablesOverdue: '/admin/finance/receivables?receivable=OVERDUE',
     },
   }

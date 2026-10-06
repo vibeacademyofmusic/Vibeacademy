@@ -1,0 +1,164 @@
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701/subjects/dd5f98ca-b8e4-46f6-946c-4a0b914611aa/lessons/e121a579-e294-41b7-842c-de3fde0bc044
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đường dẫn chương trình
+							52 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							53 link Piano, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af
+							54 link Pre Grade, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701
+							55 link Piano Adventures - Level 2B - Lesson Book (2nd Edition), Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701/subjects/dd5f98ca-b8e4-46f6-946c-4a0b914611aa
+							56 link Unit 10 — The F Major Scale, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701/subjects/dd5f98ca-b8e4-46f6-946c-4a0b914611aa
+							57 text PIANO-PRE-REP-2B-L50 · Scale and Chord Adventures - Bb/Bbm; B/Bm
+						58 text Lesson
+						59 heading PIANO-PRE-REP-2B-L50 · Scale and Chord Adventures - Bb/Bbm; B/Bm, Value: 1
+							60 text PIANO-PRE-REP-2B-L50  ·  Scale and Chord Adventures - Bb/Bbm; B/Bm
+						61 description list
+							62 text Chương trình
+							63 text Piano
+							64 text Cấp độ
+							65 text Pre Grade
+							66 text Môn học
+							67 text Piano Adventures - Level 2B - Lesson Book (2nd Edition)
+							68 text Nhóm đánh giá
+							69 text Unit 10 — The F Major Scale
+							70 text Trạng thái
+							71 text Đang hoạt động
+						72 container Giáo án Repertoire 2B
+							73 heading Giáo án Repertoire 2B, Value: 2
+								74 text Giáo án Repertoire 2B
+							75 container
+								76 text Piano Adventures - Level 2B - Lesson Book (2nd Edition)  ·  Nancy Faber và Randall Faber
+							77 container
+								78 text The F Major Scale  ·  Trang PDF sách đối chiếu 73  · Trang in đối chiếu 71
+							79 container
+								80 text Trang giáo án VIBE  30
+							81 description list
+								82 text Phạm vi nội dung
+								83 text Challenge Section, nhóm mẫu Bb/Bbm; B/Bm trên trang 71.
+								84 text Mục tiêu
+								85 text Luyện mẫu năm ngón trưởng/thứ và chuỗi hợp âm theo nhóm Bb/Bbm; B/Bm.
+								86 text Trên lớp
+								87 text So sánh hai nhóm mẫu cuối, củng cố chuyển trưởng/thứ và hợp âm. Tập từng tay; thêm hợp âm, hai tay và pedal khi học viên đã sẵn sàng.
+								88 text Ở nhà
+								89 text Ôn nhóm đang học; ghi lại mẫu còn nhầm để giáo viên chọn phần củng cố.
+								90 text Ghi chú giáo viên
+								91 text Phần Challenge được dạy theo mức sẵn sàng. Đây là mẫu năm ngón, không phải bộ gam một quãng tám cho mọi giọng; pedal ở mẫu đầu được ghi tùy chọn.
+							92 text Một Lesson có thể gồm nhiều buổi. Giáo trình không đặt điểm đạt, Final Test hoặc tự động hoàn thành môn/cấp độ.
+						93 heading Chỉnh sửa, Value: 2
+							94 text Chỉnh sửa
+						95 text Tên Lesson *
+						96 text field (settable) Tên Lesson *, Value: Scale and Chord Adventures - Bb/Bbm; B/Bm
+						97 text Mã Lesson *
+						98 text field (settable) Mã Lesson *, Value: PIANO-PRE-REP-2B-L50
+						99 text Thứ tự *
+						100 number field (settable) Thứ tự *, Value: 50
+							101 stepper 0
+								102 unknown
+								103 unknown
+						104 text Trạng thái *
+						105 pop up button Trạng thái *, Value: Đang hoạt động
+						106 container
+							107 checkbox Bắt buộc, Value: 0
+							108 text Bắt buộc
+						109 button Lưu Lesson
+						110 link Hủy, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701/subjects/dd5f98ca-b8e4-46f6-946c-4a0b914611aa
+						111 heading Ngừng sử dụng, Value: 2
+							112 text Ngừng sử dụng
+						113 text Lesson sẽ không còn được sử dụng cho hoạt động mới. Dữ liệu học tập trước đây được giữ lại.
+						114 link Ngừng sử dụng, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701/subjects/dd5f98ca-b8e4-46f6-946c-4a0b914611aa/lessons/e121a579-e294-41b7-842c-de3fde0bc044?retire=confirm
+				115 scroll bar (settable, float) 0
+	116 container
+		117 image WindowControlShadowView._shadowImageView
+		118 toolbar
+			119 container Secondary Actions: Move next, Remove from toolbar
+				120 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				121 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			122 container BackForwardSegmentedControl
+				123 button Description: Go back, Help: Show the previous page, ID: BackButton
+				124 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			125 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				126 button Page Menu, ID: AssistantButton
+				127 button Add page to Reading List, ID: OneStepBookmarkingButton
+				128 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/b403c8a4-a7ce-406c-b0ab-8db151595701/subjects/dd5f98ca-b8e4-46f6-946c-4a0b914611aa/lessons/e121a579-e294-41b7-842c-de3fde0bc044
+				129 button Translation Available, ID: TranslationButton
+				130 button Reload this page, ID: ReloadButton
+			131 button Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				132 button Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			133 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			134 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				135 button Description: new tab, Help: New Tab, ID: NewTabButton
+					136 button Description: add, Help: New Tab
+			137 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		138 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			139 tab Guitar, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				140 image FaviconImageView
+				141 text Value: Guitar, ID: UnifedTabBarButton._titleTextField
+			142 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				143 image FaviconImageView
+				144 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			145 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				146 image FaviconImageView
+				147 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			148 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				149 image FaviconImageView
+				150 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			151 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				152 image FaviconImageView
+				153 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+154 menu bar
+	155 Safari
+	156 File
+	157 Edit
+	158 View, ID: SafariViewMenu
+	159 History
+	160 Bookmarks, ID: SafariBookmarksMenu
+	161 Window, ID: SafariWindowMenu
+	162 Help, ID: SafariHelpMenu

@@ -171,7 +171,7 @@ export default function QrAttendanceClient({
         return
       }
 
-      const data = result.data as any
+      const data = result.data
 
       if (
         data?.status === 'ACTIVE'
@@ -210,7 +210,7 @@ export default function QrAttendanceClient({
         return
       }
 
-      const data = result.data as any
+      const data = result.data
 
       setToken(
         String(data.token ?? ''),
@@ -233,10 +233,6 @@ export default function QrAttendanceClient({
 
     if (sessionId) {
       rotate()
-    } else {
-      setToken('')
-      setQrImage('')
-      setExpiresAt('')
     }
 
     return () => {
@@ -253,10 +249,7 @@ export default function QrAttendanceClient({
   }, [sessionId])
 
   useEffect(() => {
-    if (!token) {
-      setQrImage('')
-      return
-    }
+    if (!token) return
 
     let cancelled = false
 
@@ -387,7 +380,7 @@ export default function QrAttendanceClient({
     }
 
     const data =
-      result.data as any
+      result.data
 
     if (data?.session_id) {
       setSessionId(
@@ -459,11 +452,14 @@ export default function QrAttendanceClient({
 
           <select
             value={branchId}
-            onChange={(event) =>
-              setBranchId(
-                event.target.value,
-              )
-            }
+            onChange={(event) => {
+              setSessionId(null)
+              setToken('')
+              setQrImage('')
+              setExpiresAt('')
+              setSecondsLeft(0)
+              setBranchId(event.target.value)
+            }}
           >
             {branches.map(
               (item) => (

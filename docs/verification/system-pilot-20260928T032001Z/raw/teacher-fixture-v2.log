@@ -1,0 +1,28 @@
+Connecting to local database...
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/teacher_session_workspace_test.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/teacher_session_workspace_test.sql .. 
+# Failed test 18: "TSW21 present and late students still need a progress note"
+#       caught: P0001: JOURNAL_SESSION_NOT_COMPLETED
+#       wanted: P0001: JOURNAL_PROGRESS_REQUIRED
+# Failed test 20: "TSW23 session journal submits"
+#     died: P0001: JOURNAL_SESSION_NOT_COMPLETED
+#         CONTEXT:
+#             PL/pgSQL function submit_session_learning_journal(uuid) line 7 at RAISE
+#             SQL statement "SELECT public.submit_session_learning_journal(p_session)"
+#             PL/pgSQL function teacher_session_write(uuid,text,uuid,jsonb) line 88 at PERFORM
+#             SQL statement "select public.teacher_session_write('c2100000-0000-4000-8000-000000000090','submit',null,'{}')"
+#             PL/pgSQL function lives_ok(text,text) line 14 at EXECUTE
+# Failed test 21: "TSW24 submitted journal keeps a revision"
+#     '0'
+#         >
+#     '0'
+# Looks like you failed 3 tests of 28
+Failed 3/28 subtests 
+
+Test Summary Report
+-------------------
+/Users/macbookair/vibe-academy-system/supabase/tests/database/teacher_session_workspace_test.sql (Wstat: 0 Tests: 28 Failed: 3)
+  Failed tests:  18, 20-21
+Files=1, Tests=28,  0 wallclock secs ( 0.01 usr +  0.01 sys =  0.02 CPU)
+Result: FAIL
+error running container: exit 1

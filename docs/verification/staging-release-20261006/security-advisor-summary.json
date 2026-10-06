@@ -1,0 +1,9 @@
+{
+  "error_count": 0,
+  "warning_count": 358,
+  "categories": {
+    "function_search_path_mutable": 8,
+    "authenticated_security_definer_function_executable": 349,
+    "auth_leaked_password_protection": 1
+  }
+}

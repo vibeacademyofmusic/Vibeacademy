@@ -1,0 +1,173 @@
+Window: "VIBE Academy", App: Safari.
+0 standard window VIBE Academy, ID: SafariWindow?IsSecure=false&UUID=FCB48A7B-333E-4C00-8697-7B082A06A83F, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 scroll area
+				4 HTML content Description: VIBE Academy, URL: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/subjects/a348a034-75dd-4978-82a6-032f1411a09d/lessons/99808b3c-9814-4829-9598-0123723f9929
+					5 container
+						6 link VIBE Academy, Value: 127.0.0.1:3000/admin
+						7 text Hệ thống quản lý
+						8 container Điều hướng quản trị
+							9 container TỔNG QUAN
+								10 heading TỔNG QUAN, Value: 2
+									11 text TỔNG QUAN
+								12 content list
+									13 link Bảng điều khiển, Value: 127.0.0.1:3000/admin
+							14 container VẬN HÀNH
+								15 heading VẬN HÀNH, Value: 2
+									16 text VẬN HÀNH
+								17 content list
+									18 link Đào tạo, Value: 127.0.0.1:3000/admin/students
+									19 link Tổng quan tài chính, Value: 127.0.0.1:3000/admin/finance
+									20 link Học phí & Thanh toán, Value: 127.0.0.1:3000/admin/finance/invoices
+									21 link Số dư khách hàng, Value: 127.0.0.1:3000/admin/finance/credits
+									22 link Chi phí vận hành, Value: 127.0.0.1:3000/admin/finance/operating-expenses
+							23 container HR
+								24 heading HR, Value: 2
+									25 text HR
+								26 content list
+									27 link Tổng quan HR, Value: 127.0.0.1:3000/admin/hr
+									28 link Nhân sự & nghỉ phép, Value: 127.0.0.1:3000/admin/employees
+									29 link Lương & chi trả, Value: 127.0.0.1:3000/admin/payroll
+									30 link Phân công và đối soát, Value: 127.0.0.1:3000/admin/session-teachers
+							31 container KINH DOANH
+								32 heading KINH DOANH, Value: 2
+									33 text KINH DOANH
+								34 content list
+									35 link Điều hành kinh doanh, Value: 127.0.0.1:3000/admin/business
+									36 link CRM & Tuyển sinh, Value: 127.0.0.1:3000/admin/business/registrations
+									37 link Báo cáo marketing, Value: 127.0.0.1:3000/admin/business/marketing
+									38 link Sau bán hàng, Value: 127.0.0.1:3000/admin/business/after-sales
+							39 container HỆ THỐNG
+								40 heading HỆ THỐNG, Value: 2
+									41 text HỆ THỐNG
+								42 content list
+									43 link Kho sách và vật tư, Value: 127.0.0.1:3000/admin/inventory
+									44 link Nhạc cụ theo serial, Value: 127.0.0.1:3000/admin/instruments
+									45 link Hệ thống, Value: 127.0.0.1:3000/admin/branches
+						46 text Đăng nhập với tài khoản Local Developer Admin Quản trị viên cấp cao
+						47 button Đăng xuất
+					48 container
+						49 text Hệ thống Vibe Academy Quản trị Local Developer Admin
+					50 container
+						51 container Đào tạo
+							52 link Học viên, Value: 127.0.0.1:3000/admin/students
+							53 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							54 link Ca dạy, Value: 127.0.0.1:3000/admin/classes
+							55 link Lịch học, Value: 127.0.0.1:3000/admin/schedule
+							56 link Điểm danh, Value: 127.0.0.1:3000/admin/attendance
+							57 link Cảnh báo chuyên cần, Value: 127.0.0.1:3000/admin/attendance/retention
+							58 link Báo cáo học tập, Value: 127.0.0.1:3000/admin/reports/learning
+							59 link Duyệt bảo lưu, Value: 127.0.0.1:3000/admin/academic/pause-requests
+							60 link Phản hồi buổi học, Value: 127.0.0.1:3000/admin/feedback
+							61 link Phòng học, Value: 127.0.0.1:3000/admin/rooms
+						62 container Đường dẫn chương trình
+							63 link Chương trình học, Value: 127.0.0.1:3000/admin/programs
+							64 link Piano, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af
+							65 link Pre Step, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd
+							66 link My First Piano Adventure - Lesson Book B: Steps on the Staff, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/subjects/a348a034-75dd-4978-82a6-032f1411a09d
+							67 link Unit 1 — Ôn Book A và chuẩn bị đọc khuông (mô tả VIBE), Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/subjects/a348a034-75dd-4978-82a6-032f1411a09d
+							68 text PIANO-PRESTEP-BB-L01 · Friends at the Piano / Parade of Friends
+						69 text Lesson
+						70 heading PIANO-PRESTEP-BB-L01 · Friends at the Piano / Parade of Friends, Value: 1
+							71 text PIANO-PRESTEP-BB-L01  ·  Friends at the Piano / Parade of Friends
+						72 description list
+							73 text Chương trình
+							74 text Piano
+							75 text Cấp độ
+							76 text Pre Step
+							77 text Môn học
+							78 text My First Piano Adventure - Lesson Book B: Steps on the Staff
+							79 text Nhóm đánh giá
+							80 text Unit 1 — Ôn Book A và chuẩn bị đọc khuông (mô tả VIBE)
+							81 text Trạng thái
+							82 text Đang hoạt động
+						83 container Giáo án Book B
+							84 heading Giáo án Book B, Value: 2
+								85 text Giáo án Book B
+							86 container
+								87 text My First Piano Adventure - Lesson Book B: Steps on the Staff  ·  Nancy Faber và Randall Faber
+							88 container
+								89 text Ôn Book A và chuẩn bị đọc khuông (mô tả VIBE)  · Trang PDF nguồn  4-7
+							90 description list
+								91 text Mục tiêu
+								92 text Nhận diện phím, số ngón, trường độ đã học và sắc thái f/p; làm quen Mozart và Beethoven.
+								93 text Trên lớp
+								94 text Theo các lá cờ ôn tập, gọi tên rồi chơi; giáo viên ghi lại phần cần củng cố trước khi đọc khuông nhạc.
+								95 text Ở nhà
+								96 text Ôn các phím và trường độ còn nhầm bằng trò chơi hỏi-đáp với người nhà.
+								97 text Ghi chú giáo viên
+								98 text Kiểm tra kiến thức nền thực tế; nếu chưa học Book A, bố trí ôn bổ sung, không mặc định đã biết.
+							99 text Một Lesson có thể gồm nhiều buổi. Giáo trình không đặt điểm đạt, Final Test hoặc tự động hoàn thành môn/cấp độ.
+							100 summary Hướng dẫn sử dụng, nguồn và bảng phân bổ đủ 50 Lesson, Value: off
+								101 text Hướng dẫn sử dụng, nguồn và bảng phân bổ đủ 50 Lesson
+						102 heading Chỉnh sửa, Value: 2
+							103 text Chỉnh sửa
+						104 text Tên Lesson *
+						105 text field (settable) Tên Lesson *, Value: Friends at the Piano / Parade of Friends
+						106 text Mã Lesson *
+						107 text field (settable) Mã Lesson *, Value: PIANO-PRESTEP-BB-L01
+						108 text Thứ tự *
+						109 number field (settable) Thứ tự *, Value: 1
+							110 stepper 0
+								111 unknown
+								112 unknown
+						113 text Trạng thái *
+						114 pop up button Trạng thái *, Value: Đang hoạt động
+						115 container
+							116 checkbox Bắt buộc, Value: 0
+							117 text Bắt buộc
+						118 button Lưu Lesson
+						119 link Hủy, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/subjects/a348a034-75dd-4978-82a6-032f1411a09d
+						120 heading Ngừng sử dụng, Value: 2
+							121 text Ngừng sử dụng
+						122 text Lesson sẽ không còn được sử dụng cho hoạt động mới. Dữ liệu học tập trước đây được giữ lại.
+						123 link Ngừng sử dụng, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/subjects/a348a034-75dd-4978-82a6-032f1411a09d/lessons/99808b3c-9814-4829-9598-0123723f9929?retire=confirm
+				124 scroll bar (settable, float) 0
+	125 container
+		126 image WindowControlShadowView._shadowImageView
+		127 toolbar
+			128 container Secondary Actions: Move next, Remove from toolbar
+				129 menu button (disabled) Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+				130 button (disabled) Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			131 container BackForwardSegmentedControl
+				132 button (disabled) Description: Go back, Help: Show the previous page, ID: BackButton
+				133 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+			134 container Secondary Actions: Move previous, Move next, Remove from toolbar
+				135 button Page Menu, ID: AssistantButton
+				136 button Add page to Reading List, ID: OneStepBookmarkingButton
+				137 text field (settable) Description: smart search field, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD, Value: 127.0.0.1:3000/admin/academic/d650ee06-2567-4694-a792-9d47722cf6af/levels/fd3d456f-e877-4379-8e7c-c788a9706ddd/subjects/a348a034-75dd-4978-82a6-032f1411a09d/lessons/99808b3c-9814-4829-9598-0123723f9929
+				138 button Translation Available, ID: TranslationButton
+				139 button Reload this page, ID: ReloadButton
+			140 button (disabled) Description: Downloads, ID: DownloadsButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				141 button (disabled) Description: downloads window, Help: Show downloads, ID: DownloadsButton
+			142 button (disabled) Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+			143 button (disabled) Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+				144 button (disabled) Description: new tab, Help: New Tab, ID: NewTabButton
+					145 button (disabled) Description: add, Help: New Tab
+			146 button (disabled) Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+		147 tab group Description: Tab bar, 5 tabs, ID: TabBar?isSeparate=false
+			148 tab Gộp menu đào tạo, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				149 image FaviconImageView
+				150 text Value: Gộp menu đào tạo, ID: UnifedTabBarButton._titleTextField
+			151 tab Quản lý Template | ZBS Template Message, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				152 image FaviconImageView
+				153 text Value: Quản lý Template | ZBS Template Message, ID: UnifedTabBarButton._titleTextField
+			154 tab Máy chủ - Bizfly Cloud Server Dashboard, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				155 image FaviconImageView
+				156 text Value: Máy chủ - Bizfly Cloud Server Dashboard, ID: UnifedTabBarButton._titleTextField
+			157 tab VIBE Academy, Value: off, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=false, Secondary Actions: close tab
+				158 image FaviconImageView
+				159 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+			160 tab VIBE Academy, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, ID: TabBarTab?isPinned=false&isNarrow=false&isActive=true, Secondary Actions: close tab
+				161 image FaviconImageView
+				162 text Value: VIBE Academy, ID: UnifedTabBarButton._titleTextField
+163 menu bar
+	164 Safari
+	165 File
+	166 Edit
+	167 View, ID: SafariViewMenu
+	168 History
+	169 Bookmarks, ID: SafariBookmarksMenu
+	170 Window, ID: SafariWindowMenu
+	171 Help, ID: SafariHelpMenu

@@ -1,0 +1,59 @@
+{
+  "run": "VIBE-EXEC-20260930",
+  "objects": {
+    "registration": "d9f814a9-2b9c-4295-82ce-1aa582d3fcc5",
+    "sourceSession": "92feaab8-8e7c-4ab2-8939-9113dd40f834",
+    "order_code": 260925102,
+    "student": "2aa35959-5998-480b-925e-22e1ee44b610",
+    "parent": "835c936d-54cb-4d49-b44c-ef55a1234df4",
+    "gatewayPayment": "83f68a6f-50f6-4ee5-a298-932d8a34888c",
+    "cashPayment": "8c0c40c5-9bc0-4c27-abda-bb2b917f9a33",
+    "placement": "519375a3-db10-4327-a43b-2b385bea5a16",
+    "enrollment": "08076840-6fc1-4a95-b0ee-33eaadfa307e",
+    "tuition": "ea720acd-4a06-4202-b266-4f9707f44e1e",
+    "invoice": "3dfbc2bb-be0b-41ba-b23a-8f8e704daf07",
+    "attendance": "fe2f54b5-444b-4bf7-98db-c02f2a1f0b0a",
+    "credit": "f1394041-73c1-4387-856c-58b2a5b48806",
+    "makeupSession": "e738af8e-d7b8-4490-aaeb-5cdee003d293",
+    "pauseRequest": "b0e31233-19b1-433d-8dad-bd1356b4d36a",
+    "pause": "97ced329-575c-4b54-8d1a-3bb9122f5fc3"
+  },
+  "actors": {
+    "ADMIN": {
+      "id": "b8a18ecb-894e-4378-b10b-19a65e1e1fc7",
+      "role": "SUPER_ADMIN"
+    },
+    "ADMIN2": {
+      "id": "b2270740-2fe2-481b-b54e-cbee8c4aac34",
+      "role": "SUPER_ADMIN"
+    },
+    "STAFF": {
+      "id": "0bfa6ea2-4ac4-4c70-b843-999d12aed8b0",
+      "role": "STAFF"
+    },
+    "BA": {
+      "id": "6ce9e479-f6cd-4a9f-85dc-32fdbd2f5350",
+      "role": "BRANCH_ADMIN"
+    },
+    "BB": {
+      "id": "fd3cd849-b552-4a65-81af-c298a62e8399",
+      "role": "BRANCH_ADMIN"
+    },
+    "FIN": {
+      "id": "58753894-7b30-4709-a469-3d924b8d990a",
+      "role": "FINANCE"
+    },
+    "TEACHER": {
+      "id": "1b879638-12f9-4554-9e9e-ccebae336823",
+      "role": "TEACHER"
+    },
+    "PARENT": {
+      "id": "4b85c1bd-1d42-48bf-82c3-8011676289ae",
+      "role": "PARENT"
+    },
+    "STUDENT": {
+      "id": "b487ee11-865f-431c-87a2-dc2f52196ef5",
+      "role": "STUDENT"
+    }
+  }
+}

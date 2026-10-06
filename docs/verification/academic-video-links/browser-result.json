@@ -1,0 +1,14 @@
+{
+  "scope": "Isolated component/action/SQL harness, synthetic identity helpers; not Mac/Supabase E2E",
+  "status": "PASS",
+  "checks": [
+    "Desktop: existing video, lesson context and management controls render",
+    "390px: accessible modal, no horizontal overflow; default is internal",
+    "Invalid URL rejected by actual Server Action; form stays open and preserves input",
+    "Save → SQL → refreshed list → reload preserves title, canonical link and lesson",
+    "Parent: internal video absent; no add/edit/remove controls",
+    "Edit and share: parent receives updated link and note; mobile stays within viewport",
+    "Remove: confirmation, successful SQL soft-delete and disappearance from parent view",
+    "No browser JavaScript or console errors"
+  ]
+}

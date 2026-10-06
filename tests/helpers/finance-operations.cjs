@@ -11,7 +11,15 @@ function load(file, mocks, cache = new Map()) {
   const compiled = { exports: {} }
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 } }).outputText
   const localRequire = name => {
+    if (name === 'server-only') return {}
     if (name in mocks) return mocks[name]
+    if (name.startsWith('@/')) {
+      const target = path.resolve(name.slice(2))
+      if (fs.existsSync(target + '.ts')) return load(target + '.ts', mocks, cache)
+      if (fs.existsSync(target + '.tsx')) return load(target + '.tsx', mocks, cache)
+      if (fs.existsSync(path.join(target, 'index.ts'))) return load(path.join(target, 'index.ts'), mocks, cache)
+      if (fs.existsSync(path.join(target, 'index.tsx'))) return load(path.join(target, 'index.tsx'), mocks, cache)
+    }
     if (name.startsWith('.')) {
       const target = path.resolve(path.dirname(file), name)
       if (target.endsWith('.css')) return { default: new Proxy({}, { get: (_, key) => String(key) }) }
@@ -27,10 +35,18 @@ function load(file, mocks, cache = new Map()) {
 }
 const id = n => `a0000000-0000-0000-0000-${String(n).padStart(12, '0')}`
 function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
-  const calls = [], invalidated = []
+  const calls = [], invalidated = [], afters = []
   const db = {
     auth: { getClaims: async () => ({ data: signedIn ? { claims: { sub: id(1) } } : null, error: null }) },
-    rpc: async (name, args) => { calls.push({ rpc: name, args }); return ['has_role','is_global_super_admin'].includes(name) ? { data: role, error: null } : { data: id(99), error: rpcError } },
+    rpc: async (name, args) => {
+      calls.push({ rpc: name, args })
+      if (name === 'list_tuition_reminders') return { data: (fixtures.tuition_reminder_operations ?? []).filter(r => !args.p_reminder || r.id === args.p_reminder), error: rpcError }
+      if (name === 'tuition_visible_branches') return { data: fixtures.branches ?? [], error: rpcError }
+      if (name === 'tuition_granted_branches') return { data: (fixtures.branches ?? []).map(b => b.id), error: rpcError }
+      if (name === 'tuition_care_may_enter') return { data: role, error: null }
+      if (name === 'tuition_reminder_kpis') return { data: { week: 0, payment: 0, upcoming: 0, red: 0, overdue: 0, sent: 0 }, error: rpcError }
+      return ['has_role','is_global_super_admin','has_permission'].includes(name) ? { data: role, error: null } : { data: name === 'learning_report_link_manage' ? fixtures['rpc:learning_report_link_manage'] ?? null : id(99), error: rpcError }
+    },
     from(table) {
       const call = { table, filters: [], orders: [] }; calls.push(call)
       const query = {
@@ -59,11 +75,12 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
   }
   const mocks = {
     '@/lib/supabase/server': { createClient: async () => db },
-    'next/navigation': { useRouter: () => ({ refresh() {}, push() {} }), usePathname: () => '/admin/payroll', redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
+    'next/navigation': { notFound: () => { throw Object.assign(new Error('Not found'), { code: 'NOT_FOUND' }) }, useRouter: () => ({ refresh() {}, push() {} }), usePathname: () => '/admin/payroll', redirect: url => { throw Object.assign(new Error('redirect'), { url }) } },
     'next/cache': { revalidatePath: p => invalidated.push(p) },
+    'next/server': { ...require('next/server'), after: fn => afters.push(fn) },
     'next/link': { default: ({ children, href }) => React.createElement('a', { href }, children) },
   }
-  return { db, calls, invalidated, load: name => load(path.join(base, name), mocks) }
+  return { db, calls, invalidated, afters, load: name => load(path.join(base, name), mocks) }
 }
 function form(values) { const f = new FormData(); for (const [k, v] of Object.entries(values)) f.set(k, String(v)); return f }
 async function redirected(action, values) {

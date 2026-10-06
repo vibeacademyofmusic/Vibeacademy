@@ -1,0 +1,3691 @@
+{
+  "counts": [
+    {
+      "program": "Piano",
+      "levels": 2,
+      "subjects": 8,
+      "lessons": 80
+    },
+    {
+      "program": "Violin",
+      "levels": 9,
+      "subjects": 45,
+      "lessons": 450
+    }
+  ],
+  "programs": [
+    {
+      "code": "PIANO",
+      "name": "Piano",
+      "levels": [
+        {
+          "code": "PRE_STEP",
+          "name": "Pre Step",
+          "grade": null,
+          "sequence": 1,
+          "levelType": "FOUNDATION",
+          "subjects": [
+            {
+              "code": "METHODE_BOOK",
+              "name": "Methode Book",
+              "family": "METHODE_BOOK",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Methode Book/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE_STEP/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE_STEP/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": -1
+        },
+        {
+          "code": "PRE",
+          "name": "Pre",
+          "grade": null,
+          "sequence": 2,
+          "levelType": "FOUNDATION",
+          "subjects": [
+            {
+              "code": "METHODE_BOOK",
+              "name": "Methode Book",
+              "family": "METHODE_BOOK",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE/Methode Book/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE/Methode Book/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "PIANO/PRE/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "PIANO/PRE/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 0
+        }
+      ]
+    },
+    {
+      "code": "VIOLIN",
+      "name": "Violin",
+      "levels": [
+        {
+          "code": "PRE",
+          "name": "Pre",
+          "grade": null,
+          "sequence": 1,
+          "levelType": "FOUNDATION",
+          "subjects": [
+            {
+              "code": "METHODE_BOOK",
+              "name": "Methode Book",
+              "family": "METHODE_BOOK",
+              "lessons": [
+                {
+                  "key": "VIOLIN/PRE/Methode Book/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/PRE/Methode Book/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/PRE/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/PRE/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/PRE/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/PRE/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 0
+        },
+        {
+          "code": "G1",
+          "name": "Grade 1",
+          "grade": 1,
+          "sequence": 2,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G1/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G1/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G1/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G1/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G1/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G1/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G1/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 1
+        },
+        {
+          "code": "G2",
+          "name": "Grade 2",
+          "grade": 2,
+          "sequence": 3,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G2/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G2/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G2/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G2/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G2/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G2/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G2/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 2
+        },
+        {
+          "code": "G3",
+          "name": "Grade 3",
+          "grade": 3,
+          "sequence": 4,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G3/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G3/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G3/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G3/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G3/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G3/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G3/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 3
+        },
+        {
+          "code": "G4",
+          "name": "Grade 4",
+          "grade": 4,
+          "sequence": 5,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G4/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G4/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G4/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G4/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G4/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G4/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G4/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "ENSEMBLE",
+              "name": "Ensemble",
+              "family": "ENSEMBLE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G4/Ensemble/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G4/Ensemble/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 4
+        },
+        {
+          "code": "G5",
+          "name": "Grade 5",
+          "grade": 5,
+          "sequence": 6,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G5/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G5/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G5/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G5/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G5/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G5/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G5/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "ENSEMBLE",
+              "name": "Ensemble",
+              "family": "ENSEMBLE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G5/Ensemble/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G5/Ensemble/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 5
+        },
+        {
+          "code": "G6",
+          "name": "Grade 6",
+          "grade": 6,
+          "sequence": 7,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G6/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G6/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G6/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G6/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G6/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G6/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G6/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "ENSEMBLE",
+              "name": "Ensemble",
+              "family": "ENSEMBLE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G6/Ensemble/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G6/Ensemble/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 6
+        },
+        {
+          "code": "G7",
+          "name": "Grade 7",
+          "grade": 7,
+          "sequence": 8,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "ENSEMBLE",
+              "name": "Ensemble",
+              "family": "ENSEMBLE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Ensemble/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Ensemble/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "MUSIC_HISTORY",
+              "name": "Music History",
+              "family": "MUSIC_HISTORY",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Music History/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Music History/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "MEDIA_PRODUCT",
+              "name": "Media Product",
+              "family": "MEDIA_PRODUCT",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G7/Media Product/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G7/Media Product/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 7
+        },
+        {
+          "code": "G8",
+          "name": "Grade 8",
+          "grade": 8,
+          "sequence": 9,
+          "levelType": "GRADE",
+          "subjects": [
+            {
+              "code": "REPERTOIRE",
+              "name": "Repertoire",
+              "family": "REPERTOIRE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Repertoire/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Repertoire/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "TECHNIQUE_FOUNDATION",
+              "name": "Technique Foundation",
+              "family": "TECHNIQUE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Technique Foundation/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "AURAL",
+              "name": "Aural",
+              "family": "AURAL",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Aural/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Aural/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "SIGHT_READING",
+              "name": "Sight Reading",
+              "family": "SIGHTREADING",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Sight Reading/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Sight Reading/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "ENSEMBLE",
+              "name": "Ensemble",
+              "family": "ENSEMBLE",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Ensemble/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Ensemble/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "MUSIC_HISTORY",
+              "name": "Music History",
+              "family": "MUSIC_HISTORY",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Music History/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Music History/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            },
+            {
+              "code": "MEDIA_PRODUCT",
+              "name": "Media Product",
+              "family": "MEDIA_PRODUCT",
+              "lessons": [
+                {
+                  "key": "VIOLIN/G8/Media Product/1",
+                  "code": "L01",
+                  "name": "Lesson 01",
+                  "ordinal": 1
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/2",
+                  "code": "L02",
+                  "name": "Lesson 02",
+                  "ordinal": 2
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/3",
+                  "code": "L03",
+                  "name": "Lesson 03",
+                  "ordinal": 3
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/4",
+                  "code": "L04",
+                  "name": "Lesson 04",
+                  "ordinal": 4
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/5",
+                  "code": "L05",
+                  "name": "Lesson 05",
+                  "ordinal": 5
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/6",
+                  "code": "L06",
+                  "name": "Lesson 06",
+                  "ordinal": 6
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/7",
+                  "code": "L07",
+                  "name": "Lesson 07",
+                  "ordinal": 7
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/8",
+                  "code": "L08",
+                  "name": "Lesson 08",
+                  "ordinal": 8
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/9",
+                  "code": "L09",
+                  "name": "Lesson 09",
+                  "ordinal": 9
+                },
+                {
+                  "key": "VIOLIN/G8/Media Product/10",
+                  "code": "L10",
+                  "name": "Lesson 10",
+                  "ordinal": 10
+                }
+              ]
+            }
+          ],
+          "rank": 8
+        }
+      ]
+    }
+  ]
+}
