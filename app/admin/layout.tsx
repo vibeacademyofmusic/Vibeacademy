@@ -8,7 +8,9 @@ import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
 
 import { logout } from '@/app/login/actions'
-import { requestClaims, requestClient, requestRole } from '@/lib/auth/request'
+import { mayViewFinancialReports } from '@/lib/auth/financial-reports'
+import { requestClaims, requestClient, requestOperationalAdmin, requestRole } from '@/lib/auth/request'
+import { isFinancialReportPath } from './navigation'
 import { TuitionPaymentNav } from './finance/SectionNav'
 import { HrSectionNav } from './hr/SectionNav'
 import { fullBusinessAccess, loadBranchBusinessAccess } from './business/access'
@@ -30,13 +32,21 @@ export default async function AdminLayout({
 
   const userId = claimsData.claims.sub
   const pathname = (await headers()).get('x-vibe-pathname')
-  const [{ data: isSuperAdmin, error: roleError }, { data: profile }] = await Promise.all([
+  const [{ data: isSuperAdmin, error: roleError }, { data: isOperational }, { data: profile }, financialReports] = await Promise.all([
     requestRole('SUPER_ADMIN'),
+    requestOperationalAdmin(),
     supabase.from('profiles').select('full_name').eq('id', userId).single(),
+    mayViewFinancialReports(null),
   ])
   let mode: ShellMode = 'full'
+  const unrestricted = !roleError && isSuperAdmin === true
+  const operationsLead = !unrestricted && isOperational === true
 
-  if (roleError || !isSuperAdmin) {
+  if (!financialReports && isFinancialReportPath(pathname)) {
+    redirect('/admin/finance/invoices?error=' + encodeURIComponent('Bạn không có quyền xem báo cáo tài chính.'))
+  }
+
+  if (!unrestricted && !operationsLead) {
     const [{ data: mayEnter, error: shellError }, { data: mayStudents, error: studentError }, { data: mayCashier }, { data: mayDecidePause }, { data: mayTuition }] = await Promise.all([
       supabase.rpc('crm_shell_may_enter'),
       supabase.rpc('student_ops_may_enter'),
@@ -57,8 +67,12 @@ export default async function AdminLayout({
   }
 
   const includeBusiness = mode === 'full' || mode === 'business' || mode === 'business-students'
-  const businessAccess = !includeBusiness ? null : isSuperAdmin ? fullBusinessAccess : await loadBranchBusinessAccess(supabase)
-  const hiddenHrefs = businessAccess ? hiddenBusinessHrefs(businessAccess) : []
+  const businessAccess = !includeBusiness ? null : unrestricted || operationsLead ? fullBusinessAccess : await loadBranchBusinessAccess(supabase)
+  const hiddenHrefs = [
+    ...(businessAccess ? hiddenBusinessHrefs(businessAccess) : []),
+    ...(!financialReports ? ['/admin/finance'] : []),
+  ]
+  const roleLabel = unrestricted ? 'Quản trị viên cấp cao' : operationsLead ? 'Điều hành vận hành' : mode === 'cashier' ? 'Thu ngân' : mode === 'tuition' ? 'Chăm sóc học phí' : mode === 'academic' ? 'Đào tạo' : mode === 'students' ? 'Học viên' : 'Kinh doanh'
 
   return (
     <div className="vibe-admin min-h-screen bg-gray-50">
@@ -85,7 +99,7 @@ export default async function AdminLayout({
               </p>
 
               <p className="mt-1 text-xs font-medium text-gray-400">
-                {mode === 'full' ? 'Quản trị viên cấp cao' : mode === 'cashier' ? 'Thu ngân' : mode === 'tuition' ? 'Chăm sóc học phí' : mode === 'academic' ? 'Đào tạo' : mode === 'students' ? 'Học viên' : 'Kinh doanh'}
+                {roleLabel}
               </p>
             </div>
 

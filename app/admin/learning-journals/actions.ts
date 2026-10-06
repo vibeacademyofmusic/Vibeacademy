@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { observations, type JournalState } from './types'
@@ -8,7 +9,7 @@ export async function saveJournal(_state: JournalState, form: FormData): Promise
   const supabase = await createClient()
   const { data: auth, error: authError } = await supabase.auth.getClaims()
   if (authError || !auth?.claims) return { error: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' }
-  const { data: allowed, error: roleError } = await supabase.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const { data: allowed, error: roleError } = await operationalAdminOn(supabase)
   if (roleError || !allowed) return { error: 'Bạn không có quyền cập nhật nhật ký học tập.' }
 
   const attendanceId = String(form.get('attendance_record_id') ?? '')

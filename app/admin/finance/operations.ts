@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { requestClaims, requestClient, requestRole } from '@/lib/auth/request'
+import { requestClaims, requestClient, requestOperationalAdmin, requestRole } from '@/lib/auth/request'
 
 export const invoiceStatuses = ['DRAFT', 'ISSUED', 'CANCELLED']
 export const debtStatuses = ['OVERDUE', 'UNPAID', 'PARTIALLY_PAID', 'PAID']
@@ -23,16 +23,16 @@ export async function adminClient() {
   const db = await requestClient()
   const { data, error } = await requestClaims()
   if (error || !data?.claims) redirect('/login')
-  const role = await requestRole('SUPER_ADMIN')
-  if (role.error || role.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  const [role, operational] = await Promise.all([requestRole('SUPER_ADMIN'), requestOperationalAdmin()])
+  if ((role.error || role.data !== true) && (operational.error || operational.data !== true)) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
   return db
 }
 export async function reminderReader() {
   const db = await requestClient()
   const { data, error } = await requestClaims()
   if (error || !data?.claims) redirect('/login')
-  const role = await requestRole('SUPER_ADMIN')
-  if (role.data === true) return { db, superAdmin: true }
+  const [operational, role] = await Promise.all([requestOperationalAdmin(), requestRole('SUPER_ADMIN')])
+  if (operational.data === true || role.data === true) return { db, superAdmin: true }
   const enter = await db.rpc('tuition_care_may_enter')
   if (enter.error || enter.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
   return { db, superAdmin: false }

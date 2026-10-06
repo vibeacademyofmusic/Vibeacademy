@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import AttendanceLauncher from '../attendance/Launcher'
 
-import { requestClient, requestRole } from '@/lib/auth/request'
+import { requestClient, requestOperationalAdmin } from '@/lib/auth/request'
 import { businessDate } from '@/app/admin/_lib/business-date'
 import { DataTable, OperationsFilterBar, OpsMetricLink } from '@/app/admin/_components/vibe'
 import { LoadError } from '../finance/_components/ui'
@@ -119,7 +119,7 @@ async function ClassTab({
   const params = await searchParams
   const db = await requestClient()
   const selectedView = view === 'classes' && params.view === 'overview' ? 'overview' : view
-  const { data: isAdmin } = await requestRole('SUPER_ADMIN')
+  const { data: isAdmin } = await requestOperationalAdmin()
   let data
   try {
     data = await loadClassOps(db, params, selectedView)

@@ -1,4 +1,4 @@
-import { requestRole } from '@/lib/auth/request'
+import { requestOperationalAdmin } from '@/lib/auth/request'
 import { createClient } from '@/lib/supabase/server'
 import { businessDate } from '@/app/admin/_lib/business-date'
 import { uuidPattern, vietnamDateTime } from '@/app/admin/finance/operations'
@@ -60,7 +60,7 @@ export async function loadStudentMovement(
 ): Promise<StudentMovement> {
   const scope = monthWindow(params.month, businessDate())
   const branchId = uuidPattern.test(params.branch ?? '') ? params.branch! : null
-  const { data: isAdmin, error: roleError } = await requestRole('SUPER_ADMIN')
+  const { data: isAdmin, error: roleError } = await requestOperationalAdmin()
   if (roleError) throw new Error(roleError.message)
 
   let newcomersQuery = db.from('students').select('id, student_code, full_name, admission_date, branches!students_default_branch_id_fkey(name)')

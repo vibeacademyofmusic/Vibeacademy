@@ -1,3 +1,4 @@
+import { operationalAdminOn } from '@/lib/auth/request'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 import { createClient } from '@/lib/supabase/server'
@@ -63,7 +64,7 @@ export async function loadBranchBusinessAccess(db: SupabaseClient): Promise<Busi
 
 export async function loadBusinessAccess(): Promise<BusinessAccess> {
   const db = await createClient()
-  const { data: isSuperAdmin, error } = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const { data: isSuperAdmin, error } = await operationalAdminOn(db)
   if (!error && isSuperAdmin === true) return fullBusinessAccess
   return loadBranchBusinessAccess(db)
 }

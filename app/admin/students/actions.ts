@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { requestOperationalAdmin } from '@/lib/auth/request'
 import { createClient } from '@/lib/supabase/server'
 import { requireOperationsStaff } from '../../../lib/authorization'
 
@@ -17,9 +18,7 @@ async function requireSuperAdmin() {
   }
 
   const { data: isSuperAdmin, error: roleError } =
-    await supabase.rpc('has_role', {
-      role_code: 'SUPER_ADMIN',
-    })
+    await requestOperationalAdmin()
 
   if (roleError || !isSuperAdmin) {
     redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')

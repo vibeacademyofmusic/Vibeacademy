@@ -68,11 +68,11 @@ function ExecutiveDashboardView({ data }: { data: ExecutiveDashboard }) {
           <strong className={styles.metricValue}>{countText(markedTotal(data))}</strong>
           <span className={styles.metricNote}>{attendanceNote}. Không tính buổi chưa điểm danh là vắng.</span>
         </Link>
-        <Link className={styles.metric} href={data.links.finance} prefetch={false}>
+        {data.financialReports ? <Link className={styles.metric} href={data.links.finance} prefetch={false}>
           <span className={styles.metricLabel}>Học phí đã thu tháng này</span>
           <strong className={styles.metricValue}>{moneyText(data.finance.collected)}</strong>
           <span className={styles.metricNote}>Tháng {data.monthLabel}. Tiền đã thu.{data.finance.collectedChange ? ` ${data.finance.collectedChange}.` : ''}</span>
-        </Link>
+        </Link> : null}
         <Link className={styles.metric} href={data.links.studentsActive} prefetch={false}>
           <span className={styles.metricLabel}>Học viên đang hoạt động</span>
           <strong className={styles.metricValue}>{countText(data.students.active)}</strong>
@@ -143,17 +143,17 @@ function ExecutiveDashboardView({ data }: { data: ExecutiveDashboard }) {
       <section className={styles.pair}>
         <section className={styles.sideCard}>
           <p className={styles.eyebrow}>FINANCE</p>
-          <h2 className={styles.sideTitle}>Tài chính tháng {data.monthLabel}</h2>
-          <p className={styles.actionDesc}>Các số đứng riêng. Không cộng thành một dòng tiền.</p>
-          <div className={styles.rows}>
+          <h2 className={styles.sideTitle}>{data.financialReports ? `Tài chính tháng ${data.monthLabel}` : 'Việc tài chính'}</h2>
+          <p className={styles.actionDesc}>{data.financialReports ? 'Các số đứng riêng. Không cộng thành một dòng tiền.' : 'Báo cáo doanh thu, lợi nhuận và dòng tiền không mở với tài khoản này.'}</p>
+          {data.financialReports ? <div className={styles.rows}>
             <div className={styles.row}><span>Tiền học phí đã thu</span><strong>{moneyText(data.finance.collected)}</strong></div>
             <div className={styles.row}><span>Công nợ hóa đơn đang mở</span><strong>{moneyText(data.finance.invoiceReceivables)}</strong></div>
             <div className={styles.row}><span>Công nợ mở sổ còn lại</span><strong>{moneyText(data.finance.openingReceivables)}</strong></div>
             <div className={styles.row}><span>Công nợ hóa đơn quá hạn</span><strong>{moneyText(data.finance.overdueReceivables)}</strong></div>
             <div className={styles.row}><span>Chi phí vận hành đã ghi</span><strong>{moneyText(data.finance.recordedOperatingExpenses)}</strong></div>
-          </div>
+          </div> : null}
           <div className={styles.links}>
-            <Link className={styles.link} href={data.links.finance} prefetch={false}>Báo cáo tài chính</Link>
+            {data.financialReports ? <Link className={styles.link} href={data.links.finance} prefetch={false}>Báo cáo tài chính</Link> : null}
             <Link className={styles.link} href={data.links.receivablesOverdue} prefetch={false}>Công nợ quá hạn</Link>
             <Link className={styles.link} href="/admin/finance/operating-expenses" prefetch={false}>Chi phí vận hành</Link>
           </div>

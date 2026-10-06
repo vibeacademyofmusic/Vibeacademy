@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
@@ -13,7 +14,7 @@ function read(form: FormData, key: string) {
 
 async function adminDb() {
   const db = await createClient()
-  const role = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const role = await operationalAdminOn(db)
   if (role.error || role.data !== true) redirect('/login')
   return db
 }

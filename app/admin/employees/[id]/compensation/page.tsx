@@ -1,3 +1,4 @@
+import { operationalAdminOn } from '@/lib/auth/request'
 import { EmployeeSections } from '../../../_components/vibe'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -182,7 +183,7 @@ export default async function CompensationPage({ params, searchParams }: {
         .select('id,period_id,teacher_name,pay_type,currency,gross_amount,v2_net_amount,calculation_version,payroll_periods(starts_on,status)')
         .or(`employee_id.eq.${id}${employee.teacher_id ? ',teacher_id.eq.' + employee.teacher_id : ''}`)
         .order('period_id', { ascending: false }).limit(50).returns<PayrollSummary[]>()),
-      db.rpc('has_role', { role_code: 'SUPER_ADMIN' }),
+      operationalAdminOn(db),
     ])
     configs = loaded[0]
     catalog = loaded[1]

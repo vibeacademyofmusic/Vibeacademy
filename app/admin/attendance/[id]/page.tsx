@@ -1,3 +1,4 @@
+import { operationalAdminOn } from '@/lib/auth/request'
 import { attendanceReturn } from '../launcher-model'
 import styles from '../attendance.module.css'
 import SessionTeacher from '@/app/admin/session-teachers/SessionTeacher'
@@ -130,7 +131,7 @@ export default async function SessionDetailPage({
   const supabase = await createClient()
   const [{ data: mayRead, error: accessError }, { data: isSuperAdmin }] = await Promise.all([
     supabase.rpc('can_access_session', { p_session: id }),
-    supabase.rpc('has_role', { role_code: 'SUPER_ADMIN' }),
+    operationalAdminOn(supabase),
   ])
   if (accessError || mayRead !== true) notFound()
   // Branch readers use existing RLS. Mutations retain the established admin gate.

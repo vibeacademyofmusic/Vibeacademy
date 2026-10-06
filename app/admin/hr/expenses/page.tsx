@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { randomUUID } from 'node:crypto'
 
-import { requestClaims, requestRole } from '@/lib/auth/request'
+import { requestClaims, requestOperationalAdmin, requestRole } from '@/lib/auth/request'
 import {
   adminClient,
   uuidPattern,
@@ -318,14 +318,17 @@ export default async function Expenses({
     superRole,
     financeRole,
     branchRole,
+    operationsLead,
   ] = await Promise.all([
     requestRole('SUPER_ADMIN'),
     requestRole('FINANCE'),
     requestRole('BRANCH_ADMIN'),
+    requestOperationalAdmin(),
   ])
 
   const operator =
     Boolean(superRole.data) ||
+    Boolean(operationsLead.data) ||
     Boolean(financeRole.data) ||
     Boolean(branchRole.data)
 

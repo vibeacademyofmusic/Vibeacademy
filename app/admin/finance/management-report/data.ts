@@ -1,3 +1,4 @@
+import { mayViewFinancialReports } from '@/lib/auth/financial-reports'
 import { adminClient, uuidPattern, type Params } from '../operations'
 import type { FinancialManagementReport } from './model'
 
@@ -35,6 +36,8 @@ export async function loadFinancialManagementReport(input: {
   if (!/^[A-Z]{3}$/.test(currency)) {
     return { report: null as FinancialManagementReport | null, error: 'Loại tiền tệ không hợp lệ.' }
   }
+  const allowed = await mayViewFinancialReports(input.branchId ?? null)
+  if (!allowed) return { report: null as FinancialManagementReport | null, error: 'Bạn không có quyền xem báo cáo tài chính.' }
   const result = await db.rpc('get_financial_management_report', {
     p_month: month,
     p_branch: input.branchId ?? null,
@@ -54,13 +57,20 @@ export async function loadFinanceControlTower(params: Params) {
     : 'VND'
   const requestedBranch = uuidPattern.test(params.branch ?? '') ? params.branch! : null
   const compare = params.compare !== '0'
-  const [superAdmin, branchesResult] = await Promise.all([
+  const [superAdmin, branchesResult, allowed] = await Promise.all([
     db.rpc('is_global_super_admin'),
     db.from('branches').select('id, name, code').order('name'),
+    mayViewFinancialReports(requestedBranch),
   ])
   const canConsolidate = superAdmin.data === true
   const branches = Array.isArray(branchesResult.data) ? branchesResult.data as FinanceBranchOption[] : []
   const branchId = canConsolidate ? requestedBranch : (requestedBranch ?? branches[0]?.id ?? null)
+  if (!allowed && !(canConsolidate && requestedBranch == null)) {
+    const branchAllowed = await mayViewFinancialReports(branchId)
+    if (!branchAllowed) {
+      return { month: month.slice(0, 7), currency, branchId, compare, canConsolidate: false, branches: [], report: null, error: 'Bạn không có quyền xem báo cáo tài chính.' }
+    }
+  }
   const loaded = await loadFinancialManagementReport({ month, branchId, currency })
   return {
     month: month.slice(0, 7),

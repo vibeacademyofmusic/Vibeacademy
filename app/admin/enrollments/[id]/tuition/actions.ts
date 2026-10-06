@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -45,9 +46,7 @@ export async function createTuitionTerm(
   const {
     data: allowed,
     error: roleError,
-  } = await supabase.rpc('has_role', {
-    role_code: 'SUPER_ADMIN',
-  })
+  } = await operationalAdminOn(supabase)
 
   if (roleError || !allowed) {
     redirect(

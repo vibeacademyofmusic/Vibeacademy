@@ -1,3 +1,4 @@
+import { mayViewFinancialReports } from '@/lib/auth/financial-reports'
 import { requestClient } from '@/lib/auth/request'
 import { createClient } from '@/lib/supabase/server'
 import { readAll } from '../finance/data'
@@ -46,6 +47,7 @@ export type ExecutiveDashboard = {
   businessDateLabel: string
   monthLabel: string
   scope: 'Toàn học viện'
+  financialReports: boolean
   lessons: {
     total: number | null
     scheduled: number | null
@@ -169,6 +171,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
   const today = businessDate(now)
   const monthStart = `${today.slice(0, 7)}-01`
   const db = await requestClient()
+  const financialReports = await mayViewFinancialReports(null)
   const names = new Map<string, string>()
 
   const [
@@ -223,7 +226,9 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     readAll<{ branch_id_snapshot: string | null; currency: string; outstanding_balance: Amount }>((from, to) =>
       db.from('invoice_receivables').select('branch_id_snapshot, currency, outstanding_balance').eq('is_overdue', true).order('invoice_id').range(from, to),
     ),
-    loadFinancialManagementReport({ month: monthStart, branchId: null, currency: 'VND' }),
+    financialReports
+      ? loadFinancialManagementReport({ month: monthStart, branchId: null, currency: 'VND' })
+      : Promise.resolve({ report: null, error: null }),
     db.rpc('crm_business_snapshot', { p_branch: null }),
   ])
 
@@ -424,6 +429,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
     businessDateLabel: dateLabel(today),
     monthLabel: monthLabel(today),
     scope: 'Toàn học viện',
+    financialReports,
     lessons,
     attendance,
     students: {
@@ -435,7 +441,7 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
       admittedThisMonth,
       pausedEnrollmentsToday,
     },
-    finance: {
+    finance: financialReports ? {
       currency,
       collected,
       collectedChange,
@@ -444,6 +450,15 @@ export async function loadExecutiveDashboard(now = new Date()): Promise<Executiv
       overdueReceivables: overdueMoney,
       overdueInvoiceCount: overdueRows ? overdueRows.length : null,
       recordedOperatingExpenses: availableMoney(report?.pnl.operating_expense, currency),
+    } : {
+      currency: 'VND',
+      collected: { amount: null, text: null },
+      collectedChange: null,
+      invoiceReceivables: { amount: null, text: null },
+      openingReceivables: { amount: null, text: null },
+      overdueReceivables: { amount: null, text: null },
+      overdueInvoiceCount: overdueRows ? overdueRows.length : null,
+      recordedOperatingExpenses: { amount: null, text: null },
     },
     academic: { reportsReadyForReview, attemptsPendingReview },
     staff: { attendance: staffAttendance, pendingRequests, payrollInReview },

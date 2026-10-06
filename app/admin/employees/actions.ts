@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
@@ -69,9 +70,7 @@ function privateError(message: string, code?: string) {
 async function assertSuperAdmin() {
   const db = await createClient()
 
-  const result = await db.rpc('has_role', {
-    role_code: 'SUPER_ADMIN',
-  })
+  const result = await operationalAdminOn(db)
 
   if (result.error || result.data !== true) {
     redirect('/login')

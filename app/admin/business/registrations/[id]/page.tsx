@@ -1,3 +1,4 @@
+import { operationalAdminOn } from '@/lib/auth/request'
 import { RecoveryControls } from '@/app/admin/system/integrations/zalo/RecoveryControls'
 import { readRecovery } from '@/lib/integrations/zalo/registration-recovery'
 import { zaloServiceClient } from '@/lib/integrations/zalo/service'
@@ -22,7 +23,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   const { id } = await params
   const query = await searchParams
   const db = await createClient()
-  const { data: canManageConsent } = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const { data: canManageConsent } = await operationalAdminOn(db)
   const consentDetails = canManageConsent === true ? await db.rpc('registration_zalo_consent_details', { p_application: id }) : { data: null, error: null }
   const consentHistory = (consentDetails.data?.history ?? []) as ConsentEntry[]
   const activeConsent = consentHistory.find(item => !item.revokedAt)

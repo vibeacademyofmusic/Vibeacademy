@@ -17,7 +17,7 @@ import {
   buildQuery,
 } from '@/app/admin/_components/vibe'
 import { businessDate, shiftBusinessDate } from '@/app/admin/_lib/business-date'
-import { requestClient, requestRole } from '@/lib/auth/request'
+import { requestClient, requestOperationalAdmin } from '@/lib/auth/request'
 import { assignPlacement, cancelPlacement, changePlacement } from './placement-actions'
 import { placementLabel } from '@/app/admin/business/crm/model'
 import { StudentOpsHub } from './hub'
@@ -82,7 +82,7 @@ type StudentsPageProps = {
               filter={params.filter ?? 'ALL'}
               page={pageNumber(params.page)}
               shiftPage={pageNumber(params.class_page)}
-              canOpenStudent={(await requestRole('SUPER_ADMIN')).data === true}
+              canOpenStudent={(await requestOperationalAdmin()).data === true}
               earliestStart={shiftBusinessDate(businessDate(), 1)}
               hrefBuilder={waitingHref}
             />
@@ -104,7 +104,7 @@ type StudentsPageProps = {
     const lifecycle = params.lifecycle === 'future' || params.lifecycle === 'paused' ? params.lifecycle : 'active'
   
     const supabase = await requestClient()
-    const { data: isSuperAdmin } = await requestRole('SUPER_ADMIN')
+    const { data: isSuperAdmin } = await requestOperationalAdmin()
     const showRecords = params.view === 'records' && isSuperAdmin === true
 
     const branchesQuery = showRecords ? supabase

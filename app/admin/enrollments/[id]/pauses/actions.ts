@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -8,7 +9,7 @@ export async function savePause(form: FormData) {
   const supabase = await createClient()
   const { data: auth } = await supabase.auth.getClaims()
   if (!auth?.claims) redirect('/login')
-  const { data: allowed, error: roleError } = await supabase.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const { data: allowed, error: roleError } = await operationalAdminOn(supabase)
   if (roleError || !allowed) redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
   const id = String(form.get('enrollment_id') ?? '')
   if (!/^[0-9a-f-]{36}$/i.test(id)) redirect('/admin/classes?error=Th%C3%B4ng%20tin%20ghi%20danh%20kh%C3%B4ng%20h%E1%BB%A3p%20l%E1%BB%87')

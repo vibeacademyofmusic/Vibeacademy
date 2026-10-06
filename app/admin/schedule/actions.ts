@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { refresh, revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -20,9 +21,7 @@ async function requireSuperAdmin() {
   }
 
   const { data: isSuperAdmin, error: roleError } =
-    await supabase.rpc('has_role', {
-      role_code: 'SUPER_ADMIN',
-    })
+    await operationalAdminOn(supabase)
 
   if (roleError || !isSuperAdmin) {
     redirect('/login?error=Unauthorized')
