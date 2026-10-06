@@ -14,10 +14,32 @@ import {
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
+function canonicalTuitionWebhookEvent(event: WebhookRecord): WebhookRecord {
+  if (event.eventType !== 'user_click_response_button') return event
+  const message = event.payload.message
+  if (!message || typeof message !== 'object' || Array.isArray(message)) return event
+  const row = message as Record<string, unknown>
+  if (typeof row.data !== 'string') return event
+  const providerButton = row.data
+  const canonicalButton = providerButton === 'Liên hệ' || providerButton === 'Liên Hệ'
+    ? 'Yêu cầu khác'
+    : providerButton === 'Tiếp Tục Học' ? 'Tiếp tục học' : providerButton
+  if (canonicalButton === providerButton) return event
+  return {
+    ...event,
+    payload: {
+      ...event.payload,
+      vibe_provider_button: providerButton,
+      message: { ...row, data: canonicalButton },
+    },
+  }
+}
+
 // Reserved for a later outbound OA call. This webhook does not read them:
 // ZALO_APP_SECRET, ZALO_OA_ACCESS_TOKEN, ZALO_OA_REFRESH_TOKEN.
 
 async function persistZaloWebhook(event: WebhookRecord, serverHeader: string | null): Promise<WebhookRecordResult> {
+  event = canonicalTuitionWebhookEvent(event)
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) {
