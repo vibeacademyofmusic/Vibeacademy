@@ -177,3 +177,10 @@ test('tuition payOS return stays on the reminder page', () => {
   assert.equal(urls.returnUrl, 'http://localhost:3000/admin/tuition/reminders')
   assert.throws(() => payos.payosTuitionReturnUrls({ NEXT_PUBLIC_APP_URL: 'http://user:pass@localhost:3000' }), /PAYOS_RETURN_URL_INVALID/)
 })
+
+
+test('automatic renewal creates a provider checkout for a reserved order before reconciling it', () => {
+  const source = readFileSync(path.join(__dirname, '../lib/integrations/tuition/auto-renewal.ts'), 'utf8')
+  assert.match(source, /openTuitionPayosCheckout\([^\n]+process\.env, true, reminderId\)/)
+  assert.doesNotMatch(source, /openTuitionPayosCheckout\([^\n]+process\.env, false, reminderId\)/)
+})
