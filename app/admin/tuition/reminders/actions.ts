@@ -7,6 +7,9 @@ import { ZALO_PILOT_OUTBOUND_DISABLED } from '@/lib/integrations/zalo/pilot-outb
 import { tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
 import { sendManualTuitionZalo } from '@/lib/integrations/zalo/tuition-test-send'
 import { loadTuitionNotice } from './notice'
+import { zaloServiceClient } from '@/lib/integrations/zalo/service'
+import { reconcileTuitionZaloSendDelivery } from '@/lib/integrations/zalo/tuition-delivery-status'
+import { TUITION_PROVIDER_TEMPLATE_ID } from '@/lib/integrations/zalo/tuition-notice'
 
 function back(form: FormData, message: string, tone: 'error' | 'success' = 'error') {
   revalidatePath('/admin/tuition/reminders')
@@ -123,4 +126,42 @@ export async function confirmTuitionZalo(form: FormData) {
           ? 'Zalo từ chối tin.'
           : 'Zalo chưa tiếp nhận tin.'
   return back(form, `Tình trạng gửi: ${label}. ${detail}`)
+}
+
+
+export async function checkTuitionZaloDelivery(form: FormData) {
+  const id = String(form.get('reminder_id') ?? '')
+  if (!uuidPattern.test(id)) return back(form, 'Không xác định được nhắc học phí cần đối soát.')
+  await adminClient()
+  const service = zaloServiceClient()
+  const latest = await service.from('tuition_zalo_sends')
+    .select('id,send_status,provider_template_id')
+    .eq('reminder_id', id)
+    .eq('provider_template_id', TUITION_PROVIDER_TEMPLATE_ID)
+    .in('send_status', ['SENT', 'DELIVERED'])
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (latest.error || !latest.data?.id) {
+    return back(form, 'Không tìm thấy lượt gửi 645192 hiện tại để đối soát.')
+  }
+
+  const result = await reconcileTuitionZaloSendDelivery(service, latest.data.id)
+  if (result.state === 'DELIVERED' || result.state === 'ALREADY_DELIVERED') {
+    return back(form, 'Zalo xác nhận tin đã phát đến điện thoại người nhận.', 'success')
+  }
+  if (result.state === 'PENDING') {
+    return back(form, 'Zalo đã tiếp nhận tin nhưng chưa phát đến điện thoại. Chưa gửi lại để tránh nhận trùng.')
+  }
+  if (result.state === 'NOT_FOUND') {
+    return back(form, 'Zalo không tìm thấy message_id của lượt gửi này. Cần đối soát trước khi cho phép gửi lại.')
+  }
+  if (result.state === 'MISSING_PHONE') {
+    return back(form, 'Không tìm thấy số điện thoại hợp lệ của người nhận để đối soát.')
+  }
+  if (result.state === 'NOT_CONFIGURED') {
+    return back(form, 'Kết nối Zalo chưa đủ điều kiện để truy xuất trạng thái gửi.')
+  }
+  return back(form, 'Không truy xuất được trạng thái phát từ Zalo. Chưa gửi lại.')
 }
