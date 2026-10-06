@@ -6,6 +6,7 @@ import {
   zaloAttemptLabel,
   type NoticeRecipient,
   type TuitionNotice,
+  TUITION_PROVIDER_TEMPLATE_ID,
 } from '@/lib/integrations/zalo/tuition-notice'
 import { zaloPilotOutboundBlocked } from '@/lib/integrations/zalo/pilot-outbound'
 import { tuitionNoticeReplyLabel, tuitionSendLabel } from '@/lib/integrations/zalo/tuition-reply'
@@ -110,7 +111,7 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
     consentParentIds: consent.filter(item => !item.revoked_at).map(item => item.parent_id),
     templateReady: tuitionReminderTemplateId(template) !== null,
     scheduledDispatchEnabled: false,
-    manualSendEnabled: template?.enabled === true && template.provider_template_id === '643118' && !zaloPilotOutboundBlocked(),
+    manualSendEnabled: template?.enabled === true && template.provider_template_id === TUITION_PROVIDER_TEMPLATE_ID && !zaloPilotOutboundBlocked(),
   })
   const phone = notice.recipient?.phone ?? null
   const activeConsent = notice.recipient

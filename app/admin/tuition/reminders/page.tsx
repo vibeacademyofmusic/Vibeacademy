@@ -16,7 +16,7 @@ import { createTuitionRenewal, retryTuitionPayos, sendTuitionPaymentRequest } fr
 import { paymentNoticeReason, paymentTemplateGate, renewalPaymentLabel, renewalProcessingLabel, storedZbsStatusLabel } from '@/lib/integrations/tuition/renewal-status'
 import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest } from '@/lib/integrations/tuition/payment-zbs'
 import { loadTuitionNotice } from './notice'
-import { noticeDate, zaloAttemptLabel } from '@/lib/integrations/zalo/tuition-notice'
+import { noticeDate, TUITION_PROVIDER_TEMPLATE_ID, zaloAttemptLabel } from '@/lib/integrations/zalo/tuition-notice'
 import { zaloPilotOutboundBlocked } from '@/lib/integrations/zalo/pilot-outbound'
 import { TUITION_CONTACT_STATUS, TUITION_REPLY_CONTINUE, TUITION_REPLY_OTHER, TUITION_REPLY_STOP, oauthCallbackLabel, readTuitionResponseSyncStatus, tuitionNoticeReplyLabel, tuitionResponseSyncFailing, tuitionSendLabel, webhookEndpointLabel } from '@/lib/integrations/zalo/tuition-reply'
 import { zaloPublicProfile } from '@/lib/integrations/zalo/admin'
@@ -120,7 +120,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   const context = <input type="hidden" name="return_context" value={contextHref} />
   const reminderTemplate = (await rows(db.from('notification_templates').select('status,enabled,provider_template_id').eq('template_key', 'ZALO_TUITION_REMINDER').eq('provider', 'ZALO').limit(1).returns<{ status: string; enabled: boolean; provider_template_id: string | null }[]>()))[0]
   const paymentTemplate = (await rows(db.from('notification_templates').select('template_key,status,enabled,provider_template_id,parameter_schema,payload_schema').eq('template_key', 'ZALO_TUITION_PAYMENT').eq('provider', 'ZALO').limit(1).returns<{ template_key: string; status: string; enabled: boolean; provider_template_id: string | null; parameter_schema: unknown; payload_schema: unknown }[]>()))[0]
-  const manualLive = reminderTemplate?.enabled === true && reminderTemplate.provider_template_id === '643118' && !zaloPilotOutboundBlocked()
+  const manualLive = reminderTemplate?.enabled === true && reminderTemplate.provider_template_id === TUITION_PROVIDER_TEMPLATE_ID && !zaloPilotOutboundBlocked()
   const { zaloManualSendBlock } = await import('@/lib/integrations/zalo/service')
   const zaloReconnect = Boolean(await zaloManualSendBlock())
   const paymentGate = paymentTemplateGate(paymentTemplate ?? null)

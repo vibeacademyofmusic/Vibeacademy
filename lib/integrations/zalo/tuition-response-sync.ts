@@ -167,7 +167,7 @@ export async function reconcileTuitionZaloResponses(
         p_row_oa_id: item.oaId,
         p_tracking_id: item.trackingId,
         p_message_id: item.msgId,
-        p_button: item.data,
+        p_button: item.data === 'Tiếp Tục Học' ? 'Tiếp tục học' : item.data === 'Liên Hệ' ? 'Yêu cầu khác' : item.data,
         p_submit_ms: item.submitDate,
       })
       if (recorded.error || !['recorded', 'duplicate', 'conflict'].includes(String(recorded.data))) return { state: 'SAVE_FAILED', saved }
@@ -237,7 +237,7 @@ export async function probeTuitionResponseChannels(
         p_row_oa_id: item.oaId,
         p_tracking_id: item.trackingId,
         p_message_id: item.msgId,
-        p_button: item.data,
+        p_button: item.data === 'Tiếp Tục Học' ? 'Tiếp tục học' : item.data === 'Liên Hệ' ? 'Yêu cầu khác' : item.data,
         p_submit_ms: item.submitDate,
       })
       if (recorded.error || !['recorded', 'duplicate', 'conflict'].includes(String(recorded.data))) { saveFailed = true; break }

@@ -5,7 +5,13 @@ export const TUITION_CONTACT_STATUS = 'Cần liên hệ'
 export const TUITION_REPLY_SOURCE = 'Zalo ZBS'
 export const TUITION_REPLY_EVENT = 'user_click_response_button'
 
+// Live 645192 buttons are title-cased. Older labels stay valid for late 643118 callbacks.
+export const TUITION_BUTTON_CONTINUE_V2 = 'Tiếp Tục Học'
+export const TUITION_BUTTON_CONTACT_V2 = 'Liên Hệ'
+
 const BUTTONS = {
+  [TUITION_BUTTON_CONTINUE_V2]: 'CONTINUE',
+  [TUITION_BUTTON_CONTACT_V2]: 'CONTACT',
   [TUITION_REPLY_CONTINUE]: 'CONTINUE',
   [TUITION_REPLY_OTHER]: 'CONTACT',
   [TUITION_REPLY_STOP]: 'STOP',
@@ -24,7 +30,7 @@ export type TuitionReplyEvent = {
 }
 
 export function tuitionLiveTemplateButtons() {
-  return [TUITION_REPLY_CONTINUE, TUITION_REPLY_STOP]
+  return [TUITION_BUTTON_CONTINUE_V2, TUITION_BUTTON_CONTACT_V2]
 }
 
 export function tuitionReplacementButtons() {

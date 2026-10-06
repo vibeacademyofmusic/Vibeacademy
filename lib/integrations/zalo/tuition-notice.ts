@@ -1,7 +1,9 @@
 import { tuitionLiveTemplateButtons, tuitionReplacementButtons } from './tuition-reply'
 
 export const TUITION_TEMPLATE_KEY = 'ZALO_TUITION_REMINDER'
-export const TUITION_PROVIDER_TEMPLATE_ID = '643118'
+export const TUITION_PROVIDER_TEMPLATE_ID = '645192'
+// Retired reminder template. Old sends keep it; their callbacks still resolve through the send snapshot.
+export const TUITION_LEGACY_TEMPLATE_IDS = ['643118'] as const
 export const TUITION_REGISTRATION_TEMPLATE_ID = '640377'
 
 export type TuitionReminderRegistry = {
@@ -11,7 +13,7 @@ export type TuitionReminderRegistry = {
   parameter_schema?: unknown
 }
 
-const VERIFIED_REMINDER_PARAMETERS = new Set(['customer_name', 'period', 'student_name', 'amount', 'due_date', 'student_code'])
+const VERIFIED_REMINDER_PARAMETERS = new Set(['student_name', 'student_code', 'days_left', 'period', 'amount', 'due_date'])
 
 export function tuitionReminderTemplateId(template: TuitionReminderRegistry | null | undefined) {
   const id = template?.provider_template_id?.trim() ?? ''
@@ -23,17 +25,17 @@ export function tuitionReminderSchema(template: TuitionReminderRegistry | null |
   if (!Array.isArray(template?.parameter_schema)) return []
   return template.parameter_schema.filter((item): item is string => typeof item === 'string')
 }
-export const TUITION_TEMPLATE_TITLE = 'VIBE - Nhắc học phí và xác nhận tiếp tục học'
+export const TUITION_TEMPLATE_TITLE = 'VIBE - Xác nhận tiếp tục học V2'
 export const TUITION_MESSAGE_PRICE_VND = 400
 export const TUITION_MESSAGE_PRICE_UID_VND = 280
 
 export const TUITION_PARAMETER_LIMITS = {
-  customer_name: 30,
-  period: 30,
   student_name: 30,
-  amount: 20,
-  due_date: 10,
   student_code: 30,
+  days_left: 20,
+  period: 30,
+  amount: 20,
+  due_date: 20,
 } as const
 
 export type NoticeRecipient = {
@@ -121,36 +123,53 @@ function packageAmountText(amount: number | null, currency: string) {
   return text.length <= TUITION_PARAMETER_LIMITS.amount ? text : null
 }
 
-export function tuitionTemplateParameters(input: Pick<TuitionNoticeInput, 'periodStart' | 'periodEnd' | 'windowEnd' | 'studentName' | 'studentCode' | 'packageAmount' | 'currency'> & { customerName: string }) {
+// 645192 declares due_date and days_left as NUMBER, so the date is sent as digits (ddMMyyyy).
+export function noticeDateDigits(value: string) {
+  const text = noticeDate(value)
+  return text ? text.replaceAll('/', '') : null
+}
+
+export function noticeDaysLeft(periodEnd: string, today: string) {
+  if (!noticeDate(periodEnd) || !noticeDate(today)) return null
+  const days = Math.round((Date.parse(`${periodEnd}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86400000)
+  return days >= 0 ? String(days) : '0'
+}
+
+function vietnamToday() {
+  return new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10)
+}
+
+export function tuitionTemplateParameters(input: Pick<TuitionNoticeInput, 'periodStart' | 'periodEnd' | 'windowEnd' | 'studentName' | 'studentCode' | 'packageAmount' | 'currency'> & { today?: string; customerName?: string }) {
   const errors: string[] = []
-  const customerName = input.customerName.trim()
   const studentName = input.studentName.trim()
   const studentCode = input.studentCode.trim()
   const start = noticeDate(input.periodStart)
   const end = noticeDate(input.periodEnd)
-  const due = noticeDate(input.windowEnd)
+  const due = noticeDateDigits(input.windowEnd)
+  const daysLeft = noticeDaysLeft(input.periodEnd, input.today ?? vietnamToday())
   const period = start && end ? `${start}-${end}` : ''
   const amount = packageAmountText(input.packageAmount, input.currency)
   const parameters = {
-    customer_name: customerName,
-    period,
     student_name: studentName,
+    student_code: studentCode,
+    days_left: daysLeft ?? '',
+    period,
     amount: amount ?? '',
     due_date: due ?? '',
-    student_code: studentCode,
   }
-  if (!customerName) errors.push('Thiếu tên người nhận.')
   if (!studentName) errors.push('Thiếu tên học viên.')
   if (!studentCode) errors.push('Thiếu mã học viên.')
   if (!period) errors.push('Thiếu kỳ học.')
   if (!amount) errors.push('Chưa có học phí gói bằng VND để điền vào mẫu. Không dùng số nợ và không tạo khoản thu chỉ để gửi.')
   if (!due) errors.push('Thiếu hạn cuối của khoảng nhắc đã lưu.')
+  if (!daysLeft) errors.push('Không tính được số ngày còn lại của kỳ học.')
   for (const [key, value] of Object.entries(parameters)) {
     const limit = TUITION_PARAMETER_LIMITS[key as keyof typeof TUITION_PARAMETER_LIMITS]
     if (value.length > limit) errors.push(`${key} dài hơn ${limit} ký tự mà mẫu đã cấu hình cho phép.`)
     if (value.includes('<') || value.includes('>')) errors.push(`${key} chứa ký tự không hợp lệ.`)
   }
-  if (parameters.due_date && !/^\d{2}\/\d{2}\/\d{4}$/.test(parameters.due_date)) errors.push('due_date không đúng định dạng ngày của mẫu.')
+  if (parameters.due_date && !/^\d{8}$/.test(parameters.due_date)) errors.push('due_date không đúng định dạng số của mẫu.')
+  if (parameters.days_left && !/^\d{1,5}$/.test(parameters.days_left)) errors.push('days_left không phải số nguyên của mẫu.')
   if (parameters.amount && !/^[1-9]\d{0,19}$/.test(parameters.amount)) errors.push('amount không phải số nguyên dương mà mẫu yêu cầu.')
   return { parameters: errors.length ? null : parameters, errors }
 }
@@ -175,16 +194,17 @@ export function previewConfiguredTuitionReminder(
 export function renderTuitionPreview(parameters: Record<string, string> | null, input: Pick<TuitionNoticeInput, 'studentName' | 'studentCode' | 'periodStart' | 'periodEnd' | 'windowEnd' | 'packageAmount' | 'currency'>, customerName: string) {
   const fallback = tuitionTemplateParameters({ ...input, customerName })
   const values = parameters ?? fallback.parameters ?? {
-    customer_name: customerName.trim() || '…',
     student_name: input.studentName.trim() || '…',
+    days_left: '…',
     student_code: input.studentCode.trim() || '…',
     period: [noticeDate(input.periodStart), noticeDate(input.periodEnd)].filter(Boolean).join('-') || '…',
     amount: packageAmountText(input.packageAmount, input.currency) ?? '…',
-    due_date: noticeDate(input.windowEnd) ?? '…',
+    due_date: noticeDateDigits(input.windowEnd) ?? '…',
   }
   return [
     TUITION_TEMPLATE_TITLE,
-    `Quý khách ${values.customer_name}, Vibe Academy thông báo sắp kết thúc khoá học của học viên ${values.student_name}, mã học viên ${values.student_code}, kỳ học ${values.period}. Học phí cần gia hạn là: ${values.amount} đồng. Hạn thanh toán: ${values.due_date}. Vui lòng xác nhận kế hoạch học tập của bạn để nhà trường có thể sắp xếp chương trình và kế hoạch tiếp theo cho mình. Vui lòng xác nhận bên dưới.`,
+    `Kính gửi Quý Phụ huynh - Nhạc sinh, Vibe Academy thông báo kỳ học ${values.period} của học viên ${values.student_name}, mã học viên ${values.student_code}, còn ${values.days_left} ngày nữa sẽ kết thúc.
+Học phí gia hạn gói 3 tháng là ${values.amount} đồng. Hạn thanh toán: ${values.due_date}. Chọn Tiếp Tục Học hoặc Liên Hệ để Vibe ghi nhận và lên kế hoạch.`,
     ...tuitionLiveTemplateButtons().map(label => `Nút phản hồi: ${label}`),
     'Không có đường dẫn. Hai nút nằm trong tin Zalo và không mở trang chứa thông tin học viên.',
   ].join('\n')

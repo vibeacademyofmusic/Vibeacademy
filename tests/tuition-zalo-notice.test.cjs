@@ -50,10 +50,10 @@ test('approved template uses package tuition and does not send early', () => {
   assert.ok(early.blockers.some(item => item.includes('Chưa đến khoảng nhắc')))
   assert.equal(early.parameters, null)
   assert.equal(early.ctaUrl, null)
-  assert.match(early.preview, /Học phí cần gia hạn là: 1500000 đồng/)
-  assert.match(early.preview, /Hạn thanh toán: 28\/11\/2026/)
-  assert.match(early.preview, /Nút phản hồi: Tiếp tục học/)
-  assert.match(early.preview, /Nút phản hồi: Dừng học/)
+  assert.match(early.preview, /Học phí gia hạn gói 3 tháng là 1500000 đồng/)
+  assert.match(early.preview, /Hạn thanh toán: 28112026/)
+  assert.match(early.preview, /Nút phản hồi: Tiếp Tục Học/)
+  assert.match(early.preview, /Nút phản hồi: Liên Hệ/)
   assert.match(early.preview, /Không có đường dẫn/)
   assert.match(early.replacementPreview, /Nút phản hồi: Yêu cầu khác/)
   assert.doesNotMatch(early.replacementPreview, /Nút phản hồi: Dừng học/)
@@ -78,10 +78,10 @@ test('parameter limits, missing consent, and the wrong recipient stay blocked', 
     today: '2026-10-29',
     consentParentIds: ['p1'],
     templateReady: true,
-    recipients: [{ id: 'p1', name: 'Phụ huynh tên dài hơn ba mươi ký tự', phone: '0901234567', canViewFinance: true, isPrimary: true, active: true }],
+    studentName: 'Học viên có tên dài hơn ba mươi ký tự',
   })
   assert.equal(longName.parameters, null)
-  assert.ok(longName.blockers.some(item => item.includes('customer_name dài hơn 30')))
+  assert.ok(longName.blockers.some(item => item.includes('student_name dài hơn 30')))
   const missingConsent = evaluateTuitionNotice({ ...base, today: '2026-10-29', templateReady: true })
   assert.ok(missingConsent.blockers.some(item => item.includes('chưa có sự đồng ý')))
   const wrong = evaluateTuitionNotice({ ...base, today: '2026-10-29', selectedRecipientId: 'other', consentParentIds: ['p1'], templateReady: true })
@@ -100,9 +100,9 @@ test('parameter limits, missing consent, and the wrong recipient stay blocked', 
   assert.equal(otherConsent.recipient.id, 'p1')
   assert.ok(otherConsent.blockers.some(item => item.includes('Người nhận này chưa có sự đồng ý')))
   const exact = tuitionTemplateParameters({ ...base, customerName: 'Phụ huynh A' })
-  assert.deepEqual(Object.keys(exact.parameters), ['customer_name', 'period', 'student_name', 'amount', 'due_date', 'student_code'])
+  assert.deepEqual(Object.keys(exact.parameters), ['student_name', 'student_code', 'days_left', 'period', 'amount', 'due_date'])
   assert.equal(exact.parameters.amount, '1500000')
-  assert.equal(exact.parameters.due_date, '28/11/2026')
+  assert.equal(exact.parameters.due_date, '28112026')
   assert.equal(exact.parameters.period, '29/08/2026-28/11/2026')
 })
 

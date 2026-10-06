@@ -22,8 +22,8 @@ const notice = load('lib/integrations/zalo/tuition-notice.ts')
 const current = {
   status: 'APPROVED',
   enabled: false,
-  provider_template_id: '643118',
-  parameter_schema: ['customer_name', 'period', 'student_name', 'amount', 'due_date', 'student_code'],
+  provider_template_id: '645192',
+  parameter_schema: ['student_name', 'student_code', 'days_left', 'period', 'amount', 'due_date'],
 }
 const input = {
   customerName: 'Phụ huynh thử',
@@ -32,12 +32,13 @@ const input = {
   windowEnd: '2026-10-31',
   studentName: 'Học viên thử',
   studentCode: 'VIBE-DEMO',
+  today: '2026-10-01',
   packageAmount: 5500000,
   currency: 'VND',
 }
 
 test('reminder template id comes from the registry and keeps the current approved id', () => {
-  assert.equal(notice.tuitionReminderTemplateId(current), '643118')
+  assert.equal(notice.tuitionReminderTemplateId(current), '645192')
   assert.equal(notice.tuitionReminderTemplateId({ ...current, provider_template_id: '640377' }), null)
   assert.equal(notice.tuitionReminderTemplateId({ ...current, status: 'PENDING', provider_template_id: '645028' }), null)
   assert.equal(notice.tuitionReminderTemplateId({ ...current, provider_template_id: null }), null)
@@ -46,9 +47,9 @@ test('reminder template id comes from the registry and keeps the current approve
 test('dry-run preview uses verified reminder fields and does not invent an unverified schema', () => {
   const preview = notice.previewConfiguredTuitionReminder(current, input)
   assert.equal(preview.ok, true)
-  assert.equal(preview.templateId, '643118')
+  assert.equal(preview.templateId, '645192')
   assert.equal(preview.parameters.amount, '5500000')
-  assert.equal(preview.parameters.due_date, '31/10/2026')
+  assert.equal(preview.parameters.due_date, '31102026')
   assert.equal(preview.parameters.student_code, 'VIBE-DEMO')
   const unknown = notice.previewConfiguredTuitionReminder({
     ...current,

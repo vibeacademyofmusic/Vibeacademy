@@ -5,7 +5,7 @@ export const TUITION_CONFIRMATION_TEMPLATE_KEY = 'ZALO_TUITION_PAYMENT_CONFIRMAT
 export const TUITION_PAYMENT_REQUEST_STATUS = 'Chờ thanh toán'
 export const TUITION_DEPOSIT_STATUS = 'Đã nhận cọc 50%'
 export const TUITION_PAID_STATUS = 'Đã thanh toán'
-export const FORBIDDEN_PAYMENT_TEMPLATE_IDS = ['643118', '640377'] as const
+export const FORBIDDEN_PAYMENT_TEMPLATE_IDS = ['643118', '640377', '645192'] as const
 
 export const TUITION_PAYMENT_BODY_PARAMETERS = [
   'customer_name',

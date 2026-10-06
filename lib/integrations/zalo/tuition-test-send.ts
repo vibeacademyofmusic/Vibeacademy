@@ -12,12 +12,12 @@ export const TUITION_TEST_TEMPLATE_URL = `https://business.openapi.zalo.me/templ
 export const TUITION_TEST_SEND_URL = 'https://business.openapi.zalo.me/message/template'
 
 export const TUITION_TEST_PARAMETERS = {
-  customer_name: 'Phụ huynh Zalo thử',
-  period: '29/07/2026-28/10/2026',
   student_name: 'TEST Zalo học phí',
-  amount: '5500000',
-  due_date: '28/10/2026',
   student_code: TUITION_TEST_STUDENT_CODE,
+  days_left: '3',
+  period: '29/07/2026-28/10/2026',
+  amount: '5500000',
+  due_date: '28102026',
 } as const
 
 export type TuitionTestInput = {
@@ -50,11 +50,11 @@ export function tuitionTestMatches(input: TuitionTestInput) {
   return keys.every(key => input.parameters[key] === TUITION_TEST_PARAMETERS[key as keyof typeof TUITION_TEST_PARAMETERS])
 }
 
-const MANUAL_PARAMETER_KEYS = ['customer_name', 'period', 'student_name', 'amount', 'due_date', 'student_code'] as const
+const MANUAL_PARAMETER_KEYS = ['student_name', 'student_code', 'days_left', 'period', 'amount', 'due_date'] as const
 
 export function tuitionManualMatches(input: TuitionTestInput) {
   const phone = normalizeVnPhone(input.phone)
-  if (!/^[0-9]{1,20}$/.test(input.templateId) || input.templateId === '640377' || input.eventCode !== 'RENEWAL_V1') return false
+  if (!/^[0-9]{1,20}$/.test(input.templateId) || input.templateId === '640377' || input.templateId === '643118' || input.eventCode !== 'RENEWAL_V1') return false
   if (!phone || !/^[A-Za-z0-9]{1,48}$/.test(input.trackingId)) return false
   const keys = Object.keys(input.parameters)
   if (keys.length !== MANUAL_PARAMETER_KEYS.length || MANUAL_PARAMETER_KEYS.some(key => !Object.prototype.hasOwnProperty.call(input.parameters, key))) return false
@@ -63,7 +63,8 @@ export function tuitionManualMatches(input: TuitionTestInput) {
     if (!value || value !== value.trim() || value.length > TUITION_PARAMETER_LIMITS[key] || value.includes('<') || value.includes('>')) return false
   }
   return /^\d{2}\/\d{2}\/\d{4}-\d{2}\/\d{2}\/\d{4}$/.test(input.parameters.period)
-    && /^\d{2}\/\d{2}\/\d{4}$/.test(input.parameters.due_date)
+    && /^\d{8}$/.test(input.parameters.due_date)
+    && /^\d{1,5}$/.test(input.parameters.days_left)
     && /^[1-9]\d{0,19}$/.test(input.parameters.amount)
 }
 

@@ -30,7 +30,7 @@ const send = load('lib/integrations/zalo/tuition-test-send.ts')
 const exact = {
   studentCode: 'TEST-ZALO-HP',
   phone: '0900000918',
-  templateId: '643118',
+  templateId: '645192',
   trackingId: 'abc123',
   eventCode: 'RENEWAL_V1',
   parameters: { ...send.TUITION_TEST_PARAMETERS },
@@ -65,7 +65,7 @@ test('other recipients, templates, and an unarmed process never call Zalo', asyn
 
 test('the authorized notice is posted once and acceptance is not delivery', async () => {
   const mock = transport([
-    { json: { error: 0, data: { status: 'ENABLE', templateId: 643118 } } },
+    { json: { error: 0, data: { status: 'ENABLE', templateId: 645192 } } },
     { json: { error: 0, data: { msg_id: 'msg-test-1' } } },
   ])
   const result = await send.sendAuthorizedTuitionTest(exact, armed, { transport: mock.transport, readCredential: credential })
@@ -73,7 +73,7 @@ test('the authorized notice is posted once and acceptance is not delivery', asyn
   assert.equal(mock.calls.length, 2)
   assert.equal(mock.calls[1].method, 'POST')
   const body = JSON.parse(mock.calls[1].body)
-  assert.equal(body.template_id, '643118')
+  assert.equal(body.template_id, '645192')
   assert.equal(body.phone, '84900000918')
   assert.deepEqual(body.template_data, send.TUITION_TEST_PARAMETERS)
   assert.equal(body.tracking_id, 'abc123')
@@ -81,7 +81,7 @@ test('the authorized notice is posted once and acceptance is not delivery', asyn
 
 test('a timeout after the template check is not posted again', async () => {
   const mock = transport([
-    { json: { error: 0, data: { status: 'ENABLE', templateId: 643118 } } },
+    { json: { error: 0, data: { status: 'ENABLE', templateId: 645192 } } },
     { throw: true },
   ])
   const result = await send.sendAuthorizedTuitionTest(exact, armed, { transport: mock.transport, readCredential: credential })
@@ -93,16 +93,16 @@ test('manual send stays closed until ZALO_PILOT_OUTBOUND is enabled and posts th
   const notice = {
     studentCode: 'RUA-CON',
     phone: '0907507918',
-    templateId: '643118',
+    templateId: '645192',
     trackingId: 'trackmanual1',
     eventCode: 'RENEWAL_V1',
     parameters: {
-      customer_name: 'Phụ huynh Zalo thử',
-      period: '29/07/2026-28/10/2026',
       student_name: 'Rùa con',
-      amount: '5500000',
-      due_date: '28/10/2026',
       student_code: 'RUA-CON',
+      days_left: '3',
+      period: '29/07/2026-28/10/2026',
+      amount: '5500000',
+      due_date: '28102026',
     },
   }
   const closed = transport([])
@@ -110,23 +110,23 @@ test('manual send stays closed until ZALO_PILOT_OUTBOUND is enabled and posts th
   assert.equal((await send.sendManualTuitionZalo({ ...notice, templateId: '640377' }, { ZALO_PILOT_OUTBOUND: 'enabled', ZALO_APP_SECRET: 'secret' }, { transport: closed.transport, readCredential: credential })).state, 'BLOCKED')
   assert.equal(closed.calls.length, 0)
   const mock = transport([
-    { json: { error: 0, data: { status: 'ENABLE', templateId: 643118 } } },
+    { json: { error: 0, data: { status: 'ENABLE', templateId: 645192 } } },
     { json: { error: 0, data: { msg_id: 'msg-manual-1' } } },
   ])
   const result = await send.sendManualTuitionZalo(notice, { ZALO_PILOT_OUTBOUND: 'enabled', ZALO_APP_SECRET: 'secret' }, { transport: mock.transport, readCredential: credential })
   assert.equal(result.state, 'ACCEPTED')
   assert.equal(result.delivered, false)
   assert.equal(JSON.parse(mock.calls[1].body).template_data.student_name, 'Rùa con')
-  assert.equal(JSON.parse(mock.calls[1].body).template_id, '643118')
+  assert.equal(JSON.parse(mock.calls[1].body).template_id, '645192')
   const timedOut = transport([
-    { json: { error: 0, data: { status: 'ENABLE', templateId: 643118 } } },
+    { json: { error: 0, data: { status: 'ENABLE', templateId: 645192 } } },
     { throw: true },
   ])
   assert.equal((await send.sendManualTuitionZalo(notice, { ZALO_PILOT_OUTBOUND: 'enabled', ZALO_APP_SECRET: 'secret' }, { transport: timedOut.transport, readCredential: credential })).state, 'AMBIGUOUS')
 })
 
 test('a disabled template is not sent', async () => {
-  const mock = transport([{ json: { error: 0, data: { status: 'PENDING', templateId: 643118 } } }])
+  const mock = transport([{ json: { error: 0, data: { status: 'PENDING', templateId: 645192 } } }])
   const result = await send.sendAuthorizedTuitionTest(exact, armed, { transport: mock.transport, readCredential: credential })
   assert.equal(result.state, 'TEMPLATE_NOT_ENABLED')
   assert.equal(mock.calls.some(call => call.method === 'POST'), false)

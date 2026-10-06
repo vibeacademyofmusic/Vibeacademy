@@ -79,6 +79,13 @@ async function persistZaloWebhook(event: WebhookRecord, serverHeader: string | n
       })
       if (applied.error) throw new Error('APPLY_FAILED')
       outcome = typeof applied.data === 'string' ? applied.data : 'unreadable'
+      if (event.eventType === 'user_click_response_button' && outcome === 'recorded') {
+        // Best effort: the 5-minute maintenance run is the durable fallback.
+        try {
+          const { runTuitionRenewalAutomation } = await import('@/lib/integrations/tuition/auto-renewal')
+          await runTuitionRenewalAutomation(client, 1)
+        } catch { /* picked up by maintenance */ }
+      }
     }
   } catch {
     await client.rpc('mark_zalo_webhook_processed', { p_event_id: row.event_id, p_error: 'APPLY_FAILED' })
