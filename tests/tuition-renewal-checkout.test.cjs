@@ -128,6 +128,12 @@ test('payment request matches the approved ZBS contract and does not reuse remin
   assert.doesNotMatch(action, /643118|640377/)
 })
 
+test('manual renewal and retry create a provider checkout for RESERVED orders', () => {
+  const source = readFileSync(path.join(__dirname, '../app/admin/tuition/reminders/renewal-actions.ts'), 'utf8')
+  assert.match(source, /openTuitionPayosCheckout\([^\n]+process\.env, true, renewal\.data\.reminder_id\)/)
+  assert.doesNotMatch(source, /activateCheckout\([^\n]+,\s*payload\.result\s*===\s*'created'/)
+})
+
 test('renewal action ignores a submitted price and reuses one checkout', () => {
   const source = readFileSync(path.join(__dirname, '../app/admin/tuition/reminders/renewal-actions.ts'), 'utf8')
   assert.match(source, /p_asserted_price: null/)
