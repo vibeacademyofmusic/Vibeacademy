@@ -11,7 +11,8 @@ async function checkout(admin: SupabaseClient, caseId: string, reminderId: strin
   const { data: order } = await admin.from('tuition_payos_orders').select('order_code,amount,description,state,checkout_url,payment_link_id').eq('case_id', caseId).in('state', ['RESERVED', 'PENDING']).limit(1).maybeSingle()
   if (!order) return null
   if (order.state === 'PENDING') return tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) ? 'READY' : null
-  const opened = await openTuitionPayosCheckout({ orderCode: Number(order.order_code), amount: Number(order.amount), description: order.description }, process.env, false, reminderId)
+  // RESERVED means the order exists only in VIBE. Create the provider checkout once; the helper falls back to GET on ambiguous POST failure.
+  const opened = await openTuitionPayosCheckout({ orderCode: Number(order.order_code), amount: Number(order.amount), description: order.description }, process.env, true, reminderId)
   if (!opened.checkout) return null
   const url = tuitionCheckoutUrl(opened.checkout.paymentLinkId, opened.checkout.checkoutUrl)
   if (!url) return null
