@@ -25,9 +25,11 @@ test('canonical staging redirect, local fallback and production domain are expli
  assert.equal(site.recoveryRedirectUrl({NEXT_PUBLIC_SITE_URL:'https://staging.vibe.edu.vn',NEXT_PUBLIC_APP_URL:'http://localhost:3000'}),'https://staging.vibe.edu.vn/auth/update-password')
  assert.equal(site.recoveryRedirectUrl({NODE_ENV:'development'}),'http://localhost:3000/auth/update-password')
  assert.equal(site.recoveryRedirectUrl({NODE_ENV:'production',NEXT_PUBLIC_SITE_URL:'https://portal.example.com'}),'https://portal.example.com/auth/update-password')
+ assert.equal(site.recoveryRedirectUrl({NODE_ENV:'production',VERCEL:'1',NEXT_PUBLIC_SUPABASE_URL:'https://owpfqwdrmyzcmjahehek.supabase.co',NEXT_PUBLIC_APP_URL:'https://vibeacademy-staging.vercel.app'}),'https://staging.vibe.edu.vn/auth/update-password')
 })
 test('missing/unsafe deployed URL does not become localhost or a Preview domain',()=>{
- for(const env of [{NODE_ENV:'production'},{VERCEL:'1',NODE_ENV:'development'},{NEXT_PUBLIC_SITE_URL:'http://localhost:3000'},{NEXT_PUBLIC_SITE_URL:'https://user:pass@staging.vibe.edu.vn'},{NEXT_PUBLIC_SITE_URL:'https://preview.vercel.app'},{NEXT_PUBLIC_SITE_URL:'https://staging.vibe.edu.vn/x'},{NEXT_PUBLIC_SITE_URL:'https://staging.vibe.edu.vn?next=evil'},{VIBE_PILOT_ENVIRONMENT:'staging',NEXT_PUBLIC_SITE_URL:'https://wrong.example'}])assert.throws(()=>site.recoveryRedirectUrl(env))
+ for(const env of [{NODE_ENV:'production'},{VERCEL:'1',NODE_ENV:'development'},{NEXT_PUBLIC_SITE_URL:'http://localhost:3000'},{NEXT_PUBLIC_SITE_URL:'https://user:pass@staging.vibe.edu.vn'},{NEXT_PUBLIC_SITE_URL:'https://preview.vercel.app'},{NEXT_PUBLIC_SITE_URL:'https://staging.vibe.edu.vn/x'},{NEXT_PUBLIC_SITE_URL:'https://staging.vibe.edu.vn?next=evil'}])assert.throws(()=>site.recoveryRedirectUrl(env))
+ assert.equal(site.recoveryRedirectUrl({VIBE_PILOT_ENVIRONMENT:'staging',NEXT_PUBLIC_SITE_URL:'https://wrong.example'}),'https://staging.vibe.edu.vn/auth/update-password')
 })
 test('valid request specifies the update-password route and trims email',async()=>{
  const {auth,calls}=fake();assert.deepEqual(await recovery.requestPasswordRecovery(auth,'  fixture@example.invalid  ','https://staging.vibe.edu.vn/auth/update-password'),{error:null});assert.deepEqual(calls,[['request','fixture@example.invalid',{redirectTo:'https://staging.vibe.edu.vn/auth/update-password'}]])
