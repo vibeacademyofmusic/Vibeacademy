@@ -14,6 +14,7 @@ export async function GET(request: Request) {
   try {
     const admin = zaloServiceClient()
     const credentials = await maintainZaloCredentials(admin)
+    // Provider delivery status is reconciled before reply/renewal work.
     let deliveries: unknown = { state: 'UNAVAILABLE' }
     try { deliveries = await reconcilePendingTuitionZaloDeliveries(admin) } catch { deliveries = { state: 'UNAVAILABLE' } }
     let replies: { state: string } = { state: 'UNAVAILABLE' }
