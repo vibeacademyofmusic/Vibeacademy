@@ -133,35 +133,16 @@ let studentsQuery = showRecords ? supabase
 
       {showRecords && <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
         <section className="rounded-2xl border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-950">
-            Add Student
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-950">Tạo học viên</h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Create a new student record.
+            Mã học viên được hệ thống cấp tự động khi lưu.
           </p>
 
           <form
             action={createStudent}
             className="mt-6 space-y-5"
           >
-            <div>
-              <label
-                htmlFor="student_code"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                Student Code *
-              </label>
-
-              <input
-                id="student_code"
-                name="student_code"
-                required
-                placeholder="HV0001"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-              />
-            </div>
-
             <div>
               <label
                 htmlFor="full_name"

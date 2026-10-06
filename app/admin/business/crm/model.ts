@@ -10,6 +10,12 @@ export const statusLabel: Record<string, string> = {
   LOST: 'Không tiếp tục',
 }
 
+export const interestLevelLabel: Record<string, string> = {
+  REFERENCE: 'Tham khảo',
+  INTERESTED: 'Quan tâm',
+  POTENTIAL: 'Tiềm năng',
+}
+
 export const sourceLabel: Record<string, string> = {
   MANUAL: 'Nhập tay',
   WALK_IN: 'Khách đến',
@@ -25,7 +31,7 @@ export const eventLabel: Record<string, string> = {
   UPDATED: 'Cập nhật',
   ASSIGNED: 'Đổi người phụ trách',
   CONTACTED: 'Đã liên hệ',
-  QUALIFIED: 'Đánh dấu tiềm năng',
+  QUALIFIED: 'Đủ điều kiện',
   TRIAL_BOOKED: 'Đặt lịch học thử',
   TRIAL_COMPLETED: 'Hoàn thành học thử',
   PROPOSAL_SENT: 'Đã gửi đề xuất',
@@ -36,12 +42,13 @@ export const eventLabel: Record<string, string> = {
   FOLLOW_UP_SET: 'Hẹn theo dõi',
   CONVERSION_REVIEWED: 'Đưa vào xem xét chuyển đổi',
   CONVERTED: 'Đã gắn học viên',
+  INTEREST_LEVEL_SET: 'Cập nhật mức độ quan tâm',
 }
 
 export const tabs = [
   { id: 'all', label: 'Tất cả', statuses: null as string[] | null },
   { id: 'new', label: 'Khách hàng mới', statuses: ['NEW', 'CONTACTED'] },
-  { id: 'potential', label: 'Tiềm năng', statuses: ['QUALIFIED', 'TRIAL_BOOKED', 'TRIAL_COMPLETED'] },
+  { id: 'potential', label: 'Học thử', statuses: ['QUALIFIED', 'TRIAL_BOOKED', 'TRIAL_COMPLETED'] },
   { id: 'opportunity', label: 'Cơ hội', statuses: ['PROPOSAL_SENT', 'NEGOTIATING'] },
   { id: 'won', label: 'Đã chốt', statuses: ['WON'] },
   { id: 'lost', label: 'Đã mất', statuses: ['LOST'] },
@@ -53,7 +60,7 @@ export const nextSteps: Record<string, { status: string; label: string }[]> = {
     { status: 'LOST', label: 'Chốt thất bại' },
   ],
   CONTACTED: [
-    { status: 'QUALIFIED', label: 'Đánh dấu tiềm năng' },
+    { status: 'QUALIFIED', label: 'Đủ điều kiện' },
     { status: 'LOST', label: 'Chốt thất bại' },
   ],
   QUALIFIED: [

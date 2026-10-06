@@ -1,0 +1,6 @@
+{
+  "name": "hooks-preview-relay",
+  "private": true,
+  "description": "Isolated preview webhook relay. No Supabase or payment secrets.",
+  "engines": { "node": "22.x" }
+}

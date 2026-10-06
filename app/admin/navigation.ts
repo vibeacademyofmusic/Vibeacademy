@@ -45,8 +45,7 @@ export const navigationGroups = [
   ] },
   { name: 'KINH DOANH', items: [
     { name: 'Điều hành kinh doanh', href: '/admin/business' },
-    { name: 'Khách hàng mới', href: '/admin/business/crm' },
-    { name: 'Hồ sơ đăng ký', href: '/admin/business/registrations' },
+    { name: 'CRM & Tuyển sinh', href: '/admin/business/registrations' },
     { name: 'Chiến dịch', href: '/admin/business/campaigns' },
     { name: 'Báo cáo kinh doanh', href: '/admin/business/reports' },
     { name: 'Khách hàng cũ', href: '/admin/business/reactivation' },

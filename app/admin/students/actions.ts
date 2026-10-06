@@ -31,12 +31,6 @@ async function requireSuperAdmin() {
 export async function createStudent(formData: FormData) {
   const supabase = await requireSuperAdmin()
 
-  const studentCode = String(
-    formData.get('student_code') ?? ''
-  )
-    .trim()
-    .toUpperCase()
-
   const fullName = String(
     formData.get('full_name') ?? ''
   ).trim()
@@ -50,7 +44,6 @@ export async function createStudent(formData: FormData) {
   ).trim()
 
   if (
-    !studentCode ||
     !fullName ||
     !branchId ||
     !admissionDate
@@ -58,7 +51,7 @@ export async function createStudent(formData: FormData) {
     redirect(
       '/admin/students?error=' +
         encodeURIComponent(
-          'Mã học sinh, họ tên, chi nhánh và ngày đăng ký là bắt buộc'
+          'Họ tên, chi nhánh và ngày đăng ký là bắt buộc'
         )
     )
   }
@@ -79,7 +72,6 @@ export async function createStudent(formData: FormData) {
   const { error } = await supabase
     .from('students')
     .insert({
-      student_code: studentCode,
       full_name: fullName,
       default_branch_id: branchId,
       admission_date: admissionDate,
@@ -91,15 +83,6 @@ export async function createStudent(formData: FormData) {
       'Create student error:',
       error
     )
-
-    if (error.code === '23505') {
-      redirect(
-        '/admin/students?error=' +
-          encodeURIComponent(
-            'Mã học sinh đã tồn tại'
-          )
-      )
-    }
 
     redirect(
       '/admin/students?error=' +
@@ -124,12 +107,6 @@ export async function updateStudent(formData: FormData) {
   const supabase = await requireSuperAdmin()
 
   const id = String(formData.get('id') ?? '').trim()
-
-  const studentCode = String(
-    formData.get('student_code') ?? ''
-  )
-    .trim()
-    .toUpperCase()
 
   const fullName = String(
     formData.get('full_name') ?? ''
@@ -171,7 +148,7 @@ export async function updateStudent(formData: FormData) {
     formData.get('notes') ?? ''
   ).trim()
 
-  if (!id || !studentCode || !fullName || !branchId) {
+  if (!id || !fullName || !branchId) {
     redirect(
       `/admin/students/${id}?error=Required%20information%20is%20missing`
     )
@@ -180,7 +157,6 @@ export async function updateStudent(formData: FormData) {
   const { error } = await supabase
     .from('students')
     .update({
-      student_code: studentCode,
       full_name: fullName,
       preferred_name: preferredName || null,
       default_branch_id: branchId,

@@ -6,8 +6,10 @@ export const pageSize = 25
 
 export type LeadFilters = {
   tab?: string
+  lead_tab?: string
   queue?: string
   status?: string
+  interest?: string
   branch?: string
   owner?: string
   source?: string
@@ -16,7 +18,7 @@ export type LeadFilters = {
   page?: string
 }
 
-const leadColumns = 'id, full_name, phone, email, student_name, source_type, program_interest, instrument_interest, branch_id, owner_user_id, status, last_contact_at, next_follow_up_on, version, created_at'
+const leadColumns = 'id, full_name, phone, email, student_name, source_type, program_interest, instrument_interest, branch_id, owner_user_id, status, interest_level, last_contact_at, next_follow_up_on, version, created_at'
 
 function safeSearch(value?: string) {
   return (value ?? '').trim().replace(/[%(),]/g, '').slice(0, 80)
@@ -58,9 +60,10 @@ export async function loadLeadPage(filters: LeadFilters) {
   const today = businessDate()
   const page = pageNumber(filters.page)
   let query = db.from('crm_leads').select(leadColumns, { count: 'exact' })
-  const statuses = filters.status ? [filters.status] : tabStatuses(filters.tab)
+  const statuses = filters.status ? [filters.status] : tabStatuses(filters.lead_tab)
   if (statuses) query = query.in('status', statuses)
   if (filters.branch) query = query.eq('branch_id', filters.branch)
+  if (['REFERENCE', 'INTERESTED', 'POTENTIAL'].includes(filters.interest ?? '')) query = query.eq('interest_level', filters.interest)
   if (filters.owner) query = query.eq('owner_user_id', filters.owner)
   if (filters.source) query = query.eq('source_type', filters.source)
   if (filters.queue === 'uncontacted') query = query.eq('status', 'NEW')
@@ -79,6 +82,6 @@ export async function loadLeadPage(filters: LeadFilters) {
     if (digits.length >= 4) clauses.push(`phone_key.ilike.%${digits}%`)
     query = query.or(clauses.join(','))
   }
-  const { data, count } = await query.order('created_at', { ascending: false }).range((page - 1) * pageSize, page * pageSize - 1)
-  return { rows: data ?? [], count: count ?? 0, page, today }
+  const { data, count, error } = await query.order('created_at', { ascending: false }).range((page - 1) * pageSize, page * pageSize - 1)
+  return { rows: data ?? [], count: count ?? 0, page, today, error: error?.message ?? null }
 }

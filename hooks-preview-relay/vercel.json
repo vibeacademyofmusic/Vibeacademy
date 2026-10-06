@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "api/integrations/payos/webhook.js": { "maxDuration": 10 },
+    "api/integrations/zalo/webhook.js": { "maxDuration": 10 },
+    "api/blocked.js": { "maxDuration": 5 },
+    "api/zalo-verifier.js": { "maxDuration": 5 }
+  },
+  "rewrites": [
+    { "source": "/zalo_verifierKlcQC8Z773rCw98af_mUELp-p0smY1TJD3Ks.html", "destination": "/api/zalo-verifier" },
+    { "source": "/((?!api/integrations/(?:payos|zalo)/webhook$|api/blocked$|api/zalo-verifier$).*)", "destination": "/api/blocked" }
+  ]
+}
