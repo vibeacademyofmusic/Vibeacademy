@@ -4,7 +4,7 @@ const fs = require('node:fs')
 const ts = require('typescript')
 function load(file) {
  const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText
- const module={exports:{}};new Function('require','module','exports',code)(require,module,module.exports);return module.exports
+ const loaded={exports:{}};new Function('require','module','exports',code)(require,loaded,loaded.exports);return loaded.exports
 }
 const recovery=load('lib/auth/password-recovery.ts')
 const site=load('lib/auth/site-url.ts')
