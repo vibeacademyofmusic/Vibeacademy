@@ -179,3 +179,15 @@ test('send status is chưa gửi, đã gửi, or lỗi', () => {
   assert.ok(ready.deliveryBlockers.some(item => item.includes('Gửi theo lịch đang tắt')))
   assert.equal(ready.deliveryBlockers.some(item => item.includes('Lịch gửi thật đang bật')), false)
 })
+
+
+test('send gate ignores legacy accepted sends after the 645192 cutover', () => {
+  const loader = fs.readFileSync('app/admin/tuition/reminders/notice.ts', 'utf8')
+  const page = fs.readFileSync('app/admin/tuition/reminders/page.tsx', 'utf8')
+  assert.match(loader, /provider_template_id/)
+  assert.match(loader, /currentTemplateSend/)
+  assert.match(loader, /legacyOnlyHistory/)
+  assert.match(loader, /legacyOnlyHistory \? 'Chưa gửi'/)
+  assert.match(page, /!notice\.replyChoice/)
+  assert.match(page, /mẫu \$\{row\.templateId/)
+})
