@@ -204,7 +204,7 @@ export function renderTuitionPreview(parameters: Record<string, string> | null, 
   return [
     TUITION_TEMPLATE_TITLE,
     `Kính gửi Quý Phụ huynh - Nhạc sinh, Vibe Academy thông báo kỳ học ${values.period} của học viên ${values.student_name}, mã học viên ${values.student_code}, còn ${values.days_left} ngày nữa sẽ kết thúc.
-Học phí gia hạn gói 3 tháng là ${values.amount} đồng. Hạn thanh toán: ${values.due_date}. Chọn Tiếp Tục Học hoặc Liên Hệ để Vibe ghi nhận và lên kế hoạch.`,
+Học phí gia hạn gói 3 tháng là ${values.amount} đồng. Hạn thanh toán: ${values.due_date}. Chọn Tiếp tục học hoặc Liên hệ để Vibe ghi nhận và lên kế hoạch.`,
     ...tuitionLiveTemplateButtons().map(label => `Nút phản hồi: ${label}`),
     'Không có đường dẫn. Hai nút nằm trong tin Zalo và không mở trang chứa thông tin học viên.',
   ].join('\n')
