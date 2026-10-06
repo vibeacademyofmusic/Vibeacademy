@@ -42,8 +42,8 @@ export default async function LessonPage({
     .select('source_book, source_authors, unit_title, source_pdf_pages, source_printed_pages, learning_objectives, classroom_activities, homework, teacher_notes, source_context, content_scope, syllabus_pdf_page')
     .eq('item_id', lesson.id)
     .maybeSingle()
-  const syllabusTitle = lesson.code.startsWith('PIANO-PRE-REP-2A-') ? 'Giáo án Repertoire 2A' : lesson.code.startsWith('PIANO-PRE-REP-2B-') ? 'Giáo án Repertoire 2B' : 'Giáo án Book B'
-  const expectsSyllabus = lesson.code.startsWith('PIANO-PRESTEP-BB-') || lesson.code.startsWith('PIANO-PRE-REP-')
+  const syllabusTitle = lesson.code.startsWith('PIANO-PRE-REP-2A-') ? 'Giáo án Repertoire 2A' : lesson.code.startsWith('PIANO-PRE-REP-2B-') ? 'Giáo án Repertoire 2B' : lesson.code.startsWith('VIO_PS_FT1_') ? 'Giáo án Fiddle Time Joggers' : lesson.code.startsWith('VIO_PS_FT2_') ? 'Giáo án Fiddle Time Runners' : 'Giáo án Book B'
+  const expectsSyllabus = lesson.code.startsWith('PIANO-PRESTEP-BB-') || lesson.code.startsWith('PIANO-PRE-REP-') || lesson.code.startsWith('VIO_PS_FT1_') || lesson.code.startsWith('VIO_PS_FT2_')
   const owner = (components ?? []).find(row => row.id === lesson.component_id)
   const showGroup = showComponentGroups(subject.completion_rule, components ?? [])
   const detailPath = `/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${subject.id}/lessons/${lesson.id}`
