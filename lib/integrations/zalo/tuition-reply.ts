@@ -1,20 +1,22 @@
 export const TUITION_REPLY_CONTINUE = 'Tiếp tục học'
+export const TUITION_REPLY_CONTACT = 'Liên hệ'
 export const TUITION_REPLY_OTHER = 'Yêu cầu khác'
 export const TUITION_REPLY_STOP = 'Dừng học'
 export const TUITION_CONTACT_STATUS = 'Cần liên hệ'
 export const TUITION_REPLY_SOURCE = 'Zalo ZBS'
 export const TUITION_REPLY_EVENT = 'user_click_response_button'
 
-// Live 645192 buttons are title-cased. Older labels stay valid for late 643118 callbacks.
-export const TUITION_BUTTON_CONTINUE_V2 = 'Tiếp Tục Học'
-export const TUITION_BUTTON_CONTACT_V2 = 'Liên Hệ'
+// Official live 645192 contract. Historical aliases are parser-only compatibility and are never advertised for new sends.
+export const TUITION_BUTTON_CONTINUE_V2 = TUITION_REPLY_CONTINUE
+export const TUITION_BUTTON_CONTACT_V2 = TUITION_REPLY_CONTACT
 
 const BUTTONS = {
   [TUITION_BUTTON_CONTINUE_V2]: 'CONTINUE',
   [TUITION_BUTTON_CONTACT_V2]: 'CONTACT',
-  [TUITION_REPLY_CONTINUE]: 'CONTINUE',
   [TUITION_REPLY_OTHER]: 'CONTACT',
   [TUITION_REPLY_STOP]: 'STOP',
+  'Tiếp Tục Học': 'CONTINUE',
+  'Liên Hệ': 'CONTACT',
 } as const
 
 export type TuitionReplyChoice = 'CONTINUE' | 'CONTACT' | 'STOP'
@@ -34,7 +36,7 @@ export function tuitionLiveTemplateButtons() {
 }
 
 export function tuitionReplacementButtons() {
-  return [TUITION_REPLY_CONTINUE, TUITION_REPLY_OTHER]
+  return tuitionLiveTemplateButtons()
 }
 
 export function tuitionReplyButtons() {
@@ -52,7 +54,7 @@ export function tuitionReplyChoice(buttonData: string): TuitionReplyChoice | nul
 
 export function tuitionReplyLabel(choice: string | null | undefined) {
   if (choice === 'CONTINUE') return TUITION_REPLY_CONTINUE
-  if (choice === 'CONTACT') return TUITION_REPLY_OTHER
+  if (choice === 'CONTACT') return TUITION_REPLY_CONTACT
   if (choice === 'STOP') return TUITION_REPLY_STOP
   return 'Chưa phản hồi'
 }
@@ -173,7 +175,7 @@ export function currentTuitionReply(events: TuitionReplyEvent[], reminderId: str
   const choice = ranked[0].choice
   return {
     choice,
-    label: tuitionReplyLabel(choice) as typeof TUITION_REPLY_CONTINUE | typeof TUITION_REPLY_OTHER | typeof TUITION_REPLY_STOP,
+    label: tuitionReplyLabel(choice) as typeof TUITION_REPLY_CONTINUE | typeof TUITION_REPLY_CONTACT | typeof TUITION_REPLY_STOP,
     needsReview: new Set(rows.map(row => row.choice)).size > 1,
     submitTime: ranked[0].submitTime,
     studentId: ranked[0].studentId,
