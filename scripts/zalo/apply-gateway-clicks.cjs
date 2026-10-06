@@ -2,7 +2,7 @@
 
 const { spawnSync } = require('node:child_process')
 
-const BUTTONS = new Set(['Tiếp tục học', 'Dừng học', 'Yêu cầu khác'])
+const BUTTONS = new Set(['Tiếp tục học', 'Dừng học', 'Yêu cầu khác', 'Liên hệ', 'Liên Hệ', 'Tiếp Tục Học'])
 const ID = /^[A-Za-z0-9_-]{1,80}$/
 const OA = /^[0-9]{8,32}$/
 const MS = /^[0-9]{13}$/
@@ -80,7 +80,8 @@ function applyGatewayClicks(env = process.env) {
     }
     let outcome = 'skipped'
     if (event.event_type === 'user_click_response_button' && BUTTONS.has(event.button) && MS.test(String(event.submit_time || '')) && OA.test(oaId || '')) {
-      outcome = applySql(`select public.record_tuition_zalo_reply('Zalo ZBS', ${quote(trackingId)}, ${quote(messageId)}, ${quote(event.button)}, ${quote(event.submit_time)}, ${quote(oaId)});`)
+      const button = event.button === 'Liên hệ' || event.button === 'Liên Hệ' ? 'Yêu cầu khác' : event.button === 'Tiếp Tục Học' ? 'Tiếp tục học' : event.button
+      outcome = applySql(`select public.record_tuition_zalo_reply('Zalo ZBS', ${quote(trackingId)}, ${quote(messageId)}, ${quote(button)}, ${quote(event.submit_time)}, ${quote(oaId)});`)
     } else if (event.event_type === 'user_received_message' && MS.test(String(event.delivery_time || ''))) {
       outcome = applySql(`select public.note_tuition_zalo_delivery(${quote(trackingId)}, ${quote(messageId)}, ${quote(event.delivery_time)});`)
     }
