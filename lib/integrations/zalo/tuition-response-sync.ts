@@ -58,6 +58,12 @@ export function tuitionResponseGetUrl(input: { templateId: string; fromMs: numbe
 
 type Transport = (url: string, init: { method: 'GET'; headers: Record<string, string> }) => Promise<{ status?: number; json: () => Promise<unknown> }>
 
+function canonicalResponseButton(value: string) {
+  if (value === 'Tiếp Tục Học') return 'Tiếp tục học'
+  if (value === 'Liên hệ' || value === 'Liên Hệ') return 'Yêu cầu khác'
+  return value
+}
+
 function gateOf(value: unknown): Gate | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null
   const row = value as Record<string, unknown>
@@ -167,7 +173,7 @@ export async function reconcileTuitionZaloResponses(
         p_row_oa_id: item.oaId,
         p_tracking_id: item.trackingId,
         p_message_id: item.msgId,
-        p_button: item.data === 'Tiếp Tục Học' ? 'Tiếp tục học' : item.data === 'Liên Hệ' ? 'Yêu cầu khác' : item.data,
+        p_button: canonicalResponseButton(item.data),
         p_submit_ms: item.submitDate,
       })
       if (recorded.error || !['recorded', 'duplicate', 'conflict'].includes(String(recorded.data))) return { state: 'SAVE_FAILED', saved }
@@ -237,7 +243,7 @@ export async function probeTuitionResponseChannels(
         p_row_oa_id: item.oaId,
         p_tracking_id: item.trackingId,
         p_message_id: item.msgId,
-        p_button: item.data === 'Tiếp Tục Học' ? 'Tiếp tục học' : item.data === 'Liên Hệ' ? 'Yêu cầu khác' : item.data,
+        p_button: canonicalResponseButton(item.data),
         p_submit_ms: item.submitDate,
       })
       if (recorded.error || !['recorded', 'duplicate', 'conflict'].includes(String(recorded.data))) { saveFailed = true; break }
