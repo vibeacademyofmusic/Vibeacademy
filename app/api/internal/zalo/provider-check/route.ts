@@ -22,6 +22,15 @@ export async function GET(request: Request) {
     const body = await response.json().catch(() => null) as { error?: number; message?: string; data?: unknown } | null
     return { http: response.status, error: body?.error ?? null, message: body?.message ?? null, data: body?.data ?? null }
   }
+  if (new URL(request.url).searchParams.get('probe') === 'response') {
+    const now = Date.now(), url = tuitionResponseGetUrl({ templateId: ids[0] ?? '645192', fromMs: now - 86400000, toMs: now, offset: 0, limit: 5 })
+    const raw = async (h: Record<string, string>, u = url) => { const r = await fetch(u, { headers: { ...h, accept: 'application/json' }, redirect: 'error', cache: 'no-store' }); const b = await r.json().catch(() => null) as { error?: number; message?: string } | null; return { http: r.status, error: b?.error ?? null, message: b?.message ?? null } }
+    return Response.json({
+      noProof: await raw({ access_token: credential.access_token }),
+      withProof: await raw(headers),
+      sdkHeaderOnly: await raw({ access_token: credential.access_token, appsecret_proof: headers.appsecret_proof }, url.replace('/response/get', '/response/get')),
+    })
+  }
   const oa = await call('https://openapi.zalo.me/v2.0/oa/getoa')
   const oaData = (oa.data ?? {}) as { oa_id?: unknown }
   const templates: Record<string, unknown> = {}
