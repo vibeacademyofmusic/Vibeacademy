@@ -1,0 +1,19 @@
+[Unit]
+Description=VIBE tuition renewal maintenance
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=vibe-zalo
+Group=vibe-zalo
+EnvironmentFile=/etc/vibe-renewal-maintenance.env
+ExecStart=/usr/bin/node /opt/vibe-zalo-gateway/renewal-maintenance-runner.cjs
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/vibe-zalo-gateway
+
+[Install]
+WantedBy=multi-user.target
