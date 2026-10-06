@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { useActionState, useState, type ReactNode } from 'react'
 import { saveTeaching } from './actions'
-import { attendanceLabels, progressLabels, progressLabel, summary, journalLabel, sessionLabel, type Workspace, type Participant, type Progress } from './model'
+import { attendanceLabels, progressLabels, progressLabel, summary, journalLabel, sessionLabel, type Workspace, type Participant, type Progress, type Subject } from './model'
 import { observations } from '@/app/admin/learning-journals/types'
 import { draftHomework, draftProgressNote, lessonContexts } from '@/app/admin/learning-journals/priority'
 import styles from './workspace.module.css'
@@ -23,29 +23,52 @@ function ProgressControl({data,p,item,kind,disabled}:{data:Workspace;p:Participa
     </SaveForm>}
   </div>
 }
+const doneStates=['PASS','MERIT','DISTINCTION','EXEMPT','COMPLETED']
+type Unit={item:Progress;kind:string;group:string}
+function unitsOf(subject:Subject):Unit[] {
+  const out:Unit[]=[]
+  for (const c of subject.components) {
+    if (c.items.length) for (const item of c.items) out.push({item,kind:'item',group:c.name})
+    else if (c.rule==='DIRECT_ASSESSMENT' && subject.rule==='ALL_REQUIRED_COMPONENTS') out.push({item:c,kind:'component',group:c.name})
+  }
+  return out
+}
+function focusOf(units:Unit[]) {
+  const doing=units.findIndex(u=>u.item.status==='IN_PROGRESS')
+  if (doing>=0) return doing
+  const next=units.findIndex(u=>!doneStates.includes(u.item.status) && u.item.status!=='LOCKED')
+  return next>=0 ? next : Math.max(0,units.length-1)
+}
 function Academic({data,p}:{data:Workspace;p:Participant}) {
   const [now] = useState(() => Date.now())
   const academic=p.academic
-  const [selected,setSelected]=useState(academic?.subjects[0]?.id??'')
+  const [selected,setSelected]=useState('')
+  const [showAll,setShowAll]=useState(false)
   if (!p.academic_readable) return <p className={styles.meta}>Hồ sơ học thuật hiện tại không thuộc phân công đang có.</p>
   if (!academic) return <p className={styles.meta}>Chưa xác định chương trình học thuật.</p>
   if (!academic.level_id) return <p className={styles.meta}>Chưa xác định cấp độ hiện tại.</p>
-  const subject=academic.subjects.find(s=>s.id===selected)??academic.subjects[0]
+  const subjectActive=(s:Subject)=>unitsOf(s).some(u=>u.item.status==='IN_PROGRESS') || s.status==='IN_PROGRESS'
+  const subject=academic.subjects.find(s=>s.id===selected)??academic.subjects.find(subjectActive)??academic.subjects.find(s=>!doneStates.includes(s.status))??academic.subjects[0]
   const future=!academic.started_at || Date.parse(academic.started_at)>now
   const disabled=future || !['PRESENT','LATE'].includes(p.attendance??'')
+  const units=subject?unitsOf(subject):[]
+  const focus=focusOf(units)
+  const doneCount=units.filter(u=>doneStates.includes(u.item.status)).length
+  const windowed=units.map((u,i)=>({u,i})).filter(({i})=>i>=focus-1 && i<=focus+2)
+  const row=({u,i}:{u:Unit;i:number})=><div key={u.item.id} className={i===focus?styles.focusLesson:styles.nearLesson}>
+    <p className={styles.meta}>{i<focus?'Bài trước':i===focus?'Đang học':'Bài tiếp theo'} · {subject?.rule==='ALL_REQUIRED_COMPONENTS'?'Nhóm đánh giá · ':''}{u.group}</p>
+    <ProgressControl data={data} p={p} item={u.item} kind={u.kind} disabled={disabled}/>
+  </div>
   return <section aria-label={`Tiến độ ${p.name}`}><h3>Tiến độ cá nhân</h3><p className={styles.meta}>{academic.name} · {academic.level_name}</p>
     {future && <p className={styles.meta}>Chưa đến ngày bắt đầu cấp độ hoặc cấp độ chưa bắt đầu.</p>}
     {!['PRESENT','LATE'].includes(p.attendance??'') && <p className={styles.meta}>Lưu điểm danh Có mặt hoặc Đi muộn để cập nhật tiến độ. Điểm danh không tự tăng tiến độ.</p>}
-    <label>Môn học<select value={subject?.id??''} onChange={e=>setSelected(e.target.value)}>{academic.subjects.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+    {academic.subjects.length>1 ? <label>Môn học<select value={subject?.id??''} onChange={e=>{setSelected(e.target.value);setShowAll(false)}}>{academic.subjects.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label> : subject && <p className={styles.meta}>Môn học: {subject.name}</p>}
     {!subject && <p>Chưa có môn học tại cấp độ này.</p>}
     {subject && <div key={subject.id}>
-      {subject.rule==='ALL_REQUIRED_COMPONENTS' ? <p className={styles.meta}>Kết quả môn: {progressLabels[subject.status]??subject.status} · Tổng hợp từ nhóm đánh giá</p> : <ProgressControl data={data} p={p} item={subject} kind="subject" disabled={disabled}/>}
-      {subject.components.map(component=><section key={component.id} className={styles.section}>
-        {subject.rule==='ALL_REQUIRED_COMPONENTS' && <h3>Nhóm đánh giá · {component.name}</h3>}
-        {component.rule==='DIRECT_ASSESSMENT' && subject.rule==='ALL_REQUIRED_COMPONENTS' && <ProgressControl data={data} p={p} item={component} kind="component" disabled={disabled}/>}
-        {component.items.map(item=><ProgressControl key={item.id} data={data} p={p} item={item} kind="item" disabled={disabled}/>)}
-        {!component.items.length && component.rule==='ALL_REQUIRED_ITEMS' && <p className={styles.meta}>Chưa có bài học để ghi tiến độ.</p>}
-      </section>)}
+      {subject.rule==='ALL_REQUIRED_COMPONENTS' ? <p className={styles.meta}>Kết quả môn: {progressLabels[subject.status]??subject.status} · Tổng hợp từ nhóm đánh giá</p> : units.length===0 && <ProgressControl data={data} p={p} item={subject} kind="subject" disabled={disabled}/>}
+      {units.length>0 && <><p className={styles.meta}>Đã xong {doneCount}/{units.length} bài</p>{windowed.map(row)}
+        <button type="button" className={styles.link} onClick={()=>setShowAll(v=>!v)}>{showAll?'Ẩn danh sách bài':`Xem tất cả ${units.length} bài`}</button>
+        {showAll && <div className={styles.allLessons}>{units.map((u,i)=>i<focus-1||i>focus+2?<ProgressControl key={u.item.id} data={data} p={p} item={u.item} kind={u.kind} disabled={disabled}/>:null)}</div>}</>}
     </div>}
   </section>
 }
