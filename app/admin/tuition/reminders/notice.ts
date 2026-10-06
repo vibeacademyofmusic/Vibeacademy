@@ -40,7 +40,7 @@ export type TuitionNoticeView = TuitionNotice & {
   contactNotedAt: string | null
   contactNotedBy: string | null
   replies: { id: string; choice: string; buttonData: string; submitTime: string; receivedAt: string; trackingId: string; source: string }[]
-  sends: { id: string; trackingId: string; sendStatus: string; sentAt: string | null; messageId: string | null }[]
+  sends: { id: string; trackingId: string; sendStatus: string; sentAt: string | null; messageId: string | null; templateId: string | null }[]
 }
 
 type ReminderRow = {
@@ -79,7 +79,7 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
   const replyState = (await rows(db.from('tuition_zalo_reply_states').select('reply_choice,submit_time,needs_review,contact_note,contact_noted_at,contact_noted_by').eq('reminder_id', reminder.id).limit(1).returns<{ reply_choice: string; submit_time: string; needs_review: boolean; contact_note: string | null; contact_noted_at: string | null; contact_noted_by: string | null }[]>()))[0]
   const contactAuthor = replyState?.contact_noted_by ? (await rows(db.from('profiles').select('id,full_name').eq('id', replyState.contact_noted_by).limit(1).returns<{ id: string; full_name: string | null }[]>()))[0] : null
   const replyRows = await rows(db.from('tuition_zalo_replies').select('id,reply_choice,button_data,submit_time,received_at,tracking_id,source').eq('reminder_id', reminder.id).order('submit_time', { ascending: false }).order('received_at', { ascending: false }).order('seq', { ascending: false }).limit(20).returns<{ id: string; reply_choice: string; button_data: string; submit_time: string; received_at: string; tracking_id: string; source: string }[]>())
-  const sendRows = await rows(db.from('tuition_zalo_sends').select('id,tracking_id,send_status,sent_at,provider_message_id').eq('reminder_id', reminder.id).order('created_at', { ascending: false }).limit(8).returns<{ id: string; tracking_id: string; send_status: string; sent_at: string | null; provider_message_id: string | null }[]>())
+  const sendRows = await rows(db.from('tuition_zalo_sends').select('id,tracking_id,send_status,sent_at,provider_message_id,provider_template_id').eq('reminder_id', reminder.id).order('created_at', { ascending: false }).limit(8).returns<{ id: string; tracking_id: string; send_status: string; sent_at: string | null; provider_message_id: string | null; provider_template_id: string | null }[]>())
   const packageAmount = reminder.amount == null ? null : Number(reminder.amount)
   const recipients: NoticeRecipient[] = current.map(link => {
     const parent = parents.find(row => row.id === link.parent_id)
@@ -113,6 +113,9 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
     scheduledDispatchEnabled: false,
     manualSendEnabled: template?.enabled === true && template.provider_template_id === TUITION_PROVIDER_TEMPLATE_ID && !zaloPilotOutboundBlocked(),
   })
+  const activeTemplateId = tuitionReminderTemplateId(template)
+  const currentTemplateSend = activeTemplateId ? sendRows.find(row => row.provider_template_id === activeTemplateId) ?? null : null
+  const legacyOnlyHistory = sendRows.length > 0 && currentTemplateSend == null
   const phone = notice.recipient?.phone ?? null
   const activeConsent = notice.recipient
     ? consent.find(item => item.parent_id === notice.recipient?.id && !item.revoked_at) ?? null
@@ -136,7 +139,7 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
       source: activeConsent.source,
       recordedBy: recorders.find(row => row.id === activeConsent.recorded_by)?.full_name ?? null,
     } : null,
-    attemptLabel: sendRows[0] ? tuitionSendLabel(sendRows[0].send_status) : zaloAttemptLabel(attempts[0]?.status),
+    attemptLabel: currentTemplateSend ? tuitionSendLabel(currentTemplateSend.send_status) : legacyOnlyHistory ? 'Chưa gửi' : zaloAttemptLabel(attempts[0]?.status),
     replyLabel: tuitionNoticeReplyLabel(sendRows.find(row => row.send_status === 'SENT' || row.send_status === 'DELIVERED')?.send_status ?? sendRows[0]?.send_status, replyState?.reply_choice, sync),
     replyAt: replyState?.submit_time ?? null,
     needsReview: replyState?.needs_review === true,
@@ -159,6 +162,7 @@ export async function loadTuitionNotice(db: DB, reminderId: string, selectedReci
       sendStatus: tuitionSendLabel(row.send_status),
       sentAt: row.sent_at,
       messageId: row.provider_message_id,
+      templateId: row.provider_template_id,
     })),
   }
 }
