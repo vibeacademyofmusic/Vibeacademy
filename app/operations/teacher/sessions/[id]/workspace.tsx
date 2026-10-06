@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useActionState, useState, type ReactNode } from 'react'
+import { useActionState, useEffect, useState, type ReactNode } from 'react'
 import { saveTeaching } from './actions'
 import { attendanceLabels, progressLabels, progressLabel, summary, journalLabel, sessionLabel, type Workspace, type Participant, type Progress, type Subject } from './model'
 import { observations } from '@/app/admin/learning-journals/types'
@@ -99,6 +99,9 @@ function Journal({data,p}:{data:Workspace;p:Participant}) {
 export default function TeachingWorkspace({data}:{data:Workspace}) {
   const counts=summary(data),time=(value:string)=>new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit'}).format(new Date(value))
   const missing=data.participants.length-counts.marked
+  const [openId,setOpenId]=useState<string|null>(null)
+  const current=data.participants.find(p=>p.enrollment_id===openId)
+  useEffect(()=>{if(!openId)return;const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpenId(null)};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[openId])
   return <main className={styles.workspace}>
     <Link prefetch={false} href="/operations/teacher">← Lịch dạy</Link>
       <header className={styles.card}><div className={`${styles.row} ${styles.between}`}><h1>{data.class_name}</h1><span className={styles.badge}>{sessionLabel(data)}</span></div>
@@ -114,14 +117,22 @@ export default function TeachingWorkspace({data}:{data:Workspace}) {
         <label>Bối cảnh<select name="context" defaultValue={data.journal?.curriculum_context??''}><option value="">Chưa chọn</option>{lessonContexts.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label><button type="submit">Lưu nội dung chung</button>
       </SaveForm>
     </section>
-    <section aria-label="Các học viên trong buổi học">{data.participants.map(p=><details key={p.enrollment_id} open className={styles.card}>
-      <summary aria-label={`Học viên ${p.name}`}><div className={styles.row}><h2>{p.name}</h2><strong className={styles.badge}>{p.academic?.level_name??'Chưa xác định cấp độ'}</strong>
-        {p.compatibility==='OUTSIDE_SCOPE'&&<span className={`${styles.badge} ${styles.warning}`}>Ngoài phạm vi lớp</span>}
-        <span className={styles.badge}>{p.attendance?attendanceLabels[p.attendance]:'Chưa điểm danh'}</span><span className={styles.badge}>{journalLabel(data,p)}</span>{p.entry?.attention_required&&!p.entry.attention_resolved_at&&<span className={`${styles.badge} ${styles.warning}`}>Cần lưu ý</span>}
-      </div></summary>
-      <div className={styles.section}><SaveForm data={data} p={p} intent="attendance"><div className={styles.row}>{Object.entries(attendanceLabels).map(([status,label])=><button key={status} type="submit" name="status" value={status} aria-pressed={p.attendance===status} className={p.attendance===status?styles.selected:undefined}>{label}</button>)}</div></SaveForm></div>
-      <div className={styles.grid}><Academic data={data} p={p}/><Journal data={data} p={p}/></div>
-    </details>)}</section>
+    <section aria-label="Các học viên trong buổi học" className={styles.card}><h2>Học viên ({data.participants.length})</h2>
+      {data.participants.map(p=><div key={p.enrollment_id} className={styles.student}>
+        <div className={styles.studentInfo}><strong aria-label={`Học viên ${p.name}`}>{p.name}</strong><div className={styles.row}><span className={styles.badge}>{p.academic?.level_name??'Chưa xác định cấp độ'}</span>
+          {p.compatibility==='OUTSIDE_SCOPE'&&<span className={`${styles.badge} ${styles.warning}`}>Ngoài phạm vi lớp</span>}
+          <span className={styles.badge}>{journalLabel(data,p)}</span>{p.entry?.attention_required&&!p.entry.attention_resolved_at&&<span className={`${styles.badge} ${styles.warning}`}>Cần lưu ý</span>}</div></div>
+        <SaveForm data={data} p={p} intent="attendance"><div className={styles.row}>{Object.entries(attendanceLabels).map(([status,label])=><button key={status} type="submit" name="status" value={status} aria-pressed={p.attendance===status} className={p.attendance===status?styles.selected:undefined}>{label}</button>)}</div></SaveForm>
+        <button type="button" onClick={()=>setOpenId(p.enrollment_id)}>Tiến độ & nhật ký</button>
+      </div>)}
+    </section>
+    {current && <div className={styles.overlay} onClick={e=>{if(e.target===e.currentTarget)setOpenId(null)}}>
+      <div role="dialog" aria-modal="true" aria-label={`Tác vụ học viên ${current.name}`} className={styles.dialog}>
+        <div className={`${styles.row} ${styles.between}`}><h2>{current.name}</h2><button type="button" onClick={()=>setOpenId(null)}>Đóng</button></div>
+        <div className={styles.row}><span className={styles.badge}>{current.attendance?attendanceLabels[current.attendance]:'Chưa điểm danh'}</span><span className={styles.badge}>{journalLabel(data,current)}</span></div>
+        <div className={styles.grid}><Academic key={current.enrollment_id} data={data} p={current}/><Journal key={current.enrollment_id} data={data} p={current}/></div>
+      </div>
+    </div>}
     <section className={styles.card}><h2>Hoàn tất ca dạy</h2><p className={styles.meta}>{missing>0?`${missing} học viên chưa điểm danh.`:'Đã điểm danh đủ.'} {counts.required-counts.ready>0?`${counts.required-counts.ready} học viên cần bổ sung quan sát hoặc nhận xét.`:'Nhật ký bắt buộc đã đủ nội dung.'}</p>
       <div className={styles.row}>{data.status==='SCHEDULED'&&<SaveForm data={data} intent="complete"><button type="submit" disabled={missing>0}>Hoàn tất ca dạy</button></SaveForm>}
         <SaveForm data={data} intent="submit"><button type="submit" disabled={missing>0||counts.ready<counts.required||!data.journal?.content_covered.trim()||data.journal.status==='SUBMITTED'}>Nộp nhật ký buổi học</button></SaveForm></div>
