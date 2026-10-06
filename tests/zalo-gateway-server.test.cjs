@@ -5,7 +5,7 @@ const os = require('node:os')
 const path = require('node:path')
 const crypto = require('node:crypto')
 
-const { processWebhook, openStore } = require('../scripts/zalo/gateway-server.js')
+const { processWebhook, openStore, readForwardEnv, forwardPending } = require('../scripts/zalo/gateway-server.js')
 
 const APP = '1355275380325944240'
 const OA = '4520912928458797082'
@@ -64,7 +64,7 @@ test('Zalo console sample is acknowledged without a stored reply', () => {
   assert.equal(again.body.duplicate, undefined)
 })
 
-test('a signed click is stored once and stays pending until a send can be matched', () => {
+test('a signed click is stored once, acknowledged quickly, and queued for upstream delivery', () => {
   const store = tempStore()
   const click = signed({
     event_name: 'user_click_response_button',
@@ -74,10 +74,11 @@ test('a signed click is stored once and stays pending until a send can be matche
   })
   const first = processWebhook({ rawBody: click.raw, signature: click.signature, env: ENV, store })
   const second = processWebhook({ rawBody: click.raw, signature: click.signature, env: ENV, store })
-  assert.equal(first.status, 503)
-  assert.equal(first.body.error, 'WEBHOOK_PENDING')
-  assert.equal(second.status, 503)
-  assert.equal(second.body.status, 'unknown_tracking')
+  assert.equal(first.status, 200)
+  assert.equal(first.body.queued, true)
+  assert.equal(second.status, 200)
+  assert.equal(second.body.duplicate, true)
+  assert.equal(store.pending().length, 1)
 })
 
 test('an unsupported signed event is stored and acknowledged once', () => {
@@ -102,10 +103,46 @@ test('a store failure does not acknowledge success', () => {
   assert.equal(result.body.error, 'WEBHOOK_NOT_RECORDED')
 })
 
-test('gateway source does not forward and does not embed the live secret', () => {
+test('gateway forwards queued raw events without embedding a live upstream or secret', async () => {
+  const store = tempStore()
+  const click = signed({
+    event_name: 'user_click_response_button',
+    oa_id: OA,
+    message: { tracking_id: 'tracking-forward', data: 'Tiếp tục học', submit_time: '1790798177156' },
+    msg_id: '808932e81f53670a3e46',
+  })
+  processWebhook({ rawBody: click.raw, signature: click.signature, serverHeader: 'ZBS', env: ENV, store })
+  const calls = []
+  const forwardEnv = readForwardEnv({ GATEWAY_UPSTREAM_URL: 'https://staging.example.test/api/integrations/zalo/webhook' })
+  const result = await forwardPending(store, forwardEnv, async (url, init) => {
+    calls.push({ url, init })
+    return { ok: true, status: 200 }
+  })
+  assert.equal(result.forwarded, 1)
+  assert.equal(calls.length, 1)
+  assert.equal(calls[0].url, 'https://staging.example.test/api/integrations/zalo/webhook')
+  assert.equal(calls[0].init.body, click.raw)
+  assert.equal(calls[0].init.headers['x-zevent-signature'], click.signature)
+  assert.equal(calls[0].init.headers['x-zevent-server'], 'ZBS')
+  assert.equal(store.pending().length, 0)
   const source = fs.readFileSync('scripts/zalo/gateway-server.js', 'utf8')
-  assert.equal(source.includes('fetch('), false)
-  assert.equal(source.includes('vercel.app'), false)
-  assert.equal(source.includes('127.0.0.1:3000'), false)
+  assert.equal(source.includes('staging.vibe.edu.vn'), false)
   assert.equal(source.includes(SECRET), false)
+})
+
+test('failed upstream delivery stays queued with retry metadata', async () => {
+  const store = tempStore()
+  const click = signed({
+    event_name: 'user_click_response_button',
+    oa_id: OA,
+    message: { tracking_id: 'tracking-retry', data: 'Liên hệ', submit_time: '1790798177157' },
+    msg_id: '808932e81f53670a3e47',
+  })
+  processWebhook({ rawBody: click.raw, signature: click.signature, env: ENV, store })
+  const forwardEnv = readForwardEnv({ GATEWAY_UPSTREAM_URL: 'https://staging.example.test/api/integrations/zalo/webhook' })
+  const result = await forwardPending(store, forwardEnv, async () => ({ ok: false, status: 503 }))
+  assert.equal(result.failed, 1)
+  assert.equal(store.pending().length, 0)
+  const later = new Date(Date.now() + 10_000).toISOString()
+  assert.equal(store.pending(20, later).length, 1)
 })
