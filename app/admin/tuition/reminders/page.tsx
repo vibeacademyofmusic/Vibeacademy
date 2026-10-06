@@ -11,7 +11,7 @@ import SubmitButton from '../../finance/_components/SubmitButton'
 import { AppPage, PageHeader, MetricCard, StatusBadge, FilterBar, SectionCard } from '../../_components/vibe'
 import { plans, debts } from '../data'
 import { reminders, kpis, timing, filters, replyFilters, visibleBranches, prepareBranches, type Reminder } from './data'
-import { generateReminders, resolveReminder, confirmTuitionZalo, recordTuitionNoticeConsent, recordTuitionContactNote } from './actions'
+import { generateReminders, resolveReminder, confirmTuitionZalo, recordTuitionNoticeConsent, recordTuitionContactNote, checkTuitionZaloDelivery } from './actions'
 import { createTuitionRenewal, retryTuitionPayos, sendTuitionPaymentRequest } from './renewal-actions'
 import { paymentNoticeReason, paymentTemplateGate, renewalPaymentLabel, renewalProcessingLabel, storedZbsStatusLabel } from '@/lib/integrations/tuition/renewal-status'
 import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest } from '@/lib/integrations/tuition/payment-zbs'
@@ -271,6 +271,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
           <Link scroll={false} className="vibe-button" href={returnHref}>Hủy</Link>
           {zaloReconnect && <p role="alert">Cần cấp quyền lại cho Zalo trước khi gửi. <Link href="/admin/system/integrations/zalo">Mở Kết nối Zalo</Link> rồi bấm Kết nối lại Zalo.</p>}
           {notice.attemptAllowed && manualLive && !zaloReconnect && !notice.replyChoice && !['Đã tiếp nhận', 'Đã phát đến máy', 'Đã tạo mã theo dõi'].includes(notice.attemptLabel) ? <form action={confirmTuitionZalo}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} />{notice.recipient && <input type="hidden" name="parent_id" value={notice.recipient.id} />}<SubmitButton className="vibe-button vibe-button-primary">Xác nhận gửi cho học viên này</SubmitButton></form> : <button type="button" className="vibe-button" disabled>Xác nhận gửi cho học viên này</button>}
+          {notice.attemptLabel === 'Đã tiếp nhận' ? <form action={checkTuitionZaloDelivery}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} /><SubmitButton className="vibe-button">Đối soát trạng thái phát</SubmitButton></form> : null}
         </div>
       </div>
       </>}
