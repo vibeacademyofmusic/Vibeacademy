@@ -39,6 +39,11 @@ export async function login(formData: FormData) {
   )
 
   if (!roleError && !isSuperAdmin) {
+    const lead = await supabase.rpc('operational_admin')
+    if (!lead.error && lead.data === true) {
+      revalidatePath('/', 'layout')
+      redirect('/admin')
+    }
     const roles = await Promise.all(['FINANCE', 'BRANCH_ADMIN', 'TEACHER'].map(role_code => supabase.rpc('has_role', { role_code })))
     if (!roles[0].error && roles[0].data === true) {
       revalidatePath('/', 'layout')

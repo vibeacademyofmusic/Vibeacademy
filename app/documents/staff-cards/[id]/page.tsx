@@ -1,3 +1,4 @@
+import { operationalAdminOn } from '@/lib/auth/request'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { uuidPattern } from '@/app/admin/finance/operations'
@@ -18,7 +19,7 @@ export default async function StaffCardPage({
   const query = await searchParams
   if (!uuidPattern.test(id)) notFound()
   const db = await createClient()
-  const role = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const role = await operationalAdminOn(db)
   if (role.error || role.data !== true) redirect('/login')
   let face: Awaited<ReturnType<typeof loadStaffFace>>
   try {
