@@ -3,6 +3,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { getZaloCredential } from './oauth'
 import { zaloAccessHeaders } from './app-secret-proof'
+import { normalizeVnPhone } from './phone'
 
 export const ZALO_PHONE_STATUS_URL = 'https://business.openapi.zalo.me/message/status'
 
@@ -58,7 +59,7 @@ export async function reconcileTuitionZaloSendDelivery(
   const parent = await admin.from('parents').select('user_id').eq('id', send.parent_id).maybeSingle()
   if (parent.error || !parent.data?.user_id) return { state: 'MISSING_PHONE' }
   const profile = await admin.from('profiles').select('phone').eq('id', parent.data.user_id).maybeSingle()
-  const phone = typeof profile.data?.phone === 'string' ? profile.data.phone.trim() : ''
+  const phone = typeof profile.data?.phone === 'string' ? normalizeVnPhone(profile.data.phone) : null
   if (profile.error || !phone) return { state: 'MISSING_PHONE' }
 
   const appSecret = env.ZALO_APP_SECRET?.trim() ?? ''
