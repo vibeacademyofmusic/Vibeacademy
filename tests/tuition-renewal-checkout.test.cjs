@@ -190,3 +190,13 @@ test('automatic renewal creates a provider checkout for a reserved order before 
   assert.match(source, /openTuitionPayosCheckout\([^\n]+process\.env, true, reminderId\)/)
   assert.doesNotMatch(source, /openTuitionPayosCheckout\([^\n]+process\.env, false, reminderId\)/)
 })
+
+
+test('PayOS provider rejection logging is sanitized and keeps secrets out', () => {
+  const source = readFileSync(path.join(__dirname, '../lib/integrations/payos/client.ts'), 'utf8')
+  assert.match(source, /component: 'payos_create_result'/)
+  assert.match(source, /component: 'payos_lookup_result'/)
+  assert.match(source, /desc: typeof body\.desc === 'string' \? body\.desc\.slice\(0, 160\) : null/)
+  assert.doesNotMatch(source, /PAYOS_API_KEY.*console/)
+  assert.doesNotMatch(source, /PAYOS_CHECKSUM_KEY.*console/)
+})
