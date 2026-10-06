@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { logout } from '@/app/login/actions'
@@ -29,18 +28,8 @@ export default async function MyExpenses({
   }
 
   return (
-    <div className="vibe-admin min-h-screen bg-[var(--vibe-surface-soft)] px-4 py-6 text-[var(--vibe-navy)] sm:px-8">
+    <div className="vibe-admin bg-[var(--vibe-surface-soft)] px-4 py-6 text-[var(--vibe-navy)] sm:px-8">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[var(--vibe-line)] bg-white px-5 py-4">
-          <div>
-            <strong>VIBE Academy</strong>
-            <p className="text-sm text-[var(--vibe-muted)]">Cổng nhân viên</p>
-          </div>
-          <nav className="flex flex-wrap items-center gap-3" aria-label="Điều hướng nhân viên">
-            <Link className="vibe-button" href="/my-payroll">Bảng lương của tôi</Link>
-            <form action={logout}><button className="vibe-button">Đăng xuất</button></form>
-          </nav>
-        </header>
         <SelfServiceView searchParams={searchParams} basePath="/my-expenses" />
       </div>
     </div>
