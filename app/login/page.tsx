@@ -1,18 +1,22 @@
+import Link from 'next/link'
 import { login } from './actions'
+import RecoveryLinkNotice from './RecoveryLinkNotice'
 
 type LoginPageProps = {
   searchParams: Promise<{
     error?: string
+    recovery?: string
   }>
 }
 
 export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
-  const { error } = await searchParams
+  const { error, recovery } = await searchParams
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <RecoveryLinkNotice />
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -23,6 +27,12 @@ export default async function LoginPage({
             Management System
           </p>
         </div>
+
+        {recovery === 'success' && (
+          <div className="mb-5 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+            Mật khẩu đã được cập nhật. Hãy đăng nhập bằng mật khẩu mới.
+          </div>
+        )}
 
         {error && (
           <div className="mb-5 rounded-lg bg-red-50 p-3 text-sm text-red-700">
@@ -67,6 +77,12 @@ export default async function LoginPage({
               className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-gray-900"
               placeholder="••••••••"
             />
+          </div>
+
+          <div className="text-right">
+            <Link href="/forgot-password" className="text-sm font-medium text-gray-700 underline underline-offset-4">
+              Quên mật khẩu?
+            </Link>
           </div>
 
           <button
