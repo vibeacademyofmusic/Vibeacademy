@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 import { readCredential } from '@/lib/integrations/zalo/oauth'
 import { zaloServiceClient } from '@/lib/integrations/zalo/service'
+import { tuitionResponseGetUrl } from '@/lib/integrations/zalo/tuition-response-sync'
 import { zaloAccessHeaders } from '@/lib/integrations/zalo/app-secret-proof'
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -25,7 +26,9 @@ export async function GET(request: Request) {
   const oaData = (oa.data ?? {}) as { oa_id?: unknown }
   const templates: Record<string, unknown> = {}
   for (const id of ids) {
+    const now = Date.now()
     templates[id] = {
+      response: await call(tuitionResponseGetUrl({ templateId: id, fromMs: now - 7 * 86400000, toMs: now, offset: 0, limit: 20 })).then(r => ({ http: r.http, error: r.error, message: r.message, count: Array.isArray((r.data as { data?: unknown[] } | null)?.data) ? ((r.data as { data: unknown[] }).data.length) : null })),
       info: await call(`https://business.openapi.zalo.me/template/info/v2?template_id=${id}`),
       sample: await call(`https://business.openapi.zalo.me/template/sample-data?template_id=${id}`),
     }
