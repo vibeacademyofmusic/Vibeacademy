@@ -200,3 +200,34 @@ test('PayOS provider rejection logging is sanitized and keeps secrets out', () =
   assert.doesNotMatch(source, /PAYOS_API_KEY.*console/)
   assert.doesNotMatch(source, /PAYOS_CHECKSUM_KEY.*console/)
 })
+
+
+test('accepted 645192 CONTINUE to one renewal invoice path is business-locked', () => {
+  const notice = readFileSync(path.join(__dirname, '../lib/integrations/zalo/tuition-notice.ts'), 'utf8')
+  const reply = readFileSync(path.join(__dirname, '../lib/integrations/zalo/tuition-reply.ts'), 'utf8')
+  const webhook = readFileSync(path.join(__dirname, '../app/api/integrations/zalo/webhook/route.ts'), 'utf8')
+  const migration = readFileSync(path.join(__dirname, '../supabase/migrations/20261007010000_tuition_reminder_645192_auto_renewal.sql'), 'utf8')
+  const checkoutMigration = readFileSync(path.join(__dirname, '../supabase/migrations/20261003120000_tuition_renewal_checkout_v1.sql'), 'utf8')
+
+  assert.match(notice, /TUITION_PROVIDER_TEMPLATE_ID = '645192'/)
+  assert.match(reply, /'Tiếp Tục Học': 'CONTINUE'/)
+  assert.match(reply, /\[TUITION_BUTTON_CONTINUE_V2\]: 'CONTINUE'/)
+  assert.match(webhook, /event\.eventType === 'user_click_response_button' && outcome === 'recorded'/)
+  assert.match(webhook, /runTuitionRenewalAutomation\(client, 1\)/)
+  assert.match(migration, /provider_template_id = '645192'/)
+  assert.match(migration, /create or replace function public\.auto_begin_tuition_renewal/)
+  assert.match(migration, /where reminder_id = p_reminder/)
+  assert.match(migration, /public\.begin_tuition_renewal\(p_reminder, 'VIBE_3_MONTHS', 'DEPOSIT_50'/)
+  assert.match(checkoutMigration, /reminder_id uuid not null unique references public\.tuition_reminders\(id\)/)
+  assert.match(checkoutMigration, /invoice_id uuid unique references public\.invoices\(id\)/)
+})
+
+test('PayOS production webhook is fail-closed by explicit enable flag, not localhost-only', () => {
+  const route = readFileSync(path.join(__dirname, '../app/api/integrations/payos/webhook/route.ts'), 'utf8')
+  assert.match(route, /PAYOS_WEBHOOK_ENABLED/)
+  assert.match(route, /PAYOS_WEBHOOK_DISABLED/)
+  assert.doesNotMatch(route, /PAYOS_PREVIEW_ONLY/)
+  assert.doesNotMatch(route, /supabaseUrl\.startsWith\('http:\/\/127\.0\.0\.1:'\)/)
+  assert.match(route, /payosSignatureMatches\(parsed\.data, parsed\.signature, checksumKey\)/)
+  assert.match(route, /record_verified_tuition_payos_webhook/)
+})
