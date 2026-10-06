@@ -209,22 +209,18 @@ export function createTuitionPaymentLedger() {
   const slots = new Map<string, PaymentSlot>()
   const chains = new Map<string, Promise<void>>()
   return {
-    async claim(key: string) {
+    async claim(key: string): Promise<'CLAIMED' | 'NOT_CLAIMED' | 'ALREADY_ACCEPTED' | 'UNKNOWN_NOT_RETRIED'> {
       const previous = chains.get(key) ?? Promise.resolve()
-      let result: 'CLAIMED' | 'NOT_CLAIMED' | 'ALREADY_ACCEPTED' | 'UNKNOWN_NOT_RETRIED' = 'NOT_CLAIMED'
-      const current = previous.then(() => {
+      const current = previous.then((): 'CLAIMED' | 'NOT_CLAIMED' | 'ALREADY_ACCEPTED' | 'UNKNOWN_NOT_RETRIED' => {
         const slot = slots.get(key) ?? 'OPEN'
-        if (slot === 'SENT') result = 'ALREADY_ACCEPTED'
-        else if (slot === 'UNKNOWN') result = 'UNKNOWN_NOT_RETRIED'
-        else if (slot === 'CLAIMED') result = 'NOT_CLAIMED'
-        else {
-          slots.set(key, 'CLAIMED')
-          result = 'CLAIMED'
-        }
+        if (slot === 'SENT') return 'ALREADY_ACCEPTED'
+        if (slot === 'UNKNOWN') return 'UNKNOWN_NOT_RETRIED'
+        if (slot === 'CLAIMED') return 'NOT_CLAIMED'
+        slots.set(key, 'CLAIMED')
+        return 'CLAIMED'
       })
       chains.set(key, current.then(() => undefined, () => undefined))
-      await current
-      return result
+      return current
     },
     complete(key: string, outcome: 'SENT' | 'UNKNOWN') {
       slots.set(key, outcome)
