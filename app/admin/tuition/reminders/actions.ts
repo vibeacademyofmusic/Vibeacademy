@@ -4,12 +4,11 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient, uuidPattern } from '../../finance/operations'
 import { ZALO_PILOT_OUTBOUND_DISABLED } from '@/lib/integrations/zalo/pilot-outbound'
-import { tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
+import { TUITION_PROVIDER_TEMPLATE_ID, tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
 import { sendManualTuitionZalo } from '@/lib/integrations/zalo/tuition-test-send'
 import { loadTuitionNotice } from './notice'
 import { zaloServiceClient } from '@/lib/integrations/zalo/service'
 import { reconcileTuitionZaloSendDelivery } from '@/lib/integrations/zalo/tuition-delivery-status'
-import { TUITION_PROVIDER_TEMPLATE_ID } from '@/lib/integrations/zalo/tuition-notice'
 
 function back(form: FormData, message: string, tone: 'error' | 'success' = 'error') {
   revalidatePath('/admin/tuition/reminders')
