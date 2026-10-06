@@ -124,7 +124,7 @@ export async function reconcilePendingTuitionZaloDeliveries(
     .select('id')
     .eq('send_status', 'SENT')
     .not('provider_message_id', 'is', null)
-    .order('sent_at', { ascending: true })
+    .order('sent_at', { ascending: false })
     .limit(Math.max(1, Math.min(limit, 20)))
 
   if (sends.error) return { state: 'UNAVAILABLE' as const, checked: 0, delivered: 0, pending: 0, missing: 0, failed: 0 }
