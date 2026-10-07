@@ -14,10 +14,18 @@ function todayVietnam() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date())
 }
 
+function weekdayVietnam(day: string) {
+  const [year, month, date] = day.split('-').map(Number)
+  const index = new Date(Date.UTC(year, month - 1, date)).getUTCDay()
+  return index === 0 ? 7 : index
+}
+
 export async function loadClassOps(db: DB, params: Params, view: OpsView) {
   const branch = uuidPattern.test(params.branch ?? '') ? params.branch! : null
+  const program = uuidPattern.test(params.program ?? '') ? params.program! : null
   const page = pageNumber(params.page)
   const date = /^\d{4}-\d{2}-\d{2}$/.test(params.date ?? '') ? params.date! : todayVietnam()
+  const todayOnly = params.when === 'today'
 
   const compatibility = view === 'classes' || view === 'overview' ? loadScopeWarnings(db, branch) : Promise.resolve({ byClass: new Map<string, Set<string>>(), affectedClasses: [], studentCount: 0 })
   const [branches, programs, teachers, classRooms, overview, classes, schedules, rooms, sessions, sessionDiag] = await Promise.all([
@@ -26,7 +34,7 @@ export async function loadClassOps(db: DB, params: Params, view: OpsView) {
     view === 'classes' ? db.from('teachers').select('id,full_name,teacher_code').eq('status', 'ACTIVE').order('full_name').limit(200) : Promise.resolve({ data: [] }),
     view === 'classes' ? db.from('rooms').select('id,name,branch_id').eq('status', 'ACTIVE').order('name').limit(200) : Promise.resolve({ data: [] }),
     view === 'overview' ? loadOverview(db, branch, compatibility) : Promise.resolve(null),
-    view === 'classes' ? loadClasses(db, { branch, page, q: params.q }, compatibility) : Promise.resolve(null),
+    view === 'classes' ? loadClasses(db, { branch, program, page, q: params.q, todayOnly, today: todayVietnam() }, compatibility) : Promise.resolve(null),
     view === 'schedule' ? loadSchedules(db, { branch, page }) : Promise.resolve(null),
     view === 'rooms' ? loadRooms(db, { branch, page }) : Promise.resolve(null),
     view === 'attendance' ? loadAttendanceSessions(db, { branch, date, page, classId: params.class }) : Promise.resolve(null),
@@ -144,7 +152,19 @@ async function loadOverview(db: DB, branch: string | null, warnings: ScopeWarnin
   }
 }
 
-async function loadClasses(db: DB, opts: { branch: string | null; page: number; q?: string }, warnings: ScopeWarnings) {
+async function loadClasses(db: DB, opts: { branch: string | null; program: string | null; page: number; q?: string; todayOnly: boolean; today: string }, warnings: ScopeWarnings) {
+  let todayClassIds: string[] | null = null
+  const scheduleClass = new Map<string, string>()
+  if (opts.todayOnly) {
+    const scheduled = await db.from('schedules').select('id, class_id').eq('status', 'ACTIVE').eq('day_of_week', weekdayVietnam(opts.today))
+    if (scheduled.error) throw scheduled.error
+    todayClassIds = [...new Set((scheduled.data ?? []).map(row => row.class_id))]
+    for (const row of scheduled.data ?? []) scheduleClass.set(row.id, row.class_id)
+    if (todayClassIds.length === 0) {
+      await warnings
+      return { data: [], page: opts.page, more: false }
+    }
+  }
   let q = db.from('classes').select(`
     id, code, name, class_type, capacity, status, branch_id, course_id, curriculum_id,
     accepted_from_level_id, accepted_to_level_id,
@@ -153,6 +173,8 @@ async function loadClasses(db: DB, opts: { branch: string | null; page: number; 
     branches!inner(id, name)
   `).order('name').range((opts.page - 1) * pageSize, opts.page * pageSize)
   if (opts.branch) q = q.eq('branch_id', opts.branch)
+  if (opts.program) q = q.eq('curriculum_id', opts.program)
+  if (todayClassIds) q = q.in('id', todayClassIds)
   if ((opts.q || '').trim()) q = q.ilike('name', '%' + opts.q!.trim().replace(/[%_,()]/g, ' ').slice(0, 60) + '%')
   const { data, error } = await q
   if (error) throw error
@@ -162,11 +184,12 @@ async function loadClasses(db: DB, opts: { branch: string | null; page: number; 
   const fromIds = [...new Set(visible.map(r => r.accepted_from_level_id).filter(Boolean))] as string[]
   const toIds = [...new Set(visible.map(r => r.accepted_to_level_id).filter(Boolean))] as string[]
   const levelIds = [...new Set([...fromIds, ...toIds])]
-  const [{ data: levels }, { data: enrollCounts }, { data: teachers }, { data: schedules }] = await Promise.all([
+  const [{ data: levels }, { data: enrollCounts }, { data: teachers }, { data: schedules }, { data: occurrences }] = await Promise.all([
     levelIds.length ? db.from('curriculum_levels').select('id,name').in('id', levelIds) : Promise.resolve({ data: [] as { id: string; name: string }[] }),
     classIds.length ? db.from('enrollments').select('class_id').in('class_id', classIds).in('status', ['ACTIVE', 'PAUSED']) : Promise.resolve({ data: [] as { class_id: string }[] }),
     classIds.length ? db.from('class_teachers').select('class_id, teacher_id, teachers(full_name, teacher_code)').in('class_id', classIds).eq('is_active', true).eq('teacher_role', 'PRIMARY') : Promise.resolve({ data: [] as never[] }),
     classIds.length ? db.from('schedules').select('class_id, day_of_week, start_time, end_time, room_id, status, rooms(name)').in('class_id', classIds).eq('status', 'ACTIVE') : Promise.resolve({ data: [] as never[] }),
+    opts.todayOnly && classIds.length ? db.from('session_occurrences').select('id, starts_at, schedule_id').in('schedule_id', [...scheduleClass.keys()]).eq('occurrence_date', opts.today).neq('status', 'CANCELLED').order('starts_at') : Promise.resolve({ data: [] as { id: string; starts_at: string; schedule_id: string }[] }),
   ])
   const scope = await warnings
   const levelMap = new Map((levels ?? []).map(l => [l.id, l.name]))
@@ -185,6 +208,11 @@ async function loadClasses(db: DB, opts: { branch: string | null; page: number; 
     scheduleMap.set(row.class_id, (scheduleMap.get(row.class_id) ? scheduleMap.get(row.class_id) + '; ' : '') + label)
     const room = rel(row.rooms as { name: string } | { name: string }[] | null)
     if (room?.name) roomMap.set(row.class_id, room.name)
+  }
+  const openMap = new Map<string, string>()
+  for (const row of occurrences ?? []) {
+    const classId = scheduleClass.get(row.schedule_id)
+    if (classId && !openMap.has(classId)) openMap.set(classId, row.id)
   }
 
   return {
@@ -224,6 +252,8 @@ async function loadClasses(db: DB, opts: { branch: string | null; page: number; 
         teacherName: teacherMap.get(row.id) ?? '—',
         scheduleLabel: scheduleMap.get(row.id) ?? '—',
         roomName: roomMap.get(row.id) ?? '—',
+        openHref: openMap.has(row.id) ? `/admin/attendance/${openMap.get(row.id)}` : `/admin/classes/${row.id}`,
+        openLabel: openMap.has(row.id) ? 'Mở ca dạy' : 'Mở hồ sơ ca',
         enrolled: countMap.get(row.id) ?? 0,
         outOfScopeCount: scope.byClass.get(row.id)?.size ?? 0,
       }

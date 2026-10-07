@@ -9,7 +9,7 @@ import {
   buildQuery,
   InlineNotice,
 } from '../../_components/vibe'
-import { createClass, setClassStatus } from '../actions'
+import { setClassStatus } from '../actions'
 import { generateSessions } from '../../attendance/actions'
 import ClassCreateLevelFields from './ClassCreateLevelFields'
 import {
@@ -25,6 +25,8 @@ function href(params: Record<string, string | undefined>, patch: Record<string, 
   const query = buildQuery({
     view: params.view,
     branch: params.branch,
+    program: params.program,
+    when: params.when,
     date: params.date,
     q: params.q,
     class: params.class,
@@ -77,7 +79,11 @@ export default function ClassOpsWorkspace({
           ...(view === 'attendance' || view === 'schedule'
             ? [{ name: 'date', label: 'Ngày', type: 'date' as const, value: params.date || data.today }]
             : []),
-          ...(view === 'classes' ? [{ name: 'q', label: 'Tìm ca dạy', type: 'search' as const, value: params.q }] : []),
+          ...(view === 'classes' ? [
+            { name: 'program', label: 'Chương trình', type: 'select' as const, value: params.program, options: data.programs.map(program => ({ id: program.id, name: program.name })), allLabel: 'Tất cả chương trình' },
+            { name: 'when', label: 'Ngày', type: 'select' as const, value: params.when, options: [{ id: 'today', name: 'Hôm nay' }], allLabel: 'Mọi ngày' },
+            { name: 'q', label: 'Tìm ca dạy', type: 'search' as const, value: params.q },
+          ] : []),
         ]}
       />
 
@@ -131,28 +137,16 @@ function ClassesView({ data, params, canManage }: { data: Loaded; params: Record
     <>
       {canManage && <section className="vibe-card space-y-3">
         <h2 className="text-lg font-semibold">Tạo ca dạy</h2>
-        <p className="text-sm text-[var(--vibe-muted)]">Chọn chương trình và khoảng trình độ. Một ca dạy nhận nhiều học viên ở các trình độ khác nhau; trình độ hiện tại vẫn thuộc từng học viên.</p>
-        <form action={createClass} className="vibe-filter">
-          <ClassCreateLevelFields
-            branches={data.branches}
-            programs={data.programs}
-            levelsByCurriculum={data.levelsByCurriculum}
-            teachers={data.teachers}
-            rooms={data.classRooms}
-          />
-          <label className="vibe-field"><span>Mã ca dạy</span><input name="code" required /></label>
-          <label className="vibe-field"><span>Tên ca dạy</span><input name="name" required /></label>
-          <label className="vibe-field"><span>Loại</span>
-            <select name="class_type" defaultValue="GROUP"><option value="GROUP">Nhóm</option><option value="ONE_ON_ONE">1-1</option></select>
-          </label>
-          <label className="vibe-field"><span>Sức chứa</span><input name="capacity" type="number" min={1} defaultValue={4} required /></label>
-          <label className="vibe-field"><span>Ngày bắt đầu ca</span><input name="start_date" type="date" /></label>
-          <label className="vibe-field"><span>Ngày kết thúc ca</span><input name="end_date" type="date" /></label>
-          <button className="vibe-button vibe-button-primary" type="submit">Tạo ca dạy</button>
-        </form>
-        <p className="text-xs text-[var(--vibe-muted)]">Ca dạy có thể tiếp nhận học viên ở các cấp độ trong phạm vi này. Trình độ hiện tại vẫn được quản lý riêng trên từng học viên.</p>
+        <ClassCreateLevelFields
+          branches={data.branches}
+          programs={data.programs}
+          levelsByCurriculum={data.levelsByCurriculum}
+          teachers={data.teachers}
+          rooms={data.classRooms}
+        />
       </section>}
 
+      {params.when === 'today' && <p className="text-sm text-[var(--vibe-muted)]">Đang xem ca có lịch hôm nay. Mở ca dạy để vào buổi học, hoặc mở hồ sơ nếu buổi chưa được tạo.</p>}
       {!list?.data.length ? <EmptyState>Không có ca dạy phù hợp với bộ lọc.</EmptyState> : (
         <div className="vibe-table-scroll">
           <table className="vibe-table">
@@ -160,7 +154,11 @@ function ClassesView({ data, params, canManage }: { data: Loaded; params: Record
             <tbody>
               {list.data.map(row => (
                 <tr key={row.id}>
-                  <td><Link prefetch={false} href={`/admin/classes/${row.id}`}>{row.name}</Link><p className="text-xs text-[var(--vibe-muted)]">{row.code}</p></td>
+                  <td>
+                    <Link prefetch={false} href={`/admin/classes/${row.id}`}>{row.name}</Link>
+                    <p className="text-xs text-[var(--vibe-muted)]">{row.code}</p>
+                    {params.when === 'today' && <p><Link prefetch={false} className="vibe-button" href={row.openHref}>{row.openLabel}</Link></p>}
+                  </td>
                   <td>{row.courseName}</td>
                   <td>{row.scopeLabel}</td>
                   <td>{row.teacherName}</td>
