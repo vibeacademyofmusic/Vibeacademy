@@ -12,7 +12,6 @@ import {
   statusTone,
   subjectAcademicValid,
   subjectCompletionLabel,
-  subjectContentReady,
   type HealthSubject,
 } from '@/app/admin/programs/model'
 import { AcademicTrail } from '@/app/admin/programs/trail'
@@ -109,7 +108,6 @@ export default async function LevelDetailPage({
       componentCount: own.filter(component => component.status === 'ACTIVE').length,
       activeLessonCount: health.activeLessonCount,
       structureReady: subjectAcademicValid(health),
-      contentReady: subjectContentReady(health),
     }
   })
   const activeSubjects = rows.filter(row => row.subject.status === 'ACTIVE')
@@ -186,7 +184,7 @@ export default async function LevelDetailPage({
         ) : null}
         {visibleRows.length === 0 ? <EmptyState>Chưa có môn học.</EmptyState> : (
           <DataTable
-            headers={['Môn học', 'Trạng thái', 'Bắt buộc', 'Cách hoàn thành', 'Unit / nhóm', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Sẵn sàng nội dung', 'Tác vụ']}
+            headers={['Môn học', 'Trạng thái', 'Bắt buộc', 'Cách hoàn thành', 'Unit / nhóm', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Tác vụ']}
             rows={visibleRows.map(row => [
               <div key="name"><strong>{row.subject.name}</strong><p className="text-xs text-gray-500">{row.subject.code}</p></div>,
               <StatusBadge key="status" tone={statusTone(row.subject.status)}>{statusLabel(row.subject.status)}</StatusBadge>,
@@ -195,7 +193,6 @@ export default async function LevelDetailPage({
               String(row.subject.status === 'ACTIVE' ? row.componentCount : 0),
               String(row.subject.status === 'ACTIVE' ? row.activeLessonCount : 0),
               row.subject.status !== 'ACTIVE' ? 'Chưa áp dụng cho học vụ' : row.structureReady ? 'Đủ cấu trúc học thuật' : 'Cần bổ sung cấu trúc học thuật',
-              row.subject.status !== 'ACTIVE' ? row.activeLessonCount > 0 ? 'Ngừng sử dụng cho hoạt động mới' : 'Chưa phát hành nội dung' : row.contentReady ? 'Đủ nội dung Lesson' : 'Nội dung Lesson chưa đầy đủ',
               <span key="actions" className="flex flex-wrap gap-2">
                 <Link href={`/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${row.subject.id}`}>Mở môn học</Link>
                 <Link href={`/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${row.subject.id}/edit`}>Chỉnh sửa</Link>

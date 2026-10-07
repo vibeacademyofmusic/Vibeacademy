@@ -22,7 +22,6 @@ export default async function CurriculumDetailPage({
   if (!program) notFound()
   const courses = workspace.courses.filter(course => course.curriculumId === program.id)
   const structureGaps = program.attention.filter(row => row.kind === 'structure')
-  const contentGaps = program.attention.filter(row => row.kind === 'content')
   const nextSequence = program.levels.length + 1
 
   return (
@@ -55,18 +54,6 @@ export default async function CurriculumDetailPage({
             ))}
           </ul>
         )}
-      </SectionCard>
-      <SectionCard title="Sẵn sàng nội dung">
-        <p className="text-sm">{program.contentLabel ?? 'Đủ nội dung Lesson'}</p>
-        {contentGaps.length > 0 ? (
-          <ul className="mt-3 space-y-2 text-sm">
-            {contentGaps.map(gap => (
-              <li key={`${gap.subjectId}-content`}>
-                <Link href={`/admin/academic/${program.id}/levels/${gap.levelId}/subjects/${gap.subjectId}`}>{gap.levelName} · {gap.subjectName}</Link>
-              </li>
-            ))}
-          </ul>
-        ) : null}
       </SectionCard>
       <SectionCard title="Cấp độ">
         {program.levels.length === 0 ? <EmptyState>Chưa có cấp độ.</EmptyState> : (

@@ -71,9 +71,9 @@ test('structure health stays separate from content readiness', () => {
   assert.equal(model.programAcademicHealth({ activeLevelCount: 1, activeLevelsMissingActiveSubjects: 0, subjects: [direct] }), 'ready')
   assert.equal(model.contentReadinessLabel(false), 'Nội dung Lesson chưa đầy đủ')
   assert.match(programs, /program\.healthLabel/)
-  assert.match(programs, /program\.contentLabel/)
+  assert.doesNotMatch(programs, /program\.contentLabel|Sẵn sàng nội dung/)
   assert.match(programPage, /Cấu trúc học thuật/)
-  assert.match(programPage, /Sẵn sàng nội dung/)
+  assert.doesNotMatch(programPage, /Sẵn sàng nội dung/)
 })
 
 test('inactive lessons stay out of active counts and rows page past 1000', () => {

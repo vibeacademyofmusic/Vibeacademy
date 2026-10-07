@@ -117,10 +117,7 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
                       <p className={styles.note}>{program.path}</p>
                     </Link>
                     <StatusBadge tone={statusTone(program.status)}>{statusLabel(program.status)}</StatusBadge>
-                    <div>
-                      <StatusBadge tone={program.health === 'incomplete' ? 'warning' : 'success'}>{program.healthLabel}</StatusBadge>
-                      <p className={styles.note}>{program.contentLabel ?? 'Đủ nội dung Lesson'}</p>
-                    </div>
+                    <StatusBadge tone={program.health === 'incomplete' ? 'warning' : 'success'}>{program.healthLabel}</StatusBadge>
                     <div className={styles.actions}>
                       <Link href={`${href}/edit`}>Chỉnh sửa</Link>
                       <form action={setCurriculumStatus}>

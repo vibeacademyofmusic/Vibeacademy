@@ -100,7 +100,7 @@ test('SH10 program summary does not mark a direct assessment subject incomplete'
   assert.equal(health, 'ready')
   assert.equal(model.healthLabel(health), 'Đủ cấu trúc học thuật')
   assert.equal(model.contentReadinessLabel(false), 'Nội dung Lesson chưa đầy đủ')
-  assert.match(programsPage, /contentLabel/)
+  assert.doesNotMatch(programsPage, /contentLabel|Sẵn sàng nội dung/)
   assert.doesNotMatch(programsPage, /Cần bổ sung cấu trúc"/)
 })
 
