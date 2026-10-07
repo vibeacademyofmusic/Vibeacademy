@@ -3,8 +3,9 @@ import Link from 'next/link'
 import { AppPage, DataTable, EmptyState, FilterBar, FormField, InlineNotice, MetricCard, PageHeader, SectionCard, SelectField, StatusBadge } from '@/app/admin/_components/vibe'
 import { createCurriculum, setCurriculumStatus } from '@/app/admin/academic/actions'
 
-import { loadWorkspace, type CourseView, type ProgramView } from './data'
+import { loadWorkspace, type CourseView } from './data'
 import { statusLabel, statusTone } from './model'
+import styles from './program-rows.module.css'
 
 type Filters = {
   view?: string
@@ -49,7 +50,6 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
     if (filters.gap === 'no-class' && !course.needsClass) return false
     return true
   })
-  const selectedProgram = workspace.programs.find(program => program.id === filters.selected)
   const selectedCourse = workspace.courses.find(course => course.id === filters.selected)
 
   return (
@@ -98,15 +98,43 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
           : <Link className="vibe-button" href={hrefFor(filters, { gap: 'no-class', status: undefined })}>Cần xử lý</Link>}
       </FilterBar>
       {view === 'programs' ? (
-        <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <SectionCard title="Chương trình">
           {visiblePrograms.length === 0 ? <EmptyState>{workspace.programs.length === 0 ? 'Chưa có chương trình.' : 'Không có chương trình phù hợp bộ lọc.'}</EmptyState> : (
-            <DataTable
-              headers={['Chương trình', 'Trạng thái', 'Cấp độ', 'Môn học', 'Nhóm đánh giá', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Sẵn sàng nội dung', 'Tác vụ']}
-              rows={visiblePrograms.map(program => programRow(program))}
-            />
+            <div className={styles.list}>
+              <div className={styles.head}>
+                <span>Chương trình</span>
+                <span>Trạng thái</span>
+                <span>Cấu trúc học thuật</span>
+                <span>Tác vụ</span>
+              </div>
+              {visiblePrograms.map(program => {
+                const href = `/admin/academic/${program.id}`
+                return (
+                  <div key={program.id} className={styles.row}>
+                    <Link className={styles.name} href={href}>
+                      <strong>{program.name}</strong>
+                      <p className={styles.note}>{program.code}</p>
+                      <p className={styles.note}>{program.path}</p>
+                    </Link>
+                    <StatusBadge tone={statusTone(program.status)}>{statusLabel(program.status)}</StatusBadge>
+                    <div>
+                      <StatusBadge tone={program.health === 'incomplete' ? 'warning' : 'success'}>{program.healthLabel}</StatusBadge>
+                      <p className={styles.note}>{program.contentLabel ?? 'Đủ nội dung Lesson'}</p>
+                    </div>
+                    <div className={styles.actions}>
+                      <Link href={`${href}/edit`}>Chỉnh sửa</Link>
+                      <form action={setCurriculumStatus}>
+                        <input type="hidden" name="id" value={program.id} />
+                        <input type="hidden" name="status" value={program.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
+                        <button className="vibe-button" type="submit">{program.status === 'ACTIVE' ? 'Ngừng hoạt động' : 'Kích hoạt'}</button>
+                      </form>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           )}
-          <ProgramPanel program={selectedProgram} />
-        </div>
+        </SectionCard>
       ) : (
         <>
         <InlineNotice>Hồ sơ khóa học cũ được giữ để đối chiếu. Không tạo khóa học mới từ màn hình này.</InlineNotice>
@@ -126,20 +154,6 @@ export default async function ProgramsWorkspacePage({ searchParams }: { searchPa
   )
 }
 
-function programRow(program: ProgramView) {
-  return [
-    <div key="name"><strong>{program.name}</strong><p className="text-xs text-gray-500">{program.code}</p><p className="text-xs text-gray-500">{program.path}</p></div>,
-    <StatusBadge key="status" tone={statusTone(program.status)}>{statusLabel(program.status)}</StatusBadge>,
-    String(program.levelCount),
-    String(program.subjectCount),
-    String(program.componentCount),
-    String(program.lessonCount),
-    <StatusBadge key="health" tone={program.health === 'incomplete' ? 'warning' : 'success'}>{program.healthLabel}</StatusBadge>,
-    program.contentLabel ?? 'Đủ nội dung Lesson',
-    <Link key="open" href={`/admin/academic/${program.id}`}>Mở chương trình</Link>,
-  ]
-}
-
 function courseRow(course: CourseView, filters: Filters) {
   return [
     <div key="name"><strong>{course.name}</strong><p className="text-xs text-gray-500">{course.code}</p></div>,
@@ -149,31 +163,6 @@ function courseRow(course: CourseView, filters: Filters) {
     `${course.classCount} lớp · ${course.enrollmentCount} học viên`,
     <Link key="open" href={hrefFor(filters, { view: 'courses', selected: course.id })}>Mở</Link>,
   ]
-}
-
-function ProgramPanel({ program }: { program?: ProgramView }) {
-  if (!program) return <SectionCard title="Chương trình"><p className="text-sm text-gray-500">Chọn một chương trình để xem cấu trúc.</p></SectionCard>
-  const ordered = [...program.levels].sort((a, b) => a.sequence - b.sequence)
-  const first = ordered[0]?.name
-  const last = ordered[ordered.length - 1]?.name
-  return (
-    <SectionCard title={program.name}>
-      <p className="text-sm">{ordered.length ? `${first === last ? first : `${first} → ${last}`}` : 'Chưa có cấp độ'}</p>
-      <p className="mt-2 text-sm text-gray-500">└─ Môn<br />&nbsp;&nbsp;&nbsp;└─ Lesson</p>
-      <p className="mt-3 text-xs text-gray-500">{program.meta}</p>
-      <p className="mt-3"><StatusBadge tone={program.health === 'incomplete' ? 'warning' : statusTone(program.status)}>{program.healthLabel}</StatusBadge></p>
-      {program.contentLabel ? <p className="mt-2 text-xs text-gray-500">{program.contentLabel}</p> : null}
-      <div className="mt-4 flex flex-col gap-2">
-        <Link className="vibe-button-primary" href={`/admin/academic/${program.id}`}>Mở cấu trúc chương trình</Link>
-        <Link className="vibe-button" href={`/admin/academic/${program.id}/edit`}>Chỉnh sửa chương trình</Link>
-        <form action={setCurriculumStatus}>
-          <input type="hidden" name="id" value={program.id} />
-          <input type="hidden" name="status" value={program.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
-          <button className="vibe-button" type="submit">{program.status === 'ACTIVE' ? 'Ngừng hoạt động' : 'Kích hoạt'}</button>
-        </form>
-      </div>
-    </SectionCard>
-  )
 }
 
 function CoursePanel({ course }: { course?: CourseView }) {

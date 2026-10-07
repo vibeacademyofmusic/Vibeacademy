@@ -35,7 +35,7 @@ test('H02 summary path uses the first and last level', () => {
     { id: 'b', name: 'Grade 8', sequence: 9 },
   ]), 'Pre → Grade 8 → Môn → Lesson')
   assert.equal(model.structureMeta(9, 36, 360), '9 Level · 36 môn · 360 Lesson')
-  assert.match(page, /program\.meta/)
+  assert.match(page, /program\.path/)
 })
 
 test('H04 counts stay secondary to the hierarchy path', () => {
