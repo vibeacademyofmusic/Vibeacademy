@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { AppPage, DataTable, EmptyState, FormField, InlineNotice, MetricCard, PageHeader, SectionCard, SelectField, StatusBadge } from '@/app/admin/_components/vibe'
+import { AppPage, DataTable, EmptyState, FormField, InlineNotice, PageHeader, SectionCard, SelectField, StatusBadge } from '@/app/admin/_components/vibe'
 import { createCurriculumLevel, setCurriculumLevelStatus } from '@/app/admin/academic/actions'
 import { loadWorkspace } from '@/app/admin/programs/data'
 import { levelTypeLabel, statusLabel, statusTone, subjectCompletionLabel } from '@/app/admin/programs/model'
 import { AcademicTrail } from '@/app/admin/programs/trail'
+import styles from './level-rows.module.css'
 
 export default async function CurriculumDetailPage({
   params,
@@ -41,12 +42,6 @@ export default async function CurriculumDetailPage({
           ))}
         </nav>
       ) : null}
-      <div className="vibe-metrics">
-        <MetricCard title="Cấp độ" value={String(program.levelCount)} />
-        <MetricCard title="Môn học" value={String(program.subjectCount)} />
-        <MetricCard title="Nhóm đánh giá" value={String(program.componentCount)} />
-        <MetricCard title="Lesson đang hoạt động" value={String(program.lessonCount)} />
-      </div>
       <SectionCard title="Cấu trúc học thuật">
         <p><StatusBadge tone={program.health === 'incomplete' ? 'warning' : 'success'}>{program.healthLabel}</StatusBadge></p>
         <p className="mt-3 text-sm text-gray-500">{program.path}</p>
@@ -75,27 +70,36 @@ export default async function CurriculumDetailPage({
       </SectionCard>
       <SectionCard title="Cấp độ">
         {program.levels.length === 0 ? <EmptyState>Chưa có cấp độ.</EmptyState> : (
-          <DataTable
-            headers={['Cấp độ', 'Trạng thái', 'Môn học', 'Nhóm đánh giá', 'Lesson đang hoạt động', 'Cấu trúc học thuật', 'Tác vụ']}
-            rows={program.levels.map(level => [
-              <div key="name"><strong>{level.name}</strong><p className="text-xs text-gray-500">{level.code} · {levelTypeLabel(level.levelType)} · {subjectCompletionLabel(level.completionRule)}</p></div>,
-              <StatusBadge key="status" tone={statusTone(level.status)}>{statusLabel(level.status)}</StatusBadge>,
-              String(level.subjectCount),
-              String(level.componentCount),
-              String(level.activeLessonCount),
-              <StatusBadge key="health" tone={level.health === 'incomplete' ? 'warning' : 'success'}>{level.health === 'incomplete' ? 'Cần bổ sung cấu trúc học thuật' : 'Đủ cấu trúc học thuật'}</StatusBadge>,
-              <span key="actions" className="flex flex-wrap gap-2">
-                <Link href={`/admin/academic/${program.id}/levels/${level.id}`}>Mở cấp độ</Link>
-                <Link href={`/admin/academic/${program.id}/levels/${level.id}/edit`}>Chỉnh sửa</Link>
-                <form action={setCurriculumLevelStatus}>
-                  <input type="hidden" name="curriculum_id" value={program.id} />
-                  <input type="hidden" name="level_id" value={level.id} />
-                  <input type="hidden" name="status" value={level.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
-                  <button className="vibe-button" type="submit">{level.status === 'ACTIVE' ? 'Ngừng hoạt động' : 'Kích hoạt'}</button>
-                </form>
-              </span>,
-            ])}
-          />
+          <div className={styles.list}>
+            <div className={styles.head}>
+              <span>Cấp độ</span>
+              <span>Trạng thái</span>
+              <span>Cấu trúc học thuật</span>
+              <span>Tác vụ</span>
+            </div>
+            {program.levels.map(level => {
+              const href = `/admin/academic/${program.id}/levels/${level.id}`
+              return (
+                <div key={level.id} className={styles.row}>
+                  <Link className={styles.name} href={href}>
+                    <strong>{level.name}</strong>
+                    <p className="text-xs text-gray-500">{level.code} · {levelTypeLabel(level.levelType)} · {subjectCompletionLabel(level.completionRule)}</p>
+                  </Link>
+                  <StatusBadge tone={statusTone(level.status)}>{statusLabel(level.status)}</StatusBadge>
+                  <StatusBadge tone={level.health === 'incomplete' ? 'warning' : 'success'}>{level.health === 'incomplete' ? 'Cần bổ sung cấu trúc học thuật' : 'Đủ cấu trúc học thuật'}</StatusBadge>
+                  <div className={styles.actions}>
+                    <Link href={`${href}/edit`}>Chỉnh sửa</Link>
+                    <form action={setCurriculumLevelStatus}>
+                      <input type="hidden" name="curriculum_id" value={program.id} />
+                      <input type="hidden" name="level_id" value={level.id} />
+                      <input type="hidden" name="status" value={level.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
+                      <button className="vibe-button" type="submit">{level.status === 'ACTIVE' ? 'Ngừng hoạt động' : 'Kích hoạt'}</button>
+                    </form>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         )}
       </SectionCard>
       <SectionCard title="Hồ sơ khóa học cũ">
