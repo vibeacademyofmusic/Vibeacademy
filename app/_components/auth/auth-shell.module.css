@@ -25,62 +25,110 @@
 
 .brand {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 42px 28px 36px;
+  padding: 36px 28px;
   background:
     radial-gradient(circle at 50% 18%, rgb(255 236 205 / 90%), transparent 42%),
     linear-gradient(180deg, #fbf3e7 0%, #f3d7b4 100%);
   box-shadow: inset -3px 0 0 #d7a15a;
 }
 
+.stage {
+  display: grid;
+  width: 100%;
+  min-height: 250px;
+  place-items: center;
+}
+
+.logoFrame,
+.motto {
+  grid-area: 1 / 1;
+  width: 100%;
+}
+
+.logoFrame {
+  display: grid;
+  place-items: center;
+  animation: frame-logo 9s ease-in-out infinite;
+}
+
 .logo {
-  width: min(250px, 78%);
+  width: min(250px, 82%);
   height: auto;
 }
 
 .motto {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 15.5rem;
+  display: grid;
+  justify-items: center;
   margin: 0;
   color: #6d452c;
-  font-size: 20px;
+  text-align: center;
+  animation: frame-type 9s ease-in-out infinite;
+}
+
+.kicker,
+.years,
+.line {
+  display: block;
+  animation: line-in 9s ease infinite;
+}
+
+.kicker {
+  margin-bottom: 6px;
+  color: #b86a22;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.years {
+  color: #6d452c;
+  font-size: 58px;
+  font-weight: 750;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  animation-delay: 0.12s;
+}
+
+.years b {
+  color: #d42327;
+  font-weight: 750;
+}
+
+.line {
+  margin-top: 8px;
+  font-size: 22px;
   font-weight: 750;
   letter-spacing: -0.03em;
-  line-height: 1.35;
-  text-align: center;
+  line-height: 1.15;
 }
 
-.motto span {
-  display: inline-block;
-  margin: 0 0.14em;
-  animation: motto-float 3.4s ease-in-out infinite;
+.line:nth-of-type(3) { animation-delay: 0.22s; }
+.line:nth-of-type(4) { animation-delay: 0.34s; color: #9a6234; }
+
+@keyframes frame-logo {
+  0%, 36% { opacity: 1; transform: scale(1); }
+  46%, 90% { opacity: 0; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-.motto span:nth-child(2) {
-  color: #d42327;
+@keyframes frame-type {
+  0%, 38% { opacity: 0; visibility: hidden; }
+  48%, 88% { opacity: 1; visibility: visible; }
+  98%, 100% { opacity: 0; visibility: hidden; }
 }
 
-@keyframes motto-float {
-  0%, 100% { transform: translateY(0); color: #6d452c; }
-  50% { transform: translateY(-4px); color: #b86a22; }
-}
-
-.motto span:nth-child(2) {
-  animation-name: motto-mark;
-}
-
-@keyframes motto-mark {
-  0%, 100% { transform: translateY(0) scale(1); color: #d42327; }
-  50% { transform: translateY(-5px) scale(1.08); color: #f0b040; }
+@keyframes line-in {
+  0%, 42% { opacity: 0; transform: translateY(16px); }
+  54%, 86% { opacity: 1; transform: translateY(0); }
+  96%, 100% { opacity: 0; transform: translateY(-10px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .motto span { animation: none; }
+  .stage { display: flex; flex-direction: column; gap: 18px; min-height: 0; }
+  .logoFrame, .motto, .kicker, .years, .line { animation: none; opacity: 1; visibility: visible; transform: none; }
 }
 
 .body {
@@ -234,14 +282,14 @@
   }
 
   .brand {
-    min-height: 0;
-    padding: 28px 20px 22px;
+    padding: 24px 20px;
     box-shadow: inset 0 -3px 0 #d7a15a;
   }
 
-  .logo {
-    width: min(196px, 62%);
-  }
+  .stage { min-height: 210px; }
+  .logo { width: min(190px, 68%); }
+  .years { font-size: 48px; }
+  .line { font-size: 20px; }
 
   .body {
     padding: 28px 22px 24px;

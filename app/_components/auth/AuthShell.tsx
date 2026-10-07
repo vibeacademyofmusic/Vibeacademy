@@ -5,12 +5,17 @@ export default function AuthShell({ title, description, children }: { title: str
   return <main className={styles.page}>
     <section className={styles.panel} aria-labelledby="auth-title">
       <div className={styles.brand}>
-        <img className={styles.logo} src="/vibe-logo.png" alt="Vibe Academy of Music & Cinema" width={3543} height={2362} />
-        <p className={styles.motto}>
-          {['Hơn', '10', 'năm', 'sự', 'nghiệp', 'giáo', 'dục', 'âm', 'nhạc'].map((word, index) => (
-            <span key={word} style={{ animationDelay: `${index * 0.16}s` }}>{word}</span>
-          ))}
-        </p>
+        <div className={styles.stage}>
+          <div className={styles.logoFrame}>
+            <img className={styles.logo} src="/vibe-logo.png" alt="Vibe Academy of Music & Cinema" width={3543} height={2362} />
+          </div>
+          <p className={styles.motto}>
+            <span className={styles.kicker}>Hơn</span>
+            <span className={styles.years}><b>10</b> năm</span>
+            <span className={styles.line}>sự nghiệp</span>
+            <span className={styles.line}>giáo dục âm nhạc</span>
+          </p>
+        </div>
       </div>
       <div className={styles.body}>
         <header>
