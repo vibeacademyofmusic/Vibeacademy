@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import AuthShell from '@/app/_components/auth/AuthShell'
+import styles from '@/app/_components/auth/auth-shell.module.css'
 import { UpdatePasswordForm } from './form'
 
 export default async function UpdatePasswordPage({
@@ -8,14 +10,10 @@ export default async function UpdatePasswordPage({
 }) {
   const { error } = await searchParams
   return (
-    <main className="vibe-admin flex min-h-screen items-center justify-center px-4 py-10">
-      <section className="vibe-card w-full max-w-md">
-        <h1>Đặt mật khẩu mới</h1>
-        <p className="mt-2 text-sm text-[var(--vibe-muted)]">Nhập mật khẩu mới cho tài khoản thí điểm. Mật khẩu này dùng để đăng nhập bản xem trước.</p>
-        {error ? <p className="mt-4 text-sm text-[var(--vibe-danger,#9b2c2c)]">{error}</p> : null}
-        <UpdatePasswordForm />
-        <p className="mt-6 text-sm"><Link className="underline" href="/login">Quay lại đăng nhập</Link></p>
-      </section>
-    </main>
+    <AuthShell title="Đặt mật khẩu mới" description="Nhập mật khẩu mới cho tài khoản. Mật khẩu này dùng để đăng nhập.">
+      {error ? <p className={styles.alert} role="alert">{error}</p> : null}
+      <UpdatePasswordForm />
+      <p className={styles.secondary}><Link href="/login">Quay lại đăng nhập</Link></p>
+    </AuthShell>
   )
 }

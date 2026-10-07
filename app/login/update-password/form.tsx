@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { passwordSaveMessage } from '@/lib/auth/preview-recovery'
 import { createClient } from '@/lib/supabase/client'
+import styles from '@/app/_components/auth/auth-shell.module.css'
 
 export function UpdatePasswordForm({ client }: { client?: SupabaseClient }) {
   const [error, setError] = useState('')
@@ -44,18 +45,18 @@ export function UpdatePasswordForm({ client }: { client?: SupabaseClient }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 space-y-4">
-      {error ? <p className="text-sm text-[var(--vibe-danger,#9b2c2c)]">{error}</p> : null}
+    <form onSubmit={onSubmit} className={styles.form}>
+      {error ? <p className={styles.alert} role="alert">{error}</p> : null}
       {client ? <p className="text-sm text-[var(--vibe-muted)]">Phiên đặt mật khẩu còn hiệu lực. Mật khẩu mới phải khác mật khẩu hiện tại.</p> : null}
-      <label className="block text-sm font-semibold text-[var(--vibe-navy)]" htmlFor="password">
-        Mật khẩu mới
-        <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" className="mt-2 w-full border px-3 py-2" />
+      <label className={styles.field} htmlFor="password">
+        <span>Mật khẩu mới</span>
+        <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" />
       </label>
-      <label className="block text-sm font-semibold text-[var(--vibe-navy)]" htmlFor="confirm">
-        Nhập lại mật khẩu
-        <input id="confirm" name="confirm" type="password" required minLength={8} autoComplete="new-password" className="mt-2 w-full border px-3 py-2" />
+      <label className={styles.field} htmlFor="confirm">
+        <span>Nhập lại mật khẩu</span>
+        <input id="confirm" name="confirm" type="password" required minLength={8} autoComplete="new-password" />
       </label>
-      <button className="vibe-button vibe-button-primary w-full" type="submit" disabled={pending}>
+      <button className={styles.submit} type="submit" disabled={pending}>
         {pending ? 'Đang lưu...' : 'Lưu mật khẩu'}
       </button>
     </form>

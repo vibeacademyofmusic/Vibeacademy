@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { FormField, InlineNotice } from '@/app/admin/_components/vibe'
+import { InlineNotice } from '@/app/admin/_components/vibe'
+import styles from '@/app/_components/auth/auth-shell.module.css'
 import { createRecoveryClient, endRecoverySession, recoveryProofStore } from '@/lib/supabase/recovery-client'
 import { beginPasswordRecovery, changeRecoveredPassword, expiredRecoveryMessage, recoveryError, recoverySuccessMessage } from '@/lib/auth/password-recovery'
 
@@ -46,13 +47,13 @@ export default function UpdatePasswordForm() {
     } catch { setError(recoveryError(null)) } finally { setPending(false) }
   }
   if (state === 'checking') return <InlineNotice>Đang kiểm tra liên kết khôi phục…</InlineNotice>
-  if (state === 'invalid') return <div className="space-y-5"><InlineNotice tone="error">{expiredRecoveryMessage}</InlineNotice><Link href="/forgot-password" className="vibe-button vibe-button-primary w-full">Gửi lại liên kết</Link><Link href="/login" className="vibe-button w-full">Quay lại đăng nhập</Link></div>
-  if (state === 'success') return <div className="space-y-5"><InlineNotice>{recoverySuccessMessage} Bạn sẽ được chuyển về trang đăng nhập.</InlineNotice><Link href="/login?recovery=success" className="vibe-button w-full">Đăng nhập</Link></div>
-  return <form onSubmit={submit} className="space-y-5" aria-busy={pending}>
-    {error && <InlineNotice tone="error">{error}</InlineNotice>}
-    <FormField label="Mật khẩu mới" name="password" type="password" autoComplete="new-password" required minLength={6} disabled={pending}/>
-    <FormField label="Xác nhận mật khẩu" name="confirmation" type="password" autoComplete="new-password" required minLength={6} disabled={pending}/>
+  if (state === 'invalid') return <div className={styles.form}><p className={styles.alert} role="alert">{expiredRecoveryMessage}</p><Link href="/forgot-password" className={styles.submit}>Gửi lại liên kết</Link><p className={styles.secondary}><Link href="/login">Quay lại đăng nhập</Link></p></div>
+  if (state === 'success') return <div><p className={styles.success} role="status">{recoverySuccessMessage} Bạn sẽ được chuyển về trang đăng nhập.</p><p className={styles.secondary}><Link href="/login?recovery=success">Đăng nhập</Link></p></div>
+  return <form onSubmit={submit} className={styles.form} aria-busy={pending}>
+    {error && <p className={styles.alert} role="alert">{error}</p>}
+    <label className={styles.field} htmlFor="password"><span>Mật khẩu mới</span><input id="password" name="password" type="password" autoComplete="new-password" required minLength={6} disabled={pending}/></label>
+    <label className={styles.field} htmlFor="confirmation"><span>Xác nhận mật khẩu</span><input id="confirmation" name="confirmation" type="password" autoComplete="new-password" required minLength={6} disabled={pending}/></label>
     <p className="text-xs text-[var(--vibe-muted)]">Dùng mật khẩu dài, khó đoán và chưa dùng cho tài khoản khác.</p>
-    <button className="vibe-button vibe-button-primary w-full" disabled={pending}>{pending ? 'Đang cập nhật…' : 'Cập nhật mật khẩu'}</button>
+    <button className={styles.submit} disabled={pending}>{pending ? 'Đang cập nhật…' : 'Cập nhật mật khẩu'}</button>
   </form>
 }

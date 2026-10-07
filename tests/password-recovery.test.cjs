@@ -4,7 +4,7 @@ const fs = require('node:fs')
 const ts = require('typescript')
 function load(file) {
  const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText
- const loaded={exports:{}};new Function('require','module','exports',code)(require,loaded,loaded.exports);return loaded.exports
+ const module={exports:{}};new Function('require','module','exports',code)(require,module,module.exports);return module.exports
 }
 const recovery=load('lib/auth/password-recovery.ts')
 const site=load('lib/auth/site-url.ts')
@@ -80,7 +80,7 @@ test('friendly errors do not expose provider strings',()=>{
 })
 test('login keeps sign-in and offers forgot password; recovery pages are present',()=>{
  const login=fs.readFileSync('app/login/page.tsx','utf8')
- assert.match(login,/Quên mật khẩu\?/);assert.match(login,/Sign in/);assert.match(login,/action=\{login\}/)
+ assert.match(login,/Quên mật khẩu\?/);assert.match(login,/Đăng nhập/);assert.match(login,/action=\{login\}/)
  assert.match(fs.readFileSync('app/forgot-password/page.tsx','utf8'),/Quên mật khẩu/)
  assert.match(fs.readFileSync('app/forgot-password/ForgotPasswordForm.tsx','utf8'),/Gửi liên kết đặt lại mật khẩu/)
  assert.match(fs.readFileSync('app/auth/update-password/page.tsx','utf8'),/Đặt mật khẩu mới/)
