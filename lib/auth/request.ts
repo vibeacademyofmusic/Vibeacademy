@@ -1,5 +1,6 @@
 import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { signingKeys } from '@/lib/supabase/signing-keys'
 
 /**
  * Identity for the current Server Component render only.
@@ -11,7 +12,8 @@ export const requestClient = cache(createClient)
 
 export const requestClaims = cache(async () => {
   const db = await requestClient()
-  return db.auth.getClaims()
+  const jwks = await signingKeys()
+  return db.auth.getClaims(undefined, jwks ? { jwks } : undefined)
 })
 
 export const requestRole = cache(async (roleCode: string) => {

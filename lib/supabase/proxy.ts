@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { signingKeys } from '@/lib/supabase/signing-keys'
 
 function continueRequest(request: NextRequest) {
   const headers = new Headers(request.headers)
@@ -38,7 +39,8 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getClaims()
+  const jwks = await signingKeys()
+  await supabase.auth.getClaims(undefined, jwks ? { jwks } : undefined)
 
   return supabaseResponse
 }

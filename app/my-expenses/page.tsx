@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation'
 
 import { logout } from '@/app/login/actions'
-import { createClient } from '@/lib/supabase/server'
+import { requestClaims } from '@/lib/auth/request'
 import SelfServiceView from '@/app/admin/hr/expenses/SelfServiceView'
+import { loadExpenses } from '@/app/admin/hr/expenses/data'
 import type { Params } from '@/app/admin/finance/operations'
 
 export default async function MyExpenses({
@@ -10,12 +11,11 @@ export default async function MyExpenses({
 }: {
   searchParams: Promise<Params>
 }) {
-  const db = await createClient()
-  const auth = await db.auth.getClaims()
-  if (auth.error || !auth.data?.claims) redirect('/login')
-
-  const context = await db.rpc('get_expense_claim_v2_create_context')
-  if (context.error || !context.data) {
+  const params = await searchParams
+  const authResult = await requestClaims()
+  if (authResult.error || !authResult.data?.claims) redirect('/login')
+  const data = await loadExpenses(params, true)
+  if (!data.context) {
     return (
       <main className="vibe-admin min-h-screen bg-[var(--vibe-surface-soft)] px-4 py-8 text-[var(--vibe-navy)]">
         <div className="mx-auto max-w-4xl rounded-xl border border-[var(--vibe-line)] bg-white p-6">
@@ -30,7 +30,7 @@ export default async function MyExpenses({
   return (
     <div className="vibe-admin bg-[var(--vibe-surface-soft)] px-4 py-6 text-[var(--vibe-navy)] sm:px-8">
       <div className="mx-auto max-w-7xl">
-        <SelfServiceView searchParams={searchParams} basePath="/my-expenses" />
+        <SelfServiceView searchParams={Promise.resolve(params)} basePath="/my-expenses" initial={data} />
       </div>
     </div>
   )

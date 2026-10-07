@@ -1,16 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
+import { requestClaims, requestClient } from '@/lib/auth/request'
 import { pageNumber, pageSize, uuidPattern, vietnamDateTime, type Params } from '../../finance/operations'
 import { expenseStates, type ClaimDetail, type ClaimListItem, type CreateContext } from './model'
 
 export async function loadExpenses(params: Params, forEmployee = false) {
-  const db = await createClient()
+  const db = await requestClient()
   const page = pageNumber(params.page)
   const status = expenseStates[params.status ?? ''] ? params.status! : null
   const claimId = uuidPattern.test(params.claim ?? '') ? params.claim! : null
   const [claimsResult, contextResult, authResult, detailResult] = await Promise.all([
     db.rpc('list_employee_expense_claims_v2', { p_status: status, p_limit: pageSize, p_offset: (page - 1) * pageSize }),
     db.rpc('get_expense_claim_v2_create_context'),
-    db.auth.getClaims(),
+    requestClaims(),
     claimId ? db.rpc('get_employee_expense_claim', { p_claim: claimId }) : Promise.resolve({ data: null, error: null }),
   ])
   const listPayload = claimsResult.data && typeof claimsResult.data === 'object' ? claimsResult.data as Record<string, unknown> : null

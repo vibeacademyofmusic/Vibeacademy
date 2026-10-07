@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { requestClaims, requestClient, requestRole } from '@/lib/auth/request'
 import { displayLabel } from '@/lib/display'
 
 const tabs = { schedule: 'Lịch dạy', classes: 'Lớp đang phụ trách', history: 'Buổi đã thực dạy', journals: 'Nhật ký được phép xem', feedback: 'Tổng hợp phản hồi' }
@@ -12,15 +12,17 @@ type Feedback = { month: string; response_count: number; overall_average: number
 function time(value: string) { return new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'short' }).format(new Date(value)) }
 
 export default async function TeacherPortal({ searchParams }: { searchParams: Promise<{ tab?: string; page?: string }> }) {
-  const params = await searchParams, db = await createClient()
-  const auth = await db.auth.getClaims()
-  if (auth.error || !auth.data?.claims) redirect('/login')
-  const role = await db.rpc('has_role', { role_code: 'TEACHER' })
-  if (role.error || role.data !== true) redirect('/login?error=Unauthorized')
+  const params = await searchParams
   const tab: Tab = params.tab && Object.hasOwn(tabs, params.tab) ? params.tab as Tab : 'schedule'
   const page = Math.min(4001, Math.max(1, Number.parseInt(params.page || '1', 10) || 1))
   const rpc = { schedule: 'teacher_portal_sessions', history: 'teacher_portal_sessions', classes: 'teacher_portal_classes', journals: 'teacher_portal_journals', feedback: 'teacher_feedback_summary' }[tab]
-  const result = await db.rpc(rpc, { p_offset: (page - 1) * 25, ...(['schedule', 'history'].includes(tab) ? { p_history: tab === 'history' } : {}) })
+  const authResult = await requestClaims()
+  if (authResult.error || !authResult.data?.claims) redirect('/login')
+  const [roleResult, result] = await Promise.all([
+    requestRole('TEACHER'),
+    requestClient().then(db => db.rpc(rpc, { p_offset: (page - 1) * 25, ...(['schedule', 'history'].includes(tab) ? { p_history: tab === 'history' } : {}) })),
+  ])
+  if (roleResult.error || roleResult.data !== true) redirect('/login?error=Unauthorized')
   if (result.error) throw new Error('Không thể tải dữ liệu giáo viên. Vui lòng thử lại.')
   const data = result.data || [], entries = data.slice(0, 25)
   const href = (nextPage: number, nextTab = tab) => `/operations/teacher?${new URLSearchParams({ tab: nextTab, page: String(nextPage) })}`

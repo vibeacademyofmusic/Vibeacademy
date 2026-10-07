@@ -53,9 +53,9 @@ function Workflow({ status, posted }: { status?: string; posted: boolean }) {
   </ol>
 }
 
-export default async function Expenses({ searchParams, basePath = '/admin/hr/expenses' }: { searchParams: Promise<Params>; basePath?: SelfPath }) {
+export default async function Expenses({ searchParams, basePath = '/admin/hr/expenses', initial }: { searchParams: Promise<Params>; basePath?: SelfPath; initial?: Awaited<ReturnType<typeof loadExpenses>> }) {
   const params = await searchParams
-  const data = await loadExpenses(params, basePath === '/my-expenses')
+  const data = initial ?? await loadExpenses(params, basePath === '/my-expenses')
   const claim = data.detail?.claim
   const owner = Boolean(claim && claim.created_by === data.actorId)
   const editable = Boolean(claim && owner && ['DRAFT', 'RETURNED'].includes(claim.status))
