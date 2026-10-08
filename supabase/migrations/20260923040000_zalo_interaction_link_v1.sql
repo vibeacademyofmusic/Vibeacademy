@@ -108,7 +108,13 @@ begin
 end;
 $$;
 
--- Replayability repair: 20260922310000 created the same signature with a different\n-- table return shape. Drop that legacy projection before replacing it with the\n-- interaction-link projection defined by this migration. Existing databases that\n-- already applied this migration are unchanged.\ndrop function if exists public.registration_zalo_connection(uuid);\n\ncreate function public.registration_zalo_connection(p_application uuid)
+-- Replayability repair: 20260922310000 created the same signature with a different
+-- table return shape. Drop that legacy projection before replacing it with the
+-- interaction-link projection defined by this migration. Existing databases that
+-- already applied this migration are unchanged.
+drop function if exists public.registration_zalo_connection(uuid);
+
+create function public.registration_zalo_connection(p_application uuid)
 returns table(
   link_status text,
   external_link_key text,
