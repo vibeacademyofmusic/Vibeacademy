@@ -3,7 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { isCanonicalProgramCode } from '@/lib/academic/canonical-programs'
 import { createClient } from '@/lib/supabase/server'
+import { lessonCodeValid, lessonWriteError, missingLessonParentMessage, normalizeLessonCode } from '@/app/admin/academic/lesson-rules'
 
 async function requireSuperAdmin() {
   const supabase = await createClient()
@@ -51,15 +53,21 @@ export async function createCurriculum(formData: FormData) {
     )
   }
 
-  const { error } = await supabase.from('curriculums').insert({
+  if (!isCanonicalProgramCode(code)) {
+    redirect(
+      '/admin/academic?error=Ch%E1%BB%89%20b%E1%BB%91n%20ch%C6%B0%C6%A1ng%20tr%C3%ACnh%20Piano%2C%20Guitar%2C%20Violin%20v%C3%A0%20Tr%E1%BB%91ng%20%C4%91%C6%B0%E1%BB%A3c%20d%C3%B9ng%20cho%20v%E1%BA%ADn%20h%C3%A0nh.'
+    )
+  }
+
+  const { data: created, error } = await supabase.from('curriculums').insert({
     code,
     name,
     description: description || null,
     status: 'ACTIVE',
-  })
+  }).select('id').single()
 
-  if (error) {
-    if (error.code === '23505') {
+  if (error || !created) {
+    if (error?.code === '23505') {
       redirect(
         '/admin/academic?error=This%20curriculum%20code%20already%20exists'
       )
@@ -72,10 +80,9 @@ export async function createCurriculum(formData: FormData) {
 
   revalidatePath('/admin')
   revalidatePath('/admin/academic')
+  revalidatePath('/admin/programs')
 
-  redirect(
-    '/admin/academic?success=Curriculum%20created%20successfully'
-  )
+  redirect(`/admin/academic/${created.id}`)
 }
 
 export async function setCurriculumStatus(formData: FormData) {
@@ -108,7 +115,7 @@ export async function setCurriculumStatus(formData: FormData) {
   revalidatePath('/admin/academic')
 
   redirect(
-    '/admin/academic?success=Curriculum%20status%20updated'
+    `/admin/academic?success=${encodeURIComponent('Đã cập nhật trạng thái chương trình')}`
   )
 }
 export async function createCurriculumLevel(formData: FormData) {
@@ -210,7 +217,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(`/admin/academic/${curriculumId}`)
   
     redirect(
-      `/admin/academic/${curriculumId}?success=Level%20created%20successfully`
+      `/admin/academic/${curriculumId}?success=${encodeURIComponent('Đã tạo cấp độ')}`
     )
   }
   export async function createCurriculumSubject(formData: FormData) {
@@ -250,8 +257,7 @@ export async function createCurriculumLevel(formData: FormData) {
     )
   
     const completionRule = String(
-      formData.get('completion_rule') ??
-        'ALL_REQUIRED_COMPONENTS'
+      formData.get('completion_rule') ?? ''
     )
   
     const isRequired =
@@ -303,7 +309,6 @@ export async function createCurriculumLevel(formData: FormData) {
       ![
         'ALL_REQUIRED_COMPONENTS',
         'DIRECT_ASSESSMENT',
-        'MANUAL',
       ].includes(completionRule)
     ) {
       redirect(
@@ -355,7 +360,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(returnPath)
   
     redirect(
-      `${returnPath}?success=Subject%20created%20successfully`
+      `${returnPath}?success=${encodeURIComponent('Đã tạo môn học')}`
     )
   }
   export async function createCurriculumSubjectComponent(
@@ -387,6 +392,8 @@ export async function createCurriculumLevel(formData: FormData) {
   
     const isRequired =
       formData.get('is_required') === 'true'
+
+    const completionRule = String(formData.get('completion_rule') ?? '')
   
     if (!curriculumId || !levelId || !subjectId) {
       redirect(
@@ -414,6 +421,12 @@ export async function createCurriculumLevel(formData: FormData) {
     if (!Number.isInteger(sortOrder) || sortOrder < 0) {
       redirect(
         `${returnPath}?error=Invalid%20sort%20order`
+      )
+    }
+
+    if (!['DIRECT_ASSESSMENT', 'ALL_REQUIRED_ITEMS'].includes(completionRule)) {
+      redirect(
+        `${returnPath}?error=Choose%20how%20the%20assessment%20group%20is%20completed`
       )
     }
   
@@ -453,6 +466,7 @@ export async function createCurriculumLevel(formData: FormData) {
         name,
         is_required: isRequired,
         sort_order: sortOrder,
+        completion_rule: completionRule,
         status: 'ACTIVE',
       })
   
@@ -469,6 +483,7 @@ export async function createCurriculumLevel(formData: FormData) {
     }
   
     revalidatePath('/admin/academic')
+    revalidatePath('/admin/programs')
     revalidatePath(`/admin/academic/${curriculumId}`)
     revalidatePath(
       `/admin/academic/${curriculumId}/levels/${levelId}`
@@ -476,7 +491,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(returnPath)
   
     redirect(
-      `${returnPath}?success=Component%20created%20successfully`
+      `${returnPath}?success=${encodeURIComponent('Đã tạo nhóm đánh giá')}`
     )
   }
   export async function setCurriculumLevelStatus(formData: FormData) {
@@ -523,7 +538,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(returnPath)
   
     redirect(
-      `${returnPath}?success=Level%20status%20updated`
+      `${returnPath}?success=${encodeURIComponent('Đã cập nhật trạng thái cấp độ')}`
     )
   }
   
@@ -580,7 +595,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(returnPath)
   
     redirect(
-      `${returnPath}?success=Subject%20status%20updated`
+      `${returnPath}?success=${encodeURIComponent('Đã cập nhật trạng thái môn học')}`
     )
   }
   
@@ -649,7 +664,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(returnPath)
   
     redirect(
-      `${returnPath}?success=Component%20status%20updated`
+      `${returnPath}?success=${encodeURIComponent('Đã cập nhật trạng thái nhóm đánh giá')}`
     )
   }
   export async function updateCurriculum(formData: FormData) {
@@ -706,7 +721,7 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(`/admin/academic/${id}`)
   
     redirect(
-      `/admin/academic/${id}?success=Curriculum%20updated%20successfully`
+      `/admin/academic/${id}?success=${encodeURIComponent('Đã cập nhật chương trình')}`
     )
   }
   export async function updateCurriculumLevel(formData: FormData) {
@@ -816,7 +831,7 @@ export async function createCurriculumLevel(formData: FormData) {
     )
   
     redirect(
-      `/admin/academic/${curriculumId}?success=Level%20updated%20successfully`
+      `/admin/academic/${curriculumId}?success=${encodeURIComponent('Đã cập nhật cấp độ')}`
     )
   }
   export async function updateCurriculumSubject(formData: FormData) {
@@ -860,8 +875,7 @@ export async function createCurriculumLevel(formData: FormData) {
     )
   
     const completionRule = String(
-      formData.get('completion_rule') ??
-        'ALL_REQUIRED_COMPONENTS'
+      formData.get('completion_rule') ?? ''
     )
   
     const isRequired =
@@ -906,7 +920,6 @@ export async function createCurriculumLevel(formData: FormData) {
       ![
         'ALL_REQUIRED_COMPONENTS',
         'DIRECT_ASSESSMENT',
-        'MANUAL',
       ].includes(completionRule)
     ) {
       redirect(`${editPath}?error=Invalid%20completion%20rule`)
@@ -959,7 +972,7 @@ export async function createCurriculumLevel(formData: FormData) {
     )
   
     redirect(
-      `${returnPath}?success=Subject%20updated%20successfully`
+      `${returnPath}?success=${encodeURIComponent('Đã cập nhật môn học')}`
     )
   }
   export async function updateCurriculumSubjectComponent(
@@ -995,6 +1008,8 @@ export async function createCurriculumLevel(formData: FormData) {
   
     const isRequired =
       formData.get('is_required') === 'true'
+
+    const completionRule = String(formData.get('completion_rule') ?? '')
   
     const editPath =
       `/admin/academic/${curriculumId}` +
@@ -1019,6 +1034,10 @@ export async function createCurriculumLevel(formData: FormData) {
     if (!Number.isInteger(sortOrder) || sortOrder < 0) {
       redirect(`${editPath}?error=Invalid%20sort%20order`)
     }
+
+    if (!['DIRECT_ASSESSMENT', 'ALL_REQUIRED_ITEMS'].includes(completionRule)) {
+      redirect(`${editPath}?error=Choose%20how%20the%20assessment%20group%20is%20completed`)
+    }
   
     const { data: subject } = await supabase
       .from('curriculum_subjects')
@@ -1038,6 +1057,7 @@ export async function createCurriculumLevel(formData: FormData) {
         name,
         is_required: isRequired,
         sort_order: sortOrder,
+        completion_rule: completionRule,
         updated_at: new Date().toISOString(),
       })
       .eq('id', componentId)
@@ -1047,6 +1067,12 @@ export async function createCurriculumLevel(formData: FormData) {
       if (error.code === '23505') {
         redirect(
           `${editPath}?error=This%20component%20already%20exists`
+        )
+      }
+
+      if (error.message.includes('requires at least one required active item')) {
+        redirect(
+          `${editPath}?error=A%20lesson-completed%20group%20needs%20one%20required%20active%20lesson`
         )
       }
   
@@ -1061,6 +1087,7 @@ export async function createCurriculumLevel(formData: FormData) {
       `/subjects/${subjectId}`
   
     revalidatePath('/admin/academic')
+    revalidatePath('/admin/programs')
     revalidatePath(`/admin/academic/${curriculumId}`)
     revalidatePath(
       `/admin/academic/${curriculumId}/levels/${levelId}`
@@ -1068,6 +1095,180 @@ export async function createCurriculumLevel(formData: FormData) {
     revalidatePath(returnPath)
   
     redirect(
-      `${returnPath}?success=Component%20updated%20successfully`
+      `${returnPath}?success=${encodeURIComponent('Đã cập nhật nhóm đánh giá')}`
     )
   }
+
+function lessonSubjectPath(curriculumId: string, levelId: string, subjectId: string) {
+  return `/admin/academic/${curriculumId}/levels/${levelId}/subjects/${subjectId}`
+}
+
+function lessonDetailPath(curriculumId: string, levelId: string, subjectId: string, lessonId: string) {
+  return `${lessonSubjectPath(curriculumId, levelId, subjectId)}/lessons/${lessonId}`
+}
+
+function lessonContext(formData: FormData) {
+  return {
+    curriculumId: String(formData.get('curriculum_id') ?? '').trim(),
+    levelId: String(formData.get('level_id') ?? '').trim(),
+    subjectId: String(formData.get('subject_id') ?? '').trim(),
+    componentId: String(formData.get('component_id') ?? '').trim(),
+    lessonId: String(formData.get('lesson_id') ?? '').trim(),
+  }
+}
+
+function refreshLessonPaths(curriculumId: string, levelId: string, subjectId: string, lessonId?: string) {
+  const subjectPath = lessonSubjectPath(curriculumId, levelId, subjectId)
+  revalidatePath('/admin/programs')
+  revalidatePath('/admin/academic')
+  revalidatePath(`/admin/academic/${curriculumId}`)
+  revalidatePath(`/admin/academic/${curriculumId}/levels/${levelId}`)
+  revalidatePath(subjectPath)
+  if (lessonId) revalidatePath(lessonDetailPath(curriculumId, levelId, subjectId, lessonId))
+  return subjectPath
+}
+
+export async function createCurriculumLesson(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const { curriculumId, levelId, subjectId, componentId } = lessonContext(formData)
+  const subjectPath = lessonSubjectPath(curriculumId, levelId, subjectId)
+  const code = normalizeLessonCode(String(formData.get('code') ?? ''))
+  const name = String(formData.get('name') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0)
+  const isRequired = formData.get('is_required') === 'true'
+  const status = String(formData.get('status') ?? 'ACTIVE')
+
+  if (!curriculumId || !levelId || !subjectId) {
+    redirect('/admin/academic?error=Không%20thể%20lưu%20Lesson.')
+  }
+  if (!componentId) {
+    const { data: subject } = await supabase
+      .from('curriculum_subjects')
+      .select('completion_rule')
+      .eq('id', subjectId)
+      .eq('level_id', levelId)
+      .maybeSingle()
+    redirect(`${subjectPath}?error=${encodeURIComponent(missingLessonParentMessage(subject?.completion_rule ?? ''))}`)
+  }
+  if (!lessonCodeValid(code)) {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid lesson code' }))}`)
+  }
+  if (!name || name.length > 200) {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Lesson name is required' }))}`)
+  }
+  if (!Number.isInteger(sortOrder) || sortOrder < 0) {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid sort order' }))}`)
+  }
+  if (status !== 'ACTIVE' && status !== 'INACTIVE') {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid lesson status' }))}`)
+  }
+
+  const { error } = await supabase.rpc('create_curriculum_lesson', {
+    p_curriculum_id: curriculumId,
+    p_level_id: levelId,
+    p_subject_id: subjectId,
+    p_component_id: componentId,
+    p_code: code,
+    p_name: name,
+    p_is_required: isRequired,
+    p_sort_order: sortOrder,
+    p_status: status,
+  })
+  if (error) {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError(error))}`)
+  }
+  refreshLessonPaths(curriculumId, levelId, subjectId)
+  redirect(`${subjectPath}?success=${encodeURIComponent('Đã tạo Lesson')}`)
+}
+
+export async function updateCurriculumLesson(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const { curriculumId, levelId, subjectId, lessonId } = lessonContext(formData)
+  const detailPath = lessonId
+    ? lessonDetailPath(curriculumId, levelId, subjectId, lessonId)
+    : lessonSubjectPath(curriculumId, levelId, subjectId)
+  const code = normalizeLessonCode(String(formData.get('code') ?? ''))
+  const name = String(formData.get('name') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0)
+  const isRequired = formData.get('is_required') === 'true'
+  const status = String(formData.get('status') ?? '')
+
+  if (!curriculumId || !levelId || !subjectId || !lessonId) {
+    redirect(`${detailPath}?error=${encodeURIComponent('Không thể lưu Lesson.')}`)
+  }
+  if (!lessonCodeValid(code)) {
+    redirect(`${detailPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid lesson code' }))}`)
+  }
+  if (!name || name.length > 200) {
+    redirect(`${detailPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Lesson name is required' }))}`)
+  }
+  if (!Number.isInteger(sortOrder) || sortOrder < 0) {
+    redirect(`${detailPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid sort order' }))}`)
+  }
+  if (status !== 'ACTIVE' && status !== 'INACTIVE') {
+    redirect(`${detailPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid lesson status' }))}`)
+  }
+
+  const { error } = await supabase.rpc('update_curriculum_lesson', {
+    p_curriculum_id: curriculumId,
+    p_level_id: levelId,
+    p_subject_id: subjectId,
+    p_lesson_id: lessonId,
+    p_code: code,
+    p_name: name,
+    p_is_required: isRequired,
+    p_sort_order: sortOrder,
+    p_status: status,
+  })
+  if (error) {
+    redirect(`${detailPath}?error=${encodeURIComponent(lessonWriteError(error))}`)
+  }
+  refreshLessonPaths(curriculumId, levelId, subjectId, lessonId)
+  redirect(`${detailPath}?success=${encodeURIComponent('Đã cập nhật Lesson')}`)
+}
+
+export async function reorderCurriculumLesson(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const { curriculumId, levelId, subjectId, lessonId } = lessonContext(formData)
+  const subjectPath = lessonSubjectPath(curriculumId, levelId, subjectId)
+  const direction = String(formData.get('direction') ?? '')
+  const scope = String(formData.get('scope') ?? 'active')
+  if (!curriculumId || !levelId || !subjectId || !lessonId || (direction !== 'up' && direction !== 'down') || (scope !== 'active' && scope !== 'all')) {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError({ message: 'Invalid lesson order' }))}`)
+  }
+  const { error } = await supabase.rpc('reorder_curriculum_lesson', {
+    p_curriculum_id: curriculumId,
+    p_level_id: levelId,
+    p_subject_id: subjectId,
+    p_lesson_id: lessonId,
+    p_direction: direction,
+    p_scope: scope,
+  })
+  if (error) {
+    redirect(`${subjectPath}?error=${encodeURIComponent(lessonWriteError(error))}`)
+  }
+  refreshLessonPaths(curriculumId, levelId, subjectId, lessonId)
+  redirect(`${subjectPath}?success=${encodeURIComponent('Đã đổi thứ tự Lesson')}`)
+}
+
+export async function retireCurriculumLesson(formData: FormData) {
+  const supabase = await requireSuperAdmin()
+  const { curriculumId, levelId, subjectId, lessonId } = lessonContext(formData)
+  const detailPath = lessonId
+    ? lessonDetailPath(curriculumId, levelId, subjectId, lessonId)
+    : lessonSubjectPath(curriculumId, levelId, subjectId)
+  if (!curriculumId || !levelId || !subjectId || !lessonId) {
+    redirect(`${detailPath}?error=${encodeURIComponent('Không thể lưu Lesson.')}`)
+  }
+  const { error } = await supabase.rpc('retire_curriculum_lesson', {
+    p_curriculum_id: curriculumId,
+    p_level_id: levelId,
+    p_subject_id: subjectId,
+    p_lesson_id: lessonId,
+  })
+  if (error) {
+    redirect(`${detailPath}?error=${encodeURIComponent(lessonWriteError(error))}`)
+  }
+  refreshLessonPaths(curriculumId, levelId, subjectId, lessonId)
+  redirect(`${lessonSubjectPath(curriculumId, levelId, subjectId)}?success=${encodeURIComponent('Đã ngừng sử dụng Lesson')}`)
+}

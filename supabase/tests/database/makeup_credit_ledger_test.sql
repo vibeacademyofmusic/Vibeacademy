@@ -1,6 +1,56 @@
 /* Superseded draft retained below for history.
 begin;
 
+-- Fixture prerequisite for the current enrollment guard. Does not change production rules.
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql security definer set search_path=public,pg_temp as $$
+declare c public.classes%rowtype; course public.courses%rowtype; level_id uuid; t uuid; r uuid; slot int;
+begin
+ select * into c from public.classes where id=p_class;
+ if not found or c.course_id is null or c.xmin::text is distinct from txid_current()::text then return; end if;
+ select * into course from public.courses where id=c.course_id;
+ if not found then return; end if;
+ level_id := course.level_id;
+ if level_id is null then
+   select id into level_id from public.curriculum_levels where curriculum_id=course.curriculum_id order by sequence_no limit 1;
+   if level_id is null then return; end if;
+   update public.courses set level_id=level_id where id=course.id and xmin::text=txid_current()::text;
+ end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,level_id) where id=c.id;
+ update public.students set default_branch_id=c.branch_id
+  where default_branch_id is null and status='ACTIVE' and xmin::text=txid_current()::text;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,level_id,date '2000-01-01','ACTIVE',true
+ from public.students s
+ where s.default_branch_id=c.branch_id and s.xmin::text=txid_current()::text
+   and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.status='ACTIVE' and (a.curriculum_id=course.curriculum_id or a.is_primary));
+ if not exists(select 1 from public.class_teachers where class_id=c.id and teacher_role='PRIMARY' and (is_active or ended_at is not null)) then
+   select id into t from public.teachers where teacher_code='FIX-'||c.id;
+   if t is null then
+     insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+     insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   end if;
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+ end if;
+ if not exists(select 1 from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id) then
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+ else
+   select id into r from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id limit 1;
+ end if;
+ if exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   update public.schedules set room_id=coalesce(room_id,r) where class_id=c.id and status='ACTIVE' and room_id is null;
+ else
+   slot := abs(hashtext(c.id::text));
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+ if c.class_type = 'ONE_ON_ONE' and c.capacity < 20 then
+   update public.classes set class_type = 'GROUP', capacity = 20 where id = c.id;
+ end if;
+end $$;
+
+
 create extension if not exists pgtap
 with schema extensions;
 
@@ -122,6 +172,7 @@ values
     'Credit Test Student D'
   );
 
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 insert into public.enrollments (
   id,
   student_id,
@@ -629,10 +680,58 @@ rollback;
 */
 begin;
 
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql security definer set search_path=public,pg_temp as $$
+declare c public.classes%rowtype; course public.courses%rowtype; level_id uuid; t uuid; r uuid; slot int;
+begin
+ select * into c from public.classes where id=p_class;
+ if not found or c.course_id is null or c.xmin::text is distinct from txid_current()::text then return; end if;
+ select * into course from public.courses where id=c.course_id;
+ if not found then return; end if;
+ level_id := course.level_id;
+ if level_id is null then
+   select id into level_id from public.curriculum_levels where curriculum_id=course.curriculum_id order by sequence_no limit 1;
+   if level_id is null then return; end if;
+   update public.courses set level_id=level_id where id=course.id and xmin::text=txid_current()::text;
+ end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,level_id) where id=c.id;
+ update public.students set default_branch_id=c.branch_id
+  where default_branch_id is null and status='ACTIVE' and xmin::text=txid_current()::text;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,level_id,date '2000-01-01','ACTIVE',true
+ from public.students s
+ where s.default_branch_id=c.branch_id and s.xmin::text=txid_current()::text
+   and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.status='ACTIVE' and (a.curriculum_id=course.curriculum_id or a.is_primary));
+ if not exists(select 1 from public.class_teachers where class_id=c.id and teacher_role='PRIMARY' and (is_active or ended_at is not null)) then
+   select id into t from public.teachers where teacher_code='FIX-'||c.id;
+   if t is null then
+     insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+     insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   end if;
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+ end if;
+ if not exists(select 1 from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id) then
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+ else
+   select id into r from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id limit 1;
+ end if;
+ if exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   update public.schedules set room_id=coalesce(room_id,r) where class_id=c.id and status='ACTIVE' and room_id is null;
+ else
+   slot := abs(hashtext(c.id::text));
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+ if c.class_type = 'ONE_ON_ONE' and c.capacity < 20 then
+   update public.classes set class_type = 'GROUP', capacity = 20 where id = c.id;
+ end if;
+end $$;
+
 create extension if not exists pgtap
 with schema extensions;
 
-select plan(30);
+select plan(51);
 
 select has_table(
   'public',
@@ -763,6 +862,7 @@ values
     'Credit Test Excused Student'
   );
 
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 insert into public.enrollments (
   id,
   student_id,
@@ -1070,17 +1170,43 @@ select is(
   'makeup completes when every participant is marked'
 );
 
+-- 20260929220000 keeps a reserved credit when the makeup is completed without PRESENT attendance
+-- and records MAKEUP_COMPLETED_WITHOUT_PRESENT. Absence does not forfeit the credit.
 select is(
   (
     select count(*)::bigint
     from public.makeup_credits
     where reserved_occurrence_id =
         'b6000000-0000-0000-0000-000000000001'
-      and status = 'USED'
-      and used_at is not null
+      and status = 'RESERVED'
   ),
   2::bigint,
-  'completed makeup consumes RESERVED credits even when attendance is ABSENT'
+  'completed makeup keeps RESERVED credits when attendance is ABSENT'
+);
+select is(
+  (
+    select count(*)::bigint
+    from public.academic_operation_exceptions exception
+    join public.makeup_credits credit on credit.id = exception.source_id
+    where exception.kind = 'MAKEUP_COMPLETED_WITHOUT_PRESENT'
+      and credit.reserved_occurrence_id = 'b6000000-0000-0000-0000-000000000001'
+  ),
+  2::bigint,
+  'absent completion records one exception per reserved credit'
+);
+update public.session_occurrences
+set status = 'COMPLETED'
+where id = 'b6000000-0000-0000-0000-000000000001';
+select is(
+  (
+    select count(*)::bigint
+    from public.academic_operation_exceptions exception
+    join public.makeup_credits credit on credit.id = exception.source_id
+    where exception.kind = 'MAKEUP_COMPLETED_WITHOUT_PRESENT'
+      and credit.reserved_occurrence_id = 'b6000000-0000-0000-0000-000000000001'
+  ),
+  2::bigint,
+  'repeating completion does not duplicate the exception'
 );
 
 select throws_ok(
@@ -1344,6 +1470,232 @@ select is(
   ),
   4::bigint,
   'reopening source revokes all still-AVAILABLE credits from that source'
+);
+
+-- Confirmed excused entitlement: one credit per regular source, same credit returned from an excused makeup.
+update public.session_occurrences
+set status = 'COMPLETED'
+where id = '96000000-0000-0000-0000-000000000001';
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000001'),
+  1::bigint,
+  'repeating completion of a regular excused session adds no credit'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status)
+values (
+  '96000000-0000-0000-0000-000000000006',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-02',
+  '2026-11-02 09:00:00+07',
+  '2026-11-02 10:00:00+07',
+  'SCHEDULED'
+);
+
+insert into public.attendance_records (id, session_occurrence_id, enrollment_id, status)
+values
+  ('a6000000-0000-0000-0000-000000000011', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000001', 'PRESENT'),
+  ('a6000000-0000-0000-0000-000000000012', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000002', 'PRESENT'),
+  ('a6000000-0000-0000-0000-000000000013', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000003', 'PRESENT'),
+  ('a6000000-0000-0000-0000-000000000014', '96000000-0000-0000-0000-000000000006', '76000000-0000-0000-0000-000000000004', 'EXCUSED');
+
+insert into public.absence_reports (id, attendance_record_id, enrollment_id, session_occurrence_id, reason)
+values (
+  'c6000000-0000-0000-0000-000000000001',
+  'a6000000-0000-0000-0000-000000000014',
+  '76000000-0000-0000-0000-000000000004',
+  '96000000-0000-0000-0000-000000000006',
+  'Cho xac nhan'
+);
+
+select is(
+  public.set_session_occurrence_status('96000000-0000-0000-0000-000000000006', 'COMPLETED'),
+  'COMPLETED',
+  'regular session completes while an excused mark still has a pending report'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006'),
+  0::bigint,
+  'pending absence report does not grant a makeup credit'
+);
+
+select is(
+  (public.confirm_absence('c6000000-0000-0000-0000-000000000001', true, 'Xac nhan co phep sau khi chot')->>'ok')::boolean,
+  true,
+  'confirming excused after completion records the entitlement'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006' and enrollment_id = '76000000-0000-0000-0000-000000000004' and source_reason = 'EXCUSED' and status = 'AVAILABLE'),
+  1::bigint,
+  'confirmed excused regular attendance grants exactly one available credit'
+);
+
+select is(
+  (public.confirm_absence('c6000000-0000-0000-0000-000000000001', true, 'Xac nhan lai')->>'repeated')::boolean,
+  true,
+  'repeating the same confirmation does not grant another credit'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where enrollment_id = '76000000-0000-0000-0000-000000000004' and source_occurrence_id in ('96000000-0000-0000-0000-000000000001', '96000000-0000-0000-0000-000000000006')),
+  2::bigint,
+  'confirmed excuse adds one credit beside the original source credit'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status, occurrence_type, source_occurrence_id)
+values (
+  'b6000000-0000-0000-0000-000000000004',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-09',
+  '2026-11-09 13:00:00+07',
+  '2026-11-09 14:00:00+07',
+  'SCHEDULED',
+  'MAKEUP',
+  '96000000-0000-0000-0000-000000000006'
+);
+
+insert into public.session_occurrence_participants (session_occurrence_id, enrollment_id, makeup_credit_id)
+values (
+  'b6000000-0000-0000-0000-000000000004',
+  '76000000-0000-0000-0000-000000000004',
+  (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')
+);
+
+insert into public.attendance_records (session_occurrence_id, enrollment_id, status)
+values ('b6000000-0000-0000-0000-000000000004', '76000000-0000-0000-0000-000000000004', 'EXCUSED');
+
+create temporary table excused_credit_snapshot as
+select count(*)::bigint as n
+from public.makeup_credits
+where enrollment_id = '76000000-0000-0000-0000-000000000004';
+
+select is(
+  public.set_session_occurrence_status('b6000000-0000-0000-0000-000000000004', 'COMPLETED'),
+  'COMPLETED',
+  'excused makeup session completes'
+);
+
+select is(
+  (select status from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006'),
+  'AVAILABLE',
+  'excused makeup returns the same credit to available'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where enrollment_id = '76000000-0000-0000-0000-000000000004'),
+  (select n from excused_credit_snapshot),
+  'excused makeup does not create or remove a credit'
+);
+
+select is(
+  (select booking_status || ':' || (select status from public.attendance_records where session_occurrence_id = 'b6000000-0000-0000-0000-000000000004')
+   from public.session_occurrence_participants
+   where session_occurrence_id = 'b6000000-0000-0000-0000-000000000004'),
+  'RELEASED:EXCUSED',
+  'excused makeup keeps the booking and attendance history'
+);
+
+select is(
+  (select count(*)::bigint from public.academic_operation_exceptions where kind = 'MAKEUP_CREDIT_RELEASED' and source_id = (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')),
+  1::bigint,
+  'excused release is audited once'
+);
+
+update public.session_occurrences set status = 'COMPLETED' where id = 'b6000000-0000-0000-0000-000000000004';
+
+select is(
+  (select count(*)::bigint from public.academic_operation_exceptions where kind = 'MAKEUP_CREDIT_RELEASED' and source_id = (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')),
+  1::bigint,
+  'repeating makeup completion does not release or audit again'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status, occurrence_type, source_occurrence_id)
+values (
+  'b6000000-0000-0000-0000-000000000005',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-10',
+  '2026-11-10 13:00:00+07',
+  '2026-11-10 14:00:00+07',
+  'SCHEDULED',
+  'MAKEUP',
+  '96000000-0000-0000-0000-000000000006'
+);
+
+insert into public.session_occurrence_participants (session_occurrence_id, enrollment_id, makeup_credit_id)
+values (
+  'b6000000-0000-0000-0000-000000000005',
+  '76000000-0000-0000-0000-000000000004',
+  (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')
+);
+
+select is(
+  (select status || ':' || reserved_occurrence_id::text from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006'),
+  'RESERVED:b6000000-0000-0000-0000-000000000005',
+  'rebooking reserves the same returned credit once'
+);
+
+select throws_ok(
+  $$
+    insert into public.session_occurrence_participants (session_occurrence_id, enrollment_id, makeup_credit_id)
+    values (
+      'b6000000-0000-0000-0000-000000000005',
+      '76000000-0000-0000-0000-000000000004',
+      (select id from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000006')
+    )
+  $$,
+  'P0001',
+  'Quyền học bù không còn dùng được.',
+  'a second active reservation of the same credit is rejected'
+);
+
+select ok(
+  exists (
+    select 1 from pg_indexes
+    where schemaname = 'public'
+      and indexname = 'session_occurrence_participants_credit_idx'
+      and indexdef ilike '%UNIQUE%'
+      and indexdef ilike '%booking_status%'
+      and indexdef ilike '%ACTIVE%'
+  ),
+  'only one active booking can hold a makeup credit'
+);
+
+insert into public.session_occurrences (id, schedule_id, occurrence_date, starts_at, ends_at, status)
+values (
+  '96000000-0000-0000-0000-000000000007',
+  '86000000-0000-0000-0000-000000000001',
+  '2026-11-16',
+  '2026-11-16 09:00:00+07',
+  '2026-11-16 10:00:00+07',
+  'SCHEDULED'
+);
+
+insert into public.enrollment_pauses (enrollment_id, starts_on, ends_on, reason)
+values ('76000000-0000-0000-0000-000000000003', '2026-11-16', '2026-11-16', 'Bao luu dung ngay buoi nay');
+
+select throws_ok(
+  $$
+    insert into public.attendance_records (session_occurrence_id, enrollment_id, status)
+    values ('96000000-0000-0000-0000-000000000007', '76000000-0000-0000-0000-000000000003', 'EXCUSED')
+  $$,
+  'P0001',
+  'Attendance cannot be recorded while the enrollment is paused',
+  'an approved pause date cannot be marked excused'
+);
+
+select is(
+  public.set_session_occurrence_status('96000000-0000-0000-0000-000000000007', 'CANCELLED'),
+  'CANCELLED',
+  'paused regular date can be cancelled without attendance'
+);
+
+select is(
+  (select count(*)::bigint from public.makeup_credits where source_occurrence_id = '96000000-0000-0000-0000-000000000007' and enrollment_id = '76000000-0000-0000-0000-000000000003'),
+  0::bigint,
+  'a paused date does not also grant a makeup credit'
 );
 
 select * from finish();

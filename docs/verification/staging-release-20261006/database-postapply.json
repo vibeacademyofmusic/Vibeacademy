@@ -1,0 +1,27 @@
+[
+  {
+    "state": {
+      "latest_migration": "20261006071000",
+      "migration_count": 226,
+      "programs": [
+        {
+          "code": "GUITAR",
+          "levels": 10
+        },
+        {
+          "code": "PIANO",
+          "levels": 2
+        },
+        {
+          "code": "VIOLIN",
+          "levels": 9
+        },
+        {
+          "code": "DRUMS",
+          "levels": 0
+        }
+      ],
+      "project": "owpfqwdrmyzcmjahehek"
+    }
+  }
+]

@@ -1,0 +1,27 @@
+BEGIN
+CREATE TABLE
+INSERT 0 1
+SET
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+LOCK TABLE
+LOCK TABLE
+CREATE TABLE
+ALTER TABLE
+REVOKE
+GRANT
+GRANT
+DROP POLICY
+CREATE POLICY
+CREATE TABLE
+DO
+                                 json_build_object                                  
+------------------------------------------------------------------------------------
+ {"changes" : null, "progress_unchanged" : true, "other_subjects_unchanged" : true}
+(1 row)
+
+ROLLBACK

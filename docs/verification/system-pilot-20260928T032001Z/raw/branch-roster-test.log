@@ -1,0 +1,46 @@
+✔ operations consolidation does not expose finance to student-only staff (14.072875ms)
+✔ menu targets existing standalone routes only (0.210208ms)
+✔ active menu chooses the most specific existing URL (0.219125ms)
+✔ HR groups staff, pay, and assignment without a separate teacher entry (11.337875ms)
+✔ business shell keeps unaudited admin routes out of the branch menu (24.78775ms)
+✔ unimplemented domains are omitted and existing finance routes are present (0.528834ms)
+✔ CRM aliases and registration share the consolidated navigation entry (0.142334ms)
+✔ approved tuition and payment group keeps six routes and precise active state (8.638667ms)
+✔ approved HR labels and deep links remain precise (8.478125ms)
+✔ HR sidebar renders exactly four direct links without nested links or controls (21.51525ms)
+✔ HR and recruitment use the same wrapping workspace tabs, mounted once (13.299ms)
+✔ payroll retains its back link without a second cross-module navigation bar (0.663333ms)
+✔ training and system preserve local routes and exact active destinations (14.309666ms)
+✔ legacy embedded training URLs select the single canonical tab (12.321417ms)
+✔ program/course switches share the training bar and preserve existing search filters (10.042834ms)
+✔ room workspace does not repeat cross-module navigation as a dropdown (0.397459ms)
+✔ date validation, Vietnam default, and all server-side filters (46.998083ms)
+✔ return URL retains filters and rejects external or unrelated destinations (8.531959ms)
+✔ launcher renders canonical roster directly and forwards filters to bounded RPC (54.852791ms)
+✔ empty and failed queries show an explicit state without class detours (61.583125ms)
+✖ branch roster is readable without exposing admin mutation controls (88.396292ms)
+✔ forged session is denied before any session rows are loaded (62.424333ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 21
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 499.798167
+
+✖ failing tests:
+
+test at tests/attendance-launcher.test.cjs:41:1
+✖ branch roster is readable without exposing admin mutation controls (88.396292ms)
+  Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.
+      at retryNode (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6474:17)
+      at renderNodeDestructive (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11)
+      at renderNode (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6905:18)
+      at renderChildrenArray (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6674:11)
+      at retryNode (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6441:13)
+      at renderNodeDestructive (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11)
+      at renderNode (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6905:18)
+      at renderElement (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5619:18)
+      at retryNode (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6417:31)
+      at renderNodeDestructive (/Users/macbookair/vibe-academy-system/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11)

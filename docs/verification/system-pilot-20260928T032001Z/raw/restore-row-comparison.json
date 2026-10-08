@@ -1,0 +1,1610 @@
+{
+  "checked_at": "2026-09-28T04:04:14.722193+00:00",
+  "source": {
+    "auth.audit_log_entries": {
+      "rows": 263,
+      "digest": "a2c6e91f19caaa69621e44731ee56b72"
+    },
+    "auth.custom_oauth_providers": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.flow_state": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.identities": {
+      "rows": 19,
+      "digest": "e9ab193d284fb95ac1d74c885de3df04"
+    },
+    "auth.instances": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.mfa_amr_claims": {
+      "rows": 140,
+      "digest": "7d891df43c49b53154ad323c6a4ec272"
+    },
+    "auth.mfa_challenges": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.mfa_factors": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_authorizations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_client_states": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_clients": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_consents": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.one_time_tokens": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.refresh_tokens": {
+      "rows": 153,
+      "digest": "33607b4843cb927ca2cf70a880380c21"
+    },
+    "auth.saml_providers": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.saml_relay_states": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.schema_migrations": {
+      "rows": 77,
+      "digest": "97c00eebbf43df94ed33ac0d3ae304b3"
+    },
+    "auth.sessions": {
+      "rows": 140,
+      "digest": "3ac176c28e51998b86375c100ea374db"
+    },
+    "auth.sso_domains": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.sso_providers": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.users": {
+      "rows": 19,
+      "digest": "a260458d23a63cade2eb6abac4583d4f"
+    },
+    "auth.webauthn_challenges": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.webauthn_credentials": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.attendance_qr_sessions": {
+      "rows": 1,
+      "digest": "d9f38bf6adebd1153b51f3749fa9b8cf"
+    },
+    "public.attendance_qr_tokens": {
+      "rows": 1,
+      "digest": "f3b2d2f68eb2928bbbdb5978c25794e6"
+    },
+    "public.attendance_records": {
+      "rows": 13,
+      "digest": "dbcb269571021d7324c1f0a51dd270a9"
+    },
+    "public.branches": {
+      "rows": 2,
+      "digest": "dfb380ba4851ce6cc3276c218070decb"
+    },
+    "public.class_teachers": {
+      "rows": 2,
+      "digest": "bdd18adaf062476e7ff071cfe82b5162"
+    },
+    "public.classes": {
+      "rows": 2,
+      "digest": "aca53c6b804a562d2efb741d72938f9d"
+    },
+    "public.courses": {
+      "rows": 1,
+      "digest": "42acbd480a761dbbb9df5ebe9080e110"
+    },
+    "public.crm_campaigns": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_lead_conversion_reviews": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_lead_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_leads": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_reactivation_cases": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_reactivation_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.curriculum_component_items": {
+      "rows": 1440,
+      "digest": "29a2d5771d0724d4bb2a3af6f86e893f"
+    },
+    "public.curriculum_levels": {
+      "rows": 37,
+      "digest": "38a244bced034062763f3b577191b71d"
+    },
+    "public.curriculum_subject_components": {
+      "rows": 144,
+      "digest": "6b62178f7903dc2143afb6195b6d0f0d"
+    },
+    "public.curriculum_subjects": {
+      "rows": 188,
+      "digest": "7acb634520dfb974f21eaf25a7775526"
+    },
+    "public.curriculums": {
+      "rows": 4,
+      "digest": "a8739b76f073ceac6d0100a152db5461"
+    },
+    "public.customer_channel_links": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.customer_credit_uses": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.customer_credits": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_entries": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_qr_verifications": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_requests": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_reviews": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_scan_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_audit": {
+      "rows": 17,
+      "digest": "ce256d21d396547ec44a8364d9a59165"
+    },
+    "public.employee_expense_claim_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_expense_claim_items_v2": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_expense_claim_lines": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_expense_claims": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_leave_policies": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_time_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_trip_reviews": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_trips": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_versions": {
+      "rows": 3,
+      "digest": "e3c31b2c4ff5631b7c3a8dc586348e15"
+    },
+    "public.employees": {
+      "rows": 2,
+      "digest": "6a930115baa61ef0177a1a34b5e47f61"
+    },
+    "public.enrollment_pauses": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.enrollment_tuition": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.enrollments": {
+      "rows": 2,
+      "digest": "134816c2817205ca55a622f86f89150c"
+    },
+    "public.financial_approval_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.financial_approval_requests": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_catalogue": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_commercial_details": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_customer_followups": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_sale_customer_links": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_units": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_warranty_cases": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_warranty_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.integration_webhook_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.inventory_entries": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.inventory_items": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.inventory_movements": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.invoice_items": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.invoices": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_academic_mappings": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_academic_shadow": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_access_grants": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessment_attempts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessment_overrides": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessment_regrades": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessments": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_attention_reasons": {
+      "rows": 8,
+      "digest": "5fa7391ca6901c4c242238a4f954e041"
+    },
+    "public.learning_audit": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_conversation_messages": {
+      "rows": 16,
+      "digest": "48133319dcbd56868b06740cbed26620"
+    },
+    "public.learning_conversations": {
+      "rows": 2,
+      "digest": "d5224f5af5faf9fe7b29dce5349d3cd2"
+    },
+    "public.learning_focus_options": {
+      "rows": 10,
+      "digest": "528b68ba72346f08b18275e916734c60"
+    },
+    "public.learning_homework_parts": {
+      "rows": 24,
+      "digest": "672a126bdd84c8d4fad7d0d1da756928"
+    },
+    "public.learning_journals": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_lesson_progress": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_observation_options": {
+      "rows": 56,
+      "digest": "788b781247b7c87460d6fd1415eced65"
+    },
+    "public.learning_practice_attempts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_report_events": {
+      "rows": 12,
+      "digest": "cac5b96703c636cd64fa71482a0a7c61"
+    },
+    "public.learning_reports": {
+      "rows": 2,
+      "digest": "8dea2580d430aafb53fafe47b09f3611"
+    },
+    "public.learning_theory_contents": {
+      "rows": 87,
+      "digest": "d6a31a74608bfeb8bb21ef3fc31e9c17"
+    },
+    "public.learning_versions": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.lesson_feedback": {
+      "rows": 1,
+      "digest": "562fad486039fcece9df1b681d3e72a4"
+    },
+    "public.lesson_feedback_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.lesson_feedback_reasons": {
+      "rows": 1,
+      "digest": "0c0a5de3aa8d90641b860bd471a19650"
+    },
+    "public.makeup_credits": {
+      "rows": 2,
+      "digest": "54a3177e94807350361c0c5a29568f89"
+    },
+    "public.migration_audit_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_batch_rows": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_batches": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_rollback_requests": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_source_mappings": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.notification_events": {
+      "rows": 7,
+      "digest": "977d15f61d5d35aa509379871c6c9123"
+    },
+    "public.notification_inbox": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.notification_jobs": {
+      "rows": 7,
+      "digest": "0c9c6692058d3c6ae0ca0a6f7db82c9c"
+    },
+    "public.notification_templates": {
+      "rows": 10,
+      "digest": "750d4411a3efe9287b7e1f218c5f1874"
+    },
+    "public.opening_receivable_corrections": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.opening_receivables": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.opening_reversals": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.opening_settlements": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.operating_expense_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.operating_expense_records": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.operating_expense_templates": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.organization_units": {
+      "rows": 3,
+      "digest": "33be0fc2ec53f3dd83f3d4f7e2ef639c"
+    },
+    "public.parents": {
+      "rows": 7,
+      "digest": "7e5ad6dfe5a9a0d86a19a9dba28005c1"
+    },
+    "public.payment_allocations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payment_entry_requests": {
+      "rows": 1,
+      "digest": "010b86b429b1466cfd7cbe7bb8c2f679"
+    },
+    "public.payments": {
+      "rows": 2,
+      "digest": "7d358c035cf403364019ec47cbecf134"
+    },
+    "public.payroll_adjustments": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_component_catalog": {
+      "rows": 11,
+      "digest": "8539cddc61030e7899714f8e931f5f56"
+    },
+    "public.payroll_component_lines_v2": {
+      "rows": 3,
+      "digest": "a34f949a64be68a3f880128ba39b3147"
+    },
+    "public.payroll_corrections": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_disbursements": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_earning_lines": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_events": {
+      "rows": 4,
+      "digest": "0f9cdd43f61a3e25b836945d8e9c57f0"
+    },
+    "public.payroll_period_actions_v2": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_periods": {
+      "rows": 1,
+      "digest": "9f3318aa61eb329b27bf6ff36c361501"
+    },
+    "public.payroll_retroactive_claims": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_retroactive_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_trip_cost_breakdowns": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.permissions": {
+      "rows": 75,
+      "digest": "66ce0fcae3c34bd0a07424bea7afb1c6"
+    },
+    "public.profiles": {
+      "rows": 19,
+      "digest": "473a1a2f2cbf63f6b7cfc78e7b694dd0"
+    },
+    "public.refund_allocations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.refunds": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_application_events": {
+      "rows": 3,
+      "digest": "815c5f018cc7d99fd4de3c310373e127"
+    },
+    "public.registration_applications": {
+      "rows": 1,
+      "digest": "3e782e37f7c022d07e17fecdf800f8c8"
+    },
+    "public.registration_deposit_terms": {
+      "rows": 1,
+      "digest": "23d85731701469a7a10bb515319e0bf8"
+    },
+    "public.registration_momo_ipn_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_momo_orders": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_payos_orders": {
+      "rows": 2,
+      "digest": "1538bed904ab0aca7a71d3630421fa51"
+    },
+    "public.registration_payos_webhook_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_zalo_phone_consents": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.role_permissions": {
+      "rows": 69,
+      "digest": "8f3f5461dbee0a43ce4fbe8bd77be762"
+    },
+    "public.roles": {
+      "rows": 11,
+      "digest": "dc862d85b61f68105d2b5eeac182b83c"
+    },
+    "public.rooms": {
+      "rows": 3,
+      "digest": "4350414f8feb9d00759e5d49e42b9f80"
+    },
+    "public.schedules": {
+      "rows": 4,
+      "digest": "636cb21e6359b528165c84194b09250b"
+    },
+    "public.session_learning_journals": {
+      "rows": 13,
+      "digest": "9954b037eddef6bd60a0cf64e20d40f7"
+    },
+    "public.session_occurrence_participants": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.session_occurrences": {
+      "rows": 16,
+      "digest": "abf903bee436c63bca4a962259af8392"
+    },
+    "public.session_teacher_assignments": {
+      "rows": 7,
+      "digest": "55e10038faabf361b9f1b0ca40180117"
+    },
+    "public.session_teacher_snapshots": {
+      "rows": 12,
+      "digest": "cd092bdb672de9879563cff196096b6d"
+    },
+    "public.staff_compensation_components": {
+      "rows": 3,
+      "digest": "cb017327ef08eb2f668606121816bccc"
+    },
+    "public.staff_portraits": {
+      "rows": 2,
+      "digest": "a1957487a09ba6ef9217b6d2e5d9ebd3"
+    },
+    "public.staff_position_assignments": {
+      "rows": 2,
+      "digest": "a5e6e4b7015553d8a3e7b274b3089be2"
+    },
+    "public.staff_position_catalog": {
+      "rows": 3,
+      "digest": "740e9890f4491dd6d8fc7c59a3a60c4e"
+    },
+    "public.staff_role_assignments": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.staff_role_catalog": {
+      "rows": 8,
+      "digest": "71e25ff3e1f9b6b2c89641a4e4cac704"
+    },
+    "public.staff_teaching_assignments": {
+      "rows": 1,
+      "digest": "2d02bb84a12d2881caac2c622875d15d"
+    },
+    "public.student_component_item_progress": {
+      "rows": 160,
+      "digest": "b4b9d985f65459715193ba01ea092c17"
+    },
+    "public.student_component_progress": {
+      "rows": 16,
+      "digest": "8fc2eb7b26a846106f62e80f46fa1f63"
+    },
+    "public.student_curriculum_enrollments": {
+      "rows": 4,
+      "digest": "a624953c1d6e21070eebade7f4ea0bd8"
+    },
+    "public.student_journal_observation_selections": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_learning_journal_entries": {
+      "rows": 13,
+      "digest": "69c664be48f82a8334f6ec60ef8a660d"
+    },
+    "public.student_level_progress": {
+      "rows": 4,
+      "digest": "67475f2a14c4abea514bb867228d3281"
+    },
+    "public.student_parents": {
+      "rows": 8,
+      "digest": "fa989c4cf844ca556bda985e75228d44"
+    },
+    "public.student_placement_cases": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_placement_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_retention_alerts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_retention_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_subject_progress": {
+      "rows": 16,
+      "digest": "0ad20cecfbcc68ba251828dd90978464"
+    },
+    "public.students": {
+      "rows": 9,
+      "digest": "dc5b021a6846436070704c7aba000a39"
+    },
+    "public.teacher_branches": {
+      "rows": 3,
+      "digest": "41c37faccf22809f93d434ea1f70892b"
+    },
+    "public.teacher_compensation_rules": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.teacher_payrolls": {
+      "rows": 1,
+      "digest": "1f56af3d81bae739164d78eb71d094c9"
+    },
+    "public.teachers": {
+      "rows": 4,
+      "digest": "f26852c6fe1c180a86d75214448bac6c"
+    },
+    "public.tuition_plan_branch_prices": {
+      "rows": 4,
+      "digest": "2c29c81edd7120881675ebe6429cbf1f"
+    },
+    "public.tuition_plans": {
+      "rows": 2,
+      "digest": "4e0e3797c4082d609ea4ae6d4d90a0ef"
+    },
+    "public.tuition_reminders": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.user_roles": {
+      "rows": 19,
+      "digest": "741fe567b25dd89a22ee43cf5517dcb7"
+    },
+    "public.zalo_notification_attempts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.zalo_owner_receipts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.buckets": {
+      "rows": 1,
+      "digest": "3dd3aaaafa458a7a8b16aa56116387ed"
+    },
+    "storage.buckets_analytics": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.buckets_vectors": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.iceberg_namespaces": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.iceberg_tables": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.migrations": {
+      "rows": 68,
+      "digest": "3883c9df7541169813c3502d5f313b87"
+    },
+    "storage.objects": {
+      "rows": 2,
+      "digest": "cf4d2da42ebed647b705a4f9ba866905"
+    },
+    "storage.s3_multipart_uploads": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.s3_multipart_uploads_parts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.vector_indexes": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "supabase_migrations.schema_migrations": {
+      "rows": 169,
+      "digest": "535bb60d075d9a764e801a582e9410ac"
+    },
+    "supabase_migrations.seed_files": {
+      "rows": 1,
+      "digest": "4106874da238af96b532869c4b44469d"
+    }
+  },
+  "restore": "vibe_pilot_restore_20260928_032001",
+  "tables": 200,
+  "mismatches": [],
+  "restored": {
+    "auth.audit_log_entries": {
+      "rows": 263,
+      "digest": "a2c6e91f19caaa69621e44731ee56b72"
+    },
+    "auth.custom_oauth_providers": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.flow_state": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.identities": {
+      "rows": 19,
+      "digest": "e9ab193d284fb95ac1d74c885de3df04"
+    },
+    "auth.instances": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.mfa_amr_claims": {
+      "rows": 140,
+      "digest": "7d891df43c49b53154ad323c6a4ec272"
+    },
+    "auth.mfa_challenges": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.mfa_factors": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_authorizations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_client_states": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_clients": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.oauth_consents": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.one_time_tokens": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.refresh_tokens": {
+      "rows": 153,
+      "digest": "33607b4843cb927ca2cf70a880380c21"
+    },
+    "auth.saml_providers": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.saml_relay_states": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.schema_migrations": {
+      "rows": 77,
+      "digest": "97c00eebbf43df94ed33ac0d3ae304b3"
+    },
+    "auth.sessions": {
+      "rows": 140,
+      "digest": "3ac176c28e51998b86375c100ea374db"
+    },
+    "auth.sso_domains": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.sso_providers": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.users": {
+      "rows": 19,
+      "digest": "a260458d23a63cade2eb6abac4583d4f"
+    },
+    "auth.webauthn_challenges": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "auth.webauthn_credentials": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.attendance_qr_sessions": {
+      "rows": 1,
+      "digest": "d9f38bf6adebd1153b51f3749fa9b8cf"
+    },
+    "public.attendance_qr_tokens": {
+      "rows": 1,
+      "digest": "f3b2d2f68eb2928bbbdb5978c25794e6"
+    },
+    "public.attendance_records": {
+      "rows": 13,
+      "digest": "dbcb269571021d7324c1f0a51dd270a9"
+    },
+    "public.branches": {
+      "rows": 2,
+      "digest": "dfb380ba4851ce6cc3276c218070decb"
+    },
+    "public.class_teachers": {
+      "rows": 2,
+      "digest": "bdd18adaf062476e7ff071cfe82b5162"
+    },
+    "public.classes": {
+      "rows": 2,
+      "digest": "aca53c6b804a562d2efb741d72938f9d"
+    },
+    "public.courses": {
+      "rows": 1,
+      "digest": "42acbd480a761dbbb9df5ebe9080e110"
+    },
+    "public.crm_campaigns": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_lead_conversion_reviews": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_lead_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_leads": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_reactivation_cases": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.crm_reactivation_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.curriculum_component_items": {
+      "rows": 1440,
+      "digest": "29a2d5771d0724d4bb2a3af6f86e893f"
+    },
+    "public.curriculum_levels": {
+      "rows": 37,
+      "digest": "38a244bced034062763f3b577191b71d"
+    },
+    "public.curriculum_subject_components": {
+      "rows": 144,
+      "digest": "6b62178f7903dc2143afb6195b6d0f0d"
+    },
+    "public.curriculum_subjects": {
+      "rows": 188,
+      "digest": "7acb634520dfb974f21eaf25a7775526"
+    },
+    "public.curriculums": {
+      "rows": 4,
+      "digest": "a8739b76f073ceac6d0100a152db5461"
+    },
+    "public.customer_channel_links": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.customer_credit_uses": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.customer_credits": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_entries": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_qr_verifications": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_requests": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_reviews": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_attendance_scan_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_audit": {
+      "rows": 17,
+      "digest": "ce256d21d396547ec44a8364d9a59165"
+    },
+    "public.employee_expense_claim_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_expense_claim_items_v2": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_expense_claim_lines": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_expense_claims": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_leave_policies": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_time_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_trip_reviews": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_trips": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.employee_versions": {
+      "rows": 3,
+      "digest": "e3c31b2c4ff5631b7c3a8dc586348e15"
+    },
+    "public.employees": {
+      "rows": 2,
+      "digest": "6a930115baa61ef0177a1a34b5e47f61"
+    },
+    "public.enrollment_pauses": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.enrollment_tuition": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.enrollments": {
+      "rows": 2,
+      "digest": "134816c2817205ca55a622f86f89150c"
+    },
+    "public.financial_approval_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.financial_approval_requests": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_catalogue": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_commercial_details": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_customer_followups": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_sale_customer_links": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_units": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_warranty_cases": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.instrument_warranty_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.integration_webhook_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.inventory_entries": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.inventory_items": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.inventory_movements": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.invoice_items": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.invoices": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_academic_mappings": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_academic_shadow": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_access_grants": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessment_attempts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessment_overrides": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessment_regrades": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_assessments": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_attention_reasons": {
+      "rows": 8,
+      "digest": "5fa7391ca6901c4c242238a4f954e041"
+    },
+    "public.learning_audit": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_conversation_messages": {
+      "rows": 16,
+      "digest": "48133319dcbd56868b06740cbed26620"
+    },
+    "public.learning_conversations": {
+      "rows": 2,
+      "digest": "d5224f5af5faf9fe7b29dce5349d3cd2"
+    },
+    "public.learning_focus_options": {
+      "rows": 10,
+      "digest": "528b68ba72346f08b18275e916734c60"
+    },
+    "public.learning_homework_parts": {
+      "rows": 24,
+      "digest": "672a126bdd84c8d4fad7d0d1da756928"
+    },
+    "public.learning_journals": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_lesson_progress": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_observation_options": {
+      "rows": 56,
+      "digest": "788b781247b7c87460d6fd1415eced65"
+    },
+    "public.learning_practice_attempts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.learning_report_events": {
+      "rows": 12,
+      "digest": "cac5b96703c636cd64fa71482a0a7c61"
+    },
+    "public.learning_reports": {
+      "rows": 2,
+      "digest": "8dea2580d430aafb53fafe47b09f3611"
+    },
+    "public.learning_theory_contents": {
+      "rows": 87,
+      "digest": "d6a31a74608bfeb8bb21ef3fc31e9c17"
+    },
+    "public.learning_versions": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.lesson_feedback": {
+      "rows": 1,
+      "digest": "562fad486039fcece9df1b681d3e72a4"
+    },
+    "public.lesson_feedback_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.lesson_feedback_reasons": {
+      "rows": 1,
+      "digest": "0c0a5de3aa8d90641b860bd471a19650"
+    },
+    "public.makeup_credits": {
+      "rows": 2,
+      "digest": "54a3177e94807350361c0c5a29568f89"
+    },
+    "public.migration_audit_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_batch_rows": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_batches": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_rollback_requests": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.migration_source_mappings": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.notification_events": {
+      "rows": 7,
+      "digest": "977d15f61d5d35aa509379871c6c9123"
+    },
+    "public.notification_inbox": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.notification_jobs": {
+      "rows": 7,
+      "digest": "0c9c6692058d3c6ae0ca0a6f7db82c9c"
+    },
+    "public.notification_templates": {
+      "rows": 10,
+      "digest": "750d4411a3efe9287b7e1f218c5f1874"
+    },
+    "public.opening_receivable_corrections": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.opening_receivables": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.opening_reversals": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.opening_settlements": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.operating_expense_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.operating_expense_records": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.operating_expense_templates": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.organization_units": {
+      "rows": 3,
+      "digest": "33be0fc2ec53f3dd83f3d4f7e2ef639c"
+    },
+    "public.parents": {
+      "rows": 7,
+      "digest": "7e5ad6dfe5a9a0d86a19a9dba28005c1"
+    },
+    "public.payment_allocations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payment_entry_requests": {
+      "rows": 1,
+      "digest": "010b86b429b1466cfd7cbe7bb8c2f679"
+    },
+    "public.payments": {
+      "rows": 2,
+      "digest": "7d358c035cf403364019ec47cbecf134"
+    },
+    "public.payroll_adjustments": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_component_catalog": {
+      "rows": 11,
+      "digest": "8539cddc61030e7899714f8e931f5f56"
+    },
+    "public.payroll_component_lines_v2": {
+      "rows": 3,
+      "digest": "a34f949a64be68a3f880128ba39b3147"
+    },
+    "public.payroll_corrections": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_disbursements": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_earning_lines": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_events": {
+      "rows": 4,
+      "digest": "0f9cdd43f61a3e25b836945d8e9c57f0"
+    },
+    "public.payroll_period_actions_v2": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_periods": {
+      "rows": 1,
+      "digest": "9f3318aa61eb329b27bf6ff36c361501"
+    },
+    "public.payroll_retroactive_claims": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_retroactive_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.payroll_trip_cost_breakdowns": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.permissions": {
+      "rows": 75,
+      "digest": "66ce0fcae3c34bd0a07424bea7afb1c6"
+    },
+    "public.profiles": {
+      "rows": 19,
+      "digest": "473a1a2f2cbf63f6b7cfc78e7b694dd0"
+    },
+    "public.refund_allocations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.refunds": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_application_events": {
+      "rows": 3,
+      "digest": "815c5f018cc7d99fd4de3c310373e127"
+    },
+    "public.registration_applications": {
+      "rows": 1,
+      "digest": "3e782e37f7c022d07e17fecdf800f8c8"
+    },
+    "public.registration_deposit_terms": {
+      "rows": 1,
+      "digest": "23d85731701469a7a10bb515319e0bf8"
+    },
+    "public.registration_momo_ipn_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_momo_orders": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_payos_orders": {
+      "rows": 2,
+      "digest": "1538bed904ab0aca7a71d3630421fa51"
+    },
+    "public.registration_payos_webhook_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.registration_zalo_phone_consents": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.role_permissions": {
+      "rows": 69,
+      "digest": "8f3f5461dbee0a43ce4fbe8bd77be762"
+    },
+    "public.roles": {
+      "rows": 11,
+      "digest": "dc862d85b61f68105d2b5eeac182b83c"
+    },
+    "public.rooms": {
+      "rows": 3,
+      "digest": "4350414f8feb9d00759e5d49e42b9f80"
+    },
+    "public.schedules": {
+      "rows": 4,
+      "digest": "636cb21e6359b528165c84194b09250b"
+    },
+    "public.session_learning_journals": {
+      "rows": 13,
+      "digest": "9954b037eddef6bd60a0cf64e20d40f7"
+    },
+    "public.session_occurrence_participants": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.session_occurrences": {
+      "rows": 16,
+      "digest": "abf903bee436c63bca4a962259af8392"
+    },
+    "public.session_teacher_assignments": {
+      "rows": 7,
+      "digest": "55e10038faabf361b9f1b0ca40180117"
+    },
+    "public.session_teacher_snapshots": {
+      "rows": 12,
+      "digest": "cd092bdb672de9879563cff196096b6d"
+    },
+    "public.staff_compensation_components": {
+      "rows": 3,
+      "digest": "cb017327ef08eb2f668606121816bccc"
+    },
+    "public.staff_portraits": {
+      "rows": 2,
+      "digest": "a1957487a09ba6ef9217b6d2e5d9ebd3"
+    },
+    "public.staff_position_assignments": {
+      "rows": 2,
+      "digest": "a5e6e4b7015553d8a3e7b274b3089be2"
+    },
+    "public.staff_position_catalog": {
+      "rows": 3,
+      "digest": "740e9890f4491dd6d8fc7c59a3a60c4e"
+    },
+    "public.staff_role_assignments": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.staff_role_catalog": {
+      "rows": 8,
+      "digest": "71e25ff3e1f9b6b2c89641a4e4cac704"
+    },
+    "public.staff_teaching_assignments": {
+      "rows": 1,
+      "digest": "2d02bb84a12d2881caac2c622875d15d"
+    },
+    "public.student_component_item_progress": {
+      "rows": 160,
+      "digest": "b4b9d985f65459715193ba01ea092c17"
+    },
+    "public.student_component_progress": {
+      "rows": 16,
+      "digest": "8fc2eb7b26a846106f62e80f46fa1f63"
+    },
+    "public.student_curriculum_enrollments": {
+      "rows": 4,
+      "digest": "a624953c1d6e21070eebade7f4ea0bd8"
+    },
+    "public.student_journal_observation_selections": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_learning_journal_entries": {
+      "rows": 13,
+      "digest": "69c664be48f82a8334f6ec60ef8a660d"
+    },
+    "public.student_level_progress": {
+      "rows": 4,
+      "digest": "67475f2a14c4abea514bb867228d3281"
+    },
+    "public.student_parents": {
+      "rows": 8,
+      "digest": "fa989c4cf844ca556bda985e75228d44"
+    },
+    "public.student_placement_cases": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_placement_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_retention_alerts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_retention_events": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.student_subject_progress": {
+      "rows": 16,
+      "digest": "0ad20cecfbcc68ba251828dd90978464"
+    },
+    "public.students": {
+      "rows": 9,
+      "digest": "dc5b021a6846436070704c7aba000a39"
+    },
+    "public.teacher_branches": {
+      "rows": 3,
+      "digest": "41c37faccf22809f93d434ea1f70892b"
+    },
+    "public.teacher_compensation_rules": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.teacher_payrolls": {
+      "rows": 1,
+      "digest": "1f56af3d81bae739164d78eb71d094c9"
+    },
+    "public.teachers": {
+      "rows": 4,
+      "digest": "f26852c6fe1c180a86d75214448bac6c"
+    },
+    "public.tuition_plan_branch_prices": {
+      "rows": 4,
+      "digest": "2c29c81edd7120881675ebe6429cbf1f"
+    },
+    "public.tuition_plans": {
+      "rows": 2,
+      "digest": "4e0e3797c4082d609ea4ae6d4d90a0ef"
+    },
+    "public.tuition_reminders": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.user_roles": {
+      "rows": 19,
+      "digest": "741fe567b25dd89a22ee43cf5517dcb7"
+    },
+    "public.zalo_notification_attempts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "public.zalo_owner_receipts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.buckets": {
+      "rows": 1,
+      "digest": "3dd3aaaafa458a7a8b16aa56116387ed"
+    },
+    "storage.buckets_analytics": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.buckets_vectors": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.iceberg_namespaces": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.iceberg_tables": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.migrations": {
+      "rows": 68,
+      "digest": "3883c9df7541169813c3502d5f313b87"
+    },
+    "storage.objects": {
+      "rows": 2,
+      "digest": "cf4d2da42ebed647b705a4f9ba866905"
+    },
+    "storage.s3_multipart_uploads": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.s3_multipart_uploads_parts": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "storage.vector_indexes": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "supabase_migrations.schema_migrations": {
+      "rows": 169,
+      "digest": "535bb60d075d9a764e801a582e9410ac"
+    },
+    "supabase_migrations.seed_files": {
+      "rows": 1,
+      "digest": "4106874da238af96b532869c4b44469d"
+    }
+  }
+}

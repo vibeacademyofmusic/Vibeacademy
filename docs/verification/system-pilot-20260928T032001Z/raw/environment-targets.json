@@ -1,0 +1,7 @@
+{
+  ".env.local": {
+    "NEXT_PUBLIC_SUPABASE_URL": "local",
+    "NEXT_PUBLIC_APP_URL": "local",
+    "ZALO_TOKEN_RENEWAL_ENABLED": "true"
+  }
+}

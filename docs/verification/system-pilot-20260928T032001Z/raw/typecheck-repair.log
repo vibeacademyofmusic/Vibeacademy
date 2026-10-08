@@ -1,0 +1,12 @@
+
+> vibe-academy-system@0.1.0 typecheck
+> tsc --noEmit
+
+app/admin/employees/attendance/page.tsx(38,307): error TS2345: Argument of type '(u: { branch_id: string; name: string; }) => { id: string; name: string; }' is not assignable to parameter of type '(value: Unit, index: number, array: Unit[]) => { id: string; name: string; }'.
+  Types of parameters 'u' and 'value' are incompatible.
+    Type 'Unit' is not assignable to type '{ branch_id: string; name: string; }'.
+      Types of property 'branch_id' are incompatible.
+        Type 'string | null' is not assignable to type 'string'.
+          Type 'null' is not assignable to type 'string'.
+app/admin/employees/leave-requests/page.tsx(27,296): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.

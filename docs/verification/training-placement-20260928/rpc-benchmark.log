@@ -1,0 +1,34 @@
+BEGIN
+NOTICE:  extension "pgtap" already exists, skipping
+CREATE EXTENSION
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 4
+INSERT 0 4
+              set_config              
+--------------------------------------
+ 73872a8f-c698-4bce-8876-3499b3e998e1
+(1 row)
+
+CREATE FUNCTION
+NOTICE:  BEFORE run 1 avg_ms 2.804900
+NOTICE:  BEFORE run 2 avg_ms 2.728740
+NOTICE:  BEFORE run 3 avg_ms 2.539320
+NOTICE:  BEFORE run 4 avg_ms 2.952230
+NOTICE:  BEFORE run 5 avg_ms 2.628140
+DO
+CREATE FUNCTION
+NOTICE:  AFTER run 1 avg_ms 2.961020
+NOTICE:  AFTER run 2 avg_ms 3.703660
+NOTICE:  AFTER run 3 avg_ms 9.823720
+NOTICE:  AFTER run 4 avg_ms 7.573660
+NOTICE:  AFTER run 5 avg_ms 7.550020
+DO
+ROLLBACK

@@ -1,0 +1,75 @@
+BEGIN
+NOTICE:  extension "pgtap" already exists, skipping
+CREATE EXTENSION
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 4
+INSERT 0 4
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ok 1 - unrelated branch missing room/teacher does not deny placement
+UPDATE 1
+ok 2 - unrelated branch timezone does not deny placement
+UPDATE 1
+UPDATE 1
+ok 3 - one-to-one first seat
+ok 4 - one-to-one full
+ok 5 - adjacent periods allowed
+ok 6 - student overlap rejected
+ok 7 - group final seat
+ok 8 - group full
+ok 9 - duplicate retry cannot create enrollment
+INSERT 0 1
+ok 10 - pause retains seat
+UPDATE 1
+ok 11 - started membership cannot rewrite class
+UPDATE 1
+ok 12 - room overlap
+UPDATE 1
+ok 13 - future class boundary beyond next fortnight remains checked
+UPDATE 1
+UPDATE 1
+UPDATE 1
+ok 14 - teacher overlap
+UPDATE 1
+UPDATE 1
+ok 15 - missing schedule is not clear
+ok 16 - internal timetable not exposed
+UPDATE 1
+UPDATE 1
+ok 17 - wrong branch profile
+UPDATE 1
+UPDATE 1
+ok 18 - before class start rejected
+UPDATE 1
+UPDATE 1
+ok 19 - future teacher is not incorrectly treated as current
+UPDATE 1
+INSERT 0 1
+ok 20 - rescheduled slot replaces recurrence
+ok 21 - rescheduled actual time resolves conflict during effective window
+ok 22 - later recurring conflict is still detected
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 1
+ok 23 - explicit makeup roster conflicts with new membership
+ok 24 - makeup does not include nonparticipants
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+b9000000-0000-4000-8000-000000000099
+INSERT 0 105
+ok 25 - all choices after first 100 remain reachable by pagination
+1..25
+ROLLBACK

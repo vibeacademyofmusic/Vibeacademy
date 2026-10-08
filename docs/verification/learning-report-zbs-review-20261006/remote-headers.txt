@@ -1,0 +1,14 @@
+Age: 0
+Cache-Control: private, no-store
+Content-Disposition: inline; filename="bao-cao-minh-hoa.pdf"
+Content-Type: application/pdf
+Date: Mon, 05 Oct 2026 22:01:34 GMT
+Server: Vercel
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-Matched-Path: /r/learning/[token]/pdf
+X-Robots-Tag: noindex
+X-Vercel-Cache: MISS
+X-Vercel-Id: sin1::iad1::9v56q-1791237693650-fd6b7f897323
+Connection: close
+Transfer-Encoding: chunked

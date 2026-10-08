@@ -1,0 +1,51 @@
+[
+  {
+    "release_result": {
+      "books": [
+        {
+          "active_lessons": 50,
+          "level": "PRE_STEP",
+          "name": "My First Piano Adventure - Lesson Book B: Steps on the Staff",
+          "program": "PIANO",
+          "subject": "METHODE_BOOK"
+        },
+        {
+          "active_lessons": 50,
+          "level": "PRE",
+          "name": "Piano Adventures® Level 1 – Lesson Book",
+          "program": "PIANO",
+          "subject": "METHODE_BOOK"
+        },
+        {
+          "active_lessons": 50,
+          "level": "PRE",
+          "name": "Piano Adventures - Level 2A - Lesson Book (2nd Edition)",
+          "program": "PIANO",
+          "subject": "REPERTOIRE_2A"
+        },
+        {
+          "active_lessons": 50,
+          "level": "PRE",
+          "name": "Piano Adventures - Level 2B - Lesson Book (2nd Edition)",
+          "program": "PIANO",
+          "subject": "REPERTOIRE_2B"
+        },
+        {
+          "active_lessons": 50,
+          "level": "PRE",
+          "name": "Classical Guitar Method – Volume 1",
+          "program": "GUITAR",
+          "subject": "METHODE_BOOK"
+        },
+        {
+          "active_lessons": 50,
+          "level": "PRE",
+          "name": "Classical Guitar Method – Volume 2",
+          "program": "GUITAR",
+          "subject": "REPERTOIRE"
+        }
+      ],
+      "ledger_count": 226
+    }
+  }
+]

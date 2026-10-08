@@ -2,6 +2,8 @@
 
 This folder contains the approved architecture, deployment, migration, and e-learning specifications for the VIBE Academy System.
 
+Current local business contract and release gate for counter registration and its Zalo confirmation: [business-lock-counter-registration-zalo-20260928.md](business-lock-counter-registration-zalo-20260928.md). Its status is local technical protection, not production approval.
+
 ## Documentation Status
 
 ### Security

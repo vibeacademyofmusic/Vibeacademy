@@ -1,0 +1,22 @@
+{
+  "status": "NOT_SENT",
+  "reason": "Mẫu ZALO_LEARNING_REPORT_PUBLISHED vẫn DRAFT, chưa có provider_template_id. Học viên thử không có phụ huynh UID đã đồng ý. LEARNING_REPORT_PUBLIC_ORIGIN chưa cấu hình. ZALO_LEARNING_REPORT_SEND_ENABLED không bật. Link thử đã thu hồi.",
+  "endpoint": "https://openapi.zalo.me/v3.0/oa/message/template",
+  "body": {
+    "user_id": "<UID Zalo của phụ huynh ACTIVE, consent_at có giá trị, quan hệ student_parents còn hiệu lực. Không suy ra từ số điện thoại.>",
+    "template_id": "<ID mẫu báo cáo sau khi Zalo duyệt. Không dùng mẫu học phí hoặc đăng ký.>",
+    "template_data": {
+      "customer_name": "<tên hồ sơ phụ huynh, tối đa 30 ký tự>",
+      "student_name": "TEST Video báo cáo",
+      "student_code": "VIBE-000391",
+      "program_name": "Piano",
+      "report_type": "Báo cáo tháng",
+      "report_period": "01/09/2026-30/09/2026",
+      "report_link_id": "<64 ký tự hex của link mới, chỉ đặt trong path CTA kiểu URL(200), không đặt trong nội dung mẫu>"
+    }
+  },
+  "cta": {
+    "title": "Xem báo cáo PDF",
+    "url": "https://<origin-https-da-xac-nhan>/r/learning/<report_link_id>/pdf"
+  }
+}

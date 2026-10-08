@@ -23,6 +23,9 @@
 # misc
 .DS_Store
 *.pem
+# Local Zalo gateway SSH material. Never commit.
+/ssh-keygen -t ed25519 -C "vibe-zalo-gateway-staging"
+/ssh-keygen -t ed25519 -C "vibe-zalo-gateway-staging".pub
 
 # debug
 npm-debug.log*
@@ -39,3 +42,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local page copies and one-off verification dumps. Keep them out of the source tree.
+.backups/
+*.bak
+*.backup
+*.broken-backup
+*.before-*

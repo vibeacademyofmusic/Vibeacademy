@@ -1,0 +1,289 @@
+✔ Book B preserves all 50 authored entries and all source pages except duplicate 49 (6.277334ms)
+✔ import reuses ten draft IDs, adds 40 and preserves progression; rerun changes nothing (4491.428583ms)
+✔ existing authored draft refuses import and rolls back (1930.893625ms)
+✖ draft reconciliation preserves content, IDs, rules, other subjects and progression, then reruns without changes (4052.66425ms)
+✔ reconciliation refuses authored rather than hiding an operational subject (2054.862042ms)
+✔ reconciliation refuses history rather than hiding an operational subject (1210.8665ms)
+✔ reconciliation refuses required rather than hiding an operational subject (3993.637ms)
+✔ reconciliation refuses video rather than hiding an operational subject (3365.794667ms)
+✔ active incomplete technique still fails the academic rule; reconciliation does not weaken validation (1.975541ms)
+✔ H01 workspace keeps Program Level Subject Lesson hierarchy (2.925875ms)
+✔ H02 summary path uses the first and last level (0.225333ms)
+✔ H04 counts stay secondary to the hierarchy path (0.230167ms)
+✔ H05 breadcrumb order is workspace program level subject lesson (0.476542ms)
+✔ H06 component remains the technical parent of a lesson (0.184833ms)
+✔ N01 N02 N03 N04 curriculum stays one workspace under Đào tạo (0.4105ms)
+✖ P01 P02 program list reads curricula and derives counts (1.995792ms)
+✔ C01 C03 course mode uses the real curriculum foreign key (0.30225ms)
+✔ old list routes redirect into the workspace (1.755667ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 16
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15503.016
+
+✖ failing tests:
+
+test at tests/piano-pre-step-structure.test.cjs:23:1
+✖ draft reconciliation preserves content, IDs, rules, other subjects and progression, then reruns without changes (4052.66425ms)
+  error: BOOK_B_CONTENT_NOT_READY
+      at Ie.la (/Users/macbookair/vibe-academy-system/node_modules/@electric-sql/pglite/dist/index.cjs:4:22506)
+      at Ie.Qa (/Users/macbookair/vibe-academy-system/node_modules/@electric-sql/pglite/dist/index.cjs:4:19876)
+      at Ie.parse (/Users/macbookair/vibe-academy-system/node_modules/@electric-sql/pglite/dist/index.cjs:4:18520)
+      at _e.Ia (/Users/macbookair/vibe-academy-system/node_modules/@electric-sql/pglite/dist/index.cjs:15:1788)
+      at /Users/macbookair/vibe-academy-system/node_modules/@electric-sql/pglite/dist/index.cjs:15:1161
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 140,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function inline_code_block line 12 at RAISE',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3923',
+    routine: 'exec_stmt_raise',
+    query: "begin;-- Local authoring reconciliation only; run inside a transaction.\nset local lock_timeout='5s';\nset local statement_timeout='90s';\nselect pg_advisory_xact_lock(hashtextextended('vibe:piano-pre-step-book-b',0));\nlock table curriculums,curriculum_levels,curriculum_subjects,curriculum_subject_components,curriculum_component_items in share row exclusive mode;\nlock table student_curriculum_enrollments,student_level_progress,student_subject_progress,student_component_progress,student_component_item_progress in share mode;\ndo $reconcile$\ndeclare sid uuid; cid uuid; lid uuid; n int; t text; digest text; before_progress jsonb:='{}'; after_progress jsonb:='{}'; changed_subject int; changed_component int;\nbegin\n select s.id,l.id into strict sid,lid from curriculums p join curriculum_levels l on l.curriculum_id=p.id join curriculum_subjects s on s.level_id=l.id where p.code='PIANO' and l.code='PRE_STEP' and s.code='TECHNIQUE_FOUNDATION';\n if not exists(select 1 from curriculum_subjects where id=sid and not is_required and completion_rule='ALL_REQUIRED_COMPONENTS') then raise exception 'TECHNIQUE_RULE_OR_REQUIREMENT_CONFLICT'; end if;\n select id into strict cid from curriculum_subject_components where subject_id=sid and code='LESSON_DRAFTS';\n if (select count(*) from curriculum_subject_components where subject_id=sid)<>1 or not exists(select 1 from curriculum_subject_components where id=cid and not is_required and completion_rule='DIRECT_ASSESSMENT') then raise exception 'TECHNIQUE_COMPONENT_CONFLICT'; end if;\n select count(*) into n from curriculum_component_items where component_id=cid;\n if n<>10 or exists(select 1 from curriculum_component_items where component_id=cid and (status<>'INACTIVE' or is_required or code<>'L'||lpad(sort_order::text,2,'0') or sort_order not between 1 and 10 or name<>'Lesson '||lpad(sort_order::text,2,'0'))) then raise exception 'TECHNIQUE_HAS_AUTHORED_OR_ACTIVE_CONTENT'; end if;\n if exists(select 1 from student_subject_progress where subject_id=sid) or exists(select 1 from student_component_progress where component_id=cid) or exists(select 1 from student_component_item_progress where item_id in(select id from curriculum_component_items where component_id=cid)) then raise exception 'TECHNIQUE_HAS_STUDENT_HISTORY'; end if;\n if exists(select 1 from academic_video_links where item_id in(select id from curriculum_component_items where component_id=cid)) or exists(select 1 from curriculum_lesson_syllabi where item_id in(select id from curriculum_component_items where component_id=cid)) then raise exception 'TECHNIQUE_HAS_AUTHORED_GUIDE'; end if;\n if (select count(*) from curriculum_lesson_syllabi g join curriculum_component_items i on i.id=g.item_id join curriculum_subject_components c on c.id=i.component_id join curriculum_subjects s on s.id=c.subject_id where s.level_id=lid and s.code='METHODE_BOOK' and s.status='ACTIVE' and c.status='ACTIVE' and i.status='ACTIVE')<>50 then raise exception 'BOOK_B_CONTENT_NOT_READY'; end if;\n foreach t in array array['student_curriculum_enrollments','student_level_progress','student_subject_progress','student_component_progress','student_component_item_progress'] loop\n  execute format('select md5(coalesce(jsonb_agg(to_jsonb(t) order by id)::text,''[]'')) from %I t',t) into digest;\n  before_progress:=before_progress||jsonb_build_object(t,digest);\n end loop;\n update curriculum_subject_components set status='INACTIVE' where id=cid and status='ACTIVE';\n get diagnostics changed_component=row_count;\n update curriculum_subjects set status='INACTIVE' where id=sid and status='ACTIVE';\n get diagnostics changed_subject=row_count;\n foreach t in array array['student_curriculum_enrollments','student_level_progress','student_subject_progress','student_component_progress','student_component_item_progress'] loop\n  execute format('select md5(coalesce(jsonb_agg(to_jsonb(t) order by id)::text,''[]'')) from %I t',t) into digest;\n  after_progress:=after_progress||jsonb_build_object(t,digest);\n end loop;\n if after_progress<>before_progress then raise exception 'PROGRESS_CHANGED'; end if;\n raise notice 'Reconciled draft-only Technique: subject %, component %, progress unchanged',changed_subject,changed_component;\nend $reconcile$;\nselect jsonb_build_object('progress_unchanged',true,'subjects',(select jsonb_agg(jsonb_build_object('id',s.id,'code',s.code,'status',s.status,'completion_rule',s.completion_rule,'is_required',s.is_required) order by s.sort_order) from curriculum_subjects s join curriculum_levels l on l.id=s.level_id join curriculums p on p.id=l.curriculum_id where p.code='PIANO' and l.code='PRE_STEP'));\ncommit;",
+    params: undefined,
+    queryOptions: undefined
+  }
+
+test at tests/programs-workspace.test.cjs:87:1
+✖ P01 P02 program list reads curricula and derives counts (1.995792ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /\.from\('curriculums'\)/. Input:
+  
+  "import { createClient } from '@/lib/supabase/server'\n" +
+    "import { businessDate } from '@/app/admin/_lib/business-date'\n" +
+    'import {\n' +
+    '  contentReadinessLabel,\n' +
+    '  courseDelivery,\n' +
+    '  healthLabel,\n' +
+    '  hierarchyPath,\n' +
+    '  levelAcademicHealth,\n' +
+    '  programAcademicHealth,\n' +
+    '  shownCount,\n' +
+    '  structureMeta,\n' +
+    '  subjectAcademicValid,\n' +
+    '  subjectContentReady,\n' +
+    '  type AttentionFact,\n' +
+    '  type ClassFact,\n' +
+    '  type HealthSubject,\n' +
+    '  type LevelFact,\n' +
+    "} from './model'\n" +
+    '\n' +
+    'export type ProgramView = {\n' +
+    '  id: string\n' +
+    '  code: string\n' +
+    '  name: string\n' +
+    '  description: string | null\n' +
+    '  status: string\n' +
+    '  path: string\n' +
+    '  meta: string\n' +
+    "  health: 'ready' | 'incomplete'\n" +
+    '  healthLabel: string\n' +
+    '  contentLabel: string | null\n' +
+    '  levelCount: number\n' +
+    '  subjectCount: number\n' +
+    '  componentCount: number\n' +
+    '  lessonCount: number\n' +
+    '  courseCount: number\n' +
+    '  levelsMissingSubjects: number\n' +
+    '  subjectsMissingLessons: number\n' +
+    '  levels: LevelFact[]\n' +
+    '  attention: AttentionFact[]\n' +
+    '}\n' +
+    '\n' +
+    'export type CourseView = {\n' +
+    '  id: string\n' +
+    '  code: string\n' +
+    '  name: string\n' +
+    '  description: string | null\n' +
+    '  status: string\n' +
+    '  curriculumId: string\n' +
+    '  curriculumName: string | null\n' +
+    '  levelName: string | null\n' +
+    '  classCount: number\n' +
+    '  enrollmentCount: number\n' +
+    '  branches: string[]\n' +
+    '  starting: boolean\n' +
+    '  ended: boolean\n' +
+    '  needsClass: boolean\n' +
+    '}\n' +
+    '\n' +
+    'type CurriculumRow = { id: string; code: string; name: string; description: string | null; status: string }\n' +
+    'type LevelRow = {\n' +
+    '  id: string\n' +
+    '  curriculum_id: string\n' +
+    '  code: string\n' +
+    '  name: string\n' +
+    '  sequence_no: number\n' +
+    '  level_number: number | null\n' +
+    '  level_type: string\n' +
+    '  completion_rule: string\n' +
+    '  status: string\n' +
+    '}\n' +
+    'type SubjectRow = { id: string; level_id: string; name: string; status: string; is_required: boolean; completion_rule: string }\n' +
+    'type ComponentRow = { id: string; subject_id: string; status: string; is_required: boolean; completion_rule: string }\n' +
+    'type ItemRow = { id: string; component_id: string; status: string; is_required: boolean }\n' +
+    'type CourseRow = { id: string; curriculum_id: string; level_id: string | null; code: string; name: string; description: string | null; status: string }\n' +
+    'type ClassRow = { id: string; course_id: string; branch_id: string; status: string; start_date: string | null }\n' +
+    'type EnrollmentRow = { class_id: string; status: string }\n' +
+    'type BranchRow = { id: string; name: string }\n' +
+    '\n' +
+    'function countBy<T>(rows: T[], key: (row: T) => string) {\n' +
+    '  const map = new Map<string, number>()\n' +
+    '  for (const row of rows) map.set(key(row), (map.get(key(row)) ?? 0) + 1)\n' +
+    '  return map\n' +
+    '}\n' +
+    '\n' +
+    'type PageResult<T> = { data: T[] | null; error: { message: string } | null }\n' +
+    '\n' +
+    'export async function loadPaged<T>(\n' +
+    '  fetchPage: (from: number, to: number) => PromiseLike<PageResult<T>>,\n' +
+    '): Promise<PageResult<T>> {\n' +
+    '  const rows: T[] = []\n' +
+    '  for (let from = 0; ; from += 1000) {\n' +
+    '    const { data, error } = await fetchPage(from, from + 999)\n' +
+    '    if (error) return { data: null, error }\n' +
+    '    const page = data ?? []\n' +
+    '    rows.push(...page)\n' +
+    '    if (page.length < 1000) return { data: rows, error: null }\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    'export async function loadWorkspace() {\n' +
+    '  const supabase = await createClient()\n' +
+    '  const today = businessDate()\n' +
+    '  const [curriculums, levels, subjects, components, items, courses, classes, enrollments, branches] = await Promise.all([\n' +
+    "    loadPaged<CurriculumRow>( (from, to) => supabase.from('operational_curriculums').select('id, code, name, description, status').order('name').range(from, to)),\n" +
+    "    loadPaged<LevelRow>( (from, to) => supabase.from('curriculum_levels').select('id, curriculum_id, code, name, sequence_no, level_number, level_type, completion_rule, status').range(from, to)),\n" +
+    "    loadPaged<SubjectRow>( (from, to) => supabase.from('curriculum_subjects').select('id, level_id, name, status, is_required, completion_rule').range(from, to)),\n" +
+    "    loadPaged<ComponentRow>( (from, to) => supabase.from('curriculum_subject_components').select('id, subject_id, status, is_required, completion_rule').range(from, to)),\n" +
+    "    loadPaged<ItemRow>( (from, to) => supabase.from('curriculum_component_items').select('id, component_id, status, is_required').range(from, to)),\n" +
+    "    loadPaged<CourseRow>( (from, to) => supabase.from('courses').select('id, curriculum_id, level_id, code, name, description, status').order('name').range(from, to)),\n" +
+    "    loadPaged<ClassRow>( (from, to) => supabase.from('classes').select('id, course_id, branch_id, status, start_date').range(from, to)),\n" +
+    "    loadPaged<EnrollmentRow>( (from, to) => supabase.from('enrollments').select('class_id, status').range(from, to)),\n" +
+    "    loadPaged<BranchRow>( (from, to) => supabase.from('branches').select('id, name').range(from, to)),\n" +
+    '  ])\n' +
+    '\n' +
+    '  const programFailed = Boolean(curriculums.error || levels.error || subjects.error || components.error || items.error)\n' +
+    '  const courseFailed = Boolean(courses.error || classes.error || enrollments.error || branches.error)\n' +
+    '  const usageFailed = Boolean(courses.error)\n' +
+    '\n' +
+    '  const levelRows = (levels.data ?? []) as LevelRow[]\n' +
+    '  const subjectRows = (subjects.data ?? []) as SubjectRow[]\n' +
+    '  const componentRows = (components.data ?? []) as ComponentRow[]\n' +
+    '  const itemRows = (items.data ?? []) as ItemRow[]\n' +
+    '  const courseRows = (courses.data ?? []) as CourseRow[]\n' +
+    '  const classRows = (classes.data ?? []) as ClassRow[]\n' +
+    '  const enrollmentRows = (enrollments.data ?? []) as EnrollmentRow[]\n' +
+    '  const branchName = new Map(((branches.data ?? []) as BranchRow[]).map(branch => [branch.id, branch.name]))\n' +
+    '\n' +
+    '  const levelsByProgram = new Map<string, LevelRow[]>()\n' +
+    '  for (const level of levelRows) {\n' +
+    '    const list = levelsByProgram.get(level.curriculum_id) ?? []\n' +
+    '    list.push(level)\n' +
+    '    levelsByProgram.set(level.curriculum_id, list)\n' +
+    '  }\n' +
+    "  const subjectsByLevel = countBy(subjectRows.filter(subject => subject.status === 'ACTIVE'), row => row.level_id)\n" +
+    '  const lessonTotals = new Map<string, { requiredActive: number; active: number }>()\n' +
+    '  for (const item of itemRows) {\n' +
+    '    const current = lessonTotals.get(item.component_id) ?? { requiredActive: 0, active: 0 }\n' +
+    "    if (item.status === 'ACTIVE') {\n" +
+    '      current.active += 1\n' +
+    '      if (item.is_required) current.requiredActive += 1\n' +
+    '    }\n' +
+    '    lessonTotals.set(item.component_id, current)\n' +
+    '  }\n' +
+    '  const subjectLevel = new Map(subjectRows.map(row => [row.id, row.level_id]))\n' +
+    '  const levelProgram = new Map(levelRows.map(row => [row.id, row.curriculum_id]))\n' +
+    '\n' +
+    '  const programs: ProgramView[] = ((curriculums.data ?? []) as CurriculumRow[]).map(curriculum => {\n' +
+    '    const programLevels = levelsByProgram.get(curriculum.id) ?? []\n' +
+    '    const programSubjects = subjectRows.filter(subject => levelProgram.get(subject.level_id) === curriculum.id)\n' +
+    '    const programComponents = componentRows.filter(component => {\n' +
+    '      const levelId = subjectLevel.get(component.subject_id)\n' +
+    '      return levelId ? levelProgram.get(levelId) === curriculum.id : false\n' +
+    '    })\n' +
+    '    const lessonCount = programComponents.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0)\n' +
+    "    const activeLevels = levelRows.filter(level => level.curriculum_id === curriculum.id && level.status === 'ACTIVE')\n" +
+    '    const levelsMissingSubjects = activeLevels.filter(level => (subjectsByLevel.get(level.id) ?? 0) === 0).length\n' +
+    '    const healthBySubject = new Map<string, HealthSubject>()\n' +
+    '    const healthSubjects: HealthSubject[] = programSubjects.map(subject => {\n' +
+    '      const own = programComponents.filter(component => component.subject_id === subject.id)\n' +
+    '      const healthSubject: HealthSubject = {\n' +
+    '        status: subject.status,\n' +
+    '        completionRule: subject.completion_rule,\n' +
+    '        activeLessonCount: own.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0),\n' +
+    '        components: own.map(component => ({\n' +
+    '          status: component.status,\n' +
+    '          isRequired: component.is_required,\n' +
+    '          completionRule: component.completion_rule,\n' +
+    '          requiredActiveLessons: lessonTotals.get(component.id)?.requiredActive ?? 0,\n' +
+    '        })),\n' +
+    '      }\n' +
+    '      healthBySubject.set(subject.id, healthSubject)\n' +
+    '      return healthSubject\n' +
+    '    })\n' +
+    '    const attention: AttentionFact[] = []\n' +
+    '    const levelFacts: LevelFact[] = programLevels.map(level => {\n' +
+    '      const ownSubjects = programSubjects.filter(subject => subject.level_id === level.id)\n' +
+    '      const ownHealth = ownSubjects.map(subject => healthBySubject.get(subject.id)).filter((row): row is HealthSubject => Boolean(row))\n' +
+    '      const ownComponents = programComponents.filter(component => ownSubjects.some(subject => subject.id === component.subject_id))\n' +
+    "      const activeSubjectCount = ownSubjects.filter(subject => subject.status === 'ACTIVE').length\n" +
+    '      for (const subject of ownSubjects) {\n' +
+    '        const healthSubject = healthBySubject.get(subject.id)\n' +
+    "        if (!healthSubject || subject.status !== 'ACTIVE') continue\n" +
+    '        if (!subjectAcademicValid(healthSubject)) {\n' +
+    "          attention.push({ levelId: level.id, levelName: level.name, subjectId: subject.id, subjectName: subject.name, kind: 'structure' })\n" +
+    '        }\n' +
+    '        if (!subjectContentReady(healthSubject)) {\n' +
+    "          attention.push({ levelId: level.id, levelName: level.name, subjectId: subject.id, subjectName: subject.name, kind: 'content' })\n" +
+    '        }\n' +
+    '      }\n' +
+    '      return {\n' +
+    '        id: level.id,\n' +
+    '        name: level.name,\n' +
+    '        sequence: level.sequence_no,\n' +
+    '        status: level.status,\n' +
+    '        code: level.code,\n' +
+    '        levelType: level.level_type,\n' +
+    '        levelNumber: level.level_number,\n' +
+    '        completionRule: level.completion_rule,\n' +
+    '        subjectCount: ownSubjects.length,\n' +
+    "        componentCount: ownComponents.filter(component => component.status === 'ACTIVE').length,\n" +
+    '        activeLessonCount: ownComponents.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0),\n' +
+    '        health: levelAcademicHealth({ status: level.status, activeSubjectCount, subjects: ownHealth }),\n' +
+    '      }\n' +
+    '    }).sort((a, b) => a.sequence - b.sequence)\n' +
+    "    const subjectsMissingLessons = healthSubjects.filter(subject => subject.status === 'ACTIVE' && !subjectContentReady(subject)).length\n" +
+    "    const contentReady = healthSubjects.filter(subject => subject.status === 'ACTIVE').every(subjectContentRea"... 5316 more characters
+  
+      at TestContext.<anonymous> (/Users/macbookair/vibe-academy-system/tests/programs-workspace.test.cjs:88:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "import { createClient } from '@/lib/supabase/server'\nimport { businessDate } from '@/app/admin/_lib/business-date'\nimport {\n  contentReadinessLabel,\n  courseDelivery,\n  healthLabel,\n  hierarchyPath,\n  levelAcademicHealth,\n  programAcademicHealth,\n  shownCount,\n  structureMeta,\n  subjectAcademicValid,\n  subjectContentReady,\n  type AttentionFact,\n  type ClassFact,\n  type HealthSubject,\n  type LevelFact,\n} from './model'\n\nexport type ProgramView = {\n  id: string\n  code: string\n  name: string\n  description: string | null\n  status: string\n  path: string\n  meta: string\n  health: 'ready' | 'incomplete'\n  healthLabel: string\n  contentLabel: string | null\n  levelCount: number\n  subjectCount: number\n  componentCount: number\n  lessonCount: number\n  courseCount: number\n  levelsMissingSubjects: number\n  subjectsMissingLessons: number\n  levels: LevelFact[]\n  attention: AttentionFact[]\n}\n\nexport type CourseView = {\n  id: string\n  code: string\n  name: string\n  description: string | null\n  status: string\n  curriculumId: string\n  curriculumName: string | null\n  levelName: string | null\n  classCount: number\n  enrollmentCount: number\n  branches: string[]\n  starting: boolean\n  ended: boolean\n  needsClass: boolean\n}\n\ntype CurriculumRow = { id: string; code: string; name: string; description: string | null; status: string }\ntype LevelRow = {\n  id: string\n  curriculum_id: string\n  code: string\n  name: string\n  sequence_no: number\n  level_number: number | null\n  level_type: string\n  completion_rule: string\n  status: string\n}\ntype SubjectRow = { id: string; level_id: string; name: string; status: string; is_required: boolean; completion_rule: string }\ntype ComponentRow = { id: string; subject_id: string; status: string; is_required: boolean; completion_rule: string }\ntype ItemRow = { id: string; component_id: string; status: string; is_required: boolean }\ntype CourseRow = { id: string; curriculum_id: string; level_id: string | null; code: string; name: string; description: string | null; status: string }\ntype ClassRow = { id: string; course_id: string; branch_id: string; status: string; start_date: string | null }\ntype EnrollmentRow = { class_id: string; status: string }\ntype BranchRow = { id: string; name: string }\n\nfunction countBy<T>(rows: T[], key: (row: T) => string) {\n  const map = new Map<string, number>()\n  for (const row of rows) map.set(key(row), (map.get(key(row)) ?? 0) + 1)\n  return map\n}\n\ntype PageResult<T> = { data: T[] | null; error: { message: string } | null }\n\nexport async function loadPaged<T>(\n  fetchPage: (from: number, to: number) => PromiseLike<PageResult<T>>,\n): Promise<PageResult<T>> {\n  const rows: T[] = []\n  for (let from = 0; ; from += 1000) {\n    const { data, error } = await fetchPage(from, from + 999)\n    if (error) return { data: null, error }\n    const page = data ?? []\n    rows.push(...page)\n    if (page.length < 1000) return { data: rows, error: null }\n  }\n}\n\nexport async function loadWorkspace() {\n  const supabase = await createClient()\n  const today = businessDate()\n  const [curriculums, levels, subjects, components, items, courses, classes, enrollments, branches] = await Promise.all([\n    loadPaged<CurriculumRow>( (from, to) => supabase.from('operational_curriculums').select('id, code, name, description, status').order('name').range(from, to)),\n    loadPaged<LevelRow>( (from, to) => supabase.from('curriculum_levels').select('id, curriculum_id, code, name, sequence_no, level_number, level_type, completion_rule, status').range(from, to)),\n    loadPaged<SubjectRow>( (from, to) => supabase.from('curriculum_subjects').select('id, level_id, name, status, is_required, completion_rule').range(from, to)),\n    loadPaged<ComponentRow>( (from, to) => supabase.from('curriculum_subject_components').select('id, subject_id, status, is_required, completion_rule').range(from, to)),\n    loadPaged<ItemRow>( (from, to) => supabase.from('curriculum_component_items').select('id, component_id, status, is_required').range(from, to)),\n    loadPaged<CourseRow>( (from, to) => supabase.from('courses').select('id, curriculum_id, level_id, code, name, description, status').order('name').range(from, to)),\n    loadPaged<ClassRow>( (from, to) => supabase.from('classes').select('id, course_id, branch_id, status, start_date').range(from, to)),\n    loadPaged<EnrollmentRow>( (from, to) => supabase.from('enrollments').select('class_id, status').range(from, to)),\n    loadPaged<BranchRow>( (from, to) => supabase.from('branches').select('id, name').range(from, to)),\n  ])\n\n  const programFailed = Boolean(curriculums.error || levels.error || subjects.error || components.error || items.error)\n  const courseFailed = Boolean(courses.error || classes.error || enrollments.error || branches.error)\n  const usageFailed = Boolean(courses.error)\n\n  const levelRows = (levels.data ?? []) as LevelRow[]\n  const subjectRows = (subjects.data ?? []) as SubjectRow[]\n  const componentRows = (components.data ?? []) as ComponentRow[]\n  const itemRows = (items.data ?? []) as ItemRow[]\n  const courseRows = (courses.data ?? []) as CourseRow[]\n  const classRows = (classes.data ?? []) as ClassRow[]\n  const enrollmentRows = (enrollments.data ?? []) as EnrollmentRow[]\n  const branchName = new Map(((branches.data ?? []) as BranchRow[]).map(branch => [branch.id, branch.name]))\n\n  const levelsByProgram = new Map<string, LevelRow[]>()\n  for (const level of levelRows) {\n    const list = levelsByProgram.get(level.curriculum_id) ?? []\n    list.push(level)\n    levelsByProgram.set(level.curriculum_id, list)\n  }\n  const subjectsByLevel = countBy(subjectRows.filter(subject => subject.status === 'ACTIVE'), row => row.level_id)\n  const lessonTotals = new Map<string, { requiredActive: number; active: number }>()\n  for (const item of itemRows) {\n    const current = lessonTotals.get(item.component_id) ?? { requiredActive: 0, active: 0 }\n    if (item.status === 'ACTIVE') {\n      current.active += 1\n      if (item.is_required) current.requiredActive += 1\n    }\n    lessonTotals.set(item.component_id, current)\n  }\n  const subjectLevel = new Map(subjectRows.map(row => [row.id, row.level_id]))\n  const levelProgram = new Map(levelRows.map(row => [row.id, row.curriculum_id]))\n\n  const programs: ProgramView[] = ((curriculums.data ?? []) as CurriculumRow[]).map(curriculum => {\n    const programLevels = levelsByProgram.get(curriculum.id) ?? []\n    const programSubjects = subjectRows.filter(subject => levelProgram.get(subject.level_id) === curriculum.id)\n    const programComponents = componentRows.filter(component => {\n      const levelId = subjectLevel.get(component.subject_id)\n      return levelId ? levelProgram.get(levelId) === curriculum.id : false\n    })\n    const lessonCount = programComponents.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0)\n    const activeLevels = levelRows.filter(level => level.curriculum_id === curriculum.id && level.status === 'ACTIVE')\n    const levelsMissingSubjects = activeLevels.filter(level => (subjectsByLevel.get(level.id) ?? 0) === 0).length\n    const healthBySubject = new Map<string, HealthSubject>()\n    const healthSubjects: HealthSubject[] = programSubjects.map(subject => {\n      const own = programComponents.filter(component => component.subject_id === subject.id)\n      const healthSubject: HealthSubject = {\n        status: subject.status,\n        completionRule: subject.completion_rule,\n        activeLessonCount: own.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0),\n        components: own.map(component => ({\n          status: component.status,\n          isRequired: component.is_required,\n          completionRule: component.completion_rule,\n          requiredActiveLessons: lessonTotals.get(component.id)?.requiredActive ?? 0,\n        })),\n      }\n      healthBySubject.set(subject.id, healthSubject)\n      return healthSubject\n    })\n    const attention: AttentionFact[] = []\n    const levelFacts: LevelFact[] = programLevels.map(level => {\n      const ownSubjects = programSubjects.filter(subject => subject.level_id === level.id)\n      const ownHealth = ownSubjects.map(subject => healthBySubject.get(subject.id)).filter((row): row is HealthSubject => Boolean(row))\n      const ownComponents = programComponents.filter(component => ownSubjects.some(subject => subject.id === component.subject_id))\n      const activeSubjectCount = ownSubjects.filter(subject => subject.status === 'ACTIVE').length\n      for (const subject of ownSubjects) {\n        const healthSubject = healthBySubject.get(subject.id)\n        if (!healthSubject || subject.status !== 'ACTIVE') continue\n        if (!subjectAcademicValid(healthSubject)) {\n          attention.push({ levelId: level.id, levelName: level.name, subjectId: subject.id, subjectName: subject.name, kind: 'structure' })\n        }\n        if (!subjectContentReady(healthSubject)) {\n          attention.push({ levelId: level.id, levelName: level.name, subjectId: subject.id, subjectName: subject.name, kind: 'content' })\n        }\n      }\n      return {\n        id: level.id,\n        name: level.name,\n        sequence: level.sequence_no,\n        status: level.status,\n        code: level.code,\n        levelType: level.level_type,\n        levelNumber: level.level_number,\n        completionRule: level.completion_rule,\n        subjectCount: ownSubjects.length,\n        componentCount: ownComponents.filter(component => component.status === 'ACTIVE').length,\n        activeLessonCount: ownComponents.reduce((sum, component) => sum + (lessonTotals.get(component.id)?.active ?? 0), 0),\n        health: levelAcademicHealth({ status: level.status, activeSubjectCount, subjects: ownHealth }),\n      }\n    }).sort((a, b) => a.sequence - b.sequence)\n    const subjectsMissingLessons = healthSubjects.filter(subject => subject.status === 'ACTIVE' && !subjectContentReady(subject)).length\n    const contentReady = healthSubjects.filter(subject => subject.status === 'ACTIVE').every(subjectContentRea"... 5316 more characters,
+    expected: /\.from\('curriculums'\)/,
+    operator: 'match',
+    diff: 'simple'
+  }

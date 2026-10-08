@@ -1,0 +1,17 @@
+✔ reminder template id comes from the registry and keeps the current approved id (1.876583ms)
+✔ dry-run preview uses verified reminder fields and does not invent an unverified schema (4.944834ms)
+✔ a second prepared send is still rejected and registration mapping is untouched (1.215083ms)
+✔ approved template uses package tuition and does not send early (193.448791ms)
+✔ parameter limits, missing consent, and the wrong recipient stay blocked (38.66775ms)
+✔ multiple parents are not all selected (33.07525ms)
+✔ confirmation records a local error and does not claim Zalo delivery (1.086208ms)
+✔ begin failures name the blocked check and a timeout is not success (53.901792ms)
+✔ send status is chưa gửi, đã gửi, or lỗi (39.57025ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 817.849

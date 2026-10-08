@@ -1,0 +1,272 @@
+BEGIN
+NOTICE:  extension "pgtap" already exists, skipping
+CREATE EXTENSION
+ plan  
+-------
+ 1..31
+(1 row)
+
+INSERT 0 3
+INSERT 0 3
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+INSERT 0 2
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 5
+   assign_student_academic_program    
+--------------------------------------
+ 6e833101-b199-4dee-8466-29c9006f03fa
+ 274727ca-7e16-4138-beac-d48159ecf843
+ 2051e2fc-3ab4-4690-8e57-f2567d501efa
+ ea8cf367-ea74-4ad0-aaf5-03f0049d8127
+(4 rows)
+
+INSERT 0 1
+INSERT 0 4
+UPDATE 40
+     start_student_academic_level     
+--------------------------------------
+ e74f7c24-aa7d-44c0-ba09-65669dbc67b8
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000003
+(1 row)
+
+  set_config   
+---------------
+ authenticated
+(1 row)
+
+SET
+                      is                      
+----------------------------------------------
+ ok 1 - date and branch yield two occurrences
+(1 row)
+
+               is               
+--------------------------------
+ ok 2 - different date is empty
+(1 row)
+
+              is              
+------------------------------
+ ok 3 - other branch excluded
+(1 row)
+
+         is          
+---------------------
+ ok 4 - shift filter
+(1 row)
+
+              is               
+-------------------------------
+ ok 5 - actual primary teacher
+(1 row)
+
+                        is                        
+--------------------------------------------------
+ ok 6 - eligible student includes explicit makeup
+(1 row)
+
+                        is                         
+---------------------------------------------------
+ ok 7 - other regular student excluded from makeup
+(1 row)
+
+                  is                   
+---------------------------------------
+ ok 8 - unknown student has no session
+(1 row)
+
+            is             
+---------------------------
+ ok 9 - dated roster count
+(1 row)
+
+ teacher_session_write 
+-----------------------
+ 
+(1 row)
+
+                  is                   
+---------------------------------------
+ ok 10 - marked count includes absence
+(1 row)
+
+           is           
+------------------------
+ ok 11 - absence filter
+(1 row)
+
+                is                 
+-----------------------------------
+ ok 12 - partial completion filter
+(1 row)
+
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000002
+(1 row)
+
+                is                
+----------------------------------
+ ok 13 - unrelated teacher denied
+(1 row)
+
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000003
+(1 row)
+
+ set_session_teacher 
+---------------------
+ 
+(1 row)
+
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000002
+(1 row)
+
+                       is                       
+------------------------------------------------
+ ok 14 - substitute sees only actual assignment
+(1 row)
+
+                  is                  
+--------------------------------------
+ ok 15 - actual substitute resolution
+(1 row)
+
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000001
+(1 row)
+
+                         is                         
+----------------------------------------------------
+ ok 16 - replaced primary loses substituted session
+(1 row)
+
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000003
+(1 row)
+
+                  is                  
+--------------------------------------
+ ok 17 - server pagination is bounded
+(1 row)
+
+             is              
+-----------------------------
+ ok 18 - student name search
+(1 row)
+
+ teacher_session_write 
+-----------------------
+ 
+ 
+ 
+(3 rows)
+
+                            is                             
+-----------------------------------------------------------
+ ok 19 - all eligible students marked completes attendance
+(1 row)
+
+                              is                              
+--------------------------------------------------------------
+ ok 20 - completed attendance sorts after unfinished sessions
+(1 row)
+
+DELETE 1
+INSERT 0 1
+                                   is                                    
+-------------------------------------------------------------------------
+ ok 21 - paused regular enrollment excluded but explicit makeup retained
+(1 row)
+
+                           is                            
+---------------------------------------------------------
+ ok 22 - remaining eligible attendance count after pause
+(1 row)
+
+                            is                            
+----------------------------------------------------------
+ ok 23 - read roster uses same paused regular eligibility
+(1 row)
+
+                            is                            
+----------------------------------------------------------
+ ok 24 - read roster preserves explicit makeup membership
+(1 row)
+
+RESET
+INSERT 0 1
+SET
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000002
+(1 row)
+
+                             is                             
+------------------------------------------------------------
+ ok 25 - branch reader receives authorized canonical roster
+(1 row)
+
+                       is                       
+------------------------------------------------
+ ok 26 - enrollment table access is not widened
+(1 row)
+
+              throws_ok               
+--------------------------------------
+ ok 27 - unknown session fails closed
+(1 row)
+
+RESET
+UPDATE 1
+SET
+                     throws_ok                      
+----------------------------------------------------
+ ok 28 - expired branch role cannot use roster read
+(1 row)
+
+              set_config              
+--------------------------------------
+ c2100000-0000-4000-8000-000000000001
+(1 row)
+
+                       throws_ok                        
+--------------------------------------------------------
+ ok 29 - teacher continues using own workspace boundary
+(1 row)
+
+                      ok                      
+----------------------------------------------
+ ok 30 - anonymous cannot execute roster read
+(1 row)
+
+                             ok                             
+------------------------------------------------------------
+ ok 31 - service role is not explicitly granted roster read
+(1 row)
+
+ finish 
+--------
+(0 rows)
+
+ROLLBACK

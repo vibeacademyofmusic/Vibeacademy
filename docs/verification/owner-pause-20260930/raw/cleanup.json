@@ -1,0 +1,7 @@
+{
+  "run": "TEST OWNER PAUSE 20260930",
+  "all_unrelated_public_rows_unchanged": true,
+  "guard_restored": true,
+  "owned_requests_removed": 2,
+  "local_test_accounts_removed": 2
+}

@@ -1,0 +1,291 @@
+ M AGENTS.md
+ M app/admin/AdminNavigation.tsx
+ M app/admin/_components/vibe/index.tsx
+ M app/admin/_lib/dashboard-data.ts
+ M app/admin/academic/[id]/edit/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/edit/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/components/[componentId]/edit/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/edit/page.tsx
+ M app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/page.tsx
+ M app/admin/academic/[id]/page.tsx
+ M app/admin/academic/actions.ts
+ M app/admin/academic/page.tsx
+ M app/admin/attendance/[id]/page.tsx
+ M app/admin/attendance/actions.ts
+ M app/admin/attendance/page.tsx
+ M app/admin/business/campaigns/actions.ts
+ M app/admin/business/campaigns/page.tsx
+ M app/admin/business/crm/[id]/page.tsx
+ M app/admin/business/crm/actions.ts
+ M app/admin/business/crm/data.ts
+ M app/admin/business/crm/model.ts
+ M app/admin/business/crm/page.tsx
+ M app/admin/business/instrument-customers/actions.ts
+ M app/admin/business/instrument-customers/page.tsx
+ M app/admin/business/page.tsx
+ M app/admin/business/reactivation/actions.ts
+ M app/admin/business/reactivation/page.tsx
+ M app/admin/business/registrations/[id]/page.tsx
+ M app/admin/business/registrations/actions.ts
+ M app/admin/business/registrations/new/page.tsx
+ M app/admin/business/registrations/page.tsx
+ M app/admin/business/reports/page.tsx
+ M app/admin/classes/[id]/StudentEnrollmentSection.tsx
+ M app/admin/classes/[id]/actions.ts
+ M app/admin/classes/[id]/page.tsx
+ M app/admin/classes/_ops/Workspace.tsx
+ M app/admin/classes/_ops/data.ts
+ M app/admin/classes/actions.ts
+ M app/admin/classes/page.tsx
+ M app/admin/courses/[id]/edit/page.tsx
+ M app/admin/courses/page.tsx
+ M app/admin/employees/actions.ts
+ M app/admin/employees/page.tsx
+ M app/admin/feedback/[id]/page.tsx
+ M app/admin/feedback/page.tsx
+ M app/admin/finance/layout.tsx
+ M app/admin/hr/expenses/SelfServiceView.tsx
+ M app/admin/hr/expenses/actions.ts
+ M app/admin/hr/expenses/data.ts
+ M app/admin/hr/expenses/operations.module.css
+ M app/admin/hr/expenses/page.tsx
+ M app/admin/hr/teaching/page.tsx
+ M app/admin/layout.tsx
+ M app/admin/navigation.ts
+ M app/admin/page.tsx
+ M app/admin/payroll/_ux/Index.tsx
+ M app/admin/payroll/_ux/Workspace.tsx
+ M app/admin/reports/learning/[id]/page.tsx
+ M app/admin/reports/learning/page.tsx
+ M app/admin/session-teachers/page.tsx
+ M app/admin/students/[id]/ClassEnrollments.tsx
+ M app/admin/students/hub.tsx
+ M app/admin/students/ops-shell.tsx
+ M app/admin/students/page.tsx
+ M app/admin/students/placement-actions.ts
+ M app/admin/teachers/page.tsx
+ M app/admin/tuition/layout.tsx
+ M app/api/integrations/zalo/webhook/route.ts
+ M app/login/actions.ts
+ M app/login/page.tsx
+ M app/my-learning/page.tsx
+ M app/my-payroll/page.tsx
+ M app/operations/teacher/page.tsx
+ M app/operations/teacher/sessions/[id]/page.tsx
+ M lib/integrations/zalo/webhook.ts
+ M lib/notifications/worker.ts
+ M next.config.ts
+ M package-lock.json
+ M package.json
+ M supabase/config.toml
+ M supabase/tests/database/attendance_records_test.sql
+ M supabase/tests/database/enrollment_pause_attendance_test.sql
+ M supabase/tests/database/registration_placement_test.sql
+ M supabase/tests/database/student_ops_shell_test.sql
+ M supabase/tests/future_academic_start_scheduling_test.sql
+ M tests/academic-subject.test.cjs
+ M tests/admin-navigation.test.cjs
+ M tests/admin-shell-access.test.cjs
+ M tests/crm-operations.test.cjs
+ M tests/executive-dashboard.test.cjs
+ M tests/mixed-level-class-ops.test.cjs
+ M tests/notification-worker.test.cjs
+ M tests/registration-placement.test.cjs
+ M tests/zalo-webhook-foundation.test.cjs
+?? .backups/
+?? app/admin/WorkspaceSectionTabs.tsx
+?? app/admin/_components/WorkspaceTabs.tsx
+?? app/admin/_components/workspace-tabs.module.css
+?? app/admin/academic/[id]/levels/[levelId]/subjects/[subjectId]/lessons/
+?? app/admin/academic/lesson-operator.tsx
+?? app/admin/academic/lesson-rules.ts
+?? app/admin/attendance/Launcher.tsx
+?? app/admin/attendance/attendance.module.css
+?? app/admin/attendance/launcher-model.ts
+?? app/admin/business/access.ts
+?? app/admin/business/after-sales/
+?? app/admin/business/crm/CrmContent.tsx
+?? app/admin/business/marketing/
+?? app/admin/business/registrations/[id]/PayosAwaiting.tsx
+?? app/admin/business/registrations/[id]/ZaloConnection.tsx
+?? app/admin/business/registrations/new/CounterForm.tsx
+?? app/admin/business/registrations/shell.tsx
+?? app/admin/business/registrations/status.ts
+?? app/admin/business/registrations/workspace.module.css
+?? app/admin/business/workspace-frame.tsx
+?? app/admin/business/workspaces.ts
+?? app/admin/employees/StaffPanels.tsx
+?? app/admin/employees/[id]/compensation/actions.ts.bak
+?? app/admin/employees/[id]/compensation/page.tsx.bak
+?? app/admin/employees/portrait.ts
+?? app/admin/employees/staff-actions.ts
+?? app/admin/employees/staff-data.ts
+?? app/admin/finance/SectionNav.tsx
+?? app/admin/finance/layout.tsx.before-control-tower-20260922
+?? app/admin/finance/page.tsx.before-control-tower-20260922
+?? app/admin/finance/payments/page.tsx.backup
+?? app/admin/hr/SectionNav.tsx
+?? app/admin/hr/retroactive-pay/page.tsx.before-integrated-payroll-20260921-180046
+?? app/admin/payroll/[period]/[teacher]/page.tsx.bak
+?? app/admin/payroll/[period]/page.tsx.bak
+?? app/admin/payroll/_ux/Workspace.tsx.before-payment-navigation-20260921-185601
+?? app/admin/payroll/actions.ts.bak
+?? app/admin/payroll/data.ts.bak
+?? app/admin/programs/
+?? app/admin/system/
+?? app/admin/teachers/[id]/
+?? app/api/integrations/momo/
+?? app/api/integrations/payos/
+?? app/api/integrations/zalo/oauth/
+?? app/api/internal/
+?? app/documents/payslips/PayslipActions.tsx.before-a5-landscape-20260921-005237
+?? app/documents/payslips/PayslipDocument.tsx.before-a5-landscape-20260921-005237
+?? app/documents/payslips/PayslipDocument.tsx.before-a5-zalo-20260921-004613
+?? app/documents/payslips/PayslipDocument.tsx.before-formal-one-page-20260921-005717
+?? app/documents/payslips/PayslipDocument.tsx.before-header-refine-20260921-002426
+?? app/documents/payslips/PayslipDocument.tsx.before-logo-center-20260921-002738
+?? app/documents/payslips/PayslipDocument.tsx.before-logo-payroll-line-20260921-003400
+?? app/documents/payslips/[id]/page.tsx.before-header-refine-20260921-002426
+?? app/documents/payslips/[id]/page.tsx.before-payslip-design-20260921-001900
+?? app/documents/payslips/[id]/page.tsx.broken-backup
+?? app/documents/staff-cards/
+?? app/my-expenses/
+?? app/my-learning/conversations/
+?? app/my-learning/reports/
+?? app/operations/teacher/sessions/[id]/actions.ts
+?? app/operations/teacher/sessions/[id]/model.ts
+?? app/operations/teacher/sessions/[id]/workspace.module.css
+?? app/operations/teacher/sessions/[id]/workspace.tsx
+?? assets/
+?? docs/crm-consolidation-delivery.md
+?? docs/crm-consolidation-inventory.md
+?? docs/curriculum/
+?? docs/local-development-workflow.md
+?? docs/payos-local-configuration.md
+?? docs/verification/
+?? docs/zalo-registration-channel-recovery.md
+?? docs/zalo-token-renewal-pilot.md
+?? employee_expense_claims_v1.sql
+?? instrumentation.ts
+?? lib/integrations/momo/
+?? lib/integrations/payos/
+?? lib/integrations/zalo/admin.ts
+?? lib/integrations/zalo/app-secret-proof.ts
+?? lib/integrations/zalo/authorization.ts
+?? lib/integrations/zalo/connection-check.ts
+?? lib/integrations/zalo/connection.ts
+?? lib/integrations/zalo/errors.ts
+?? lib/integrations/zalo/maintenance.ts
+?? lib/integrations/zalo/oauth.ts
+?? lib/integrations/zalo/outbound.ts
+?? lib/integrations/zalo/phone.ts
+?? lib/integrations/zalo/preview-dispatch.ts
+?? lib/integrations/zalo/readiness.ts
+?? lib/integrations/zalo/recovery-labels.ts
+?? lib/integrations/zalo/registration-recovery.ts
+?? lib/integrations/zalo/renewal-settings.ts
+?? lib/integrations/zalo/service.ts
+?? lib/integrations/zalo/widget-public.ts
+?? lib/reports/
+?? lib/staff/
+?? ops/
+?? scripts/crm-sprint-2-rehearsal.sql
+?? scripts/curriculum-four-programs-plan.cjs
+?? scripts/local-academic-pdf-check.cjs
+?? scripts/local-assignment-control-fixture.cjs
+?? scripts/local-bootstrap-expense-v2-acceptance.cjs
+?? scripts/local-guitar-curriculum-scaffold.cjs
+?? scripts/local-lan-info.cjs
+?? scripts/local-mixed-level-class-fixture.cjs
+?? scripts/local-mixed-level-closure.cjs
+?? scripts/local-perf-session.cjs
+?? scripts/local-preview.cjs
+?? scripts/local-seed-academic-demo.cjs
+?? scripts/local-student-academic-zalo-check.cjs
+?? scripts/local-student-academic-zalo-e2e.cjs
+?? scripts/local-student-ops-uat-fixture.cjs
+?? scripts/local-teacher-session-fixture.cjs
+?? scripts/local-training-placement-race.cjs
+?? scripts/payos-webhook-proxy.cjs
+?? scripts/test-direct-assessment-migration.cjs
+?? scripts/zalo-maintenance.cjs
+?? scripts/zalo-scheduler.cjs
+?? "ssh-keygen -t ed25519 -C \"vibe-zalo-gateway-staging\""
+?? "ssh-keygen -t ed25519 -C \"vibe-zalo-gateway-staging\".pub"
+?? staff_compensation_rpc_v1.sql
+?? staff_foundation_v1.sql
+?? supabase/migrations/20260922310000_zalo_admin_read_v1.sql
+?? supabase/migrations/20260922320000_crm_channel_state_v1.sql
+?? supabase/migrations/20260923031500_lesson_operator_writes_v1.sql
+?? supabase/migrations/20260923040000_zalo_interaction_link_v1.sql
+?? supabase/migrations/20260923050000_notification_zalo_outbound_v1.sql
+?? supabase/migrations/20260923051000_zalo_registration_template_copy_v1.sql
+?? supabase/migrations/20260923052000_zalo_registration_template_mapping_v1.sql
+?? supabase/migrations/20260923170000_zalo_payment_notification_z1.sql
+?? supabase/migrations/20260924130000_mixed_level_class_ops_v1.sql
+?? supabase/migrations/20260924160000_teacher_session_workspace_v1.sql
+?? supabase/migrations/20260926120000_student_lifecycle_segmentation_v1.sql
+?? supabase/migrations/20260926183000_staff_profile_badges_v1.sql
+?? supabase/migrations/20260926190000_staff_teaching_curriculum_v1.sql
+?? supabase/migrations/20260928010000_consolidate_counter_registration.sql
+?? supabase/migrations/20260928020000_consolidate_registration_payments.sql
+?? supabase/migrations/20260928030000_consolidate_zalo_durable_outbox.sql
+?? supabase/migrations/20260928040000_consolidation_rpc_grants.sql
+?? supabase/migrations/20260928050000_preserve_main_registration_contract.sql
+?? supabase/migrations/20260928060000_zalo_automatic_renewal.sql
+?? supabase/migrations/20260928070000_zalo_channel_recovery.sql
+?? supabase/migrations/20260928080000_zalo_registration_recovery_action.sql
+?? supabase/migrations/20260928090000_zalo_connection_evidence.sql
+?? supabase/migrations/20260928190000_training_placement_integrity.sql
+?? supabase/migrations/20260928200000_academic_family_communications.sql
+?? supabase/migrations/20260928201000_academic_feedback_portal.sql
+?? supabase/migrations/20260928210000_attendance_launcher.sql
+?? supabase/tests/database/attendance_launcher_test.sql
+?? supabase/tests/database/crm_channel_state_test.sql
+?? supabase/tests/database/lesson_operator_writes_test.sql
+?? supabase/tests/database/mixed_level_class_ops_test.sql
+?? supabase/tests/database/registration_agreed_deposit_test.sql
+?? supabase/tests/database/registration_branch_payment_option_test.sql
+?? supabase/tests/database/registration_momo_deposit_test.sql
+?? supabase/tests/database/registration_payos_test.sql
+?? supabase/tests/database/staff_profile_badges_test.sql
+?? supabase/tests/database/student_code_sequence_test.sql
+?? supabase/tests/database/teacher_session_workspace_test.sql
+?? supabase/tests/database/training_placement_integrity_test.sql
+?? supabase/tests/database/zalo_admin_read_test.sql
+?? supabase/tests/database/zalo_automatic_renewal_test.sql
+?? supabase/tests/database/zalo_channel_recovery_test.sql
+?? supabase/tests/database/zalo_durable_recovery_test.sql
+?? supabase/tests/database/zalo_payment_notification_z1_test.sql
+?? supabase/tests/database/zalo_template_readiness_test.sql
+?? tests/attendance-launcher.test.cjs
+?? tests/business-workspaces.test.cjs
+?? tests/crm-consolidation.test.cjs
+?? tests/curriculum-four-programs-plan.test.cjs
+?? tests/curriculum-workspace.test.cjs
+?? tests/helpers/zalo-module-loader.cjs
+?? tests/helpers/zalo-renewal-process.cjs
+?? tests/lesson-crud.test.cjs
+?? tests/local-preview.test.cjs
+?? tests/local-seed-academic-demo.test.cjs
+?? tests/mixed-level-work-queue.test.cjs
+?? tests/momo-signature.test.mjs
+?? tests/payos-hardening.test.mjs
+?? tests/payos-registration.test.mjs
+?? tests/payos-sync.test.cjs
+?? tests/staff-profile-card.test.cjs
+?? tests/structure-health.test.cjs
+?? tests/teacher-session-workspace.test.cjs
+?? tests/zalo-admin-ui.test.cjs
+?? tests/zalo-automatic-renewal.test.cjs
+?? tests/zalo-channel-recovery.test.cjs
+?? tests/zalo-durable-database.test.cjs
+?? tests/zalo-durable-recovery.test.cjs
+?? tests/zalo-payment-notification-z1.test.cjs
+?? tests/zalo-phone-payment-path.test.cjs
+?? tests/zalo-phone-registration.test.cjs
+?? tests/zalo-recovery-controls.test.cjs
+?? tests/zalo-registration-recovery-action.test.cjs
+?? tests/zalo-renewal-database.test.cjs
+?? tests/zalo-template-readiness.test.cjs

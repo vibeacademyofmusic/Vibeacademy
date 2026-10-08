@@ -1,0 +1,63 @@
+Window: "VIBE Academy 🔊", App: Google Chrome.
+0 standard window VIBE Academy - Google Chrome - VIBE ACADEMY OF, URL: localhost:3000/admin/tuition/reminders, Secondary Actions: Raise
+	1 container VIBE Academy - Google Chrome - VIBE ACADEMY OF, URL: localhost:3000/admin/tuition/reminders
+		2 container
+			3 container
+				4 scroll area
+					5 HTML content VIBE Academy, URL: localhost:3000/admin/tuition/reminders?history=dea2ce6f-b45c-4ebc-a91d-0c4d3c50702f
+						6 container Lịch sử Zalo
+							7 container
+								8 heading Lịch sử Zalo, Value: 2
+									9 text Lịch sử Zalo
+								10 button Đóng cửa sổ
+							11 container
+								12 text Lịch sử gửi:  Đã phát đến máy · 97be9bf2e4114e92b89635fc17c34fce . Đã tiếp nhận nghĩa là Zalo đã nhận tin, chưa phải đã tới máy. Đã phát đến máy là Zalo xác nhận tin đã tới điện thoại. Mẫu đang dùng nhận Tiếp tục học hoặc Dừng học. Yêu cầu khác chỉ áp dụng khi mẫu thay thế được duyệt và đưa vào sử dụng. Mỗi dòng giữ đúng chữ Zalo trả về, kèm thời điểm. Lịch sử phản hồi:
+								13 content list
+									14 container
+										15 AXListMarker • 
+										16 text Tiếp tục học  ·  20:36 3/10/26  · nhận  20:48 3/10/26  ·  97be9bf2e4114e92b89635fc17c34fce  ·  Zalo ZBS
+								17 text Gửi thật thủ công đã bật cho đúng một học viên đã đủ điều kiện. Gửi theo lịch vẫn tắt. Không gửi hàng loạt.  Tiếp tục học, Yêu cầu khác và Dừng học chỉ ghi nhận ý định.
+		18 container
+			19 container
+				20 toolbar
+					21 button Back
+					22 button (disabled) Forward
+					23 button Reload
+					24 container
+						25 pop up button View site information
+						26 text field (settable) Address and search bar, Value: localhost:3000/admin/tuition/reminders, Placeholder: Search Google or type a URL
+						27 button Bookmark this tab
+					28 pop up button Extensions
+					29 button Control your music, videos, and more
+					30 button VIBE ACADEMY OF
+					31 pop up button Chrome
+			32 container
+				33 pop up button Tab search
+				34 tab group
+					35 tab (settable, boolean) vibe-academy-staging | Vibe Academy | Supabase - Memory usage - 269 MB, Value: off
+						36 button Close
+					37 tab (settable, boolean) payOS - Memory usage - 107 MB, Value: off
+						38 button Close
+					39 tab (selected, settable, boolean) VIBE Academy - Memory usage - 158 MB, Value: on
+						40 button Close
+					41 tab (settable, boolean) Value: off, (48) Summer Vacation Marathon! ☀️🏖️ | Tom & Jerry Tales MEGA COMP | ‪@wbkids‬ - YouTube - Audio playing - Memory usage - 454 MB
+						42 button (disabled) Mute tab
+						43 button Close
+				44 button New Tab
+				45 button Open Gemini in Chrome
+	46 container
+		47 close button
+		48 zoom button
+49 menu bar
+	50 Chrome
+	51 File
+	52 Edit
+	53 View
+	54 History
+	55 Bookmarks
+	56 Profiles
+	57 Tab
+	58 Window
+	59 Help
+
+The focused UI element is 10 button Đóng cửa sổ

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AcademicTrail } from '@/app/admin/programs/trail'
 
 import { createClient } from '@/lib/supabase/server'
 
@@ -26,9 +27,8 @@ export default async function EditCoursePage({
         .eq('id', id)
         .maybeSingle(),
       supabase
-        .from('curriculums')
+        .from('operational_curriculums')
         .select('id, code, name, status')
-        .eq('status', 'ACTIVE')
         .order('name'),
       supabase
         .from('curriculum_levels')
@@ -48,12 +48,7 @@ export default async function EditCoursePage({
 
   return (
     <div className="max-w-2xl">
-      <Link
-        href="/admin/courses"
-        className="text-sm font-medium text-gray-500 hover:text-gray-900"
-      >
-        ← Back to Courses
-      </Link>
+      <AcademicTrail items={[{ label: 'Khóa học', href: '/admin/programs?view=courses' }, { label: course.name }]} />
 
       <div className="mt-6 mb-8">
         <p className="text-sm font-medium text-gray-500">

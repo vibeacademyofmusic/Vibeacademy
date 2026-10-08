@@ -1,0 +1,460 @@
+{
+  "run_id": "VIBE-E2E-ACA-20260928",
+  "objects": {
+    "actor-ADMIN": {
+      "id": "585f8ddb-9fb4-498b-b2bd-0942a0846196",
+      "email": "vibe.e2e.admin.20260928@example.test",
+      "role": "SUPER_ADMIN"
+    },
+    "actor-BA": {
+      "id": "a6adf0df-a9f5-43bd-a8f0-39f20ae8e3a6",
+      "email": "vibe.e2e.ba.20260928@example.test",
+      "role": "BRANCH_ADMIN"
+    },
+    "actor-BB": {
+      "id": "74a6b3c2-35af-4c1f-a53a-88dffcb67bc1",
+      "email": "vibe.e2e.bb.20260928@example.test",
+      "role": "BRANCH_ADMIN"
+    },
+    "actor-ACA": {
+      "id": "eadb838b-b313-4154-9601-80e805aab296",
+      "email": "vibe.e2e.aca.20260928@example.test",
+      "role": "ACADEMIC_ADMIN"
+    },
+    "actor-T1": {
+      "id": "29b913f4-e924-4fb9-a92b-c54fe8e99d8c",
+      "email": "vibe.e2e.t1.20260928@example.test",
+      "role": "TEACHER"
+    },
+    "actor-T2": {
+      "id": "a5b53e99-8e69-4a23-8e84-7a4d5d4a5cb8",
+      "email": "vibe.e2e.t2.20260928@example.test",
+      "role": "TEACHER"
+    },
+    "actor-T3": {
+      "id": "87f890e5-810e-403d-8b3f-4dafd38a44e3",
+      "email": "vibe.e2e.t3.20260928@example.test",
+      "role": "TEACHER"
+    },
+    "actor-S1": {
+      "id": "1dea3200-f8a4-4996-a691-c1de11766f38",
+      "email": "vibe.e2e.s1.20260928@example.test",
+      "role": "STUDENT"
+    },
+    "actor-S2": {
+      "id": "18ecda69-7a73-4f9e-afa5-defdae07fd59",
+      "email": "vibe.e2e.s2.20260928@example.test",
+      "role": "STUDENT"
+    },
+    "actor-S3": {
+      "id": "2f14be44-f272-4b91-90d1-6f55e93da2a4",
+      "email": "vibe.e2e.s3.20260928@example.test",
+      "role": "STUDENT"
+    },
+    "actor-S4": {
+      "id": "be82c20d-fbaa-4f5c-b4f8-51076ef3d678",
+      "email": "vibe.e2e.s4.20260928@example.test",
+      "role": "STUDENT"
+    },
+    "actor-S5": {
+      "id": "660b9964-6c36-4d1c-8722-da092a5c7e37",
+      "email": "vibe.e2e.s5.20260928@example.test",
+      "role": "STUDENT"
+    },
+    "actor-P1": {
+      "id": "3ac51dc0-a866-432f-a195-b32b914f256c",
+      "email": "vibe.e2e.p1.20260928@example.test",
+      "role": "PARENT"
+    },
+    "actor-P2": {
+      "id": "0c624ca9-a932-4afb-a13e-4ac8df1e3f76",
+      "email": "vibe.e2e.p2.20260928@example.test",
+      "role": "PARENT"
+    },
+    "actor-P3": {
+      "id": "253e20f0-7800-41cb-9fa6-75c3253cce34",
+      "email": "vibe.e2e.p3.20260928@example.test",
+      "role": "PARENT"
+    },
+    "actor-P4": {
+      "id": "8d6cc3f0-c8cc-4eac-8bd4-a2e217fb9495",
+      "email": "vibe.e2e.p4.20260928@example.test",
+      "role": "PARENT"
+    },
+    "draft/PIANO/PRE_STEP": {
+      "id": "fd3d456f-e877-4379-8e7c-c788a9706ddd",
+      "table": "curriculum_levels"
+    },
+    "draft/PIANO/PRE_STEP/METHODE_BOOK": {
+      "id": "a348a034-75dd-4978-82a6-032f1411a09d",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/PRE_STEP/TECHNIQUE_FOUNDATION": {
+      "id": "68944925-476b-47da-85e6-0c3f1ff9068d",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/PRE_STEP/AURAL": {
+      "id": "f753c539-cedb-4b25-8a36-70b6f278e9e2",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/PRE_STEP/SIGHT_READING": {
+      "id": "7f17557f-517c-4fea-8f59-33619fa401dc",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/PRE/METHODE_BOOK": {
+      "id": "254424d8-d434-490b-862d-931d08c4d02f",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G4/ENSEMBLE": {
+      "id": "16c1d8c7-48be-49de-8fd7-abc181cfe452",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G5/ENSEMBLE": {
+      "id": "30d7739a-6747-4861-85ca-d29e8e3ca892",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G6/ENSEMBLE": {
+      "id": "12dc4560-654f-4a72-8599-e837c297a975",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G7/ENSEMBLE": {
+      "id": "c14b1e35-d88a-4d13-8ede-6f9e68130e12",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G7/MUSIC_HISTORY": {
+      "id": "ecd8f7e7-5d11-4d42-8088-443923ce08e7",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G7/MEDIA_PRODUCT": {
+      "id": "29346a5f-9cf1-499c-8364-9287257744dd",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G8/ENSEMBLE": {
+      "id": "580903a5-22ad-4353-84b8-861727ffd2c6",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G8/MUSIC_HISTORY": {
+      "id": "ea0e7068-3c4f-4610-87ae-0ee836ed5f71",
+      "table": "curriculum_subjects"
+    },
+    "draft/PIANO/G8/MEDIA_PRODUCT": {
+      "id": "da3090dd-7e39-455e-83ee-9c94204217f5",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/PRE/METHODE_BOOK": {
+      "id": "5940bb7e-0e74-4b00-8c4a-597406483ef4",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G4/ENSEMBLE": {
+      "id": "6d5dcbb5-f496-45f5-800d-6ef8e3c3ea96",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G5/ENSEMBLE": {
+      "id": "1246e451-fad0-4257-8a8d-237a53772df9",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G6/ENSEMBLE": {
+      "id": "ef838b6c-d18a-4f2c-8c88-ec09ad57c5c4",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G7/ENSEMBLE": {
+      "id": "2b98d146-ff9a-43b5-84c6-502d5fed2d09",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G7/MUSIC_HISTORY": {
+      "id": "eb167979-a188-47f0-8fad-78356d6cad88",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G7/MEDIA_PRODUCT": {
+      "id": "2994416e-c2de-4c6a-84db-a410778d9fe8",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G8/ENSEMBLE": {
+      "id": "8dccf792-285c-47b3-8c16-c5d4990df2a0",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G8/MUSIC_HISTORY": {
+      "id": "be91b1d4-9a1c-4081-8120-acedb2c386ac",
+      "table": "curriculum_subjects"
+    },
+    "draft/DRUMS/G8/MEDIA_PRODUCT": {
+      "id": "aa9318af-986e-4e1e-8460-429908b780ae",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/PRE/METHODE_BOOK": {
+      "id": "60527421-a4d3-47e6-85cb-248cb87e8dcb",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G4/ENSEMBLE": {
+      "id": "6183d7c3-4173-4699-8bed-ef4964c71b2a",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G5/ENSEMBLE": {
+      "id": "94f839ed-e5a1-4960-89e6-b7dda83c7c7a",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G6/ENSEMBLE": {
+      "id": "55f8fa34-a537-4144-8332-eec7ff86f491",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G7/ENSEMBLE": {
+      "id": "37fa270e-32a3-4c31-82e2-685f4834b26a",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G7/MUSIC_HISTORY": {
+      "id": "405e02be-f859-4f83-8d0d-30dabb95aff0",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G7/MEDIA_PRODUCT": {
+      "id": "f4a12ef1-017e-4025-88ac-a0fe037b1e10",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G8/ENSEMBLE": {
+      "id": "66b8733b-9ad9-41da-858c-1c78791322fd",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G8/MUSIC_HISTORY": {
+      "id": "05088cf6-41cd-41e5-896f-09782a6b639c",
+      "table": "curriculum_subjects"
+    },
+    "draft/GUITAR/G8/MEDIA_PRODUCT": {
+      "id": "eff97a87-3804-48aa-86d3-b8f2e13a3ce2",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/PRE/METHODE_BOOK": {
+      "id": "5de63c08-222f-4315-8c63-f3327c12aeda",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G4/ENSEMBLE": {
+      "id": "0228dabc-6210-4b94-871f-3440fd53878c",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G5/ENSEMBLE": {
+      "id": "ee95a756-7064-4fc6-85cd-3831c77bf842",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G6/ENSEMBLE": {
+      "id": "1988dba0-46c1-47f4-8c85-91a0bda105f1",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G7/ENSEMBLE": {
+      "id": "bfe6ecc7-b681-44a0-8b29-0726accd5c39",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G7/MUSIC_HISTORY": {
+      "id": "25e38ead-fd32-41ae-8176-fb6c618f5b82",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G7/MEDIA_PRODUCT": {
+      "id": "a96b2e90-5d23-4350-8979-f6d987071559",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G8/ENSEMBLE": {
+      "id": "2ba4ab34-aa57-40a0-8fc4-82901e2235ee",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G8/MUSIC_HISTORY": {
+      "id": "748e83d1-87f6-428e-874b-5fff8f3c19a6",
+      "table": "curriculum_subjects"
+    },
+    "draft/VIOLIN/G8/MEDIA_PRODUCT": {
+      "id": "180566ce-a5d2-4635-84b3-abdf380c4699",
+      "table": "curriculum_subjects"
+    },
+    "P1": {
+      "id": "c923957d-57f5-4094-83fb-b0f0016b3267",
+      "table": "parents"
+    },
+    "P2": {
+      "id": "4ec51f3a-f113-41d1-8301-8c153ef51cd9",
+      "table": "parents"
+    },
+    "P3": {
+      "id": "27e2e8ca-d9f9-417e-89b8-12e0d1c638f7",
+      "table": "parents"
+    },
+    "P4": {
+      "id": "96fde5e3-bf3b-4d86-8420-ecaeb409bf01",
+      "table": "parents"
+    },
+    "S1": {
+      "id": "969cc2f0-394c-4ce8-8d47-0c3c10cf3c0e",
+      "table": "students"
+    },
+    "S1-academic": {
+      "id": "2106721b-e09f-4108-bebf-115f8b4e41cd",
+      "table": "student_curriculum_enrollments"
+    },
+    "S2": {
+      "id": "1eb3bd5f-0ab3-4da6-8a25-dc87e582f2ea",
+      "table": "students"
+    },
+    "S3": {
+      "id": "a74121cb-3818-4727-8bd4-6fc620a00f95",
+      "table": "students"
+    },
+    "S3-academic": {
+      "id": "b54c8b15-85f1-4de8-a59d-60cf974aafa6",
+      "table": "student_curriculum_enrollments"
+    },
+    "S4": {
+      "id": "3ded1d66-3ca9-4ba4-8a29-b91f4d288736",
+      "table": "students"
+    },
+    "S4-academic": {
+      "id": "a6c875be-1195-4092-8f28-1c8708f6c4dc",
+      "table": "student_curriculum_enrollments"
+    },
+    "S5": {
+      "id": "9f59c28e-52fc-403b-81bf-c7e511d2bdf0",
+      "table": "students"
+    },
+    "S5-academic": {
+      "id": "ed734096-0eaa-466f-b087-7f776e82dc58",
+      "table": "student_curriculum_enrollments"
+    },
+    "T1": {
+      "id": "767773d8-7e58-4c6a-8928-0565c42572a6",
+      "table": "teachers"
+    },
+    "T2": {
+      "id": "770685e6-84bd-445e-8e2a-d03320fe62b8",
+      "table": "teachers"
+    },
+    "T3": {
+      "id": "972ea138-5e78-4a80-826f-c79eeb8deded",
+      "table": "teachers"
+    },
+    "course": {
+      "id": "eabd35ec-d724-4863-826f-7329b1464fe5",
+      "table": "courses"
+    },
+    "class-SEP": {
+      "id": "1da160b1-f25b-40a5-8688-86d5e0541828",
+      "table": "classes"
+    },
+    "room-SEP": {
+      "id": "ea3226c5-f282-4966-8231-703f006c319e",
+      "table": "rooms"
+    },
+    "teacher-SEP": {
+      "id": "7ff4c427-ef14-4687-8ef4-ee6d9fe4b383",
+      "table": "class_teachers"
+    },
+    "schedule-SEP-1": {
+      "id": "5569ecaf-2033-4bb9-8837-a105af742db4",
+      "table": "schedules"
+    },
+    "schedule-SEP-4": {
+      "id": "d93e9c90-6c9b-4b54-8d2d-85f6e12fb12a",
+      "table": "schedules"
+    },
+    "enrollment-SEP": {
+      "id": "f2074bd7-da34-4351-846d-c90c41e499c1",
+      "table": "enrollments"
+    },
+    "SEP-3": {
+      "id": "b50c0756-35a5-4975-8245-6a7018a4d521",
+      "table": "session_occurrences"
+    },
+    "SEP-7": {
+      "id": "ad150aff-0284-4559-8932-10052b7c7a61",
+      "table": "session_occurrences"
+    },
+    "SEP-10": {
+      "id": "d03f58c7-6de8-4e6b-850d-1a8ea8e184bf",
+      "table": "session_occurrences"
+    },
+    "SEP-14": {
+      "id": "d89f099c-9b23-46ce-81ed-fdb666f6cfb3",
+      "table": "session_occurrences"
+    },
+    "SEP-17": {
+      "id": "8fd9acbc-cb19-4a62-8af9-888c6405308b",
+      "table": "session_occurrences"
+    },
+    "SEP-21": {
+      "id": "1622b981-c99e-43a4-86c5-2bd1e9169644",
+      "table": "session_occurrences"
+    },
+    "SEP-24": {
+      "id": "0683edc8-8421-478b-85fb-9c9bb95be463",
+      "table": "session_occurrences"
+    },
+    "SEP-28": {
+      "id": "b42ddbad-2ea5-41cd-88da-e91370a973de",
+      "table": "session_occurrences"
+    },
+    "class-AUG": {
+      "id": "9e5873de-9787-44a5-8d3b-845b4663c640",
+      "table": "classes"
+    },
+    "room-AUG": {
+      "id": "47c75275-a24b-4b8a-8f09-e2fc764a06bb",
+      "table": "rooms"
+    },
+    "teacher-AUG": {
+      "id": "f79b55ee-421b-40c4-82f2-9a9bfd6b5c5d",
+      "table": "class_teachers"
+    },
+    "schedule-AUG-1": {
+      "id": "b34e3cbe-dc48-4029-8c84-0d26220fff5c",
+      "table": "schedules"
+    },
+    "schedule-AUG-4": {
+      "id": "67dfeebf-437f-46b1-8825-25dc767ca772",
+      "table": "schedules"
+    },
+    "enrollment-AUG": {
+      "id": "a3271215-bc94-4a31-851c-98d90a991f7b",
+      "table": "enrollments"
+    },
+    "AUG-3": {
+      "id": "0ed9842b-d904-4706-8160-031d45b686c6",
+      "table": "session_occurrences"
+    },
+    "AUG-6": {
+      "id": "098c58f9-7464-4c23-84d5-54b6a4a2dd6e",
+      "table": "session_occurrences"
+    },
+    "AUG-10": {
+      "id": "368b7122-fb7f-4b87-8115-cc4e5dfd9c48",
+      "table": "session_occurrences"
+    },
+    "AUG-13": {
+      "id": "bd46d1dc-0d73-4c28-89dd-c7b8b986986b",
+      "table": "session_occurrences"
+    },
+    "AUG-17": {
+      "id": "8b0792ce-410c-4009-89b3-b1ce27fc6d22",
+      "table": "session_occurrences"
+    },
+    "AUG-20": {
+      "id": "9374dc73-88d8-4d4b-82ec-9b432549a95f",
+      "table": "session_occurrences"
+    },
+    "AUG-24": {
+      "id": "8753856c-cdcb-4af7-89ae-6db73319feb0",
+      "table": "session_occurrences"
+    },
+    "AUG-27": {
+      "id": "188b0245-2ae1-4f60-861a-f3003388155c",
+      "table": "session_occurrences"
+    },
+    "MONTHLY": {
+      "id": "bf9cac0f-c263-4191-8640-2ae43f63c000",
+      "table": "learning_reports"
+    },
+    "END_OF_COURSE": {
+      "id": "a7c019d3-5e04-4422-afa1-834f23f3bea8",
+      "table": "learning_reports"
+    },
+    "feedback": {
+      "id": "8e8436e9-712a-4a57-8aaf-a0472a004fb8",
+      "table": "lesson_feedback"
+    }
+  },
+  "blockers": [
+    "S2: Piano Pre Step not academically ready"
+  ]
+}

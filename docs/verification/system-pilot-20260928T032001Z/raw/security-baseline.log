@@ -1,0 +1,22 @@
+Connecting to local database...
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/authorization_foundation_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/authorization_foundation_test.sql ......... ok
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/security_catalogue_baseline_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/security_catalogue_baseline_test.sql ...... ok
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/security_consistency_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/macbookair/vibe-academy-system/supabase/tests/database/security_consistency_test.sql ............. ok
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/relationship_read_authorization_test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+psql:/Users/macbookair/vibe-academy-system/supabase/tests/database/relationship_read_authorization_test.sql:124: ERROR:  Enrollment blocked: CLASS_SCOPE_UNCONFIGURED
+CONTEXT:  PL/pgSQL function guard_enrollment_class_scope() line 16 at RAISE
+/Users/macbookair/vibe-academy-system/supabase/tests/database/relationship_read_authorization_test.sql .. 
+Dubious, test returned 3 (wstat 768, 0x300)
+No subtests run 
+
+Test Summary Report
+-------------------
+/Users/macbookair/vibe-academy-system/supabase/tests/database/relationship_read_authorization_test.sql (Wstat: 768 (exited 3) Tests: 0 Failed: 0)
+  Non-zero exit status: 3
+  Parse errors: No plan found in TAP output
+Files=4, Tests=73,  0 wallclock secs ( 0.02 usr  0.01 sys +  0.01 cusr  0.01 csys =  0.05 CPU)
+Result: FAIL
+error running container: exit 1

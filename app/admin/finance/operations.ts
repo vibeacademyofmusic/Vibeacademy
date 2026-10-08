@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
+import { requestClaims, requestClient, requestRole } from '@/lib/auth/request'
 
 export const invoiceStatuses = ['DRAFT', 'ISSUED', 'CANCELLED']
 export const debtStatuses = ['OVERDUE', 'UNPAID', 'PARTIALLY_PAID', 'PAID']
@@ -20,11 +20,27 @@ export function vietnamDateTime(now = new Date()) {
   return parts.replace(' ', 'T')
 }
 export async function adminClient() {
-  const db = await createClient()
-  const { data, error } = await db.auth.getClaims()
+  const db = await requestClient()
+  const { data, error } = await requestClaims()
   if (error || !data?.claims) redirect('/login')
-  const role = await db.rpc('has_role', { role_code: 'SUPER_ADMIN' })
+  const role = await requestRole('SUPER_ADMIN')
   if (role.error || role.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  return db
+}
+export async function reminderReader() {
+  const db = await requestClient()
+  const { data, error } = await requestClaims()
+  if (error || !data?.claims) redirect('/login')
+  const role = await requestRole('SUPER_ADMIN')
+  if (role.data === true) return { db, superAdmin: true }
+  const enter = await db.rpc('tuition_care_may_enter')
+  if (enter.error || enter.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  return { db, superAdmin: false }
+}
+export async function signedInClient() {
+  const db = await requestClient()
+  const { data, error } = await requestClaims()
+  if (error || !data?.claims) redirect('/login')
   return db
 }
 export type Rule = 'id' | 'amount' | 'date' | 'datetime' | 'currency' | 'method' | 'required' | 'optional'
@@ -58,10 +74,14 @@ const safeErrors: Record<string, string> = {
   'Refund exceeds the original payment allocation amount': 'Số tiền hoàn vượt phân bổ gốc còn lại.',
   'Refund allocation exceeds the refund amount': 'Số tiền phân bổ vượt phiếu hoàn tiền.',
 }
-export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: string, form: FormData, fields: Record<string, Rule>, options: { confirm?: boolean; issue?: boolean; selectResult?: boolean } = {}) {
-  const db = await adminClient()
+export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: string, form: FormData, fields: Record<string, Rule>, options: { confirm?: boolean; issue?: boolean; selectResult?: boolean; recordPayment?: boolean } = {}) {
+  const db = options.recordPayment ? await signedInClient() : await adminClient()
   const selected = String(form.get('selected') ?? '')
   const query = new URLSearchParams(uuidPattern.test(selected) ? { selected } : {})
+  const entryKey = String(form.get('idempotency_key') ?? '')
+  if (module === 'payments' && uuidPattern.test(entryKey)) query.set('entry', entryKey)
+  const allocationInvoice = rpc === 'allocate_payment_to_invoice' ? String(form.get('invoice_id') ?? '') : ''
+  if (uuidPattern.test(allocationInvoice)) query.set('invoice', allocationInvoice)
   const payment = String(form.get('payment_id') ?? '')
   if (module === 'refunds' && uuidPattern.test(payment)) query.set('payment', payment)
   let args: Record<string, string | null>
@@ -69,12 +89,23 @@ export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: s
     args = readInput(form, fields)
     if (options.confirm && form.get('confirm') !== 'yes') throw new Error('INPUT')
     if (options.issue && args.p_due_on! < args.p_issued_on!) throw new Error('INPUT')
+    if (options.recordPayment && args.p_payment_method === 'CASH' && form.get('cash_acknowledged') !== 'yes') {
+      query.set('error', 'Tiền mặt chỉ được ghi khi đã xác nhận đã nhận tiền mặt tại quầy.')
+      redirect(`/admin/finance/${module}?${query}`)
+    }
   } catch {
     query.set('error', 'Vui lòng kiểm tra dữ liệu, ngày tháng và xác nhận thao tác.')
     redirect(`/admin/finance/${module}?${query}`)
   }
+  const rpcArgs: Record<string, string | boolean | null> = args
+  if (options.recordPayment) {
+    rpcArgs.p_cash_acknowledged = form.get('cash_acknowledged') === 'yes'
+    const permission = rpcArgs.p_payment_method === 'CASH' ? 'finance.cash.record' : 'finance.payment.record'
+    const allowed = await db.rpc('has_permission', { p_permission: permission, p_branch: rpcArgs.p_branch_id })
+    if (allowed.error || allowed.data !== true) redirect('/login?error=' + encodeURIComponent('Bạn không có quyền truy cập'))
+  }
   let result
-  try { result = await db.rpc(rpc, args) } catch {
+  try { result = await db.rpc(rpc, rpcArgs) } catch {
     query.set('error', 'Không xác nhận được kết quả. Hãy tải lại danh sách trước khi thử lại để tránh tạo trùng.')
     redirect(`/admin/finance/${module}?${query}`)
   }
@@ -82,8 +113,18 @@ export async function mutate(module: 'invoices' | 'payments' | 'refunds', rpc: s
     query.set('error', safeErrors[result.error.message] ?? 'Không thể thực hiện thao tác. Dữ liệu có thể đã thay đổi hoặc không thỏa điều kiện. Hãy tải lại và kiểm tra trạng thái.')
     redirect(`/admin/finance/${module}?${query}`)
   }
+  if (rpc === 'allocate_payment_to_invoice' && (typeof result.data !== 'string' || !uuidPattern.test(result.data))) {
+    query.set('error', 'Chưa xác nhận được kết quả phân bổ. Hãy kiểm tra hóa đơn và lịch sử phân bổ trước khi thử lại.')
+    redirect(`/admin/finance/payments?${query}`)
+  }
   for (const route of ['', '/invoices', '/payments', '/receivables', '/refunds']) revalidatePath('/admin/finance' + route)
+  if (uuidPattern.test(allocationInvoice)) {
+    const invoiceQuery = new URLSearchParams({ selected: allocationInvoice, success: 'Đã lưu phân bổ tiền. Trạng thái thanh toán và công nợ bên dưới được cập nhật từ sổ công nợ.' })
+    redirect(`/admin/finance/invoices?${invoiceQuery}`)
+  }
+
   if (options.selectResult && typeof result.data === 'string' && uuidPattern.test(result.data)) query.set('selected', result.data)
+  query.delete('entry')
   query.set('success', 'Thao tác thành công.')
   redirect(`/admin/finance/${module}?${query}`)
 }

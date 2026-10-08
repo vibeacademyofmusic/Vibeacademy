@@ -1,4 +1,51 @@
 begin;
+
+-- Fixture prerequisite for the current enrollment guard. Does not change production rules.
+create or replace function pg_temp.prepare_enrollment_fixture(p_class uuid)
+returns void language plpgsql security definer set search_path=public,pg_temp as $$
+declare c public.classes%rowtype; course public.courses%rowtype; level_id uuid; t uuid; r uuid; slot int;
+begin
+ select * into c from public.classes where id=p_class;
+ if not found or c.course_id is null or c.xmin::text is distinct from txid_current()::text then return; end if;
+ select * into course from public.courses where id=c.course_id;
+ if not found then return; end if;
+ level_id := course.level_id;
+ if level_id is null then
+   select id into level_id from public.curriculum_levels where curriculum_id=course.curriculum_id order by sequence_no limit 1;
+   if level_id is null then return; end if;
+   update public.courses set level_id=level_id where id=course.id and xmin::text=txid_current()::text;
+ end if;
+ update public.classes set accepted_from_level_id=coalesce(accepted_from_level_id,level_id),
+   accepted_to_level_id=coalesce(accepted_to_level_id,level_id) where id=c.id;
+ update public.students set default_branch_id=c.branch_id
+  where default_branch_id is null and status='ACTIVE' and xmin::text=txid_current()::text;
+ insert into public.student_curriculum_enrollments(student_id,curriculum_id,current_level_id,started_at,status,is_primary)
+ select s.id,course.curriculum_id,level_id,date '2000-01-01','ACTIVE',true
+ from public.students s
+ where s.default_branch_id=c.branch_id and s.xmin::text=txid_current()::text
+   and not exists(select 1 from public.student_curriculum_enrollments a where a.student_id=s.id and a.status='ACTIVE' and (a.curriculum_id=course.curriculum_id or a.is_primary));
+ if not exists(select 1 from public.class_teachers where class_id=c.id and teacher_role='PRIMARY' and (is_active or ended_at is not null)) then
+   select id into t from public.teachers where teacher_code='FIX-'||c.id;
+   if t is null then
+     insert into public.teachers(teacher_code,full_name) values('FIX-'||c.id,'TEST prerequisite teacher') returning id into t;
+     insert into public.teacher_branches(teacher_id,branch_id,is_primary) values(t,c.branch_id,true);
+   end if;
+   insert into public.class_teachers(class_id,teacher_id,teacher_role,assigned_at) values(c.id,t,'PRIMARY',date '2000-01-01');
+ end if;
+ if not exists(select 1 from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id) then
+   insert into public.rooms(branch_id,code,name,capacity) values(c.branch_id,'FIX-'||c.id,'TEST prerequisite room',30) returning id into r;
+ else
+   select id into r from public.rooms where branch_id=c.branch_id and code='FIX-'||c.id limit 1;
+ end if;
+ if exists(select 1 from public.schedules where class_id=c.id and status='ACTIVE') then
+   update public.schedules set room_id=coalesce(room_id,r) where class_id=c.id and status='ACTIVE' and room_id is null;
+ else
+   slot := abs(hashtext(c.id::text));
+   insert into public.schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status)
+   values(c.id,r,1+(slot%7),time '06:00'+(slot%10)*interval '1 hour',time '06:50'+(slot%10)*interval '1 hour',date '2000-01-01','Asia/Ho_Chi_Minh','ACTIVE');
+ end if;
+end $$;
+
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 -- Fixture identities are scoped; test transaction rolls back.
@@ -100,6 +147,7 @@ values
     'Attendance Test Student B'
   );
 
+select pg_temp.prepare_enrollment_fixture(id) from public.classes where xmin::text = txid_current()::text;
 insert into public.enrollments (
   id,
   student_id,
@@ -172,10 +220,14 @@ select set_config('request.jwt.claim.sub', 'b1000000-0000-0000-0000-000000000001
 
 
 insert into auth.users(id) values('b1000000-0000-0000-0000-000000000003'),('b1000000-0000-0000-0000-000000000004');
+-- A payroll self-reader must have a live profile and scoped TEACHER role.
+insert into public.profiles(id,status) values('b1000000-0000-0000-0000-000000000004','ACTIVE');
+insert into public.user_roles(user_id,role_id,branch_id) select 'b1000000-0000-0000-0000-000000000004',id,'11000000-0000-0000-0000-000000000001' from public.roles where code='TEACHER';
 update students set user_id='b1000000-0000-0000-0000-000000000002' where id='61000000-0000-0000-0000-000000000001';
 insert into parents(id,user_id,parent_code) values('f1000000-0000-0000-0000-000000000001','b1000000-0000-0000-0000-000000000003','FEEDBACK-PARENT');
 insert into student_parents(student_id,parent_id) values('61000000-0000-0000-0000-000000000001','f1000000-0000-0000-0000-000000000001');
 insert into teachers(id,teacher_code,full_name) values('f2000000-0000-0000-0000-000000000001','FEEDBACK-TEACHER','Feedback Teacher');
+delete from public.class_teachers where teacher_id in (select id from public.teachers where teacher_code like 'FIX-%');
 insert into class_teachers(class_id,teacher_id,assigned_at) values('51000000-0000-0000-0000-000000000001','f2000000-0000-0000-0000-000000000001','2026-08-01');
 
 insert into teachers(id,teacher_code,full_name) values('f2000000-0000-0000-0000-000000000002','SUBSTITUTE','Substitute');
@@ -198,6 +250,23 @@ insert into attendance_records(session_occurrence_id,enrollment_id,status) value
 set local role authenticated;
 select set_session_teacher('91000000-0000-0000-0000-000000000002','f2000000-0000-0000-0000-000000000002','SUBSTITUTE','Second session');
 update session_occurrences set status='COMPLETED' where id='91000000-0000-0000-0000-000000000002';
+-- V1.1 monthly salary is supported by reviewed Employee Master attendance.
+reset role;
+insert into auth.users(id) values('76a71111-0000-4000-8000-000000000001');
+insert into public.profiles(id,status) values('76a71111-0000-4000-8000-000000000001','ACTIVE');
+insert into public.user_roles(user_id,role_id) select '76a71111-0000-4000-8000-000000000001',id from public.roles where code='SUPER_ADMIN';
+select public.configure_employee_unit('HQ','11000000-0000-0000-0000-000000000001','Synthetic monthly mapping');
+do $$declare eid uuid; req uuid; shift record;begin
+ eid:=public.create_employee('HQ','2026-08-01','Synthetic monthly teacher','Permanent','MONTHLY',null,null,'f2000000-0000-0000-0000-000000000001','Monthly source');
+ for shift in select * from public.employee_schedule(eid,'2026-08-01','2026-08-31') loop
+  perform set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
+  req:=public.request_employee_attendance(eid,shift.work_date,shift.shift_code,0,'WORKED',null,null,'Synthetic worked shift',gen_random_uuid());
+  perform set_config('request.jwt.claim.sub','76a71111-0000-4000-8000-000000000001',true);
+  perform public.review_employee_attendance(req,'APPROVED','Checked');
+ end loop;
+ perform set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
+end$$;
+set local role authenticated;
 select create_payroll_period('11000000-0000-0000-0000-000000000001','2026-08-01');
 select lives_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'generate');
 select is((select base_salary from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000001'),1000::numeric,'monthly full salary');
@@ -222,6 +291,14 @@ update teacher_compensation_rules set effective_from='2026-08-01' where teacher_
 set local role authenticated;
 select lives_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'regenerate draft after source change');
 select is((select hourly_earnings from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),350::numeric,'new source rate applied');
+-- Retain hourly assertions above; replay the same actual-teacher sources as per-session.
+select transition_payroll(id,version,'DRAFT','Per-session test') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001';
+reset role;
+update teacher_compensation_rules set pay_type='PER_SESSION',class_type='ONE_ON_ONE' where teacher_id='f2000000-0000-0000-0000-000000000002';
+set local role authenticated;
+select lives_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'Per-session generation uses same actual-teacher engine');
+select is((select hourly_earnings from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),350::numeric,'Per-session effective rates pay substitute only');
+select is((select count(*) from payroll_earning_lines where actual_teacher_id='f2000000-0000-0000-0000-000000000002' and calculation_snapshot->>'pay_type'='PER_SESSION'),2::bigint,'Per-session lines are distinguished in immutable source evidence');
 select add_payroll_adjustment(id,'BONUS',50,'Local bonus') from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002';
 select is((select gross_amount from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),400::numeric,'bonus added');
 select is((select sum(amount) from payroll_earning_lines where actual_teacher_id='f2000000-0000-0000-0000-000000000002'),350::numeric,'earning lines unchanged by adjustment');
@@ -230,7 +307,7 @@ select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000004'
 select is((select count(*) from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'),0::bigint,'teacher cannot see draft review payroll');
 select throws_ok($$select generate_teacher_payroll('00000000-0000-0000-0000-000000000000')$$,'P0001','Unauthorized','nonadmin generation denied');
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
-select lives_ok($$select transition_payroll(id,version,'APPROVED','Reviewed amounts') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'approve');
+select lives_ok($$select transition_payroll_with_override(id,version,'APPROVED','Reviewed amounts','MAKER_CHECKER_EMERGENCY','Test explicit owner-authorized emergency') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'approve');
 select throws_ok($$select generate_teacher_payroll(id) from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'P0001','Payroll generation requires DRAFT','approved cannot regenerate');
 select throws_ok($$select add_payroll_adjustment(id,'BONUS',1,'After approval') from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'$$,'P0001','Adjustment requires generated or review payroll','approved cannot adjust');
 select is((select approved_by from payroll_adjustments where reason='Local bonus'),auth.uid(),'adjustment approval actor');
@@ -240,7 +317,7 @@ select is((select count(*) from payroll_earning_lines),2::bigint,'teacher sees o
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000003',true);
 select is((select count(*) from teacher_payrolls),0::bigint,'parent cannot read payroll');
 select set_config('request.jwt.claim.sub','b1000000-0000-0000-0000-000000000001',true);
-select lives_ok($$select transition_payroll(id,version,'FINALIZED','Final approved snapshot') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'finalize');
+select lives_ok($$select transition_payroll_with_override(id,version,'FINALIZED','Final approved snapshot','MAKER_CHECKER_EMERGENCY','Test explicit owner-authorized emergency') from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001'$$,'finalize');
 select throws_ok($$update teacher_payrolls set gross_amount=0$$,'42501',null,'direct authenticated writes denied');
 reset role;
 select throws_ok($$update teacher_payrolls set gross_amount=0 where teacher_id='f2000000-0000-0000-0000-000000000002'$$,'P0001','Approved payroll is immutable','finalized totals protected by trigger');
@@ -248,5 +325,10 @@ select throws_ok($$delete from payroll_earning_lines where actual_teacher_id='f2
 select throws_ok($$update payroll_periods set status='DRAFT' where branch_id='11000000-0000-0000-0000-000000000001'$$,'P0001','Approved payroll is immutable','finalized period protected');
 select throws_ok($$insert into payroll_earning_lines(payroll_id,actual_teacher_id,branch_id,earned_on,earning_type,rate,amount) select id,teacher_id,branch_id,'2026-08-01','MONTHLY_BASE',1,1 from teacher_payrolls where teacher_id='f2000000-0000-0000-0000-000000000002'$$,'P0001','Approved payroll is immutable','new lines cannot enter finalized payroll');
 select throws_ok($$delete from payroll_events where period_id in(select id from payroll_periods where branch_id='11000000-0000-0000-0000-000000000001')$$,'P0001','Payroll audit is immutable','audit protected');
+create temp table operational_teacher as select public.create_employee('HQ','2026-01-01','Synthetic compensation UI teacher','Test','HOURLY',null,'b1000000-0000-0000-0000-000000000004','f2000000-0000-0000-0000-000000000002','Document UI test') id;
+select lives_ok($$select public.configure_employee_compensation((select id from operational_teacher),'11000000-0000-0000-0000-000000000001','HOURLY',250,'VND','2026-10-01','2026-10-31',null,'Future hourly')$$,'Employee operational wrapper supports linked hourly rate');
+select lives_ok($$select public.configure_employee_compensation((select id from operational_teacher),'11000000-0000-0000-0000-000000000001','PER_SESSION',350,'VND','2026-11-01','2026-11-30','ONE_ON_ONE','Future session')$$,'Employee operational wrapper supports class-specific session rate');
+select is((select rate from public.teacher_compensation_rules where teacher_id='f2000000-0000-0000-0000-000000000002' and effective_from='2026-11-01'),350::numeric,'Session rate and effective date stored in existing rule table');
+select throws_ok($$select public.configure_employee_compensation((select id from operational_teacher),'11000000-0000-0000-0000-000000000001','PER_SESSION',400,'VND','2026-11-15','2026-11-30','ONE_ON_ONE','Overlap')$$,'P0001','Compensation dates overlap','Session wrapper preserves overlap guard');
 select * from finish();
 rollback;

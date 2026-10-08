@@ -1,8 +1,12 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
+import { zaloServiceClient } from '@/lib/integrations/zalo/service'
+import { prepareLearningReportPdf } from '@/lib/reports/public-pdf'
 import { adminClient, uuidPattern, validDate } from '../../finance/operations'
 import { summaryFields, types } from './data'
+import { generationErrors } from './periods'
 const path = '/admin/reports/learning'
 export async function generateReport(form: FormData) {
   const db = await adminClient()
@@ -13,7 +17,19 @@ export async function generateReport(form: FormData) {
   else {
     try {
       const result = await db.rpc('generate_learning_report', { p_enrollment_id: enrollment, p_type: type, p_start: start, p_end: end })
-      if (result.error || typeof result.data !== 'string' || !uuidPattern.test(result.data)) error = 'Không tạo được báo cáo. Kỳ báo cáo phải đã kết thúc và trùng thời gian ghi danh; báo cáo tháng cần đủ tháng.'
+      if (result.error) {
+        console.error('generate_learning_report RPC error:', {
+          message: result.error.message,
+          code: result.error.code,
+          details: result.error.details,
+          hint: result.error.hint,
+        })
+
+        error = generationErrors[result.error.message] ?? 'Không tạo được báo cáo. Hãy tải lại và kiểm tra ghi danh, kỳ báo cáo.'
+      } else if (typeof result.data !== 'string' || !uuidPattern.test(result.data)) {
+        console.error('generate_learning_report returned invalid result:', result.data)
+        error = 'Chưa xác nhận được báo cáo đã tạo. Hãy tải lại danh sách trước khi thử lại.'
+      }
       else id = result.data
     } catch { error = 'Chưa xác nhận được kết quả. Hãy tải lại danh sách trước khi thử lại.' }
   }
@@ -26,14 +42,32 @@ export async function updateReport(form: FormData) {
   let error = ''
   const summary = Object.fromEntries(summaryFields.map(f => [f.id, String(form.get(f.id) ?? '').trim()]))
   const note = String(form.get('admin_note') ?? '').trim()
-  if (!uuidPattern.test(id) || !Number.isSafeInteger(version) || version < 1 || !['SAVE', 'REGENERATE', 'READY', 'APPROVE', 'RETURN', 'CANCEL'].includes(action) || Object.values(summary).some(v => v.length > 4000) || note.length > 4000 || (['APPROVE', 'CANCEL'].includes(action) && form.get('confirm') !== 'yes')) error = 'Vui lòng kiểm tra nội dung và xác nhận thao tác.'
+  if (!uuidPattern.test(id) || !Number.isSafeInteger(version) || version < 1 || !['SAVE', 'REGENERATE', 'READY', 'APPROVE', 'PUBLISH', 'RETURN', 'CANCEL'].includes(action) || Object.values(summary).some(v => v.length > 4000) || note.length > 4000 || (['APPROVE', 'PUBLISH', 'CANCEL'].includes(action) && form.get('confirm') !== 'yes')) error = 'Vui lòng kiểm tra nội dung và xác nhận thao tác.'
   else {
     try {
       const result = await db.rpc('update_learning_report', { p_id: id, p_version: version, p_action: action, p_summary: summary, p_note: note })
       if (result.error) error = 'Không thể cập nhật. Báo cáo có thể đã thay đổi hoặc đã khóa; hãy tải lại.'
+      else if (action === 'PUBLISH') after(async () => {
+        try { await prepareLearningReportPdf(zaloServiceClient(), id) } catch { /* The durable PDF queue remains pending/failed for maintenance. */ }
+      })
     } catch { error = 'Chưa xác nhận được kết quả. Hãy tải lại trước khi thử lại.' }
   }
   revalidatePath(path)
   if (uuidPattern.test(id)) revalidatePath(path + '/' + id)
   redirect((uuidPattern.test(id) ? path + '/' + id : path) + '?' + new URLSearchParams(error ? { error } : { success: 'Đã cập nhật báo cáo.' }))
+}
+
+export async function manageReportLink(form: FormData) {
+  const db = await adminClient()
+  const id = String(form.get('id') ?? ''), action = String(form.get('action') ?? '')
+  let error = ''
+  if (!uuidPattern.test(id) || !['CREATE', 'REVOKE', 'PREPARE'].includes(action)
+      || (action !== 'PREPARE' && form.get('confirm') !== 'yes')) error = 'Vui lòng kiểm tra và xác nhận thao tác.'
+  else try {
+    const result = await db.rpc('learning_report_link_manage', { p_report: id, p_action: action === 'PREPARE' ? 'READ' : action })
+    if (result.error || !result.data || (action === 'PREPARE' && !result.data.path)) error = 'Không thể cập nhật đường dẫn báo cáo. Vui lòng tải lại.'
+    else if (action !== 'REVOKE') await prepareLearningReportPdf(zaloServiceClient(), id)
+  } catch { error = 'Chưa chuẩn bị được PDF. Hệ thống sẽ thử lại; vui lòng tải lại trạng thái.' }
+  revalidatePath(path + '/' + id)
+  redirect((uuidPattern.test(id) ? path + '/' + id : path) + '?' + new URLSearchParams(error ? { error } : { success: action === 'REVOKE' ? 'Đã thu hồi đường dẫn PDF.' : 'Đã chuẩn bị đường dẫn PDF.' }))
 }

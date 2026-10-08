@@ -1,0 +1,16 @@
+{
+  "httpStatus": 200,
+  "signatureVerified": true,
+  "orderCode": 1790532932726,
+  "paymentLinkId": "6b73bf4a7b2e4be1bbdb1823c4988005",
+  "checkoutUrl": "https://pay.payos.vn/web/6b73bf4a7b2e4be1bbdb1823c4988005",
+  "status": "PENDING",
+  "amount": 2750000,
+  "amountPaid": 0,
+  "amountRemaining": 2750000,
+  "transactionsCount": 0,
+  "createdAt": "2026-10-05T19:29:01+07:00",
+  "expiredAt": null,
+  "expiryAvailable": false,
+  "checkedAt": "2026-10-05T12:30:41.924Z"
+}
