@@ -37,15 +37,16 @@ export async function RegistrationRecovery({ searchParams }: {
    <SectionCard title="Tình trạng kết nối">
      <StatusBadge tone={connected ? 'success' : 'warning'}>{health}</StatusBadge>
      <p className="mt-3 break-words">Ứng dụng: {process.env.ZALO_APP_ID || 'Chưa cấu hình'} · OA: {process.env.ZALO_OA_ID || 'Chưa cấu hình'} · Mẫu: 640377</p>
-     <p className="mt-2">Phiên bản khóa: {credential?.version ?? 'Chưa khởi tạo'} · Hạn khóa: {date(credential?.expires_at ?? null)}</p>
+     <p className="mt-2">Phiên bản khóa: {credential?.version ?? 'Chưa khởi tạo'}</p>
+     <p className="mt-2">Hạn token: {date(credential?.expires_at ?? null)}</p>
      {!connected && <p className="mt-3">{zaloRecoveryMessage(credentialReadError ? 'ZALO_CREDENTIAL_STORE_UNAVAILABLE' : credential?.error_code ?? 'ZALO_REFRESH_TOKEN_MISSING')}</p>}
-     <p className="mt-2">Gia hạn thành công gần nhất: {date(credential?.last_refreshed_at ?? null)}</p>
-     <p className="mt-2">Lịch kiểm tra tiếp theo: {date(connectionView.scheduler?.next_check_at ?? null)}</p>
-     <p className="mt-2">Lịch nền: {connectionView.schedulerAlive ? 'Đang hoạt động' : 'Chưa ghi nhận hoặc đã trễ'} · Kiểm tra gần nhất: {date(connectionView.scheduler?.checked_at ?? null)}</p>
+     <p className="mt-2">Lần gia hạn gần nhất: {date(credential?.last_refreshed_at ?? null)}</p>
+     <p className="mt-2">Sức khỏe lịch: {connectionView.scheduler?.result === 'READY' ? 'Sẵn sàng' : connectionView.scheduler?.result ? zaloRecoveryMessage(connectionView.scheduler.result) : 'Chưa ghi nhận'} · {connectionView.schedulerAlive ? 'Đúng hạn' : 'Chưa ghi nhận hoặc đã trễ'} · Kiểm tra gần nhất: {date(connectionView.scheduler?.checked_at ?? null)}</p>
+     <p className="mt-2">Lần kiểm tra tiếp theo: {date(connectionView.scheduler?.next_check_at ?? null)}</p>
      {(!connected || (connectionView.scheduler && connectionView.scheduler.result !== 'READY')) && <InlineNotice tone="warning">Cần quản trị viên kiểm tra kết nối. Thông báo này hiển thị trong hệ thống, không phụ thuộc Zalo. {connectionView.scheduler?.result === 'OWNERSHIP_UNCONFIRMED' ? 'Chưa xác nhận MAIN là nơi duy nhất gia hạn token.' : ''}</InlineNotice>}
      {(connectionView.checks ?? []).map(check => <InlineNotice key={check.source} tone={check.result === 'READY' ? 'success' : 'warning'}><p>{check.source === 'MAIN' ? 'Kho token của ứng dụng hiện tại' : 'Token tham chiếu từ workspace CRM cũ (không phải kết nối của ứng dụng hiện tại)'} · {date(check.checked_at)}</p><p>{zaloRecoveryMessage(check.result)}{check.http_status != null ? ` · API OA: HTTP ${check.http_status}, mã Zalo ${check.provider_error}` : ' · Chưa gọi API vì không có token'}</p></InlineNotice>)}
      <p className="mt-3">Gia hạn tự động chỉ thực hiện khi đã xác định nơi quản lý token dùng chung. Khi cần cấp quyền lại, chọn “Kết nối lại Zalo”; cặp khóa mới được lưu an toàn trên máy chủ. Không cần sửa cấu hình hoặc khởi động lại cho mỗi lần gia hạn.</p>
-     <p className="mt-3">Kiểm tra kết nối không gửi tin. Lịch nền chỉ chạy khi máy Mac bật và không ngủ.</p>
+     <p className="mt-3">Kiểm tra kết nối không gửi tin. Lịch production chạy trên Vercel mỗi ngày lúc 16:00 giờ Việt Nam.</p>
      <div className="vibe-actions mt-4">
        <form action={checkConnection}><button type="submit" className="vibe-button">Kiểm tra kết nối (không gia hạn)</button></form>
        <form action="/api/integrations/zalo/oauth/start" method="post"><button type="submit" className="vibe-button">{credential ? 'Kết nối lại Zalo' : 'Kết nối Zalo'}</button></form>
