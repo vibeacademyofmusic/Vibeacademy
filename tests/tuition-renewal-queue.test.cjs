@@ -51,6 +51,9 @@ function admin(state) {
     async rpc(name, args) {
       calls.push(name)
       if (name === 'claim_tuition_renewal_automation') {
+        if (state.replyProcessed && state.queue.length === 0) {
+          state.queue.push({ reminderId: reminder, status: 'PENDING', attempts: 0, lockedUntil: 0 })
+        }
         const due = state.queue.filter(row => row.status === 'PENDING' || (row.status === 'PROCESSING' && row.lockedUntil <= Date.now()))
         const picked = due.slice(0, 1)
         for (const row of picked) {
@@ -178,6 +181,56 @@ test('a failed checkout retries once and a stored checkout is not opened again',
   await renewal.runTuitionRenewalAutomation(db, 1, { openCheckout, send })
   assert.equal(opened.length, 2)
   assert.equal(db.calls.filter(name => name === 'claim_tuition_payment_notice').length, 1)
+})
+
+test('a processed reply with no queue row is claimed later without opening payOS while the template is off', async () => {
+  const current = state(false)
+  current.queue = []
+  current.replyProcessed = true
+  const db = admin(current)
+  const opened = []
+  const result = await renewal.runTuitionRenewalAutomation(db, 1, {
+    openCheckout: async () => { opened.push('open'); return { checkout: null } },
+    send: async () => { throw new Error('send must not run') },
+  })
+  assert.equal(result.results[0].step, 'prepare')
+  assert.equal(current.begins, 0)
+  assert.equal(opened.length, 0)
+  assert.equal(current.orders.length, 0)
+  assert.equal(current.queue[0].status, 'PENDING')
+})
+
+test('two workers overlap and only one opens the checkout', async () => {
+  const current = state(true)
+  const db = admin(current)
+  let opened = 0
+  let sent = 0
+  const openCheckout = async () => {
+    opened += 1
+    await new Promise(resolve => setTimeout(resolve, 30))
+    return { checkout: { orderCode: 101, amount: 2750000, paymentLinkId: 'synthetic01', checkoutUrl: 'https://pay.payos.vn/web/synthetic01', qrCode: '' } }
+  }
+  const send = async () => { sent += 1; return { outcome: 'ACCEPTED', reason: 'ACCEPTED' } }
+  await Promise.all([
+    renewal.runTuitionRenewalAutomation(db, 1, { openCheckout, send }),
+    renewal.runTuitionRenewalAutomation(db, 1, { openCheckout, send }),
+  ])
+  assert.equal(opened, 1)
+  assert.equal(sent, 1)
+  assert.equal(current.begins, 1)
+  assert.equal(current.orders.length, 1)
+})
+
+test('the queue schedule is separate and does not generate reminders or manual orders', () => {
+  const route = fs.readFileSync(path.join(__dirname, '../app/api/internal/tuition/renewal-automation/route.ts'), 'utf8')
+  const cron = JSON.parse(fs.readFileSync(path.join(__dirname, '../vercel.json'), 'utf8'))
+  const token = fs.readFileSync(path.join(__dirname, '../app/api/internal/zalo/renewal/route.ts'), 'utf8')
+  assert.equal(cron.crons.filter(item => item.path === '/api/internal/tuition/renewal-automation').length, 1)
+  assert.equal(cron.crons.filter(item => item.path === '/api/internal/zalo/renewal' && item.schedule === '0 9 * * *').length, 1)
+  assert.notEqual(cron.crons.find(item => item.path === '/api/internal/tuition/renewal-automation').schedule, '0 9 * * *')
+  assert.match(route, /runTuitionRenewalAutomation/)
+  assert.doesNotMatch(route, /generate_tuition_reminders|confirmTuitionZalo|begin_tuition_zalo_send|sendManualTuitionZalo|openTuitionPayosCheckout/)
+  assert.doesNotMatch(token, /runTuitionRenewalAutomation|generate_tuition_reminders/)
 })
 
 test('the webhook resumes a duplicate button event without treating it as a new reply', () => {

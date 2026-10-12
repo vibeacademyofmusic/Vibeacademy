@@ -44,6 +44,11 @@ function harness(fixtures = {}, rpcError = null, role = true, signedIn = true) {
       if (name === 'tuition_visible_branches') return { data: fixtures.branches ?? [], error: rpcError }
       if (name === 'tuition_granted_branches') return { data: (fixtures.branches ?? []).map(b => b.id), error: rpcError }
       if (name === 'tuition_care_may_enter') return { data: role, error: null }
+      if (name === 'tuition_reminder_send_allowed') return { data: fixtures.sendAllowed === true, error: null }
+      if (name === 'tuition_reminder_template_gate') {
+        const row = (fixtures.notification_templates ?? []).find(item => item.template_key === 'ZALO_TUITION_REMINDER' && item.provider === 'ZALO')
+        return { data: row ? { enabled: row.enabled === true, provider_template_id: row.provider_template_id ?? null } : null, error: null }
+      }
       if (name === 'tuition_reminder_kpis') return { data: { week: 0, payment: 0, upcoming: 0, red: 0, overdue: 0, sent: 0 }, error: rpcError }
       return ['has_role','is_global_super_admin','has_permission'].includes(name) ? { data: role, error: null } : { data: name === 'learning_report_link_manage' ? fixtures['rpc:learning_report_link_manage'] ?? null : id(99), error: rpcError }
     },

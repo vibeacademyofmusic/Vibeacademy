@@ -82,12 +82,12 @@ export type TuitionNotice = {
 }
 
 export function tuitionReminderDispatchGate(input: {
-  superAdmin: boolean
+  branchGranted: boolean
   templateEnabled: boolean
   templateId: string | null
   outboundBlocked: boolean
 }): { ok: true } | { ok: false; message: string } {
-  if (!input.superAdmin) return { ok: false, message: 'Bạn không có quyền gửi nhắc học phí qua Zalo. Chưa gửi.' }
+  if (!input.branchGranted) return { ok: false, message: 'Bạn không có quyền gửi nhắc học phí qua Zalo cho chi nhánh này. Chưa gửi.' }
   if (input.templateEnabled !== true || input.templateId !== TUITION_PROVIDER_TEMPLATE_ID) {
     return { ok: false, message: 'Mẫu nhắc học phí đang tắt. Chưa gửi.' }
   }
@@ -97,7 +97,7 @@ export function tuitionReminderDispatchGate(input: {
 
 export function tuitionSendBeginMessage(errorText: string) {
   const text = errorText.toLowerCase()
-  if (text.includes('super_admin')) return 'Bạn không có quyền gửi nhắc học phí qua Zalo. Chưa gửi.'
+  if (text.includes('tuition_send_unauthorized') || text.includes('super_admin')) return 'Bạn không có quyền gửi nhắc học phí qua Zalo cho chi nhánh này. Chưa gửi.'
   if (text.includes('already prepared')) return 'Đã có lần gửi đang mở hoặc đã được Zalo tiếp nhận cho nhắc này. Không gửi trùng.'
   if (text.includes('consent required')) return 'Người nhận chưa có sự đồng ý nhận thông báo học phí qua Zalo. Chưa gửi.'
   if (text.includes('window has not started')) return 'Chưa đến khoảng nhắc theo ngày Việt Nam. Chưa gửi.'

@@ -102,6 +102,8 @@ test('callback route requires admin; maintenance checks secret; scheduler never 
  const cron=fs.readFileSync('vercel.json','utf8')
  assert.match(cron,/\/api\/internal\/zalo\/renewal/)
  assert.match(cron,/"0 9 \* \* \*"/)
+ assert.match(cron,/\/api\/internal\/tuition\/renewal-automation/)
+ assert.doesNotMatch(cron,/\/api\/internal\/zalo\/maintenance/)
 })
 
 test('legacy UID path cannot send without a durable claim', async()=>{

@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap;
-select plan(17);
+select plan(18);
 
 insert into auth.users(id) values ('c0e1b200-0000-4000-8000-000000000001');
 insert into public.profiles(id, full_name, status) values ('c0e1b200-0000-4000-8000-000000000001', 'Queue Admin', 'ACTIVE');
@@ -43,6 +43,7 @@ select set_config('request.jwt.claim.role', 'service_role', true);
 select is(public.record_tuition_zalo_reply('Zalo ZBS', 'queueretrytracking01', 'msgqueue01', 'Tiếp tục học', '1760000000000', '12345678'), 'recorded', 'first button reply is recorded');
 select is(public.record_tuition_zalo_reply('Zalo ZBS', 'queueretrytracking01', 'msgqueue01', 'Tiếp tục học', '1760000000000', '12345678'), 'duplicate', 'repeated webhook does not record a second reply');
 select is((select count(*) from public.tuition_zalo_replies where reminder_id = 'c0e1b200-0000-4000-8000-000000000021'), 1::bigint, 'one reply row remains');
+select is((select count(*) from public.tuition_renewal_automation where reminder_id = 'c0e1b200-0000-4000-8000-000000000021'), 0::bigint, 'a processed reply waits for the queue worker');
 
 select is((select count(*) from public.claim_tuition_renewal_automation(1)), 1::bigint, 'queue claims the continue reply');
 select is((select count(*) from public.claim_tuition_renewal_automation(1)), 0::bigint, 'a live lock is not claimed twice');

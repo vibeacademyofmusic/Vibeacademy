@@ -2,7 +2,7 @@
 import { reminderActionHref } from './dialog-context'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { adminClient, uuidPattern } from '../../finance/operations'
+import { adminClient, signedInClient, uuidPattern } from '../../finance/operations'
 import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from '@/lib/integrations/zalo/pilot-outbound'
 import { TUITION_PROVIDER_TEMPLATE_ID, tuitionReminderDispatchGate, tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
 import { sendManualTuitionZalo } from '@/lib/integrations/zalo/tuition-test-send'
@@ -73,15 +73,16 @@ export async function confirmTuitionZalo(form: FormData) {
   const id = String(form.get('reminder_id') ?? '')
   const parentId = String(form.get('parent_id') ?? '')
   if (!uuidPattern.test(id)) return back(form, 'Không xác định được học viên cần gửi.')
-  const db = await adminClient()
-  const [role, template] = await Promise.all([
-    db.rpc('has_role', { role_code: 'SUPER_ADMIN' }),
-    db.from('notification_templates').select('enabled,provider_template_id').eq('template_key', 'ZALO_TUITION_REMINDER').eq('provider', 'ZALO').limit(1).maybeSingle(),
+  const db = await signedInClient()
+  const [allowed, template] = await Promise.all([
+    db.rpc('tuition_reminder_send_allowed', { p_reminder: id }),
+    db.rpc('tuition_reminder_template_gate'),
   ])
+  const templateRow = template.data as { enabled?: boolean; provider_template_id?: string | null } | null
   const gate = tuitionReminderDispatchGate({
-    superAdmin: role.data === true,
-    templateEnabled: template.data?.enabled === true,
-    templateId: template.data?.provider_template_id ?? null,
+    branchGranted: allowed.data === true,
+    templateEnabled: templateRow?.enabled === true,
+    templateId: templateRow?.provider_template_id ?? null,
     outboundBlocked: zaloPilotOutboundBlocked(),
   })
   if (!gate.ok) return back(form, gate.message)
