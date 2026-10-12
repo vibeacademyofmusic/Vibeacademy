@@ -1,0 +1,4 @@
+{
+  "buildCommand": "echo '1209bff0a3770b676e3ded08cb356a3267948fb4a90cdf876975ac2cbbe2903d  docs/design/approved-auth-design.json' | sha256sum -c - && node scripts/auth-design-lock.cjs && npm run build",
+  "autoAssignCustomDomains": true
+}

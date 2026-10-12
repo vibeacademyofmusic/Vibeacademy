@@ -1,0 +1,10 @@
+---
+description: Production release freeze requested on 12 October 2026
+alwaysApply: true
+---
+
+Production at manage.vibe.edu.vn is frozen at deployment dpl_2rWYz4ktKaHEGkxhXQXhuwnAwfLW.
+Read docs/production/freeze-20261012/checkpoint.json and README.md before any production maintenance.
+Until the human explicitly authorizes reopening production, do not deploy, promote, roll back, reassign domains, change production environment variables, migrate production schemas, modify authorization, or change the Zalo gateway configuration. Never bypass the frozen Vercel build command through prebuilt deployment or manual promotion.
+Read-only verification and local/staging development are allowed. Existing staff operations, payments, webhooks, and credential refresh continue through the current deployed application.
+The owner can technically override platform settings; the freeze must be respected by every agent, CLI workflow, and future task. Do not create a maintenance automation that mutates production during this freeze.

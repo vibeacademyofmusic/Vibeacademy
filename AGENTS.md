@@ -25,3 +25,13 @@ Bring affected UI into alignment without unrelated redesigns. Preserve business 
 A UI task is not complete if it works functionally but deviates from the approved design. Compilation and automated tests alone do not establish visual acceptance. Every UI implementation report must include rendered design-consistency verification.
 
 <!-- END:vibe-design-consistency -->
+
+<!-- BEGIN:vibe-production-freeze-20261012 -->
+
+# Production release freeze
+
+Production is frozen at `dpl_2rWYz4ktKaHEGkxhXQXhuwnAwfLW` under the user's request of 12 October 2026. Before production maintenance, read [the freeze checkpoint](docs/production/freeze-20261012/README.md).
+
+Do not deploy, promote, roll back, reassign domains, modify production configuration or permissions, run schema migrations, or change gateway services until the human explicitly authorizes reopening production. Do not bypass the freeze using prebuilt deployments. Read-only checks and local/staging work are allowed. Existing staff business operations remain available.
+
+<!-- END:vibe-production-freeze-20261012 -->
