@@ -1,0 +1,14 @@
+{
+  "version": "vibe-auth-approved-20261009",
+  "files": {
+    "app/_components/auth/AuthShell.tsx": "1fcd861cf90b2428d02d461a4293d112b7363ef17666c7d5764b36459035db83",
+    "app/_components/auth/auth-shell.module.css": "522598ad5dc70cd0bad8d4fc953aa6648e0460963e79fb72181cb5d2e146209d",
+    "app/login/page.tsx": "66a4e19699616db32964c62868ed05c8f7b474be319624ca6e6376760279170f",
+    "app/login/recover/page.tsx": "ce85efeb66d1244407c4caafda2d0f3143a35a4531c57a903af002e6f9f4f840",
+    "app/login/update-password/page.tsx": "629795e239c2744141a2c4b613f893d9cda966a599e20fd13ef1cc7805295d91",
+    "app/login/update-password/form.tsx": "79ec2d96ba902b2d70e64d186330edf2dfe6b2acd7941065bb79750e3fbd7de7",
+    "app/forgot-password/ForgotPasswordForm.tsx": "248ce55fdee3d71f818122f3a7ac0498ba1cad8481c8e6200a9a7c0235326908",
+    "app/auth/update-password/UpdatePasswordForm.tsx": "9b43fae1988fb17bda0bd090b4869df7ecbaa96216093d705ff62f75cc63f591",
+    "public/vibe-logo.png": "580bda73f088fce4fafda2508db7a3a7330c75a6e85ff649658e817b5ef15681"
+  }
+}

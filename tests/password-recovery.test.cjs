@@ -80,7 +80,7 @@ test('friendly errors do not expose provider strings',()=>{
 })
 test('login keeps sign-in and offers forgot password; recovery pages are present',()=>{
  const login=fs.readFileSync('app/login/page.tsx','utf8')
- assert.match(login,/Quên mật khẩu\?/);assert.match(login,/Sign in/);assert.match(login,/action=\{login\}/)
+ assert.match(login,/Quên mật khẩu\?/);assert.match(login,/Đăng nhập/);assert.match(login,/action=\{login\}/)
  assert.match(fs.readFileSync('app/forgot-password/page.tsx','utf8'),/Quên mật khẩu/)
  assert.match(fs.readFileSync('app/forgot-password/ForgotPasswordForm.tsx','utf8'),/Gửi liên kết đặt lại mật khẩu/)
  assert.match(fs.readFileSync('app/auth/update-password/page.tsx','utf8'),/Đặt mật khẩu mới/)

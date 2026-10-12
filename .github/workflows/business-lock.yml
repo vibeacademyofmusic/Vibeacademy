@@ -16,6 +16,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - run: npm run test:auth-design
       - run: npx --no-install next typegen
       - run: npm run lint
       - run: npm run typecheck
