@@ -13,12 +13,12 @@
     "lib/integrations/zalo/authorized-fixture-test.ts": "826833d95a15bdfef9edcaadcab6584d5e46263df2906e34b8ae61d6ea0362b2",
     "app/admin/tuition/reminders/authorized-test-actions.ts": "e5057185f45b6afb23a62c878fef55e58ab69a2d326b5bd24c1651c1bdfb3876",
     "app/admin/tuition/reminders/AuthorizedFixtureTests.tsx": "ec32a22981fefac640ad653fed44a86e54b0750deb402c2e64704200adaad58c",
-    "app/admin/tuition/reminders/page.tsx": "6fb116c8875c673561edaae1c9e9767aea2fdaad45d644cb21db336a2759252b",
+    "app/admin/tuition/reminders/page.tsx": "9b5efaf3294e0c93b6428ba4d71ad37fe7ab356aa24b01a0ac3fb4e5b7d5cea5",
     "tests/authorized-zalo-fixture-test.test.cjs": "8223253b8c9230e3ef87582d0ec557be986e3aa48f562206ca7c462017ccd048",
     "supabase/migrations/20261012071120_authorized_zalo_fixture_round.sql": "6f835d251cd3c1ae761d69b7ae26d7b830ed596972e953510111ee2ab9c854e5",
     "app/api/admin/zalo/tuition-response-check/route.ts": "a038593509fdb915a498ea7a0c1a8f0f78e07fe6dc55ad7e1ef6620bb4d3e1ba",
     "supabase/migrations/20261012122003_authorized_fixture_zalo_reply_bridge.sql": "73928249c19cce965b41536bfb7d171f55ef3357b6234f5e8f55bfdba8d52a19",
-    "app/admin/_components/vibe/ActionDropdown.tsx": "edb7ffde7c0f7c9b8f3a656de96ae71f27bb5ffb39e2f0cccdc1a5aecf5f0722",
+    "app/admin/_components/vibe/ActionDropdown.tsx": "4bae84bca39455316f2795df27338785a8277ca391584b8db9ece52fedeebda8",
     "app/admin/_components/vibe/action-dropdown.module.css": "b17e45e750269b20df72abc2b0ce4e09085d989c88737c5653efffde0bda17e5"
   },
   "authorized_fixture_contract": "Exact fixture and recipient; Super Admin only; two authorized templates, one durable claim each, expires after 24 hours; cancelled PayOS test link; never reset prior accepted delivery."

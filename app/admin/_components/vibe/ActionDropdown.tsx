@@ -6,8 +6,8 @@ import styles from './action-dropdown.module.css'
 
 export type DropdownAction = { label: string; href?: string; disabled?: boolean; external?: boolean }
 
-export default function ActionDropdown({ label, tone, actions, children }: {
-  label: string; tone?: 'paid' | 'pending'; actions: DropdownAction[]; children?: ReactNode
+export default function ActionDropdown({ label, tone, actions, children, triggerLabel = 'Thao tác' }: {
+  label: string; triggerLabel?: string; tone?: 'paid' | 'pending'; actions: DropdownAction[]; children?: ReactNode
 }) {
   const id = useId()
   const popup = useRef<HTMLDivElement>(null)
@@ -26,7 +26,7 @@ export default function ActionDropdown({ label, tone, actions, children }: {
   return <>
     <button type="button" className={styles.trigger} data-tone={tone} aria-expanded={open} aria-controls={id}
       aria-label={label} onClick={event => toggle(event.currentTarget)}>
-      <span>Thao tác</span><span aria-hidden="true">▾</span>
+      <span>{triggerLabel}</span><span aria-hidden="true">▾</span>
     </button>
     <div id={id} ref={popup} popover="auto" className={styles.popup} aria-label={label}
       onToggle={event => setOpen(event.newState === 'open')}>

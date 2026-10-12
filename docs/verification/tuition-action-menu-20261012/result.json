@@ -1,9 +1,9 @@
 {
-  "deployment": "dpl_4U5ZBRvUhuXobnw1jGXJsQzZVjxx",
+  "deployment": "dpl_HJVYaTcC8q8v9teEZFvbgjf4JD9u",
   "scope": "Tuition reminder processing column only",
   "paid": "sky-blue token; full PAID only",
   "pending": "orange; includes partial deposit",
-  "actions": "One-row status and dropdown; original destination links and disabled actions retained",
+  "actions": "One colored status dropdown per row; original destination links and disabled actions retained",
   "verification": [
     "TypeScript passed",
     "Production build passed",
@@ -12,5 +12,5 @@
     "390px mobile preview verified without horizontal popup overflow",
     "Existing white cards, navy text and VIBE tokens verified"
   ],
-  "design_manifest_hash": "d8d4bce3ef33399f31969ba123e2a579611b9908ac633334c12fb9dc7c787e8d"
+  "design_manifest_hash": "1a245f227edf0a3d8bc7b198c37a1e8982ac9ee88dac2dc27817d181b96cf1a7"
 }
