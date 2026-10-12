@@ -18,7 +18,7 @@
     "local:bootstrap-admin": "node scripts/local-bootstrap-admin.cjs",
     "local:seed-academic-demo": "node scripts/local-seed-academic-demo.cjs",
     "local:mixed-level-fixture": "node scripts/local-mixed-level-class-fixture.cjs",
-    "prebuild": "node scripts/auth-design-lock.cjs && node scripts/local-preview.cjs prepare",
+    "prebuild": "node scripts/auth-design-lock.cjs && node --test tests/login-operations-lead.test.cjs && node scripts/local-preview.cjs prepare",
     "postbuild": "node scripts/local-preview.cjs record",
     "preview": "node scripts/local-preview.cjs preview",
     "typecheck": "tsc --noEmit",

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { mayViewFinancialReports } from '@/lib/auth/financial-reports'
 import { OtherFinanceNavigation } from './SectionNav'
 import type { ReactNode } from 'react'
 
@@ -17,11 +18,13 @@ const related = [
   ['/admin/hr/payslips', 'Phiếu lương & chi trả'],
 ]
 
-export default function FinanceLayout({ children }: { children: ReactNode }) {
+export default async function FinanceLayout({ children }: { children: ReactNode }) {
+  const reports = await mayViewFinancialReports(null)
+  const visible = reports ? links : links.filter(([path]) => path !== '')
   return (
     <div className="min-w-0 space-y-6">
       <OtherFinanceNavigation><nav aria-label="Điều hướng tài chính" className="flex flex-wrap gap-2">
-        {links.map(([path, label]) => (
+        {visible.map(([path, label]) => (
           <Link key={path} prefetch={false} href={'/admin/finance' + path} className="rounded border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-100">{label}</Link>
         ))}
         {related.map(([href, label]) => (
