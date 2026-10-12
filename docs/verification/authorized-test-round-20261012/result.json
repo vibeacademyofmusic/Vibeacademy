@@ -1,0 +1,45 @@
+{
+  "scope": "Only TEST-HP-HA-20261012, recipient phone ends 724",
+  "authorization": "User approved two live templates and production bounded test button mechanism",
+  "templates": [
+    "645192",
+    "645028"
+  ],
+  "one_claim_per_template": true,
+  "expires_after_hours": 24,
+  "prior_delivered_message_preserved": "105525b7975ae503bc4c",
+  "results": [
+    {
+      "id": "4dba8413-4a16-463f-8b55-d38d8d377f65",
+      "templateId": "645192",
+      "state": "ACCEPTED",
+      "messageId": "d34f500a59f42bad72e2",
+      "providerDelivery": {
+        "error": 0,
+        "status": 1,
+        "deliveryTime": "1791790088723"
+      },
+      "deliveryPersisted": "DELIVERED"
+    },
+    {
+      "id": "d31253ea-b5b2-4ac4-834c-cdff27af4ef0",
+      "templateId": "645028",
+      "state": "ACCEPTED",
+      "messageId": "94cdce89d277a02ef961",
+      "providerDelivery": {
+        "error": 0,
+        "status": 1,
+        "deliveryTime": "1791790088727"
+      },
+      "deliveryPersisted": "DELIVERED"
+    }
+  ],
+  "real_tuition_changed": false,
+  "invoice_created": false,
+  "test_payment_link_state": "CANCELLED",
+  "test_payment_amount_received": 0,
+  "unit_tests_passed": 6,
+  "database_role_and_duplicate_checks": "Passed, transaction rolled back",
+  "security_advisors": "Two expected SECURITY DEFINER authenticated-execute advisories; both functions explicitly enforce existing SUPER_ADMIN and private table has no role grants; denial checked with OPERATIONS_LEAD",
+  "rendered_ui": "Production modal verified; native Safari interaction interrupted, two sends executed through same dispatch handler"
+}

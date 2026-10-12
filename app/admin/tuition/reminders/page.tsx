@@ -1,3 +1,4 @@
+import AuthorizedFixtureTests from './AuthorizedFixtureTests'
 import Link from 'next/link'
 import CheckoutLink from './CheckoutLink'
 import ReminderDialog from './ReminderDialog'
@@ -11,7 +12,7 @@ import SubmitButton from '../../finance/_components/SubmitButton'
 import { AppPage, PageHeader, MetricCard, StatusBadge, FilterBar, SectionCard } from '../../_components/vibe'
 import { plans, debts } from '../data'
 import { reminders, kpis, timing, filters, replyFilters, visibleBranches, prepareBranches, type Reminder } from './data'
-import { generateReminders, resolveReminder, confirmTuitionZalo, recordTuitionNoticeConsent, recordTuitionContactNote } from './actions'
+import { generateReminders, resolveReminder, confirmTuitionZalo, recordTuitionNoticeConsent, recordTuitionContactNote, checkTuitionZaloDelivery } from './actions'
 import { createTuitionRenewal, retryTuitionPayos, sendTuitionPaymentRequest } from './renewal-actions'
 import { paymentNoticeReason, paymentTemplateGate, renewalPaymentLabel, renewalProcessingLabel, storedZbsStatusLabel } from '@/lib/integrations/tuition/renewal-status'
 import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest } from '@/lib/integrations/tuition/payment-zbs'
@@ -249,13 +250,14 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         {notice.candidates.length > 1 && <p className="flex flex-wrap gap-2">{notice.candidates.map(candidate => <Link className="vibe-button" key={candidate.id} scroll={false} prefetch={false} href={zaloHref(params, notice.reminderId) + '&parent=' + candidate.id}>{candidate.name}</Link>)}</p>}
         <p className="flex flex-wrap items-center gap-2">Phản hồi: <ReplyMark label={notice.replyLabel} />{notice.replyChoice === 'CONTACT' ? <StatusBadge tone="warning">{TUITION_CONTACT_STATUS}</StatusBadge> : null}{notice.replyAt ? <span>{timeText(notice.replyAt)}</span> : null}{notice.needsReview ? <StatusBadge tone="warning">Cần xác minh</StatusBadge> : null}</p>
         {notice.replyChoice === 'CONTACT' && <form action={recordTuitionContactNote} className="grid max-w-xl gap-3 rounded-xl border border-[var(--vibe-line)] bg-white p-4">{context}
-          <p className="text-sm">Yêu cầu khác chỉ đưa hồ sơ vào danh sách cần nhân viên liên hệ. Lưu nội dung xử lý không đổi trạng thái học viên, ghi danh, bảo lưu, công nợ hoặc thanh toán.</p>
+          <p className="text-sm">Liên hệ chỉ đưa hồ sơ vào danh sách cần nhân viên liên hệ. Lưu nội dung xử lý không đổi trạng thái học viên, ghi danh, bảo lưu, công nợ hoặc thanh toán.</p>
           <input type="hidden" name="reminder_id" value={notice.reminderId} />
           <label className="vibe-field"><span>Nội dung xử lý</span><textarea name="contact_note" required maxLength={2000} defaultValue={notice.contactNote ?? ''} rows={3} /></label>
           {notice.contactNotedAt && <p className="text-sm">Đã lưu lúc {timeText(notice.contactNotedAt)}{notice.contactNotedBy ? ` · ${notice.contactNotedBy}` : ''}.</p>}
           <SubmitButton className="vibe-button">Lưu nội dung xử lý</SubmitButton>
         </form>}
         <pre className="whitespace-pre-wrap rounded-xl border border-[var(--vibe-line)] bg-white p-4 text-sm">{notice.preview}</pre>
+        <AuthorizedFixtureTests db={db} reminderId={notice.reminderId} context={context} />
         {notice.blockers.length > 0 && <ul className="list-disc pl-5 text-sm">{notice.blockers.map(item => <li key={item}>{item}</li>)}</ul>}
         {notice.recipient && !notice.consentRecord && <form action={recordTuitionNoticeConsent} className="grid max-w-xl gap-3 rounded-xl border border-[var(--vibe-line)] bg-white p-4">{context}
           <p className="text-sm">Đồng ý nhận thông báo học phí gắn với từng học viên và phụ huynh này, không dùng đồng ý của học viên khác hay đồng ý lúc đăng ký. Chỉ ghi sau khi chính phụ huynh xác nhận cho {notice.studentName} ({notice.studentCode}).</p>
@@ -270,15 +272,16 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         <div className="flex flex-wrap gap-2">
           <Link scroll={false} className="vibe-button" href={returnHref}>Hủy</Link>
           {zaloReconnect && <p role="alert">Cần cấp quyền lại cho Zalo trước khi gửi. <Link href="/admin/system/integrations/zalo">Mở Kết nối Zalo</Link> rồi bấm Kết nối lại Zalo.</p>}
-          {notice.attemptAllowed && manualLive && !zaloReconnect && !['Đã tiếp nhận', 'Đã phát đến máy', 'Đã tạo mã theo dõi'].includes(notice.attemptLabel) ? <form action={confirmTuitionZalo}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} />{notice.recipient && <input type="hidden" name="parent_id" value={notice.recipient.id} />}<SubmitButton className="vibe-button vibe-button-primary">Xác nhận gửi cho học viên này</SubmitButton></form> : <button type="button" className="vibe-button" disabled>Xác nhận gửi cho học viên này</button>}
+          {notice.attemptAllowed && manualLive && !zaloReconnect && !notice.replyChoice && !['Đã tiếp nhận', 'Đã phát đến máy', 'Đã tạo mã theo dõi'].includes(notice.attemptLabel) ? <form action={confirmTuitionZalo}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} />{notice.recipient && <input type="hidden" name="parent_id" value={notice.recipient.id} />}<SubmitButton className="vibe-button vibe-button-primary">Xác nhận gửi cho học viên này</SubmitButton></form> : <button type="button" className="vibe-button" disabled>Xác nhận gửi cho học viên này</button>}
+          {notice.attemptLabel === 'Đã tiếp nhận' ? <form action={checkTuitionZaloDelivery}>{context}<input type="hidden" name="reminder_id" value={notice.reminderId} /><SubmitButton className="vibe-button">Đối soát trạng thái phát</SubmitButton></form> : null}
         </div>
       </div>
       </>}
         <div id="lich-su" className="space-y-2 text-sm">
-          <p>Lịch sử gửi: {notice.sends.length ? notice.sends.map(row => `${row.sendStatus} · ${row.trackingId}`).join(' · ') : notice.attemptLabel}. Đã tiếp nhận nghĩa là Zalo đã nhận tin, chưa phải đã tới máy. Đã phát đến máy là Zalo xác nhận tin đã tới điện thoại. Mẫu đang dùng nhận Tiếp tục học hoặc Dừng học. Yêu cầu khác chỉ áp dụng khi mẫu thay thế được duyệt và đưa vào sử dụng. Mỗi dòng giữ đúng chữ Zalo trả về, kèm thời điểm.</p>
+          <p>Lịch sử gửi: {notice.sends.length ? notice.sends.map(row => `${row.sendStatus} · mẫu ${row.templateId ?? 'không rõ'} · ${row.trackingId}`).join(' · ') : notice.attemptLabel}. Đã tiếp nhận nghĩa là Zalo đã nhận tin, chưa phải đã tới máy. Đã phát đến máy là Zalo xác nhận tin đã tới điện thoại. Mẫu đang dùng nhận Tiếp tục học hoặc Liên hệ. Liên hệ đưa hồ sơ vào danh sách cần nhân viên chăm sóc và không tự tạo thanh toán. Mỗi dòng giữ đúng chữ Zalo trả về, kèm thời điểm.</p>
           <p>Lịch sử phản hồi:</p>
           {notice.replies.length ? <ul className="list-disc space-y-1 pl-5">{notice.replies.map(row => <li key={row.id}><ReplyMark label={row.buttonData} /> · {timeText(row.submitTime)} · nhận {timeText(row.receivedAt)} · {row.trackingId} · {row.source}</li>)}</ul> : <p>Chưa có lịch sử phản hồi.</p>}
-          <p>{manualLive ? 'Gửi thật thủ công đã bật cho đúng một học viên đã đủ điều kiện. Gửi theo lịch vẫn tắt. Không gửi hàng loạt.' : 'Xem trước không tạo lượt gửi. Gửi thật đang tắt.'} Tiếp tục học, Yêu cầu khác và Dừng học chỉ ghi nhận ý định.</p>
+          <p>{manualLive ? 'Gửi thật thủ công đã bật cho đúng một học viên đã đủ điều kiện. Gửi theo lịch vẫn tắt. Không gửi hàng loạt.' : 'Xem trước không tạo lượt gửi. Gửi thật đang tắt.'} Tiếp tục học và Liên hệ chỉ ghi nhận ý định.</p>
         </div>
       </>}
     </ReminderDialog>}
@@ -315,9 +318,9 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
     {params.auto === '1' && <ReminderDialog title="Zalo tự động" closeHref={returnHref}>
       <div id="zalo-auto" className="space-y-2">
         <p>{manualLive ? 'Chế độ hiện tại: Gửi thật thủ công đã bật. Gửi theo lịch đang tắt. Chưa gửi tồn đọng.' : 'Chế độ hiện tại: xem trước. Gửi thật đang tắt. Chưa bật lịch gửi tự động và chưa gửi tồn đọng.'}</p>
-        <p>Mẫu đang cấu hình là ZALO_TUITION_REMINDER, mã Zalo {reminderTemplateId}, trạng thái {reminderTemplate?.status ?? 'chưa đọc'}. Gửi theo lịch đang tắt. Gửi thủ công {manualLive ? 'đang bật' : 'đang tắt'}. {reminderTemplateId === '643118' ? 'Nút trên tin của mẫu này là Tiếp tục học và Dừng học.' : 'Hợp đồng nút của mã này chưa được xác minh từ Zalo.'} Tham số đã có nguồn: tên phụ huynh, kỳ học, tên học viên, học phí gói, hạn cuối khoảng nhắc, mã học viên. Không có đường dẫn. Mẫu đăng ký 640377 giữ nguyên. Nhắc gia hạn không lấy số nợ và không ghi đã thanh toán.</p>
+        <p>Mẫu đang cấu hình là ZALO_TUITION_REMINDER, mã Zalo {reminderTemplateId}, trạng thái {reminderTemplate?.status ?? 'chưa đọc'}. Gửi theo lịch đang tắt. Gửi thủ công {manualLive ? 'đang bật' : 'đang tắt'}. {reminderTemplateId === '645192' ? 'Nút trên tin của mẫu này là Tiếp tục học và Liên hệ.' : 'Mẫu lịch sử chỉ dùng để đối chiếu, không gửi mới.'} Tham số đã có nguồn: tên phụ huynh, kỳ học, tên học viên, học phí gói, hạn cuối khoảng nhắc, mã học viên. Không có đường dẫn. Mẫu đăng ký 640377 giữ nguyên. Nhắc gia hạn không lấy số nợ và không ghi đã thanh toán.</p>
         <p>Nội dung mẫu thay thế đã chuẩn bị, chờ tạo và duyệt trên Zalo. Chưa dùng để gửi:</p>
-        <pre className="whitespace-pre-wrap rounded-xl border border-[var(--vibe-line)] bg-white p-4 text-sm">{notice?.replacementPreview ?? 'Quý khách {customer_name}, Vibe Academy thông báo sắp kết thúc khoá học của học viên {student_name}, mã học viên {student_code}, kỳ học {period}. Học phí cần gia hạn là: {amount} đồng. Hạn thanh toán: {due_date}. Vui lòng xác nhận kế hoạch học tập của bạn để nhà trường có thể sắp xếp chương trình và kế hoạch tiếp theo cho mình. Vui lòng xác nhận bên dưới.\nNút phản hồi: Tiếp tục học\nNút phản hồi: Yêu cầu khác\nKhông có đường dẫn.'}</pre>
+        <pre className="whitespace-pre-wrap rounded-xl border border-[var(--vibe-line)] bg-white p-4 text-sm">{notice?.replacementPreview ?? 'Quý khách {customer_name}, Vibe Academy thông báo sắp kết thúc khoá học của học viên {student_name}, mã học viên {student_code}, kỳ học {period}. Học phí cần gia hạn là: {amount} đồng. Hạn thanh toán: {due_date}. Vui lòng xác nhận kế hoạch học tập của bạn để nhà trường có thể sắp xếp chương trình và kế hoạch tiếp theo cho mình. Vui lòng xác nhận bên dưới.\nNút phản hồi: Tiếp tục học\nNút phản hồi: Liên hệ\nKhông có đường dẫn.'}</pre>
         <p>Phạm vi: chi nhánh đang lọc trên trang này. Mốc nhắc vẫn là lịch học phí đã duyệt. Lần chạy gần nhất: chưa có vì lịch gửi chưa được bật.</p>
         <p>Tạm dừng nhắc từng học viên chưa mở, vì gửi tự động chưa chạy. Không có nút gửi hàng loạt.</p>
       </div>
