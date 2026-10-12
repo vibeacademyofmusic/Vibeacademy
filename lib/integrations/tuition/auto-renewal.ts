@@ -2,17 +2,20 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { openTuitionPayosCheckout } from './renewal-payos'
 import { tuitionCheckoutUrl } from './checkout-link'
-import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest, TUITION_PAYMENT_TEMPLATE_KEY, VERIFIED_TUITION_PAYMENT_TEMPLATE_ID } from './payment-zbs'
+import { buildTuitionPaymentRequest, paymentAttemptFromStored, prepareTuitionPaymentRequest, TUITION_PAYMENT_REQUEST, TUITION_PAYMENT_TEMPLATE_KEY, tuitionPaymentTemplateReady, VERIFIED_TUITION_PAYMENT_TEMPLATE_ID } from './payment-zbs'
 import { sendTuitionPaymentTemplate } from './payment-send'
 
 type Step = { status: 'DONE' | 'PENDING' | 'HELD'; step: string; error?: string }
+type CheckoutOpener = typeof openTuitionPayosCheckout
+type Sender = typeof sendTuitionPaymentTemplate
+type RunnerDeps = { openCheckout?: CheckoutOpener; send?: Sender }
 
-async function checkout(admin: SupabaseClient, caseId: string, reminderId: string): Promise<string | null> {
+async function checkout(admin: SupabaseClient, caseId: string, reminderId: string, openCheckout: CheckoutOpener): Promise<string | null> {
   const { data: order } = await admin.from('tuition_payos_orders').select('order_code,amount,description,state,checkout_url,payment_link_id').eq('case_id', caseId).in('state', ['RESERVED', 'PENDING']).limit(1).maybeSingle()
   if (!order) return null
   if (order.state === 'PENDING') return tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) ? 'READY' : null
   // RESERVED means the order exists only in VIBE. Create the provider checkout once; the helper falls back to GET on ambiguous POST failure.
-  const opened = await openTuitionPayosCheckout({ orderCode: Number(order.order_code), amount: Number(order.amount), description: order.description }, process.env, true, reminderId)
+  const opened = await openCheckout({ orderCode: Number(order.order_code), amount: Number(order.amount), description: order.description }, process.env, true, reminderId)
   if (!opened.checkout) return null
   const url = tuitionCheckoutUrl(opened.checkout.paymentLinkId, opened.checkout.checkoutUrl)
   if (!url) return null
@@ -23,7 +26,7 @@ async function checkout(admin: SupabaseClient, caseId: string, reminderId: strin
   return activated.error ? null : 'READY'
 }
 
-async function sendPayment(admin: SupabaseClient, caseId: string): Promise<Step> {
+async function sendPayment(admin: SupabaseClient, caseId: string, send: Sender): Promise<Step> {
   const { data: renewal } = await admin.from('tuition_renewal_cases').select('id,student_id,parent_id,plan_code,list_price,amount_due,payment_option,due_on,invoice_id,zbs_status,zbs_error_code,state').eq('id', caseId).maybeSingle()
   if (!renewal) return { status: 'HELD', step: 'case', error: 'CASE_MISSING' }
   if (renewal.zbs_status === 'SENT' || renewal.state === 'AWAITING_PAYMENT') return { status: 'DONE', step: 'already_sent' }
@@ -66,7 +69,7 @@ async function sendPayment(admin: SupabaseClient, caseId: string): Promise<Step>
   let outcome: 'ACCEPTED' | 'UNKNOWN' | 'REJECTED' = 'UNKNOWN'
   let reason = 'UNKNOWN'
   try {
-    const sent = await sendTuitionPaymentTemplate({ phone: profile.data.phone, templateId: prepared.templateId, trackingId: tracking, parameters: prepared.parameters })
+    const sent = await send({ phone: profile.data.phone, templateId: prepared.templateId, trackingId: tracking, parameters: prepared.parameters })
     outcome = sent.outcome
     reason = sent.reason
   } catch { outcome = 'UNKNOWN' }
@@ -76,23 +79,48 @@ async function sendPayment(admin: SupabaseClient, caseId: string): Promise<Step>
   return { status: 'HELD', step: 'payment_request', error: reason }
 }
 
-async function processOne(admin: SupabaseClient, reminderId: string): Promise<Step> {
+async function orderCreationGate(admin: SupabaseClient, reminderId: string): Promise<Step | null> {
+  const [template, existing, send] = await Promise.all([
+    admin.from('notification_templates').select('template_key,status,enabled,provider_template_id,parameter_schema,payload_schema').eq('template_key', TUITION_PAYMENT_TEMPLATE_KEY).limit(1).maybeSingle(),
+    admin.from('tuition_renewal_cases').select('id').eq('reminder_id', reminderId).limit(1).maybeSingle(),
+    admin.from('tuition_zalo_sends').select('parent_id').eq('reminder_id', reminderId).in('send_status', ['SENT', 'DELIVERED']).limit(1).maybeSingle(),
+  ])
+  const order = existing.data
+    ? await admin.from('tuition_payos_orders').select('state').eq('case_id', existing.data.id).in('state', ['RESERVED', 'PENDING']).limit(1).maybeSingle()
+    : { data: null }
+  if (order.data?.state === 'PENDING') return null
+  if (!tuitionPaymentTemplateReady(template.data, TUITION_PAYMENT_REQUEST)) {
+    return { status: 'PENDING', step: 'prepare', error: 'ZBS_SEND_DISABLED' }
+  }
+  const parent = send.data?.parent_id
+    ? await admin.from('parents').select('user_id').eq('id', send.data.parent_id).maybeSingle()
+    : { data: null }
+  const profile = parent.data?.user_id
+    ? await admin.from('profiles').select('phone').eq('id', parent.data.user_id).maybeSingle()
+    : { data: null }
+  if (!profile.data?.phone?.trim()) return { status: 'HELD', step: 'phone', error: 'PHONE_MISSING' }
+  return null
+}
+
+async function processOne(admin: SupabaseClient, reminderId: string, deps: RunnerDeps): Promise<Step> {
+  const blocked = await orderCreationGate(admin, reminderId)
+  if (blocked) return blocked
   const begun = await admin.rpc('auto_begin_tuition_renewal', { p_reminder: reminderId })
   const payload = begun.data as { result?: string; case_id?: string } | null
   if (begun.error || !payload) return { status: 'PENDING', step: 'begin', error: begun.error?.message?.match(/TUITION_[A-Z0-9_]+/)?.[0] ?? 'BEGIN_FAILED' }
   if (payload.result === 'not_continue') return { status: 'DONE', step: 'not_continue' }
   if (!payload.case_id) return { status: 'HELD', step: 'begin', error: payload.result ?? 'NO_CASE' }
-  if (!await checkout(admin, payload.case_id, reminderId)) return { status: 'PENDING', step: 'checkout', error: 'CHECKOUT_UNAVAILABLE' }
-  return sendPayment(admin, payload.case_id)
+  if (!await checkout(admin, payload.case_id, reminderId, deps.openCheckout ?? openTuitionPayosCheckout)) return { status: 'PENDING', step: 'checkout', error: 'CHECKOUT_UNAVAILABLE' }
+  return sendPayment(admin, payload.case_id, deps.send ?? sendTuitionPaymentTemplate)
 }
 
-export async function runTuitionRenewalAutomation(admin: SupabaseClient, limit = 3) {
+export async function runTuitionRenewalAutomation(admin: SupabaseClient, limit = 3, deps: RunnerDeps = {}) {
   const claimed = await admin.rpc('claim_tuition_renewal_automation', { p_limit: limit })
   if (claimed.error) return { claimed: 0, state: 'UNAVAILABLE' as const }
   const results: Array<{ reminder: string; status: string; step: string }> = []
   for (const row of (claimed.data ?? []) as Array<{ reminder_id: string }>) {
     let step: Step
-    try { step = await processOne(admin, row.reminder_id) } catch { step = { status: 'PENDING', step: 'exception', error: 'EXCEPTION' } }
+    try { step = await processOne(admin, row.reminder_id, deps) } catch { step = { status: 'PENDING', step: 'exception', error: 'EXCEPTION' } }
     await admin.rpc('finish_tuition_renewal_automation', { p_reminder: row.reminder_id, p_status: step.status, p_step: step.step, p_error: step.error ?? null })
     results.push({ reminder: row.reminder_id.slice(0, 8), status: step.status, step: step.step })
   }

@@ -81,6 +81,20 @@ export type TuitionNotice = {
   priceVnd: number
 }
 
+export function tuitionReminderDispatchGate(input: {
+  superAdmin: boolean
+  templateEnabled: boolean
+  templateId: string | null
+  outboundBlocked: boolean
+}): { ok: true } | { ok: false; message: string } {
+  if (!input.superAdmin) return { ok: false, message: 'Bạn không có quyền gửi nhắc học phí qua Zalo. Chưa gửi.' }
+  if (input.templateEnabled !== true || input.templateId !== TUITION_PROVIDER_TEMPLATE_ID) {
+    return { ok: false, message: 'Mẫu nhắc học phí đang tắt. Chưa gửi.' }
+  }
+  if (input.outboundBlocked) return { ok: false, message: 'Gửi thật đang tắt. Chưa gửi.' }
+  return { ok: true }
+}
+
 export function tuitionSendBeginMessage(errorText: string) {
   const text = errorText.toLowerCase()
   if (text.includes('super_admin')) return 'Bạn không có quyền gửi nhắc học phí qua Zalo. Chưa gửi.'

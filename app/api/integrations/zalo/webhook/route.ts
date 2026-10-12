@@ -101,12 +101,12 @@ async function persistZaloWebhook(event: WebhookRecord, serverHeader: string | n
       })
       if (applied.error) throw new Error('APPLY_FAILED')
       outcome = typeof applied.data === 'string' ? applied.data : 'unreadable'
-      if (event.eventType === 'user_click_response_button' && outcome === 'recorded') {
-        // Best effort: the 5-minute maintenance run is the durable fallback.
+      if (event.eventType === 'user_click_response_button' && (outcome === 'recorded' || outcome === 'duplicate')) {
+        // A repeated webhook resumes one queue row. It does not record a second reply.
         try {
           const { runTuitionRenewalAutomation } = await import('@/lib/integrations/tuition/auto-renewal')
           await runTuitionRenewalAutomation(client, 1)
-        } catch { /* picked up by maintenance */ }
+        } catch { /* The queue stays pending until the secret renewal route runs again. */ }
       }
     }
   } catch {

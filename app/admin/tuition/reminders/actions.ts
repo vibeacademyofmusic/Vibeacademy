@@ -3,8 +3,8 @@ import { reminderActionHref } from './dialog-context'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient, uuidPattern } from '../../finance/operations'
-import { ZALO_PILOT_OUTBOUND_DISABLED } from '@/lib/integrations/zalo/pilot-outbound'
-import { TUITION_PROVIDER_TEMPLATE_ID, tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
+import { ZALO_PILOT_OUTBOUND_DISABLED, zaloPilotOutboundBlocked } from '@/lib/integrations/zalo/pilot-outbound'
+import { TUITION_PROVIDER_TEMPLATE_ID, tuitionReminderDispatchGate, tuitionSendBeginMessage } from '@/lib/integrations/zalo/tuition-notice'
 import { sendManualTuitionZalo } from '@/lib/integrations/zalo/tuition-test-send'
 import { loadTuitionNotice } from './notice'
 import { zaloServiceClient } from '@/lib/integrations/zalo/service'
@@ -74,6 +74,17 @@ export async function confirmTuitionZalo(form: FormData) {
   const parentId = String(form.get('parent_id') ?? '')
   if (!uuidPattern.test(id)) return back(form, 'Không xác định được học viên cần gửi.')
   const db = await adminClient()
+  const [role, template] = await Promise.all([
+    db.rpc('has_role', { role_code: 'SUPER_ADMIN' }),
+    db.from('notification_templates').select('enabled,provider_template_id').eq('template_key', 'ZALO_TUITION_REMINDER').eq('provider', 'ZALO').limit(1).maybeSingle(),
+  ])
+  const gate = tuitionReminderDispatchGate({
+    superAdmin: role.data === true,
+    templateEnabled: template.data?.enabled === true,
+    templateId: template.data?.provider_template_id ?? null,
+    outboundBlocked: zaloPilotOutboundBlocked(),
+  })
+  if (!gate.ok) return back(form, gate.message)
   const notice = await loadTuitionNotice(db, id, uuidPattern.test(parentId) ? parentId : null)
   if (!notice) return back(form, 'Không tìm thấy nhắc học phí của học viên này.')
   if (!notice.templateId) return back(form, 'Mẫu ZALO_TUITION_REMINDER chưa có mã Zalo đã duyệt. Chưa gửi.')
