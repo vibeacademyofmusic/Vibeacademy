@@ -1,0 +1,17 @@
+{
+  "deployment": "dpl_2rWYz4ktKaHEGkxhXQXhuwnAwfLW",
+  "changes": [
+    "Removed duplicate ProgramPanel from programs listing.",
+    "Full program row uses a stretched native link; edit and status controls retain independent actions above the link.",
+    "Removed content-readiness block from main curriculum detail without changing lessons or authoring data."
+  ],
+  "validation": {
+    "typescript": "PASS",
+    "production_build": "PASS",
+    "existing_prebuild_tests": 11,
+    "guitar_production": "Opened from program row; main page contains no content-readiness section; VIBE white cards, navy typography, gold accents and level navigation verified.",
+    "piano_production": "Opened successfully using the program-row link; correct Piano heading and level navigation rendered.",
+    "list_design": "Removed right sidebar; full-width white card, consistent row spacing, navy names, status badges, independent edit/status actions. Responsive single-column rows below 720px."
+  },
+  "design_manifest_hash": "1209bff0a3770b676e3ded08cb356a3267948fb4a90cdf876975ac2cbbe2903d"
+}
