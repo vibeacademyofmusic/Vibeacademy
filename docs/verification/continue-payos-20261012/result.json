@@ -1,0 +1,50 @@
+{
+  "production_deployment": "dpl_GUo68K8jmsweFg7EyxX3WShu6TBM",
+  "fixture": "TEST-HP-HA-20261012",
+  "actual_reply": {
+    "choice": "CONTINUE",
+    "provider_submit_time": "2026-10-12T14:56:11.073+07:00",
+    "gateway_event": 25,
+    "production_event": "2ec2ad62-cf72-497f-a5d5-befe5463a479",
+    "gateway_forwarded_http": 200
+  },
+  "root_causes": [
+    "Regional gateway forwarded production OA events to staging, which returned 503.",
+    "Authorized fixture reminder tracking was missing from normal tuition message correlation.",
+    "Shared PayOS sequence started within historical provider order namespace.",
+    "Test source enrollment was closed after the prior test. Reopened only with explicit authorization."
+  ],
+  "fixes": [
+    "Gateway upstream changed to manage.vibe.edu.vn, existing original signature/durable queue/retries retained. Gateway independently runs under systemd.",
+    "Idempotent, exact-fixture correlation bridge applied; no synthetic customer response persisted.",
+    "Shared order sequence raised monotonically; collided historical paid order retained as EXCEPTION, never treated as this invoice payment."
+  ],
+  "renewal": {
+    "case": "0bf215f3-db19-46c8-a25b-7157fe2b907a",
+    "invoice": "INV-2026-000001",
+    "plan_price": 5500000,
+    "amount_due": 2750000,
+    "starts_on": "2026-10-29",
+    "due_on": "2026-10-28",
+    "order_code": 1791808713530,
+    "provider_state": "PENDING",
+    "paid_amount": 0,
+    "future_tuition_created": false,
+    "invoice_count": 1,
+    "zbs_state": "AWAITING_TEMPLATE",
+    "additional_messages_sent": false
+  },
+  "checks": {
+    "automated_passed": 39,
+    "rollback_bridge_wrong_identity_and_duplicate": "PASS",
+    "rollback_duplicate_renewal": "PASS",
+    "anonymous_and_authenticated_bridge_execute": false,
+    "live_original_signed_gateway_retry": "HTTP 200, event 25 forwarded",
+    "rendered_design": "Existing VIBE white modal, navy text, gold-accent context verified on production; actual CONTINUE and PayOS link visible. PayOS checkout visibly shows 2750000 VND."
+  },
+  "remaining_limitations": [
+    "Optional Zalo response polling API still returns -1241. Signed webhook channel now works independently.",
+    "No actual payment executed; paid-period creation after verified PayOS payment was not live-tested.",
+    "No additional ZBS payment request sent; existing manual template-send approval state remains."
+  ]
+}
