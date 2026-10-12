@@ -172,7 +172,7 @@ test('component subject exposes only component editor and future grade stays loc
  let html=await render(d)
  assert.match(html,/name="progress_id" value="cp1"/);assert.doesNotMatch(html,/name="progress_id" value="sp1"/)
  d.student_level_progress[0].started_at='2099-01-01T00:00:00Z';html=await render(d)
- assert.doesNotMatch(html,/name="progress_id"/);assert.match(html,/Chưa đến ngày bắt đầu trình độ/)
+ assert.match(html,/<fieldset disabled=""/);assert.match(html,/name="progress_id" value="cp1"/);assert.match(html,/Chưa đến ngày bắt đầu trình độ/)
 })
 test('manual subject units expose Đang học and Đạt without covering the editor', async () => {
   const d = fixtures()
@@ -212,7 +212,9 @@ test('lesson component records Đang học and Đạt on each lesson and stays l
   html = await render(d)
   assert.match(html, /L01 · Lesson 01/)
   assert.match(html, /Chưa học/)
-  assert.doesNotMatch(html, /name="progress_id"/)
+  assert.match(html, /<fieldset disabled=""/)
+  assert.match(html, />Đang học</)
+  assert.match(html, />Đạt</)
   assert.match(html, /Đang học và Đạt của từng bài học sẽ mở khi đến thời điểm bắt đầu/)
 })
 test('scheduled edit gate compares timestamps instead of timestamp versus calendar string',()=>{

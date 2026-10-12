@@ -538,15 +538,15 @@ const { data: academicRecordComponents, error: academicRecordComponentsError } =
 
     isAcademicScheduled(currentLevelProgress.started_at)
 
-  const canEdit =
+  const canShowControls =
 
     !inconsistent &&
 
     enrollment.status === 'ACTIVE' &&
 
-    currentLevelProgress?.status === 'IN_PROGRESS' &&
+    currentLevelProgress?.status === 'IN_PROGRESS'
 
-    !isCurrentLevelScheduled
+  const canEdit = canShowControls && !isCurrentLevelScheduled
 
 return (<div className="space-y-5">            <div className="rounded-xl border border-gray-200 bg-white p-5">
 
@@ -796,7 +796,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
   {isCurrentLevelScheduled && <p className="mt-3 text-sm text-gray-600">Chưa đến ngày bắt đầu trình độ. Đang học và Đạt của từng bài học sẽ mở khi đến thời điểm bắt đầu.</p>}
 
-  <details className="group mt-5" open={canEdit}>
+  <details className="group mt-5" open={canShowControls}>
 
   <summary className="cursor-pointer list-none">
 
@@ -846,7 +846,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
       </p>
 
-      {canEdit &&
+      {canShowControls &&
 
       item.hasProgress &&
 
@@ -859,6 +859,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
           className="relative z-10 flex shrink-0 items-center gap-2"
 
         >
+<fieldset disabled={!canEdit} className="contents">
 
           <input
 
@@ -940,7 +941,8 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
           </button>
 
-        </form>
+        </fieldset>
+</form>
 
       ) : (
 
@@ -1010,7 +1012,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
               </div>
 
-              {canEdit &&
+              {canShowControls &&
 
               componentItem.hasProgress &&
 
@@ -1025,6 +1027,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
                   className="relative z-10 flex shrink-0 items-center gap-2"
 
                 >
+<fieldset disabled={!canEdit} className="contents">
 
                   <input
 
@@ -1094,7 +1097,8 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                   </button>
 
-                </form>
+                </fieldset>
+</form>
 
               ) : (
 
@@ -1122,9 +1126,10 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                       </p>
 
-                      {canEdit && item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' && componentItem.component.completion_rule === 'ALL_REQUIRED_ITEMS' ? (
+                      {canShowControls && item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' && componentItem.component.completion_rule === 'ALL_REQUIRED_ITEMS' ? (
 
                         <form action={updateLessonProgressStatus} className="relative z-10 flex shrink-0 items-center gap-2">
+<fieldset disabled={!canEdit} className="contents">
 
                           {lesson.hasProgress && (
 
@@ -1146,7 +1151,8 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                           <button type="submit" name="status" value="PASS" className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${lesson.status === 'PASS' ? 'border-green-300 bg-green-50 text-green-700' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'}`}>Đạt</button>
 
-                        </form>
+                        </fieldset>
+</form>
 
                       ) : (
 
