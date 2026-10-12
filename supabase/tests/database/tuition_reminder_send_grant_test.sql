@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap;
-select plan(8);
+select plan(12);
 
 insert into auth.users(id) values
   ('c0e1b210-0000-4000-8000-000000000001'),
@@ -22,14 +22,26 @@ join public.permissions permission on permission.code = 'tuition.renewal.prepare
 where role.code = 'TUITION_PREPARE_ONLY';
 insert into public.user_roles(user_id, role_id, branch_id)
 select 'c0e1b210-0000-4000-8000-000000000003', id, (select id from public.branches where code = 'V01') from public.roles where code = 'TUITION_PREPARE_ONLY';
+insert into public.roles(code, name, is_system) values ('TUITION_SEND_ONLY', 'Chỉ gửi nhắc', false);
+insert into public.role_permissions(role_id, permission_id)
+select role.id, permission.id
+from public.roles role
+join public.permissions permission on permission.code = 'tuition.reminder.send'
+where role.code = 'TUITION_SEND_ONLY';
+insert into auth.users(id) values ('c0e1b210-0000-4000-8000-000000000004');
+insert into public.profiles(id, full_name, status) values ('c0e1b210-0000-4000-8000-000000000004', 'Send Grant', 'ACTIVE');
+insert into public.user_roles(user_id, role_id, branch_id)
+select 'c0e1b210-0000-4000-8000-000000000004', id, (select id from public.branches where code = 'V01') from public.roles where code = 'TUITION_SEND_ONLY';
 insert into public.branches(id, code, name) values ('c0e1b210-0000-4000-8000-000000000010', 'SEND-B', 'Chi nhánh khác');
 insert into public.organization_units(code, name) values ('HQ', 'Hội sở') on conflict (code) do nothing;
 insert into public.employees(id, employee_code, home_unit, hire_date, profile_id, created_by) values
   ('c0e1b210-0000-4000-8000-0000000000e2', 'VIBE-HQ-9102', 'HQ', current_date, 'c0e1b210-0000-4000-8000-000000000002', 'c0e1b210-0000-4000-8000-000000000002'),
-  ('c0e1b210-0000-4000-8000-0000000000e3', 'VIBE-HQ-9103', 'HQ', current_date, 'c0e1b210-0000-4000-8000-000000000003', 'c0e1b210-0000-4000-8000-000000000003');
+  ('c0e1b210-0000-4000-8000-0000000000e3', 'VIBE-HQ-9103', 'HQ', current_date, 'c0e1b210-0000-4000-8000-000000000003', 'c0e1b210-0000-4000-8000-000000000003'),
+  ('c0e1b210-0000-4000-8000-0000000000e4', 'VIBE-HQ-9104', 'HQ', current_date, 'c0e1b210-0000-4000-8000-000000000004', 'c0e1b210-0000-4000-8000-000000000004');
 insert into public.employee_versions(employee_id, version, effective_on, full_name, unit_code, employee_group, employment_status, end_date, pay_type, reason, created_by) values
-  ('c0e1b210-0000-4000-8000-0000000000e2', 1, current_date, 'Nhân viên gửi', 'HQ', 'Văn phòng', 'ACTIVE', null, 'MONTHLY', 'Phân quyền thử', 'c0e1b210-0000-4000-8000-000000000002'),
-  ('c0e1b210-0000-4000-8000-0000000000e3', 1, current_date, 'Nhân viên tạo đơn', 'HQ', 'Văn phòng', 'ACTIVE', null, 'MONTHLY', 'Phân quyền thử', 'c0e1b210-0000-4000-8000-000000000003');
+  ('c0e1b210-0000-4000-8000-0000000000e2', 1, current_date, 'Nhân viên xem', 'HQ', 'Văn phòng', 'ACTIVE', null, 'MONTHLY', 'Phân quyền thử', 'c0e1b210-0000-4000-8000-000000000002'),
+  ('c0e1b210-0000-4000-8000-0000000000e3', 1, current_date, 'Nhân viên tạo đơn', 'HQ', 'Văn phòng', 'ACTIVE', null, 'MONTHLY', 'Phân quyền thử', 'c0e1b210-0000-4000-8000-000000000003'),
+  ('c0e1b210-0000-4000-8000-0000000000e4', 1, current_date, 'Nhân viên được gửi', 'HQ', 'Văn phòng', 'ACTIVE', null, 'MONTHLY', 'Phân quyền thử', 'c0e1b210-0000-4000-8000-000000000004');
 
 insert into public.notification_templates(template_key, provider, provider_template_id, status, description, parameter_schema, enabled)
 values ('ZALO_TUITION_REMINDER', 'ZALO', '645192', 'APPROVED', 'Thử cổng gửi', '["student_name"]'::jsonb, false);
@@ -78,10 +90,16 @@ select pg_temp.make_send_reminder('c0e1b210-0000-4000-8000-000000000021', (selec
 select pg_temp.make_send_reminder('c0e1b210-0000-4000-8000-000000000041', 'c0e1b210-0000-4000-8000-000000000010', 'SEND-OTH');
 
 select set_config('request.jwt.claim.sub', 'c0e1b210-0000-4000-8000-000000000002', true);
-select ok(public.tuition_reminder_send_allowed('c0e1b210-0000-4000-8000-000000000021'), 'care employee may send for the assigned branch');
+select ok(public.tuition_branch_granted((select id from public.branches where code = 'V01'), 'tuition.reminder.view'), 'care employee can view the assigned branch');
+select ok(not coalesce(public.tuition_reminder_send_allowed('c0e1b210-0000-4000-8000-000000000021'), false), 'view permission does not send for the assigned branch');
 select ok(not coalesce(public.tuition_reminder_send_allowed('c0e1b210-0000-4000-8000-000000000041'), false), 'care employee cannot send for another branch');
+select throws_ok($$select public.begin_tuition_zalo_send('c0e1b210-0000-4000-8000-000000000021', 'c0e1b210-0000-4000-8000-000000000099')$$, 'P0001', 'TUITION_SEND_UNAUTHORIZED', 'view permission does not open a send');
 select is((public.tuition_reminder_template_gate()->>'enabled')::boolean, false, 'the reminder template gate stays off');
 select throws_ok($$select public.begin_tuition_zalo_send('c0e1b210-0000-4000-8000-000000000041', 'c0e1b210-0000-4000-8000-000000000099')$$, 'P0001', 'TUITION_SEND_UNAUTHORIZED', 'the wrong branch does not open a send');
+
+select set_config('request.jwt.claim.sub', 'c0e1b210-0000-4000-8000-000000000004', true);
+select ok(public.tuition_reminder_send_allowed('c0e1b210-0000-4000-8000-000000000021'), 'an explicit send grant may send for the assigned branch');
+select ok(not coalesce(public.tuition_reminder_send_allowed('c0e1b210-0000-4000-8000-000000000041'), false), 'an explicit send grant cannot send for another branch');
 
 select set_config('request.jwt.claim.sub', 'c0e1b210-0000-4000-8000-000000000003', true);
 select ok(not coalesce(public.tuition_reminder_send_allowed('c0e1b210-0000-4000-8000-000000000021'), false), 'prepare permission alone is not a send grant');

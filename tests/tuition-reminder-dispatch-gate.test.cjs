@@ -1,6 +1,14 @@
 const { test } = require('node:test')
 const assert = require('node:assert/strict')
+const fs = require('node:fs')
 const { harness, id, redirected } = require('./helpers/finance-operations.cjs')
+
+test('the server send check uses the send permission, not reminder view', () => {
+  const sql = fs.readFileSync('supabase/migrations/20261012140000_tuition_reminder_send_permission.sql', 'utf8')
+  assert.match(sql, /tuition\.reminder\.send/)
+  assert.doesNotMatch(sql, /tuition_branch_granted\([^)]*'tuition\.reminder\.view'/)
+  assert.match(sql, /does not grant that permission to TUITION_CARE/)
+})
 
 const reminder = id(2)
 
