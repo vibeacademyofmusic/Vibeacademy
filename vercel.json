@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "path": "/api/internal/zalo/renewal",
+      "schedule": "0 9 * * *"
+    }
+  ],
+  "buildCommand": "echo '139aeaf9aec49282e543abbfbc436c39fcb412444202082371a44e1c5752a98f  docs/design/approved-auth-design.json' | sha256sum -c - && node scripts/auth-design-lock.cjs && npm run build"
+}
