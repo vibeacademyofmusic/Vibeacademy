@@ -1,5 +1,6 @@
+import { reportAdminClient as adminClient } from '../access'
 import Link from 'next/link'
-import { adminClient, type Params } from '../../../finance/operations'
+import { type Params } from '../../../finance/operations'
 import { Panel, Table, Notice, LoadError, Confirm, inputClass, dateText, timeText } from '../../../finance/_components/ui'
 import SubmitButton from '../../../finance/_components/SubmitButton'
 import { reportDetail, history, statuses, types, summaryFields, legacySummaryFallback, reportDelivery } from '../data'

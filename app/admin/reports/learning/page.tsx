@@ -1,6 +1,7 @@
+import { reportAdminClient as adminClient } from './access'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { adminClient, vietnamDateTime, type Params } from '../../finance/operations'
+import { vietnamDateTime, type Params } from '../../finance/operations'
 import { branches } from '../../finance/query'
 import { Select, Field, Pager, Notice, LoadError, dateText, inputClass } from '../../finance/_components/ui'
 import SubmitButton from '../../finance/_components/SubmitButton'
