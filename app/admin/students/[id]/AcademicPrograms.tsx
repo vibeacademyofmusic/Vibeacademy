@@ -796,9 +796,11 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
   {isCurrentLevelScheduled && <p className="mt-3 text-sm text-gray-600">Chưa đến ngày bắt đầu trình độ. Đang học và Đạt của từng bài học sẽ mở khi đến thời điểm bắt đầu.</p>}
 
-  <details className="group mt-5">
+  <details className="group mt-5" open={canEdit}>
 
-  <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+  <summary className="cursor-pointer list-none">
+
+    <span className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-100">
 
     <span>Môn học & Học phần</span>
 
@@ -818,9 +820,11 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
     </span>
 
+    </span>
+
   </summary>
 
-  <div className="mt-3 space-y-2">
+  <div className="relative z-10 mt-3 space-y-2">
 
   {sortedSubjectProgress.map((item) => (
 
@@ -828,13 +832,13 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
     key={item.id}
 
-    className="overflow-hidden rounded-lg border border-gray-200"
+    className="min-w-0 rounded-lg border border-gray-200"
 
   >
 
-    <div className="flex items-center justify-between gap-4 px-3 py-2.5">
+    <div className="flex flex-wrap items-center justify-between gap-4 px-3 py-2.5">
 
-      <p className="text-sm font-medium text-gray-800">
+      <p className="min-w-0 text-sm font-medium text-gray-800">
 
         {item.subject.name}
 
@@ -852,7 +856,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
           action={updateDirectSubjectProgressStatus}
 
-          className="flex items-center gap-2"
+          className="relative z-10 flex shrink-0 items-center gap-2"
 
         >
 
@@ -986,7 +990,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
             >
 
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
 
               <div className="flex items-center gap-3">
 
@@ -1010,15 +1014,15 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
               componentItem.hasProgress &&
 
-              item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' &&
+              componentItem.component.completion_rule !== 'ALL_REQUIRED_ITEMS' &&
 
-              componentItem.component.completion_rule !== 'ALL_REQUIRED_ITEMS' ? (
+              (item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' || componentItem.component.completion_rule === 'DIRECT_ASSESSMENT') ? (
 
                 <form
 
                   action={updateComponentProgressStatus}
 
-                  className="flex items-center gap-2"
+                  className="relative z-10 flex shrink-0 items-center gap-2"
 
                 >
 
@@ -1110,9 +1114,9 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                   {componentItem.lessons.map(lesson => (
 
-                    <div key={lesson.itemId} className="flex items-center justify-between gap-3 py-1">
+                    <div key={lesson.itemId} className="flex flex-wrap items-center justify-between gap-3 py-1">
 
-                      <p className="text-sm text-gray-700">
+                      <p className="min-w-0 text-sm text-gray-700">
 
                         {lesson.code ? `${lesson.code} · ` : ''}{lesson.name}
 
@@ -1120,7 +1124,7 @@ return (<div className="space-y-5">            <div className="rounded-xl border
 
                       {canEdit && item.subject.completion_rule === 'ALL_REQUIRED_COMPONENTS' && componentItem.component.completion_rule === 'ALL_REQUIRED_ITEMS' ? (
 
-                        <form action={updateLessonProgressStatus} className="flex items-center gap-2">
+                        <form action={updateLessonProgressStatus} className="relative z-10 flex shrink-0 items-center gap-2">
 
                           {lesson.hasProgress && (
 

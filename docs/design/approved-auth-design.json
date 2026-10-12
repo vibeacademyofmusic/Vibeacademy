@@ -19,7 +19,13 @@
     "tests/payos-hardening.test.mjs": "2a53f08f5ca45d619dfc3e258fc55d9eaee6fa17aebacacbb2e747d72a7f7645",
     "tests/zalo-phone-registration.test.cjs": "b416cacf17661ead423bd598d53d3de5175d7f409d9700b741c8c6581cc727c1",
     "tests/zalo-durable-recovery.test.cjs": "e3877b8d2664aaacf78b47a353ca82c99ab443575f3d01b8c2a70742bdfe2033",
-    "tests/zalo-registration-recovery-action.test.cjs": "79cc5e8320c8fc81bc3df1b51d61d5979c41ca946a4cc924638e00df5bbf51c7"
+    "tests/zalo-registration-recovery-action.test.cjs": "79cc5e8320c8fc81bc3df1b51d61d5979c41ca946a4cc924638e00df5bbf51c7",
+    "app/admin/students/[id]/AcademicPrograms.tsx": "2c9c50711c44b81b47e9cfb1b5a946584fa41a085263c310102f15179c439ab8",
+    "app/admin/students/[id]/academic-progress.ts": "506fd831bc3420cacc105e535d51b50895cc35fa585b497744b73055ea2a6e11",
+    "app/admin/students/actions.ts": "83f9a9c418a50863699d2e739a99a7b412942483ff8e0816b8d11708312f4595",
+    "tests/academic-profile.test.cjs": "a19a0b3fb536a9d18b5aa928d9c33ed813fbea7a28147ee18e268b8e89419f56",
+    "tests/academic-progress-actions.test.cjs": "6632de13f4edf9d9b9dd270c2cfb016a2affbfa01ae8af25470585d94d1c31cd"
   },
-  "counter_registration_contract": "Verified PayOS receipt -> completed registration -> consented, enabled Zalo template -> durable, duplicate-safe send; SENT is not delivery confirmation."
+  "counter_registration_contract": "Verified PayOS receipt -> completed registration -> consented, enabled Zalo template -> durable, duplicate-safe send; SENT is not delivery confirmation.",
+  "academic_progress_contract": "Operational admin writes; visible controls for started active levels; future and completed levels stay locked; no zero-row success; grade completion remains database controlled."
 }

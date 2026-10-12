@@ -174,6 +174,20 @@ test('component subject exposes only component editor and future grade stays loc
  d.student_level_progress[0].started_at='2099-01-01T00:00:00Z';html=await render(d)
  assert.doesNotMatch(html,/name="progress_id"/);assert.match(html,/Chưa đến ngày bắt đầu trình độ/)
 })
+test('manual subject units expose Đang học and Đạt without covering the editor', async () => {
+  const d = fixtures()
+  d.student_level_progress[0].status = 'IN_PROGRESS'
+  d.student_level_progress[0].started_at = '2020-01-01T00:00:00Z'
+  d.curriculum_subjects[0].completion_rule = 'MANUAL'
+  d.curriculum_subject_components[0].completion_rule = 'DIRECT_ASSESSMENT'
+  const html = await render(d)
+  const summary = html.slice(html.indexOf('<summary'), html.indexOf('>', html.indexOf('<summary')) + 1)
+  assert.doesNotMatch(summary, /\bflex\b/)
+  assert.match(html, /name="progress_id" value="cp1"/)
+  assert.match(html, />Đang học</)
+  assert.match(html, />Đạt</)
+  assert.match(html, /<details[^>]*open/)
+})
 test('lesson component records Đang học and Đạt on each lesson and stays locked before the start', async () => {
   const d = fixtures()
   d.student_level_progress[0].status = 'IN_PROGRESS'
