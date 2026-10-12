@@ -72,6 +72,14 @@ export const navigationGroups: { name: string; items: NavigationItem[] }[] = [
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
 // Existing learning report URLs remain under the training workspace.
+export function isFinancialReportPath(pathname: string | null | undefined) {
+  if (!pathname) return false
+  const path = pathname.split('?')[0]
+  return path === '/admin/finance'
+    || path.startsWith('/admin/finance/management-report')
+    || path.startsWith('/documents/finance/management-report')
+}
+
 export function isBusinessShellPath(pathname: string | null | undefined) {
   return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))
 }
