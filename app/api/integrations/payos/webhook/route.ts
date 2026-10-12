@@ -21,11 +21,15 @@ export async function POST(request: Request) {
   const checksumKey = process.env.PAYOS_CHECKSUM_KEY
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const webhookEnabled = process.env.PAYOS_WEBHOOK_ENABLED === 'true'
   if (!checksumKey || !supabaseUrl || !serviceKey) {
     return Response.json({ ok: false, error: 'PAYOS_NOT_CONFIGURED' }, { status: 503 })
   }
-  if (!supabaseUrl.startsWith('http://127.0.0.1:') && !supabaseUrl.startsWith('http://localhost:')) {
-    return Response.json({ ok: false, error: 'PAYOS_PREVIEW_ONLY' }, { status: 503 })
+  // Fail closed in every hosted environment unless PayOS callbacks are explicitly enabled.
+  // This replaces the old localhost-only pilot gate so staging/production can process
+  // verified callbacks without ever treating redirects, ZBS events, or checkout creation as payment.
+  if (!webhookEnabled) {
+    return Response.json({ ok: false, error: 'PAYOS_WEBHOOK_DISABLED' }, { status: 503 })
   }
   let body: unknown
   try {

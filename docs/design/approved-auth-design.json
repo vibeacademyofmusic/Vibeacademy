@@ -9,6 +9,17 @@
     "app/login/update-password/form.tsx": "79ec2d96ba902b2d70e64d186330edf2dfe6b2acd7941065bb79750e3fbd7de7",
     "app/forgot-password/ForgotPasswordForm.tsx": "248ce55fdee3d71f818122f3a7ac0498ba1cad8481c8e6200a9a7c0235326908",
     "app/auth/update-password/UpdatePasswordForm.tsx": "9b43fae1988fb17bda0bd090b4869df7ecbaa96216093d705ff62f75cc63f591",
-    "public/vibe-logo.png": "580bda73f088fce4fafda2508db7a3a7330c75a6e85ff649658e817b5ef15681"
-  }
+    "public/vibe-logo.png": "580bda73f088fce4fafda2508db7a3a7330c75a6e85ff649658e817b5ef15681",
+    "lib/integrations/payos/sync.ts": "546aac784a63d22c1dbde727478ba15f115fc53d13f7f94c4385679c21759e14",
+    "lib/integrations/payos/client.ts": "898ce13871a5d6fccda68486a1124856a815ee64b1499c2d4454a2676668460f",
+    "app/api/integrations/payos/webhook/route.ts": "4cc24fbe62d8b0be3c554bff3532ac3ec4b1a1cd03cf7b2f82f437d1b410585c",
+    "lib/integrations/zalo/preview-dispatch.ts": "9573cd25c41dcea1560c36ef07fd40534997091d61e15eb5a255eb278771b661",
+    "lib/integrations/zalo/phone.ts": "45391b2241bd14d120f7b1fda5907f7cb3d0535cba0df9e94c8c692ba481f17f",
+    "tests/payos-sync.test.cjs": "2c80ddf61a4a00f2373fa835b993a75ad299dc32ae0bd399e180d9159a716250",
+    "tests/payos-hardening.test.mjs": "2a53f08f5ca45d619dfc3e258fc55d9eaee6fa17aebacacbb2e747d72a7f7645",
+    "tests/zalo-phone-registration.test.cjs": "b416cacf17661ead423bd598d53d3de5175d7f409d9700b741c8c6581cc727c1",
+    "tests/zalo-durable-recovery.test.cjs": "e3877b8d2664aaacf78b47a353ca82c99ab443575f3d01b8c2a70742bdfe2033",
+    "tests/zalo-registration-recovery-action.test.cjs": "79cc5e8320c8fc81bc3df1b51d61d5979c41ca946a4cc924638e00df5bbf51c7"
+  },
+  "counter_registration_contract": "Verified PayOS receipt -> completed registration -> consented, enabled Zalo template -> durable, duplicate-safe send; SENT is not delivery confirmation."
 }

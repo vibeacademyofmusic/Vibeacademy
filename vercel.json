@@ -5,5 +5,5 @@
       "schedule": "0 9 * * *"
     }
   ],
-  "buildCommand": "echo '139aeaf9aec49282e543abbfbc436c39fcb412444202082371a44e1c5752a98f  docs/design/approved-auth-design.json' | sha256sum -c - && node scripts/auth-design-lock.cjs && npm run build"
+  "buildCommand": "echo 'a74cc16c7e69381a5ececf3ace5720071994098bb6247719c9e28fea29eba996  docs/design/approved-auth-design.json' | sha256sum -c - && node scripts/auth-design-lock.cjs && npm run build"
 }

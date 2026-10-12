@@ -10,7 +10,9 @@ export async function syncPendingPayosPayment(applicationId: string, orderCode: 
   if (!uuidPattern.test(applicationId) || !Number.isSafeInteger(orderCode)) return 'SKIPPED'
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  if (!serviceKey || !supabaseUrl?.startsWith('http://127.0.0.1:') && !supabaseUrl?.startsWith('http://localhost:')) return 'SKIPPED'
+  const local = supabaseUrl?.startsWith('http://127.0.0.1:') || supabaseUrl?.startsWith('http://localhost:')
+  // Hosted reconciliation follows the same explicit gate as verified webhooks.
+  if (!serviceKey || !supabaseUrl || (!local && process.env.PAYOS_WEBHOOK_ENABLED !== 'true')) return 'SKIPPED'
   const client = await createClient()
   const { data: claims, error: authError } = await client.auth.getClaims()
   if (authError || !claims?.claims) return 'SKIPPED'

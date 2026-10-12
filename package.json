@@ -18,14 +18,15 @@
     "local:bootstrap-admin": "node scripts/local-bootstrap-admin.cjs",
     "local:seed-academic-demo": "node scripts/local-seed-academic-demo.cjs",
     "local:mixed-level-fixture": "node scripts/local-mixed-level-class-fixture.cjs",
-    "prebuild": "node scripts/auth-design-lock.cjs && node --test tests/login-operations-lead.test.cjs && node scripts/local-preview.cjs prepare",
+    "prebuild": "node scripts/auth-design-lock.cjs && node --test tests/login-operations-lead.test.cjs && npm run test:counter-registration && node scripts/local-preview.cjs prepare",
     "postbuild": "node scripts/local-preview.cjs record",
     "preview": "node scripts/local-preview.cjs preview",
     "typecheck": "tsc --noEmit",
     "zalo:pilot:start": "node scripts/zalo-scheduler.cjs start",
     "zalo:pilot:status": "node scripts/zalo-scheduler.cjs status",
     "zalo:maintenance": "node scripts/zalo-maintenance.cjs",
-    "test:auth-design": "node --test tests/auth-design-lock.test.cjs"
+    "test:auth-design": "node --test tests/auth-design-lock.test.cjs",
+    "test:counter-registration": "node --test tests/payos-sync.test.cjs tests/payos-hardening.test.mjs tests/zalo-phone-registration.test.cjs tests/zalo-durable-recovery.test.cjs tests/zalo-registration-recovery-action.test.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
