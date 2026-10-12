@@ -1,3 +1,4 @@
+import ActionDropdown from '../../_components/vibe/ActionDropdown'
 import AuthorizedFixtureTests from './AuthorizedFixtureTests'
 import Link from 'next/link'
 import CheckoutLink from './CheckoutLink'
@@ -164,7 +165,20 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
         debt ? <Link prefetch={false} key="invoice" href={'/admin/finance/invoices?selected=' + debt.invoice_id}>{debt.invoice_number} • {debt.receivable_status} • {debt.invoice_status === 'ISSUED' ? 'Còn nợ' : 'Số dư hóa đơn (chưa ghi nhận công nợ)'}{' '}{money(debt.outstanding_balance, debt.currency)}</Link> : 'Chưa có hóa đơn',
         <span key="zalo" className="grid min-w-36 gap-1 text-sm"><SendMark label={sendByReminder.has(r.id) ? tuitionSendLabel(sendByReminder.get(r.id)) : zaloAttemptLabel(attemptByReminder.get(r.id))} /><Link className="vibe-button" scroll={false} prefetch={false} href={zaloHref(params, r.id)} aria-label={'Gửi Zalo cho ' + r.full_name}>Gửi Zalo</Link><Link className="text-sm underline" scroll={false} prefetch={false} href={zaloHref(params, r.id).replace('zalo=', 'history=')}>Lịch sử</Link></span>,
         <span key="reply" className="grid min-w-28 gap-1 text-sm"><ReplyMark label={tuitionNoticeReplyLabel(sendByReminder.get(r.id), r.reply_choice)} />{r.reply_choice === 'CONTACT' && <StatusBadge tone="warning">{TUITION_CONTACT_STATUS}</StatusBadge>}{r.reply_submit_time && <small>{timeText(r.reply_submit_time)}</small>}{r.contact_note && <small>Xử lý: {r.contact_note}{r.contact_noted_at ? ` · ${timeText(r.contact_noted_at)}` : ''}{r.contact_noted_by_name ? ` · ${r.contact_noted_by_name}` : ''}</small>}{r.reply_needs_review && <StatusBadge tone="warning">Cần xác minh</StatusBadge>}</span>,
-        <span key="process" className="grid min-w-52 gap-2 text-sm"><span>Xử lý nội bộ: {renewalProcessingLabel(renewalByReminder.get(r.id)?.state, Boolean(r.reply_choice))}</span><span>Thanh toán: {renewalPaymentLabel(renewalByReminder.get(r.id)?.state)}</span>{renewalByReminder.get(r.id) && <span>{renewalByReminder.get(r.id)!.plan_code === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng'} · {money(renewalByReminder.get(r.id)!.list_price, 'VND')} · đến hạn {money(renewalByReminder.get(r.id)!.amount_due, 'VND')}</span>}{invoiceById.get(renewalByReminder.get(r.id)?.invoice_id ?? '') && <span>{invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.invoice_number} · {invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.status}</span>}{rowCheckout && <a className="underline" href={rowCheckout}>Mở payOS</a>}<Link className="vibe-button" scroll={false} prefetch={false} href={renewHref(params, r.id)}>Gia hạn</Link><button type="button" className="vibe-button" disabled aria-disabled="true" title="Chưa mở">Nghỉ học</button><button type="button" className="vibe-button" disabled aria-disabled="true" title="Chưa mở">Tạm ngừng</button>{r.status === 'PENDING' && <Link scroll={false} prefetch={false} className="vibe-button" href={renewHref(params, r.id).replace('renew=', 'process=')}>Xử lý nhắc</Link>}{r.status !== 'PENDING' && <span>{r.reason}{r.marked_at && <small className="block">{timeText(r.marked_at)}</small>}</span>}</span>]
+        <span key="process" className="inline-flex items-center gap-2 whitespace-nowrap text-sm">
+          <span className="vibe-badge" style={{ background: renewalByReminder.get(r.id)?.state === 'PAID' ? 'var(--vibe-blue-soft)' : '#fff3e6', color: renewalByReminder.get(r.id)?.state === 'PAID' ? 'var(--vibe-blue)' : '#a65313' }}>{renewalPaymentLabel(renewalByReminder.get(r.id)?.state)}</span>
+          <ActionDropdown label={'Thao tác học phí cho ' + r.full_name} tone={renewalByReminder.get(r.id)?.state === 'PAID' ? 'paid' : 'pending'} actions={[
+            ...(rowCheckout ? [{ label: 'Mở payOS', href: rowCheckout, external: true }] : []),
+            { label: 'Gia hạn', href: renewHref(params, r.id) },
+            { label: 'Nghỉ học', disabled: true }, { label: 'Tạm ngừng', disabled: true },
+            ...(r.status === 'PENDING' ? [{ label: 'Xử lý nhắc', href: renewHref(params, r.id).replace('renew=', 'process=') }] : []),
+          ]}>
+            <span>Xử lý nội bộ: {renewalProcessingLabel(renewalByReminder.get(r.id)?.state, Boolean(r.reply_choice))}</span>
+            {renewalByReminder.get(r.id) && <span>{renewalByReminder.get(r.id)!.plan_code === 'VIBE_12_MONTHS' ? '1 năm' : '3 tháng'} · {money(renewalByReminder.get(r.id)!.list_price, 'VND')} · đến hạn {money(renewalByReminder.get(r.id)!.amount_due, 'VND')}</span>}
+            {invoiceById.get(renewalByReminder.get(r.id)?.invoice_id ?? '') && <span>{invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.invoice_number} · {invoiceById.get(renewalByReminder.get(r.id)!.invoice_id)!.status}</span>}
+            {r.status !== 'PENDING' && r.reason && <span>{r.reason}{r.marked_at && <small className="block">{timeText(r.marked_at)}</small>}</span>}
+          </ActionDropdown>
+        </span>]
     })} />
     <Pager path="/admin/tuition/reminders" params={params} {...list} />
     {uuidPattern.test(params.renew ?? '') && await (async () => {
