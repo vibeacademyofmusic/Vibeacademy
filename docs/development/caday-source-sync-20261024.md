@@ -6,7 +6,7 @@ This branch is a **development source snapshot** for continuing the operating sc
 
 - Includes the `/admin/classes` and `/admin/schedule` redirects, the `/admin/students?tab=coordination` workspace, class setup and placement actions, schedule planning rules, transactional room guards, and their focused tests.
 - SQL migrations here are **source files only**. This sync does not run them against staging or production and does not change room, class, enrollment, attendance, or tuition records.
-- Excludes `.env*`, credentials, ignored `.backups/` and `.vercel/`, `tmp/`, production snapshots and reports, student imports and rosters, production reset scripts, and unrelated academic/CRM work. No user records are part of this commit.
+- Excludes `.env*`, credentials, ignored `.backups/` and `.vercel/`, `tmp/`, production snapshots and reports, student imports and rosters, production reset scripts, and unrelated academic/CRM/auth-design work. No user records are part of this commit.
 - The source serving `manage.vibe.edu.vn` cannot be identified by Git SHA from the current Vercel deployment metadata: it was made through the CLI without Git metadata. This branch must not be described as the verified production source.
 
 ## Local verification before sync
@@ -14,7 +14,7 @@ This branch is a **development source snapshot** for continuing the operating sc
 - `next typegen` and `npm run typecheck`: passed.
 - Focused coordination, navigation, independent-shift, class-ops, and Piano-planning Node tests: **51/51 passed**.
 - `CI=1 npm run build`: passed; this compiles the isolated branch without deploying.
-- Focused ESLint: no errors, four warnings in copied development files.
+- Full ESLint: passed with 83 warnings; focused copied-file lint had four warnings.
 - Database migration execution and end-to-end browser testing were not part of this source-only sync. SQL test files and CI steps are included, but a GitHub CI result is needed after push before calling the branch release-ready.
 
 The original checkout retains all unrelated local work. Production deployment, database migrations, and student placement require their own reviewed steps.
