@@ -18,3 +18,7 @@ This branch is a **development source snapshot** for continuing the operating sc
 - Database migration execution and end-to-end browser testing were not part of this source-only sync. SQL test files and CI steps are included, but a GitHub CI result is needed after push before calling the branch release-ready.
 
 The original checkout retains all unrelated local work. Production deployment, database migrations, and student placement require their own reviewed steps.
+
+## GitHub-only sync guard
+
+`vercel.json` disables Vercel's Git deployment for `codex/caday-source-sync-20261024`. It must be present in the first push of this branch, because the project Git-link status could not be confirmed from the available read-only metadata. This setting applies only to the named branch; do not remove it or merge it into another branch without reviewing deployment behavior. Verify the GitHub remote SHA and both Vercel projects after the push.
