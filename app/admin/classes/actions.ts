@@ -1,13 +1,38 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { clock, planIndependentShifts, shiftIdentityCode, windowProblems, type TimeWindow } from '@/lib/teaching-shifts/independent'
 import { primaryShiftWouldExceedTwo, type ShiftSlot } from '@/lib/teaching-shifts/overlap'
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function scheduleSaveErrorMessage(message: string) {
+  if (message.includes('SCHEDULE_ROOM_CONFLICT')) return 'Phòng đã có ca dạy khác trong khung giờ này'
+  if (message.includes('SCHEDULE_ROOM_TOO_SMALL')) return 'Sức chứa ca dạy vượt sức chứa phòng đã cấu hình'
+  if (message.includes('SCHEDULE_ROOM_CAPACITY_UNKNOWN')) return 'Phòng chưa xác định sức chứa. Giữ chờ ca dạy cho đến khi xác nhận.'
+  if (message.includes('SCHEDULE_ROOM_UNAVAILABLE')) return 'Phòng không thuộc chi nhánh của ca dạy hoặc không còn sử dụng'
+  if (message.includes('SCHEDULE_ROOM_TIMEZONE_UNSUPPORTED')) return 'Múi giờ của lịch phòng chưa được hỗ trợ'
+  if (message.includes('two overlapping')) return 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.'
+  if (message.includes('already teaching')) return 'Giáo viên của ca dạy đã có lịch trùng thời gian.'
+  return 'Không lưu được lịch lặp lại của ca dạy'
+}
+
+function readSlots(formData: FormData): TimeWindow[] {
+  const days = formData.getAll('slot_day')
+  const starts = formData.getAll('slot_start')
+  const ends = formData.getAll('slot_end')
+  if (!days.length) return []
+  return days.flatMap((day, index) => {
+    const value = Number(String(day).trim())
+    if (!Number.isInteger(value) || value < 1 || value > 7) return []
+    return [{ day: value, start: String(starts[index] ?? '').trim(), end: String(ends[index] ?? '').trim() }]
+  })
+}
 
 async function requireSuperAdmin() {
   const supabase = await createClient()
@@ -20,9 +45,7 @@ async function requireSuperAdmin() {
   }
 
   const { data: isSuperAdmin, error: roleError } =
-    await supabase.rpc('has_role', {
-      role_code: 'SUPER_ADMIN',
-    })
+    await operationalAdminOn(supabase)
 
   if (roleError || !isSuperAdmin) {
     redirect('/login?error=Unauthorized')
@@ -44,9 +67,15 @@ export async function createClass(formData: FormData) {
 
   const teacherId = String(formData.get('teacher_id') ?? '').trim()
   const roomId = String(formData.get('room_id') ?? '').trim()
-  const dayValue = String(formData.get('day_of_week') ?? '').trim()
-  const startTime = String(formData.get('start_time') ?? '').trim()
-  const endTime = String(formData.get('end_time') ?? '').trim()
+  const slots = readSlots(formData)
+  const selectedDays = [...new Set([
+    ...formData.getAll('day_of_week').map(value => Number(String(value).trim())),
+    ...slots.map(slot => slot.day),
+  ])].filter(day => Number.isInteger(day) && day >= 1 && day <= 7)
+  const singleSlot = slots.length === 1 ? slots[0] : null
+  const dayValue = singleSlot ? String(singleSlot.day) : selectedDays.length === 1 ? String(selectedDays[0]) : ''
+  const startTime = singleSlot?.start || String(formData.get('start_time') ?? '').trim()
+  const endTime = singleSlot?.end || String(formData.get('end_time') ?? '').trim()
   const effectiveFrom = String(formData.get('effective_from') ?? '').trim()
   const effectiveTo = String(formData.get('effective_to') ?? '').trim()
 
@@ -94,16 +123,15 @@ export async function createClass(formData: FormData) {
   if (
     !branchId ||
     !curriculumId ||
-    !code ||
-    !name ||
-    !classType
+    !classType ||
+    (slots.length <= 1 && selectedDays.length <= 1 && (!code || !name))
   ) {
     redirect(
       '/admin/classes?view=classes&error=' + encodeURIComponent('Cần chi nhánh, chương trình, mã, tên và loại ca dạy')
     )
   }
 
-  if (!/^[A-Z0-9_-]{2,50}$/.test(code)) {
+  if (slots.length <= 1 && selectedDays.length <= 1 && !/^[A-Z0-9_-]{2,50}$/.test(code)) {
     redirect(
       '/admin/classes?view=classes&error=' + encodeURIComponent('Mã ca dạy chỉ gồm chữ, số, gạch ngang hoặc gạch dưới, từ 2 đến 50 ký tự')
     )
@@ -169,7 +197,7 @@ export async function createClass(formData: FormData) {
 
   const { data: program } = await supabase
     .from('operational_curriculums')
-    .select('id, name')
+    .select('id, name, code')
     .eq('id', curriculumId)
     .maybeSingle()
 
@@ -179,9 +207,9 @@ export async function createClass(formData: FormData) {
     )
   }
 
-  const scheduleRequested = Boolean(dayValue || startTime || endTime || roomId || effectiveFrom || effectiveTo)
+  const scheduleRequested = Boolean(selectedDays.length || startTime || endTime || roomId || effectiveFrom || effectiveTo)
   const day = Number(dayValue)
-  if (scheduleRequested && (!Number.isInteger(day) || day < 1 || day > 7 || !startTime || !endTime || !roomId || !effectiveFrom)) {
+  if (slots.length <= 1 && selectedDays.length <= 1 && scheduleRequested && (!Number.isInteger(day) || day < 1 || day > 7 || !startTime || !endTime || !roomId || !effectiveFrom)) {
     redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Lịch lặp lại cần thứ, giờ bắt đầu, giờ kết thúc, phòng và ngày hiệu lực'))
   }
   if (startTime && endTime && endTime <= startTime) {
@@ -191,7 +219,180 @@ export async function createClass(formData: FormData) {
     redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Ngày hết hiệu lực không được trước ngày bắt đầu lịch'))
   }
 
-  const complete = Boolean(fromLevel && toLevel && teacherId && scheduleRequested && roomId && effectiveFrom)
+  if (slots.length > 1 || selectedDays.length > 1) {
+    const windows: TimeWindow[] = slots.length
+      ? slots
+      : selectedDays.map(day => ({ day, start: startTime, end: endTime }))
+    const problems = windowProblems(windows)
+    if (problems.incomplete || problems.invalid) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Mỗi dòng cần giờ kết thúc sau giờ bắt đầu'))
+    }
+    if (problems.overlap) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Các khung giờ cùng một ngày đang chồng nhau'))
+    }
+    if (!roomId || !effectiveFrom) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Mỗi ca cần giờ, phòng và ngày hiệu lực'))
+    }
+    const { data: room } = await supabase.from('rooms').select('id, branch_id, status, capacity').eq('id', roomId).maybeSingle()
+    if (!room || room.status !== 'ACTIVE' || room.branch_id !== branchId) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Phòng không thuộc chi nhánh của ca dạy hoặc không còn sử dụng'))
+    }
+    if (!Number.isInteger(room.capacity) || room.capacity <= 0) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Phòng chưa xác định sức chứa. Giữ chờ ca dạy cho đến khi xác nhận.'))
+    }
+    if (capacity > room.capacity) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent(`Sức chứa vượt sức chứa phòng (${room.capacity})`))
+    }
+    const { data: occupied, error: occupiedError } = await supabase
+      .from('schedules')
+      .select('day_of_week, start_time, end_time, room_id, effective_from, effective_to, classes!inner(id, code, name, branch_id, curriculum_id, status)')
+      .eq('status', 'ACTIVE')
+      .eq('classes.branch_id', branchId)
+    if (occupiedError) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent('Không kiểm tra được ca đang có. Hãy thử lại.'))
+    }
+    const existing = (occupied ?? []).flatMap(row => {
+      const klass = Array.isArray(row.classes) ? row.classes[0] : row.classes
+      if (!klass || klass.status === 'CANCELLED') return []
+      const dayCount = (occupied ?? []).filter(other => {
+        const otherClass = Array.isArray(other.classes) ? other.classes[0] : other.classes
+        return otherClass?.id === klass.id
+      }).length
+      return [{
+        id: klass.id,
+        code: klass.code,
+        name: klass.name,
+        branchId: klass.branch_id,
+        curriculumId: klass.curriculum_id,
+        dayOfWeek: row.day_of_week,
+        startTime: String(row.start_time),
+        endTime: String(row.end_time),
+        dayCount,
+        roomId: row.room_id,
+        effectiveFrom: String(row.effective_from),
+        effectiveTo: row.effective_to,
+      }]
+    })
+    const plan = planIndependentShifts({
+      programCode: program.code,
+      programName: program.name,
+      branchId,
+      curriculumId,
+      days: windows.map(window => window.day),
+      start: windows[0]?.start || startTime,
+      end: windows[0]?.end || endTime,
+      windows,
+      roomId,
+      effectiveFrom,
+      effectiveTo: effectiveTo || null,
+      existing,
+    })
+    const createdIds: string[] = []
+    const createdCodes: string[] = []
+    const fail = async (message: string) => {
+      if (createdIds.length) await supabase.from('classes').delete().in('id', createdIds)
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent(message))
+    }
+    for (const shift of plan) {
+      if (shift.existing) continue
+      let code = shift.code
+      for (let suffix = 2; suffix < 20; suffix += 1) {
+        const { data: taken } = await supabase.from('classes').select('id').eq('branch_id', branchId).eq('code', code).maybeSingle()
+        if (!taken) break
+        code = `${shiftIdentityCode(program.code, shift.day, shift.start)}-${suffix}`.slice(0, 50)
+      }
+      const { data: created, error } = await supabase.from('classes').insert({
+        branch_id: branchId,
+        course_id: null,
+        curriculum_id: curriculumId,
+        code,
+        name: shift.name,
+        class_type: classType,
+        capacity,
+        start_date: startDateValue || effectiveFrom,
+        end_date: endDateValue || null,
+        notes: notes || null,
+        status: 'DRAFT',
+        accepted_from_level_id: fromLevel,
+        accepted_to_level_id: toLevel,
+      }).select('id').single()
+      if (error || !created) return await fail(error?.message || 'Không tạo được ca dạy')
+      createdIds.push(created.id)
+      createdCodes.push(code)
+      if (teacherId) {
+        const { data: teacher } = await supabase.from('teachers').select('id, status').eq('id', teacherId).maybeSingle()
+        if (!teacher || teacher.status !== 'ACTIVE') await fail('Giáo viên chính không còn hoạt động')
+        const { error: teacherError } = await supabase.from('class_teachers').insert({
+          class_id: created.id,
+          teacher_id: teacherId,
+          teacher_role: 'PRIMARY',
+          is_active: true,
+          assigned_at: effectiveFrom || startDateValue || new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date()),
+        })
+        if (teacherError) await fail(teacherError.message.includes('two overlapping')
+          ? 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.'
+          : 'Không gán được giáo viên chính cho ca dạy')
+      }
+      const { data: sameDay, error: sameDayError } = await supabase.from('schedules').select('id, class_id, room_id, day_of_week, start_time, end_time, effective_from, effective_to').eq('status', 'ACTIVE').eq('day_of_week', shift.day)
+      if (sameDayError) return await fail('Không kiểm tra được lịch sử dụng phòng. Hãy thử lại.')
+      const overlaps = (sameDay ?? []).filter(row =>
+        clock(String(row.start_time)) < shift.end && shift.start < clock(String(row.end_time))
+        && (effectiveFrom <= (row.effective_to ?? '9999-12-31') && (effectiveTo || '9999-12-31') >= row.effective_from)
+      )
+      if (overlaps.some(row => row.room_id === roomId)) await fail('Phòng đã có ca dạy khác trong khung giờ này')
+      if (teacherId) {
+        const { data: otherPrimary } = await supabase.from('class_teachers').select('class_id').eq('teacher_id', teacherId).eq('teacher_role', 'PRIMARY').eq('is_active', true).neq('class_id', created.id)
+        const otherIds = new Set((otherPrimary ?? []).map(row => row.class_id))
+        const candidate: ShiftSlot = { classId: created.id, dayOfWeek: shift.day, startTime: shift.start, endTime: shift.end, effectiveFrom, effectiveTo: effectiveTo || null }
+        const others: ShiftSlot[] = overlaps.filter(row => otherIds.has(row.class_id)).map(row => ({
+          classId: row.class_id,
+          dayOfWeek: row.day_of_week,
+          startTime: String(row.start_time),
+          endTime: String(row.end_time),
+          effectiveFrom: row.effective_from,
+          effectiveTo: row.effective_to,
+        }))
+        if (primaryShiftWouldExceedTwo(candidate, others)) {
+          await fail('Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.')
+        }
+      }
+      const { error: scheduleError } = await supabase.from('schedules').insert({
+        class_id: created.id,
+        room_id: roomId,
+        day_of_week: shift.day,
+        start_time: shift.start,
+        end_time: shift.end,
+        effective_from: effectiveFrom,
+        effective_to: effectiveTo || null,
+        timezone: 'Asia/Ho_Chi_Minh',
+        status: 'ACTIVE',
+      })
+      if (scheduleError) {
+        await fail(scheduleSaveErrorMessage(scheduleError.message))
+      }
+      if (teacherId && roomId) {
+        const { error: activateError } = await supabase.from('classes').update({ status: 'ACTIVE' }).eq('id', created.id)
+        if (activateError) await fail('Đã tạo ca dạy nhưng chưa chuyển được sang đang hoạt động')
+      }
+    }
+    revalidatePath('/admin')
+    revalidatePath('/admin/classes')
+    revalidatePath('/admin/students')
+    const reused = plan.filter(shift => shift.existing).map(shift => shift.existing?.code).filter(Boolean)
+    if (!createdCodes.length) {
+      redirect('/admin/classes?view=classes&error=' + encodeURIComponent(`Đã có ca tương ứng: ${reused.join(', ')}. Mở ca đó, không tạo thêm.`))
+    }
+    const missing = [
+      !teacherId ? 'giáo viên chính' : null,
+    ].filter(Boolean)
+    redirect('/admin/classes?view=classes&success=' + encodeURIComponent(
+      `Đã tạo ${createdCodes.length} ca độc lập: ${createdCodes.join(', ')}.`
+      + (reused.length ? ` Giữ nguyên ca đã có: ${reused.join(', ')}.` : '')
+      + (missing.length ? ` Còn thiếu: ${missing.join(', ')}.` : ' Có thể nhận học viên khi ca đã kích hoạt.')
+    ))
+  }
+
+  const complete = Boolean(teacherId && scheduleRequested && roomId && effectiveFrom)
   const { data: created, error } = await supabase
     .from('classes')
     .insert({
@@ -245,11 +446,18 @@ export async function createClass(formData: FormData) {
   }
 
   if (scheduleRequested) {
-    const { data: room } = await supabase.from('rooms').select('id, branch_id, status').eq('id', roomId).maybeSingle()
+    const { data: room } = await supabase.from('rooms').select('id, branch_id, status, capacity').eq('id', roomId).maybeSingle()
     if (!room || room.status !== 'ACTIVE' || room.branch_id !== branchId) {
-      await fail('Phòng không thuộc chi nhánh của ca dạy hoặc không còn sử dụng')
+      return await fail('Phòng không thuộc chi nhánh của ca dạy hoặc không còn sử dụng')
     }
-    const { data: sameDay } = await supabase.from('schedules').select('id, class_id, room_id, day_of_week, start_time, end_time, effective_from, effective_to').eq('status', 'ACTIVE').eq('day_of_week', day)
+    if (!Number.isInteger(room.capacity) || room.capacity <= 0) {
+      return await fail('Phòng chưa xác định sức chứa. Giữ chờ ca dạy cho đến khi xác nhận.')
+    }
+    if (capacity > room.capacity) {
+      await fail(`Sức chứa vượt sức chứa phòng (${room.capacity})`)
+    }
+    const { data: sameDay, error: sameDayError } = await supabase.from('schedules').select('id, class_id, room_id, day_of_week, start_time, end_time, effective_from, effective_to').eq('status', 'ACTIVE').eq('day_of_week', day)
+    if (sameDayError) return await fail('Không kiểm tra được lịch sử dụng phòng. Hãy thử lại.')
     const overlaps = (sameDay ?? []).filter(row =>
       row.start_time.slice(0, 5) < endTime && startTime < row.end_time.slice(0, 5)
       && (effectiveFrom <= (row.effective_to ?? '9999-12-31') && (effectiveTo || '9999-12-31') >= row.effective_from)
@@ -283,11 +491,7 @@ export async function createClass(formData: FormData) {
       status: 'ACTIVE',
     })
     if (scheduleError) {
-      await fail(scheduleError.message.includes('two overlapping')
-        ? 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.'
-        : scheduleError.message.includes('already teaching')
-          ? 'Giáo viên của ca dạy đã có lịch trùng thời gian.'
-          : 'Không lưu được lịch lặp lại của ca dạy')
+      await fail(scheduleSaveErrorMessage(scheduleError.message))
     }
   }
 
@@ -301,7 +505,6 @@ export async function createClass(formData: FormData) {
   revalidatePath('/admin/students')
 
   const missing = [
-    !fromLevel || !toLevel ? 'phạm vi trình độ' : null,
     !teacherId ? 'giáo viên chính' : null,
     !scheduleRequested ? 'lịch lặp lại, phòng và ngày hiệu lực' : null,
   ].filter(Boolean)

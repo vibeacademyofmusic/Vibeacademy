@@ -37,7 +37,7 @@ export function StudentOpsShell({ tab, children }: { tab: StudentOpsTab; childre
             <select name="tab" defaultValue={tab} className="ml-3 rounded-lg border border-[var(--vibe-line)] bg-white px-3 py-2">
               <option value="overview">Tổng quan học viên</option>
               <option value="students">Học viên đang hoạt động</option>
-              <option value="waiting">Chờ vào ca dạy</option>
+              <option value="coordination">Ca dạy và lịch học</option>
             </select>
           </label>
           <button className="vibe-button" type="submit">Xem</button>

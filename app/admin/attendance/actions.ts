@@ -1,5 +1,6 @@
 'use server'
 
+import { operationalAdminOn } from '@/lib/auth/request'
 import { attendanceReturn } from './launcher-model'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -17,9 +18,7 @@ async function requireSuperAdmin() {
   }
 
   const { data: isSuperAdmin, error: roleError } =
-    await supabase.rpc('has_role', {
-      role_code: 'SUPER_ADMIN',
-    })
+    await operationalAdminOn(supabase)
 
   if (roleError || !isSuperAdmin) {
     redirect('/login?error=Unauthorized')
@@ -248,7 +247,9 @@ export async function generateSessions(
   revalidatePath('/admin/classes')
 
   const returnTo = String(formData.get('return_to') ?? '').trim()
-  const safeReturn = returnTo.startsWith('/admin/classes') ? returnTo : '/admin/classes?view=attendance'
+  const safeReturn = returnTo.startsWith('/admin/classes') || returnTo.startsWith('/admin/students?tab=coordination&view=today')
+    ? returnTo
+    : '/admin/classes?view=attendance'
 
   redirect(
     `${safeReturn}${safeReturn.includes('?') ? '&' : '?'}success=${encodeURIComponent(

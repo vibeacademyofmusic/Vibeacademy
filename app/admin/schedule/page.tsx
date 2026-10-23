@@ -5,7 +5,8 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> }
 export default async function ScheduleListRedirect({ searchParams }: Props) {
   const params = await searchParams
   const query = new URLSearchParams()
-  query.set('tab', 'schedule')
+  query.set('tab', 'coordination')
+  query.set('view', 'week')
   if (params.branch) query.set('branch', params.branch)
   if (params.date) query.set('date', params.date)
   if (params.error) query.set('error', params.error)

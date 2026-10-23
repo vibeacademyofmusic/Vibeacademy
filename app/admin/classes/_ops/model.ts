@@ -13,6 +13,7 @@ export const compatibilityLabels: Record<string, string> = {
   OUTSIDE_SCOPE: 'Ngoài phạm vi',
   WRONG_PROGRAM: 'Sai chương trình',
   ACADEMIC_PROGRAM_MISSING: 'Thiếu chương trình Academic',
+  ACADEMIC_PROGRAM_INACTIVE: 'Chương trình Academic chưa hoạt động',
   CURRENT_LEVEL_MISSING: 'Thiếu trình độ hiện tại',
   CLASS_SCOPE_UNCONFIGURED: 'Chưa cấu hình phạm vi',
 }
@@ -22,14 +23,15 @@ export function parseOpsView(value?: string): OpsView {
 }
 
 export function formatLevelScope(fromName?: string | null, toName?: string | null) {
-  if (!fromName || !toName) return 'Chưa cấu hình phạm vi'
+  if (!fromName && !toName) return 'Mọi trình độ'
+  if (!fromName || !toName) return 'Phạm vi chưa hoàn chỉnh'
   return `${fromName} → ${toName}`
 }
 
 export function compatibilityTone(code: string): 'success' | 'warning' | 'error' | 'neutral' | 'info' {
   if (code === 'IN_SCOPE') return 'success'
   if (code === 'OUTSIDE_SCOPE' || code === 'CLASS_SCOPE_UNCONFIGURED') return 'warning'
-  if (code === 'WRONG_PROGRAM' || code === 'ACADEMIC_PROGRAM_MISSING' || code === 'CURRENT_LEVEL_MISSING') return 'error'
+  if (code === 'WRONG_PROGRAM' || code === 'ACADEMIC_PROGRAM_MISSING' || code === 'ACADEMIC_PROGRAM_INACTIVE' || code === 'CURRENT_LEVEL_MISSING') return 'error'
   return 'neutral'
 }
 

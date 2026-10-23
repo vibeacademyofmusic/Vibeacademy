@@ -3,8 +3,7 @@ import { isAfterSalesPath, isMarketingPath } from './business/workspaces'
 export const trainingTabs: { name: string; href: string; studentTab?: string }[] = [
   { name: 'Học viên', href: '/admin/students' },
   { name: 'Chương trình học', href: '/admin/programs' },
-  { name: 'Ca dạy', href: '/admin/classes', studentTab: 'teaching-shifts' },
-  { name: 'Lịch học', href: '/admin/schedule', studentTab: 'schedule' },
+  { name: 'Ca dạy & Lịch học', href: '/admin/classes', studentTab: 'coordination' },
   { name: 'Điểm danh', href: '/admin/attendance', studentTab: 'attendance' },
   { name: 'Cảnh báo chuyên cần', href: '/admin/attendance/retention' },
   { name: 'Báo cáo học tập', href: '/admin/reports/learning' },
@@ -72,6 +71,14 @@ export const navigationGroups: { name: string; items: NavigationItem[] }[] = [
 ]
 // Context-only pages (journals, academic record, pauses/makeup) require a selected student/session.
 // Existing learning report URLs remain under the training workspace.
+export function isFinancialReportPath(pathname: string | null | undefined) {
+  if (!pathname) return false
+  const path = pathname.split('?')[0]
+  return path === '/admin/finance'
+    || path.startsWith('/admin/finance/management-report')
+    || path.startsWith('/documents/finance/management-report')
+}
+
 export function isBusinessShellPath(pathname: string | null | undefined) {
   return pathname === '/admin/business' || Boolean(pathname?.startsWith('/admin/business/'))
 }
@@ -187,7 +194,7 @@ export function workspaceTabsForAccess(pathname: string, mode: ShellMode) {
 
 export function activeWorkspaceTab(pathname: string, view?: string | null, tab?: string | null) {
   if (pathname === '/admin/students') {
-    const aliases: Record<string, string> = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }
+    const aliases: Record<string, string> = { coordination: '/admin/classes', waiting: '/admin/classes', 'teaching-shifts': '/admin/classes', schedule: '/admin/classes', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }
     return aliases[tab || ''] || '/admin/students'
   }
   if (pathname === '/admin/academic/pause-requests') return '/admin/academic/pause-requests'

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { businessDate } from '@/app/admin/_lib/business-date'
 import { createClient } from '@/lib/supabase/server'
+import { coordinationReturn, placementStaffMessage, withCoordinationState } from '../coordination/rules'
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
 
@@ -14,36 +15,37 @@ async function db() {
   return client
 }
 
-function back(error: { message?: string } | null, destination = '/admin/students?tab=waiting') {
+function back(formData: FormData, error: { message?: string } | null, destination?: string) {
   revalidatePath('/admin/students')
   revalidatePath('/admin/classes')
-  redirect(error?.message
-    ? `/admin/students?tab=waiting&error=${encodeURIComponent(placementMessage(error.message))}`
-    : destination)
-}
-
-function placementMessage(error: string) {
-  if (error.includes('PLACEMENT_STALE')) return 'Hồ sơ đã thay đổi. Hãy kiểm tra lại thông tin mới trước khi xếp ca.'
-  if (error.includes('PLACEMENT_REQUEST_REUSED')) return 'Yêu cầu đã được dùng cho thao tác khác. Hãy tải lại hồ sơ.'
-  if (error.includes('PLACEMENT_SCHEDULE_UNKNOWN')) return 'Chưa đủ dữ liệu lịch, phòng hoặc phân công giáo viên để kiểm tra xung đột.'
-  if (error.includes('PLACEMENT_STUDENT_CONFLICT')) return 'Học viên đã có lịch học trùng thời gian.'
-  if (error.includes('PLACEMENT_TEACHER_CONFLICT')) return 'Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn ca khác hoặc đổi lịch.'
-  if (error.includes('PLACEMENT_ROOM_CONFLICT')) return 'Phòng học đã có lịch trùng thời gian.'
-  if (error.includes('PLACEMENT_UNAUTHORIZED')) return 'Bạn không có quyền xác nhận học viên vào ca dạy tại chi nhánh này.'
-  if (error.includes('PLACEMENT_PROGRAM_DENIED')) return 'Ca dạy không cùng chương trình với hồ sơ đăng ký.'
-  if (error.includes('PLACEMENT_LEVEL_DENIED')) return 'Ca dạy không nhận trình độ hiện tại của học viên.'
-  if (error.includes('PLACEMENT_TEACHER_REQUIRED')) return 'Ca dạy chưa có giáo viên chính hợp lệ.'
-  if (error.includes('PLACEMENT_SCHEDULE_REQUIRED')) return 'Ca dạy chưa có lịch định kỳ.'
-  if (error.includes('PLACEMENT_CLASS_FULL')) return 'Ca dạy đã đủ sĩ số.'
-  if (error.includes('PLACEMENT_CLASS_DENIED')) return 'Ca dạy không thuộc chi nhánh hoặc không còn nhận học viên.'
-  if (error.includes('PLACEMENT_ALREADY_ENROLLED')) return 'Học viên đã có ghi danh ở ca dạy này.'
-  if (error.includes('PLACEMENT_TRANSITION_DENIED')) return 'Hồ sơ này không còn ở trạng thái có thể vào ca dạy.'
-  if (error.includes('PLACEMENT_START_DENIED')) return 'Ngày bắt đầu nằm ngoài thời gian của ca dạy.'
-  if (error.includes('PLACEMENT_ALREADY_STARTED')) return 'Đã bắt đầu học — cần quy trình đổi ca dạy.'
-  if (error.includes('PLACEMENT_HISTORY_LOCKED')) return 'Hồ sơ đã có dữ liệu học tập, chưa thể sửa ca dạy tại đây.'
-  if (error.includes('PLACEMENT_REASON_REQUIRED')) return 'Cần nhập lý do từ 1 đến 2000 ký tự.'
-  if (error.includes('PLACEMENT_UNCHANGED')) return 'Ca dạy và ngày bắt đầu chưa thay đổi.'
-  return 'Không vào ca dạy được. Vui lòng kiểm tra lại ca dạy và ngày bắt đầu.'
+  revalidatePath('/admin/attendance')
+  const placement = String(formData.get('placement_id') ?? '')
+  const start = String(formData.get('start_date') ?? '')
+  const classId = String(formData.get('class_id') ?? '')
+  const base = coordinationReturn(String(formData.get('return_to') ?? '')) || '/admin/students?tab=coordination&view=queue'
+  if (error?.message) {
+    const known = placementStaffMessage(error.message)
+    const reference = crypto.randomUUID().slice(0, 8)
+    if (!known) console.error('placement failed', reference, error.message)
+    redirect(withCoordinationState(base, {
+      error: known || `Không xếp ca được. Mã đối chiếu ${reference}.`,
+      place: placement || undefined,
+      start: datePattern.test(start) ? start : undefined,
+      class: error.message.includes('PLACEMENT_CLASS_FULL') ? undefined : classId || undefined,
+      success: undefined,
+    }))
+  }
+  redirect(destination || withCoordinationState(base, {
+    view: 'queue',
+    place: undefined,
+    class: undefined,
+    start: undefined,
+    error: undefined,
+    placed: placement || '1',
+    success: datePattern.test(start) && start > businessDate()
+      ? 'Đã xếp ca. Học viên ở trạng thái đã xếp ca – chờ bắt đầu cho đến ngày tham gia.'
+      : 'Đã xếp ca.',
+  }))
 }
 
 export async function matchPlacement(formData: FormData) {
@@ -53,23 +55,41 @@ export async function matchPlacement(formData: FormData) {
     p_placement: String(formData.get('placement_id') ?? ''),
     p_version: Number(formData.get('version') ?? 0),
   })
-  back(error)
+  back(formData, error)
 }
 
 export async function assignPlacement(formData: FormData) {
   const client = await db()
   const start = String(formData.get('start_date') ?? '')
-  const { error } = await client.rpc('assign_student_placement', {
+  if (datePattern.test(start) && start < businessDate()) {
+    back(formData, { message: 'PLACEMENT_START_PAST' })
+  }
+  const classIds = [...new Set(formData.getAll('class_id').map(value => String(value)).filter(Boolean))]
+  const placement = String(formData.get('placement_id') ?? '')
+  const { error } = await client.rpc('assign_student_shift_set', {
     p_request: String(formData.get('request_id') || crypto.randomUUID()),
-    p_placement: String(formData.get('placement_id') ?? ''),
+    p_placement: placement,
     p_version: Number(formData.get('version') ?? 0),
-    p_class: String(formData.get('class_id') ?? ''),
+    p_classes: classIds,
     p_start: datePattern.test(start) ? start : null,
   })
-  const destination = datePattern.test(start) && start <= businessDate()
-    ? '/admin/students?tab=students'
-    : '/admin/students?tab=students&lifecycle=future'
-  back(error, destination)
+  if (!error) {
+    const saved = await client.from('student_placement_cases').select('status, required_weekly_sessions').eq('id', placement).maybeSingle()
+    const required = saved.data?.required_weekly_sessions
+    if (typeof required === 'number' && saved.data?.status === 'MATCHING') {
+      revalidatePath('/admin/students')
+      revalidatePath('/admin/classes')
+      revalidatePath('/admin/attendance')
+      const base = coordinationReturn(String(formData.get('return_to') ?? '')) || '/admin/students?tab=coordination&view=queue'
+      redirect(withCoordinationState(base, {
+        error: undefined,
+        place: placement,
+        start: datePattern.test(start) ? start : undefined,
+        success: `Đã xếp một phần lịch. Hồ sơ yêu cầu ${required} buổi/tuần và vẫn còn thiếu buổi.`,
+      }))
+    }
+  }
+  back(formData, error)
 }
 
 export async function changePlacement(formData: FormData) {
@@ -84,7 +104,7 @@ export async function changePlacement(formData: FormData) {
     p_start: datePattern.test(start) ? start : null,
     p_reason: String(formData.get('reason') ?? ''),
   })
-  back(error, '/admin/students?tab=students&lifecycle=future')
+  back(formData, error)
 }
 
 export async function cancelPlacement(formData: FormData) {
@@ -96,5 +116,5 @@ export async function cancelPlacement(formData: FormData) {
     p_enrollment: String(formData.get('enrollment_id') ?? ''),
     p_reason: String(formData.get('reason') ?? ''),
   })
-  back(error)
+  back(formData, error)
 }

@@ -3,7 +3,7 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const { harness } = require('./helpers/finance-operations.cjs')
-const { navigationGroups, activeNavigationHref } = harness().load('../navigation.ts')
+const { navigationGroups, activeNavigationHref, isFinancialReportPath } = harness().load('../navigation.ts')
 test('operations consolidation does not expose finance to student-only staff', () => {
   const { navigationForAccess } = harness().load('../navigation.ts')
   assert.equal(navigationGroups.some(g => ['ĐÀO TẠO', 'TÀI CHÍNH'].includes(g.name)), false)
@@ -182,10 +182,11 @@ test('payroll retains its back link without a second cross-module navigation bar
 
 test('legacy embedded training URLs select the single canonical tab', () => {
   const n = harness().load('../navigation.ts')
-  const aliases = { 'teaching-shifts': '/admin/classes', schedule: '/admin/schedule', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }
+  const aliases = { coordination: '/admin/classes', waiting: '/admin/classes', 'teaching-shifts': '/admin/classes', schedule: '/admin/classes', attendance: '/admin/attendance', reports: '/admin/reports/learning', feedback: '/admin/feedback' }
   for (const [tab, href] of Object.entries(aliases)) assert.equal(n.activeWorkspaceTab('/admin/students', null, tab), href)
-  for (const tab of ['overview','students','waiting']) assert.equal(n.activeWorkspaceTab('/admin/students', null, tab), '/admin/students')
-  assert.equal(n.trainingTabs.filter(t => t.name === 'Ca dạy').length, 1)
+  for (const tab of ['overview','students']) assert.equal(n.activeWorkspaceTab('/admin/students', null, tab), '/admin/students')
+  assert.equal(n.trainingTabs.filter(t => t.name === 'Ca dạy & Lịch học').length, 1)
+  assert.equal(n.trainingTabs.filter(t => t.name === 'Lịch học').length, 0)
   assert.equal(n.trainingTabs.filter(t => t.name === 'Phòng học').length, 1)
   assert.doesNotMatch(fs.readFileSync('app/admin/students/ops-shell.tsx','utf8'), /<nav|bg-gray-950/)
   assert.equal((fs.readFileSync('app/admin/WorkspaceSectionTabs.tsx','utf8').match(/<WorkspaceTabs /g) || []).length, 1)
@@ -218,4 +219,15 @@ test('tuition care shell opens only the reminder page', () => {
   assert.match(page, /title="Chưa mở">Tạm ngừng/)
   const section = fs.readFileSync('app/admin/finance/SectionNav.tsx', 'utf8')
   assert.match(section, /mode === 'tuition'/)
+})
+
+test('financial report paths stay distinct from operational finance work', () => {
+  assert.equal(isFinancialReportPath('/admin/finance'), true)
+  assert.equal(isFinancialReportPath('/admin/finance/management-report'), true)
+  assert.equal(isFinancialReportPath('/documents/finance/management-report'), true)
+  assert.equal(isFinancialReportPath('/admin/finance/invoices'), false)
+  assert.equal(isFinancialReportPath('/admin/finance/payments'), false)
+  assert.equal(isFinancialReportPath('/admin/finance/refunds'), false)
+  assert.equal(isFinancialReportPath('/admin/finance/operating-expenses'), false)
+  assert.equal(isFinancialReportPath('/admin/payroll'), false)
 })

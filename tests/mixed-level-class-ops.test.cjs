@@ -21,7 +21,7 @@ test('UI: workspace modes and mixed-level copy exist', () => {
   const page = fs.readFileSync('app/admin/classes/page.tsx', 'utf8')
   const workspace = fs.readFileSync('app/admin/classes/_ops/Workspace.tsx', 'utf8')
   const model = fs.readFileSync('app/admin/classes/_ops/model.ts', 'utf8')
-  assert.match(page, /teaching-shifts/)
+  assert.match(page, /coordination/)
   assert.match(workspace, /Ca dạy/)
   assert.match(model, /Tổng quan/)
   assert.match(model, /Ca dạy/)
@@ -34,13 +34,15 @@ test('UI: workspace modes and mixed-level copy exist', () => {
   assert.match(model, /formatLevelScope/)
 })
 
-test('MIX: enrollment uses Academic Program level and blocks outside scope', () => {
+test('MIX: enrollment reads Academic Grade and requires explicit operational dates', () => {
   const enroll = fs.readFileSync('app/admin/classes/[id]/actions.ts', 'utf8')
   const section = fs.readFileSync('app/admin/classes/[id]/StudentEnrollmentSection.tsx', 'utf8')
   const migration = fs.readFileSync('supabase/migrations/20260924130000_mixed_level_class_ops_v1.sql', 'utf8')
   assert.match(enroll, /class_enrollment_compatibility/)
   assert.match(section, /class_student_current_level|loadClassRoster/)
-  assert.match(section, /Không copy Course\.level_id|Student Academic Program/)
+  assert.match(section, /Trình độ lấy từ hồ sơ học thuật/)
+  assert.match(section, /không dùng ngày học phí/)
+  assert.doesNotMatch(section, /defaultValue=\{todayInVietnam\}/)
   assert.doesNotMatch(migration, /alter table public\.enrollments[\s\S]{0,200}add column/i)
   assert.doesNotMatch(migration, /add column if not exists level_id/)
   assert.match(migration, /accepted_from_level_id/)
@@ -75,7 +77,7 @@ test('MIX: course.level_id not treated as student level in ops model', () => {
 
 test('list routes redirect into the Học viên tabs', () => {
   for (const [file, tab] of [
-    ['app/admin/schedule/page.tsx', 'schedule'],
+    ['app/admin/schedule/page.tsx', 'coordination'],
     ['app/admin/attendance/page.tsx', 'attendance'],
   ]) {
     const source = fs.readFileSync(file, 'utf8')

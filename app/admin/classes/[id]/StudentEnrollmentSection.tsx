@@ -20,13 +20,6 @@ export default async function StudentEnrollmentSection({
   capacity,
 }: StudentEnrollmentSectionProps) {
   const supabase = await createClient()
-  const todayInVietnam = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Ho_Chi_Minh',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date())
-
   const roster = await loadClassRoster(supabase, classId)
 
   const { data: students } = await supabase
@@ -49,7 +42,7 @@ export default async function StudentEnrollmentSection({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-950">Danh sách học viên</h2>
-          <p className="mt-1 text-sm text-gray-500">Trình độ hiện tại lấy từ Student Academic Program — không copy Course.level_id.</p>
+          <p className="mt-1 text-sm text-gray-500">Trình độ lấy từ hồ sơ học thuật của từng học viên. Thiếu Grade không cản ghi danh sau khi đã xác minh bộ môn và ngày bắt đầu vận hành.</p>
         </div>
         <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">{roster.length} / {capacity}</span>
       </div>
@@ -89,15 +82,15 @@ export default async function StudentEnrollmentSection({
 
       <form action={enrollStudent} className="mt-6 space-y-3 border-t pt-4">
         <h3 className="font-medium">Ghi danh học viên mới</h3>
-        <p className="text-xs text-gray-500">Chỉ IN_SCOPE được phép. Lớp chưa cấu hình phạm vi sẽ bị chặn ghi danh mới.</p>
+        <p className="text-xs text-gray-500">Chỉ ghi danh học viên có bộ môn phù hợp. Nhập ngày bắt đầu học đã được xác nhận; không dùng ngày học phí. Phạm vi trình độ để trống cho phép lớp nhiều trình độ.</p>
         <input type="hidden" name="class_id" value={classId} />
         <select name="student_id" required className="w-full rounded border px-3 py-2" disabled={remainingSeats === 0}>
           <option value="">Chọn học viên</option>
           {availableStudents.map(student => <option key={student.id} value={student.id}>{student.full_name} ({student.student_code})</option>)}
         </select>
         <div className="flex flex-wrap gap-3">
-          <label className="text-sm">Ngày ghi danh<input type="date" name="enrolled_at" required defaultValue={todayInVietnam} className="ml-2 rounded border px-2 py-1" /></label>
-          <label className="text-sm">Ngày bắt đầu<input type="date" name="started_at" required defaultValue={todayInVietnam} className="ml-2 rounded border px-2 py-1" /></label>
+          <label className="text-sm">Ngày ghi danh<input type="date" name="enrolled_at" required className="ml-2 rounded border px-2 py-1" /></label>
+          <label className="text-sm">Ngày bắt đầu học<input type="date" name="started_at" required className="ml-2 rounded border px-2 py-1" /></label>
         </div>
         <button className="rounded bg-gray-950 px-4 py-2 text-sm text-white" disabled={remainingSeats === 0}>Ghi danh</button>
       </form>

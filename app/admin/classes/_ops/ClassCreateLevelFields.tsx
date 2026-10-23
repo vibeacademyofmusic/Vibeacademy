@@ -1,12 +1,22 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState, type FormEvent } from 'react'
+import { createClass } from '../actions'
+import { planIndependentShifts, windowProblems, type ExistingShiftRow, type KeyedWindow } from '@/lib/teaching-shifts/independent'
+import TimeWindowFields from '../../coordination/time-window-fields'
+import styles from './create-wizard.module.css'
 
 type Branch = { id: string; name: string }
 type Program = { id: string; name: string; code: string }
 type Level = { id: string; name: string; sequence_no: number }
 type Teacher = { id: string; full_name: string | null; teacher_code: string }
-type Room = { id: string; name: string; branch_id: string }
+type Room = { id: string; name: string; branch_id: string; capacity: number | null }
+
+const steps = [
+  { title: 'Chi nhánh và chương trình', hint: 'Chọn nơi dạy và chương trình. Phạm vi trình độ có thể để trống, hoặc chọn đủ Từ và Đến.' },
+  { title: 'Lịch dạy', hint: 'Mỗi thứ là một dòng giờ riêng. Tổ hợp ngày chỉ chọn nhanh các thứ, không tự điền giờ.' },
+  { title: 'Xem trước và tạo', hint: 'Kiểm tra từng ca trước khi lưu. Ca đã có sẽ được mở, không tạo thêm và không gộp.' },
+]
 
 export default function ClassCreateLevelFields({
   branches,
@@ -14,96 +24,208 @@ export default function ClassCreateLevelFields({
   levelsByCurriculum,
   teachers,
   rooms,
+  existingShifts = [],
+  initialBranchId = '',
+  initialProgramId = '',
+  initialLevelId = '',
 }: {
   branches: Branch[]
   programs: Program[]
   levelsByCurriculum: Record<string, Level[]>
   teachers: Teacher[]
   rooms: Room[]
+  existingShifts?: ExistingShiftRow[]
+  initialBranchId?: string
+  initialProgramId?: string
+  initialLevelId?: string
 }) {
-  const [branchId, setBranchId] = useState('')
-  const [programId, setProgramId] = useState('')
-  const levels = useMemo(() => {
-    if (programId) return levelsByCurriculum[programId] ?? []
-    return Object.values(levelsByCurriculum).flat()
-  }, [programId, levelsByCurriculum])
-  const branchRooms = branchId ? rooms.filter(room => room.branch_id === branchId) : rooms
+  const formRef = useRef<HTMLFormElement>(null)
+  const [step, setStep] = useState(0)
+  const [notice, setNotice] = useState('')
+  const [branchId, setBranchId] = useState(initialBranchId)
+  const [programId, setProgramId] = useState(initialProgramId)
+  const [fromLevel, setFromLevel] = useState(initialLevelId)
+  const [toLevel, setToLevel] = useState(initialLevelId)
+  const [classType, setClassType] = useState('GROUP')
+  const [slots, setSlots] = useState<KeyedWindow[]>([])
+  const levels = useMemo(() => levelsByCurriculum[programId] ?? [], [programId, levelsByCurriculum])
+  const branchRooms = branchId ? rooms.filter(room => room.branch_id === branchId) : []
+  const program = programs.find(item => item.id === programId)
+  const plan = useMemo(() => {
+    const problems = windowProblems(slots)
+    if (!program || !branchId || !slots.length || problems.incomplete || problems.invalid || problems.overlap) return []
+    return planIndependentShifts({
+      programCode: program.code,
+      programName: program.name,
+      branchId,
+      curriculumId: programId,
+      days: slots.map(slot => slot.day),
+      start: slots[0].start,
+      end: slots[0].end,
+      windows: slots,
+      roomId: value('room_id') || undefined,
+      effectiveFrom: value('effective_from') || undefined,
+      effectiveTo: value('effective_to') || null,
+      existing: existingShifts,
+    })
+  }, [program, branchId, programId, slots, existingShifts, step])
+
+  function value(name: string) {
+    const field = formRef.current?.elements.namedItem(name)
+    return field && 'value' in field ? String(field.value).trim() : ''
+  }
+
+  function validate(index: number) {
+    if (index === 0) {
+      if (!branchId || !programId) return 'Chọn chi nhánh và chương trình để tiếp tục.'
+      if ((fromLevel && !toLevel) || (!fromLevel && toLevel)) return 'Phạm vi trình độ cần cả Từ và Đến, hoặc để trống.'
+      return ''
+    }
+    if (index === 1) {
+      const room = value('room_id')
+      const from = value('effective_from')
+      const to = value('effective_to')
+      const problems = windowProblems(slots)
+      const requested = Boolean(slots.length || room || from || to)
+      if (requested && !slots.length) return 'Chọn ít nhất một thứ.'
+      if (problems.incomplete) return 'Mỗi dòng cần giờ bắt đầu và giờ kết thúc riêng.'
+      if (problems.invalid) return 'Giờ kết thúc phải sau giờ bắt đầu.'
+      if (problems.overlap) return 'Các khung giờ cùng một ngày đang chồng nhau.'
+      if (requested && (!room || !from)) return 'Lịch cần phòng và ngày hiệu lực.'
+      if (from && to && to < from) return 'Ngày hết hiệu lực không được trước ngày bắt đầu lịch.'
+      return ''
+    }
+    const capacity = Number(value('capacity'))
+    if (!Number.isInteger(capacity) || capacity <= 0) return 'Sức chứa phải là số nguyên lớn hơn 0.'
+    if (classType === 'ONE_ON_ONE' && capacity !== 1) return 'Ca 1-1 có sức chứa đúng 1.'
+    if (classType === 'GROUP' && capacity < 2) return 'Ca nhóm cần sức chứa từ 2 trở lên.'
+    const room = rooms.find(item => item.id === value('room_id'))
+    if (room?.capacity && capacity > room.capacity) return `Sức chứa vượt sức chứa phòng (${room.capacity}).`
+    if (slots.length <= 1) {
+      const code = value('code').replace(/\s+/g, '_').toUpperCase()
+      const name = value('name')
+      if (!/^[A-Z0-9_-]{2,50}$/.test(code)) return 'Mã ca dạy gồm chữ, số, gạch ngang hoặc gạch dưới, từ 2 đến 50 ký tự.'
+      if (!name) return 'Nhập tên ca dạy để hoàn thành.'
+    }
+    const startDate = value('start_date')
+    const endDate = value('end_date')
+    if (startDate && endDate && endDate < startDate) return 'Ngày kết thúc ca không được trước ngày bắt đầu.'
+    return ''
+  }
+
+  function goNext() {
+    const message = validate(step)
+    setNotice(message)
+    if (!message) setStep(current => current + 1)
+  }
+
+  function finish(event: FormEvent<HTMLFormElement>) {
+    const message = validate(2)
+    setNotice(message)
+    if (message) event.preventDefault()
+  }
+
+  const creating = plan.filter(row => !row.existing)
+  const reusing = plan.filter(row => row.existing)
 
   return (
-    <>
-      <label className="vibe-field">
-        <span>Chi nhánh</span>
-        <select name="branch_id" required value={branchId} onChange={event => setBranchId(event.target.value)}>
-          <option value="">Chọn chi nhánh</option>
-          {branches.map(branch => <option key={branch.id} value={branch.id}>{branch.name}</option>)}
-        </select>
-      </label>
-      <label className="vibe-field">
-        <span>Chương trình</span>
-        <select name="curriculum_id" required value={programId} onChange={event => setProgramId(event.target.value)}>
-          <option value="">Chọn chương trình</option>
-          {programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
-        </select>
-      </label>
-      <label className="vibe-field" key={`${programId}-from`}>
-        <span>Từ trình độ</span>
-        <select name="accepted_from_level_id" defaultValue="">
-          <option value="">— (chưa cấu hình)</option>
-          {levels.map(level => <option key={level.id} value={level.id}>{level.name}</option>)}
-        </select>
-      </label>
-      <label className="vibe-field" key={`${programId}-to`}>
-        <span>Đến trình độ</span>
-        <select name="accepted_to_level_id" defaultValue="">
-          <option value="">— (chưa cấu hình)</option>
-          {levels.map(level => <option key={level.id} value={level.id}>{level.name}</option>)}
-        </select>
-      </label>
-      <label className="vibe-field">
-        <span>Giáo viên chính</span>
-        <select name="teacher_id" defaultValue="">
-          <option value="">Để sau — ca vẫn là bản nháp</option>
-          {teachers.map(teacher => (
-            <option key={teacher.id} value={teacher.id}>{teacher.full_name || teacher.teacher_code}</option>
-          ))}
-        </select>
-      </label>
-      <label className="vibe-field">
-        <span>Thứ trong tuần</span>
-        <select name="day_of_week" defaultValue="">
-          <option value="">Chưa chọn lịch</option>
-          <option value="1">Thứ 2</option>
-          <option value="2">Thứ 3</option>
-          <option value="3">Thứ 4</option>
-          <option value="4">Thứ 5</option>
-          <option value="5">Thứ 6</option>
-          <option value="6">Thứ 7</option>
-          <option value="7">Chủ nhật</option>
-        </select>
-      </label>
-      <label className="vibe-field">
-        <span>Giờ bắt đầu</span>
-        <input name="start_time" type="time" />
-      </label>
-      <label className="vibe-field">
-        <span>Giờ kết thúc</span>
-        <input name="end_time" type="time" />
-      </label>
-      <label className="vibe-field">
-        <span>Phòng</span>
-        <select name="room_id" defaultValue="">
-          <option value="">Chọn phòng</option>
-          {branchRooms.map(room => <option key={room.id} value={room.id}>{room.name}</option>)}
-        </select>
-      </label>
-      <label className="vibe-field">
-        <span>Ngày hiệu lực lịch</span>
-        <input name="effective_from" type="date" />
-      </label>
-      <label className="vibe-field">
-        <span>Hết hiệu lực lịch</span>
-        <input name="effective_to" type="date" />
-      </label>
-    </>
+    <form ref={formRef} action={createClass} onSubmit={finish} className={styles.form}>
+      <ol className={styles.steps} aria-label="Các bước tạo ca dạy">
+        {steps.map((item, index) => (
+          <li key={item.title} data-state={index === step ? 'current' : index < step ? 'done' : 'upcoming'} aria-current={index === step ? 'step' : undefined}>
+            <span className={styles.mark}>{index + 1}</span>
+            {item.title}
+          </li>
+        ))}
+      </ol>
+      <p className={styles.hint}>{steps[step].hint}</p>
+
+      <div className={styles.panel} hidden={step !== 0}>
+        <label className="vibe-field"><span>Chi nhánh</span>
+          <select name="branch_id" required value={branchId} onChange={event => setBranchId(event.target.value)}>
+            <option value="">Chọn chi nhánh</option>
+            {branches.map(branch => <option key={branch.id} value={branch.id}>{branch.name}</option>)}
+          </select>
+        </label>
+        <label className="vibe-field"><span>Chương trình</span>
+          <select name="curriculum_id" required value={programId} onChange={event => { setProgramId(event.target.value); setFromLevel(''); setToLevel('') }}>
+            <option value="">Chọn chương trình</option>
+            {programs.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <label className="vibe-field"><span>Từ trình độ</span>
+          <select name="accepted_from_level_id" value={fromLevel} onChange={event => setFromLevel(event.target.value)}>
+            <option value="">— (chưa cấu hình)</option>
+            {levels.map(level => <option key={level.id} value={level.id}>{level.name}</option>)}
+          </select>
+        </label>
+        <label className="vibe-field"><span>Đến trình độ</span>
+          <select name="accepted_to_level_id" value={toLevel} onChange={event => setToLevel(event.target.value)}>
+            <option value="">— (chưa cấu hình)</option>
+            {levels.map(level => <option key={level.id} value={level.id}>{level.name}</option>)}
+          </select>
+        </label>
+      </div>
+
+      <div className={styles.panel} hidden={step !== 1}>
+        <label className="vibe-field"><span>Giáo viên chính</span>
+          <select name="teacher_id" defaultValue="">
+            <option value="">Để sau — ca vẫn là bản nháp</option>
+            {teachers.map(teacher => <option key={teacher.id} value={teacher.id}>{teacher.full_name || teacher.teacher_code}</option>)}
+          </select>
+        </label>
+        <TimeWindowFields rows={slots} onChange={setSlots} names={{ day: 'slot_day', start: 'slot_start', end: 'slot_end' }} checkboxName="day_of_week" />
+        <label className="vibe-field"><span>Phòng</span>
+          <select key={branchId} name="room_id" defaultValue="">
+            <option value="">{branchId ? 'Chọn phòng' : 'Chọn chi nhánh trước'}</option>
+            {branchRooms.map(room => <option key={room.id} value={room.id}>{room.name}{room.capacity ? ` · ${room.capacity} chỗ` : ''}</option>)}
+          </select>
+        </label>
+        <label className="vibe-field"><span>Ngày hiệu lực lịch</span><input name="effective_from" type="date" /></label>
+        <label className="vibe-field"><span>Hết hiệu lực lịch</span><input name="effective_to" type="date" /></label>
+      </div>
+
+      <div className={styles.panel} hidden={step !== 2}>
+        {plan.length > 0 && (
+          <div className={styles.preview}>
+            <p>Sẽ tạo {creating.length} ca độc lập.{reusing.length ? ` ${reusing.length} ca đã có và sẽ được mở, không tạo trùng.` : ''}</p>
+            <ul>
+              {plan.map((row, index) => (
+                <li key={`${row.day}-${row.start}-${index}`}>
+                  <strong>{row.name}</strong>
+                  <span>{row.code}</span>
+                  {row.existing ? (
+                    <a href={`/admin/classes/${row.existing.id}`}>Mở đúng ca đã có {row.existing.code}. Cùng phòng và khoảng hiệu lực. Đổi giáo viên hoặc phòng sau này vẫn giữ ca này.</a>
+                  ) : (
+                    <span>Ca mới. Cùng giờ ở phòng khác vẫn là ca riêng.</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {slots.length <= 1 && (
+          <>
+            <label className="vibe-field"><span>Mã ca dạy</span><input key={plan[0]?.code || 'code'} name="code" required defaultValue={plan[0]?.code || ''} /></label>
+            <label className="vibe-field"><span>Tên ca dạy</span><input key={plan[0]?.name || 'name'} name="name" required defaultValue={plan[0]?.name || ''} /></label>
+          </>
+        )}
+        <label className="vibe-field"><span>Loại</span>
+          <select name="class_type" value={classType} onChange={event => setClassType(event.target.value)}>
+            <option value="GROUP">Nhóm</option><option value="ONE_ON_ONE">1-1</option>
+          </select>
+        </label>
+        <label className="vibe-field"><span>Sức chứa</span><input key={classType} name="capacity" type="number" min={1} defaultValue={classType === 'ONE_ON_ONE' ? 1 : 4} required /></label>
+        <label className="vibe-field"><span>Ngày bắt đầu ca</span><input name="start_date" type="date" /></label>
+        <label className="vibe-field"><span>Ngày kết thúc ca</span><input name="end_date" type="date" /></label>
+      </div>
+
+      {notice ? <p className={styles.alert} role="alert">{notice}</p> : null}
+      <div className={styles.nav}>
+        {step > 0 && <button className="vibe-button" type="button" onClick={() => { setNotice(''); setStep(current => current - 1) }}>Quay lại</button>}
+        {step < 2 && <button className="vibe-button vibe-button-primary" type="button" onClick={goNext}>Tiếp tục</button>}
+        {step === 2 && <button className="vibe-button vibe-button-primary" type="submit">{creating.length ? `Tạo ${creating.length} ca` : 'Hoàn thành'}</button>}
+      </div>
+    </form>
   )
 }
