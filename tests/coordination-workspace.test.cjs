@@ -4,6 +4,7 @@ const fs = require('node:fs')
 
 const navigation = fs.readFileSync('app/admin/navigation.ts', 'utf8')
 const workspace = fs.readFileSync('app/admin/coordination/Workspace.tsx', 'utf8')
+const weeklyBoard = fs.readFileSync('app/admin/coordination/WeeklyBoard.tsx', 'utf8')
 const data = fs.readFileSync('app/admin/coordination/data.ts', 'utf8')
 const actions = fs.readFileSync('app/admin/students/placement-actions.ts', 'utf8')
 const migration = fs.readFileSync('supabase/migrations/20261021013000_placement_eligibility_contract.sql', 'utf8')
@@ -21,7 +22,9 @@ test('teaching shifts and schedule share one training entry', () => {
   assert.match(workspace, /Danh sách ca/)
   assert.match(workspace, /Lịch tuần/)
   assert.match(workspace, /Hôm nay/)
-  assert.match(workspace, /Đổi riêng buổi này/)
+  assert.match(weeklyBoard, /Đổi riêng buổi này/)
+  assert.match(workspace, /WeeklyDashboard params/)
+  assert.equal(workspace.includes('loadWeek('), false)
   assert.match(workspace, /Đổi lịch định kỳ từ ngày/)
   assert.match(workspace, /Xếp lịch học/)
   assert.match(workspace, /Mỗi ca định kỳ là một thứ/)
@@ -52,4 +55,17 @@ test('placement search and confirmation share one decision and do not reuse a pa
   assert.match(windowFields, /Áp dụng giờ này cho các buổi còn lại/)
   assert.match(data, /coordination load failed/)
   assert.equal(data.includes('list_placement_class_options'), false)
+})
+
+// Exercise view resolution: a bare entry should open the calendar, while explicit workflows stay intact.
+test('coordination opens the week by default and preserves explicit workflow links', () => {
+  const ts = require('typescript')
+  const vm = require('node:vm')
+  const exported = { exports: {} }
+  const code = ts.transpileModule(data, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText
+  vm.runInNewContext(code, { module: exported, exports: exported.exports, require: () => ({}) })
+  const { coordinationView } = exported.exports
+  assert.equal(coordinationView(), 'week')
+  assert.equal(coordinationView('invalid'), 'week')
+  for (const view of ['week', 'queue', 'shifts', 'today']) assert.equal(coordinationView(view), view)
 })

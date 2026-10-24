@@ -57,8 +57,8 @@ export type PlacedShift = { classId: string; code: string; name: string; day: nu
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
 
 export function coordinationView(value?: string) {
-  if (value === 'shifts' || value === 'week' || value === 'today') return value
-  return 'queue'
+  if (value === 'queue' || value === 'shifts' || value === 'today') return value
+  return 'week'
 }
 
 export function weekBounds(date: string) {
