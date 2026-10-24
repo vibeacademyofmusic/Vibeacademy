@@ -16,7 +16,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: node --test tests/coordination-calendar.test.mjs tests/coordination-calendar-db.test.mjs tests/coordination-calendar-loader.test.cjs
+      - run: node --test tests/coordination-calendar.test.mjs tests/coordination-calendar-db.test.mjs tests/coordination-calendar-loader.test.cjs tests/coordination-workspace.test.cjs
   regression:
     runs-on: ubuntu-latest
     timeout-minutes: 35

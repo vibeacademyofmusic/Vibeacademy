@@ -56,3 +56,16 @@ test('placement search and confirmation share one decision and do not reuse a pa
   assert.match(data, /coordination load failed/)
   assert.equal(data.includes('list_placement_class_options'), false)
 })
+
+// Exercise view resolution: a bare entry should open the calendar, while explicit workflows stay intact.
+test('coordination opens the week by default and preserves explicit workflow links', () => {
+  const ts = require('typescript')
+  const vm = require('node:vm')
+  const exported = { exports: {} }
+  const code = ts.transpileModule(data, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText
+  vm.runInNewContext(code, { module: exported, exports: exported.exports, require: () => ({}) })
+  const { coordinationView } = exported.exports
+  assert.equal(coordinationView(), 'week')
+  assert.equal(coordinationView('invalid'), 'week')
+  for (const view of ['week', 'queue', 'shifts', 'today']) assert.equal(coordinationView(view), view)
+})

@@ -22,7 +22,7 @@ type Params = Record<string, string | undefined>
 function href(params: Params, patch: Record<string, string | undefined> = {}) {
   const query = buildQuery({
     tab: 'coordination',
-    view: params.view || 'queue',
+    view: params.view || 'week',
     branch: params.branch,
     curriculum: params.curriculum,
     q: params.q,
@@ -46,14 +46,9 @@ export default async function CoordinationWorkspace({ params }: { params: Params
   return (
     <section className="space-y-4">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--vibe-navy)]">Ca dạy & Lịch học</h1>
-        <p className="mt-2 max-w-3xl text-sm text-[var(--vibe-muted)]">
-          Mỗi ca định kỳ là một thứ và một khung giờ. Chọn nhiều thứ khi tạo ca sẽ tạo nhiều ca độc lập. Học viên được xếp vào từng ca đã chọn.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--vibe-navy)]">Ca dạy & Lịch học</h1>
+        {view === 'shifts' && <p className="mt-1 text-sm text-[var(--vibe-muted)]">Mỗi ca định kỳ là một thứ và một khung giờ. Học viên được xếp vào từng ca đã chọn.</p>}
       </header>
-      <Suspense fallback={<div className="vibe-card" role="status">Đang tải lịch và sĩ số trong tuần…</div>}>
-        <WeeklyDashboard params={scoped} />
-      </Suspense>
       {(params.error || params.success) && <InlineNotice tone={params.error ? 'error' : 'success'}>{params.error || params.success}</InlineNotice>}
       {params.placed && <InlineNotice tone="success">Đã xếp ca. Học viên bắt đầu trong tương lai vẫn ở mục Đã xếp ca – chờ bắt đầu cho đến đúng ngày.{' '}
         <Link href={href(scoped, { view: 'queue' })}>Xếp học viên tiếp theo</Link>
@@ -61,15 +56,20 @@ export default async function CoordinationWorkspace({ params }: { params: Params
       <OpsTabs
         ariaLabel="Ca dạy và lịch học"
         tabs={[
+          { href: href(scoped, { view: 'week' }), label: 'Lịch tuần', active: view === 'week' },
           { href: href(scoped, { view: 'queue' }), label: 'Chờ vào ca', active: view === 'queue' },
           { href: href(scoped, { view: 'shifts' }), label: 'Danh sách ca', active: view === 'shifts' },
-          { href: href(scoped, { view: 'week' }), label: 'Lịch tuần', active: view === 'week' },
           { href: href(scoped, { view: 'today' }), label: 'Hôm nay', active: view === 'today' },
         ]}
       />
       {view === 'queue' && <Queue params={scoped} />}
       {view === 'shifts' && <Shifts params={scoped} />}
-      {view === 'week' && <Week params={scoped} />}
+      {view === 'week' && <>
+        <Suspense fallback={<div className="vibe-card" role="status">Đang tải lịch và sĩ số trong tuần…</div>}>
+          <WeeklyDashboard params={scoped} />
+        </Suspense>
+        <Week params={scoped} />
+      </>}
       {view === 'today' && <Today params={scoped} canOperate={await requestOperationalAdmin().then(result => result.data === true)} />}
     </section>
   )
@@ -305,7 +305,7 @@ async function Shifts({ params }: { params: Params }) {
 
 async function Week({ params }: { params: Params }) {
   const recur = params.recur
-  if (!recur) return <p className="text-sm text-[var(--vibe-muted)]">Xem lịch tuần ở bảng phía trên. Chọn “Đổi lịch định kỳ” trong ca cần điều chỉnh.</p>
+  if (!recur) return null
   const db = await requestClient()
   const { data: rooms, error } = await db.from('rooms').select('id,name,branch_id').eq('status', 'ACTIVE').order('name')
   if (error) return <InlineNotice tone="error">Chưa tải được phòng để đổi lịch. Hãy thử lại.</InlineNotice>

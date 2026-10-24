@@ -8,5 +8,5 @@ export default async function WeeklyDashboard({ params }: { params: Record<strin
   const branch = params.branch || ''
   const result = await loadCalendar(await requestClient(), date, branch)
   return <WeeklyBoard key={`${date}:${branch}`} snapshot={result.data} error={result.error} reference={result.reference}
-    date={date} branch={branch} view={params.view || 'queue'} />
+    date={date} branch={branch} view={params.view || 'week'} />
 }
