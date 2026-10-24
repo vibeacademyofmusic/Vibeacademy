@@ -15,7 +15,12 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - run: npm ci
+      - name: Cần Thơ master workbook planner contracts
+        run: python3 -m unittest discover -s tests -p 'test_can_tho_master_plan.py' -v
       - run: npm run test:auth-design
       - run: npx --no-install next typegen
       - run: npm run lint
