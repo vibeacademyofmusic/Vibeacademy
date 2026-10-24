@@ -103,6 +103,10 @@ as $$
 $$;
 
 revoke all on function public.placement_week_still_open(uuid) from public, anon, authenticated;
+-- Existing enrollment triggers run as their postgres-owned SECURITY DEFINER.
+-- Keep this helper private while allowing those triggers to call it when a
+-- migration is applied by supabase_admin instead of postgres.
+grant execute on function public.placement_week_still_open(uuid) to postgres;
 
 -- Keep the legacy six-argument RPC callable during a database-first rollout.
 -- The seven-argument overload explicitly changes the weekly target.

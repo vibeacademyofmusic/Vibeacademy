@@ -153,6 +153,9 @@ as $$
 $$;
 
 revoke all on function public.placement_window_fit(uuid, uuid) from public, anon, authenticated;
+-- The existing postgres-owned placement decision function calls this helper.
+-- Keep it private when migrations run as supabase_admin.
+grant execute on function public.placement_window_fit(uuid, uuid) to postgres;
 
 create or replace function public.set_placement_time_windows(
   p_placement uuid,
