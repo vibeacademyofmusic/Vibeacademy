@@ -4,6 +4,7 @@ import { refresh, revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { primaryShiftWouldExceedTwo, type ShiftSlot } from '@/lib/teaching-shifts/overlap'
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -166,10 +167,14 @@ export async function createSchedule(
     formData.get('notes') ?? ''
   ).trim()
 
+  if (daysOfWeek.length > 1) {
+    redirect('/admin/schedule?error=' + encodeURIComponent('Mỗi ca dạy chỉ có một thứ và một khung giờ. Hãy tạo ca mới với mã riêng.'))
+  }
+
   if (
     !classId ||
     !roomId ||
-    daysOfWeek.length === 0 ||
+    daysOfWeek.length !== 1 ||
     !startTime ||
     !endTime ||
     !effectiveFrom
@@ -236,6 +241,22 @@ export async function createSchedule(
     redirect(
       '/admin/schedule?error=Cannot%20schedule%20a%20completed%20or%20cancelled%20class'
     )
+  }
+
+  // One class code represents one teaching shift during any effective date.
+  // Legacy classes may have older multi-day rows; do not add to that shape.
+  const { data: sameClassSchedules, error: classScheduleError } = await supabase
+    .from('schedules')
+    .select('effective_from, effective_to')
+    .eq('class_id', classId)
+    .eq('status', 'ACTIVE')
+  if (classScheduleError) {
+    redirect('/admin/schedule?error=' + encodeURIComponent('Không kiểm tra được lịch ca dạy hiện có.'))
+  }
+  if ((sameClassSchedules ?? []).some(schedule =>
+    dateRangesOverlap(effectiveFrom, effectiveTo, schedule.effective_from, schedule.effective_to)
+  )) {
+    redirect('/admin/schedule?error=' + encodeURIComponent('Ca này đã có lịch trong khoảng ngày đã chọn. Hãy tạo ca mới với mã riêng.'))
   }
 
   // --------------------------------------------------
@@ -342,56 +363,56 @@ export async function createSchedule(
   const { data: currentTeacherAssignments } =
     await supabase
       .from('class_teachers')
-      .select('teacher_id')
+      .select('teacher_id, teacher_role')
       .eq('class_id', classId)
       .eq('is_active', true)
 
-  const teacherIds = (
-    currentTeacherAssignments ?? []
-  ).map(
-    (assignment) =>
-      assignment.teacher_id
-  )
+  const assistantIds = (currentTeacherAssignments ?? [])
+    .filter(assignment => assignment.teacher_role === 'ASSISTANT')
+    .map(assignment => assignment.teacher_id)
+  const primaryIds = (currentTeacherAssignments ?? [])
+    .filter(assignment => assignment.teacher_role === 'PRIMARY')
+    .map(assignment => assignment.teacher_id)
+  const teacherIds = [...assistantIds, ...primaryIds]
 
   if (teacherIds.length > 0) {
     const { data: otherTeacherAssignments } =
       await supabase
         .from('class_teachers')
-        .select(
-          'class_id, teacher_id'
-        )
+        .select('class_id, teacher_id, teacher_role')
         .in('teacher_id', teacherIds)
         .eq('is_active', true)
 
-    const teacherClassIds = Array.from(
-      new Set(
-        (
-          otherTeacherAssignments ?? []
-        )
-          .map(
-            (assignment) =>
-              assignment.class_id
-          )
-          .filter(
-            (otherClassId) =>
-              otherClassId !== classId
-          )
-      )
+    const otherRows = (otherTeacherAssignments ?? []).filter(row => row.class_id !== classId)
+    const assistantClassIds = new Set(otherRows.filter(row => assistantIds.includes(row.teacher_id)).map(row => row.class_id))
+    if (conflictingSchedules.some(schedule => assistantClassIds.has(schedule.class_id))) {
+      redirect('/admin/schedule?error=' + encodeURIComponent('Giáo viên phụ của ca dạy đã có lịch trùng thời gian.'))
+    }
+
+    const primaryClassIds = new Set(
+      otherRows.filter(row => row.teacher_role === 'PRIMARY' && primaryIds.includes(row.teacher_id)).map(row => row.class_id)
     )
-
-    if (teacherClassIds.length > 0) {
-      const teacherConflict =
-        conflictingSchedules.find(
-          (schedule) =>
-            teacherClassIds.includes(
-              schedule.class_id
-            )
-        )
-
-      if (teacherConflict) {
-        redirect(
-          '/admin/schedule?error=A%20teacher%20assigned%20to%20this%20class%20is%20already%20teaching%20another%20class%20at%20that%20time'
-        )
+    for (const dayOfWeek of daysOfWeek) {
+      const candidate: ShiftSlot = {
+        classId,
+        dayOfWeek,
+        startTime,
+        endTime,
+        effectiveFrom,
+        effectiveTo,
+      }
+      const others: ShiftSlot[] = conflictingSchedules
+        .filter(schedule => schedule.day_of_week === dayOfWeek && primaryClassIds.has(schedule.class_id))
+        .map(schedule => ({
+          classId: schedule.class_id,
+          dayOfWeek: schedule.day_of_week,
+          startTime: String(schedule.start_time),
+          endTime: String(schedule.end_time),
+          effectiveFrom: schedule.effective_from,
+          effectiveTo: schedule.effective_to,
+        }))
+      if (primaryShiftWouldExceedTwo(candidate, others)) {
+        redirect('/admin/schedule?error=' + encodeURIComponent('Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.'))
       }
     }
   }
@@ -427,6 +448,14 @@ export async function createSchedule(
       redirect(
         '/admin/schedule?error=This%20schedule%20already%20exists'
       )
+    }
+
+    if (error.message.includes('two overlapping')) {
+      redirect('/admin/schedule?error=' + encodeURIComponent('Giáo viên chính đã có hai ca dạy trùng thời gian. Hãy chọn giáo viên khác hoặc đổi lịch.'))
+    }
+
+    if (error.message.includes('already teaching')) {
+      redirect('/admin/schedule?error=' + encodeURIComponent('Giáo viên của ca dạy đã có lịch trùng thời gian.'))
     }
 
     redirect(

@@ -1,0 +1,5 @@
+.actions { display:flex; flex-wrap:wrap; gap:8px; padding-bottom:16px; border-bottom:1px solid var(--vibe-line); }
+.actions button[aria-pressed="true"] { border-color:var(--vibe-gold); background:var(--vibe-gold-soft); }
+.form { display:grid; gap:16px; padding-top:18px; }
+.form label { width:100%; }
+.form button[type="submit"] { justify-self:start; }

@@ -1,0 +1,13 @@
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { previewPayroll, confirmPayroll, type Preview as PreviewData } from './preview-actions'
+import { formatMoney } from './model'
+import styles from './payroll.module.css'
+export default function Preview({period}:{period:string}) {
+ const [data,setData]=useState<PreviewData>(),[error,setError]=useState(''),[busy,setBusy]=useState(false),[confirmed,setConfirmed]=useState(false)
+ const router=useRouter()
+ async function load(){setBusy(true);setError('');setConfirmed(false);const r=await previewPayroll(period);setData(r.data);setError(r.error||'');setBusy(false)}
+ async function generate(){if(!data||!confirmed)return;setBusy(true);const r=await confirmPayroll(period,data.version,data.fingerprint);setBusy(false);if(r.error){setError(r.error);setConfirmed(false)}else{setData(undefined);setConfirmed(false);router.refresh();setError('Đã tính lại. Kết quả đang hiển thị được tải từ cơ sở dữ liệu.')}}
+ return <section className={styles.section}><h3>Xem chênh lệch & tính lại</h3><p className={styles.note}>Bước 1 chỉ đọc nguồn. Khoản cố định chưa phủ trọn tháng và phương pháp chưa hỗ trợ sẽ bị chặn. Thưởng và công tác phí đang hoạt động được giữ một lần theo nguồn của kỳ.</p><button type="button" disabled={busy} className={styles.btn} onClick={load}>{busy?'Đang xử lý…':'Xem chênh lệch (không ghi dữ liệu)'}</button>{error&&<p role="status" className={styles.note}>{error}</p>}{data&&<><div className={styles.scroll}><table className={styles.table}><thead><tr><th>Nhân viên</th><th>Đã tính</th><th>Dự kiến</th><th>Chênh lệch</th><th>Điều kiện</th></tr></thead><tbody>{data.rows.map(r=><tr key={r.employee_id}><td>{r.name}</td><td>{r.current==null?'Chưa tính':formatMoney(r.current,r.currency)}</td><td>{r.projected==null?'BỊ CHẶN':formatMoney(r.projected,r.currency)}</td><td>{formatMoney(r.delta,r.currency)}</td><td>{r.issues.length?r.issues.join(' '):'Đủ dữ liệu được hỗ trợ'}</td></tr>)}</tbody></table></div>{data.issues.map((issue,i)=><p key={i} className={styles.stopText}>{issue}</p>)}{data.status!=='DRAFT'?<p className={styles.note}>Trả kỳ về nháp bằng quy trình chuyển trạng thái bên dưới, ghi lý do, rồi mở lại bản xem thử. Không đổi trạng thái tự động.</p>:!data.blocked&&<><label className={styles.check}><input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>Tôi đã kiểm tra chênh lệch và xác nhận tính lại từ nguồn này.</label><button type="button" className={`${styles.btn} ${styles.primary}`} disabled={busy||!confirmed} onClick={generate}>Xác nhận tính lại</button></>}</>}</section>
+}

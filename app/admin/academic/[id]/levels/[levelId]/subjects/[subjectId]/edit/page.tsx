@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AcademicTrail } from '@/app/admin/programs/trail'
 
 import { createClient } from '@/lib/supabase/server'
 import { updateCurriculumSubject } from '../../../../../../actions'
@@ -60,14 +60,12 @@ export default async function EditSubjectPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <Link
-          href={`/admin/academic/${curriculum.id}/levels/${level.id}`}
-          className="text-sm font-medium text-gray-500 hover:text-gray-900"
-        >
-          ← Back to {level.name}
-        </Link>
-      </div>
+      <AcademicTrail items={[
+        { label: curriculum.name, href: `/admin/academic/${curriculum.id}` },
+        { label: level.name, href: `/admin/academic/${curriculum.id}/levels/${level.id}` },
+        { label: subject.name, href: `/admin/academic/${curriculum.id}/levels/${level.id}/subjects/${subject.id}` },
+        { label: 'Chỉnh sửa môn' },
+      ]} />
 
       <div className="mb-8">
         <p className="text-sm font-medium text-gray-500">
@@ -75,7 +73,7 @@ export default async function EditSubjectPage({
         </p>
 
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
-          Edit Subject
+          Chỉnh sửa môn học
         </h1>
 
         <p className="mt-2 text-sm text-gray-500">
@@ -117,7 +115,7 @@ export default async function EditSubjectPage({
               htmlFor="family_code"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Subject Family *
+              Nhóm môn *
             </label>
 
             <input
@@ -134,7 +132,7 @@ export default async function EditSubjectPage({
               htmlFor="code"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Subject Code *
+              Mã môn học *
             </label>
 
             <input
@@ -151,7 +149,7 @@ export default async function EditSubjectPage({
               htmlFor="name"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Subject Name *
+              Tên môn học *
             </label>
 
             <input
@@ -169,7 +167,7 @@ export default async function EditSubjectPage({
                 htmlFor="subject_level"
                 className="mb-2 block text-sm font-medium text-gray-700"
               >
-                Subject Level
+                Cấp của môn
               </label>
 
               <input
@@ -187,7 +185,7 @@ export default async function EditSubjectPage({
                 htmlFor="sort_order"
                 className="mb-2 block text-sm font-medium text-gray-700"
               >
-                Order *
+                Thứ tự *
               </label>
 
               <input
@@ -207,27 +205,31 @@ export default async function EditSubjectPage({
               htmlFor="completion_rule"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Completion Rule
+              Completion Method — Phương thức đánh giá
             </label>
 
             <select
               id="completion_rule"
               name="completion_rule"
-              defaultValue={subject.completion_rule}
+              required
+              aria-describedby="completion-method-help"
+              defaultValue={['ALL_REQUIRED_COMPONENTS', 'DIRECT_ASSESSMENT'].includes(subject.completion_rule) ? subject.completion_rule : ''}
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
             >
+              <option value="" disabled>Chọn phương thức đánh giá</option>
               <option value="ALL_REQUIRED_COMPONENTS">
-                All Required Components
+                Đánh giá theo nhóm đánh giá
               </option>
 
               <option value="DIRECT_ASSESSMENT">
-                Direct Assessment
-              </option>
-
-              <option value="MANUAL">
-                Manual
+                Đánh giá trực tiếp
               </option>
             </select>
+            <p id="completion-method-help" className="mt-2 text-sm text-gray-500">
+              Đánh giá theo nhóm đánh giá: môn bắt buộc cần ít nhất một nhóm đánh giá bắt buộc đang hoạt động trước khi gán chương trình.
+              Đánh giá trực tiếp: đánh giá ở cấp môn, không bắt buộc có nhóm đánh giá con và không tự tính kết quả từ nhóm đánh giá.
+              Môn bắt buộc vẫn cần đạt để hoàn thành bậc học.
+            </p>
           </div>
 
           <label className="flex items-center gap-3">
@@ -240,7 +242,7 @@ export default async function EditSubjectPage({
             />
 
             <span className="text-sm font-medium text-gray-700">
-              Required subject
+              Môn học bắt buộc
             </span>
           </label>
 
@@ -248,7 +250,7 @@ export default async function EditSubjectPage({
             type="submit"
             className="rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800"
           >
-            Save Changes
+            Lưu thay đổi
           </button>
         </form>
       </section>

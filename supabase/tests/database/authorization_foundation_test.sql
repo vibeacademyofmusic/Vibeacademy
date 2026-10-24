@@ -57,7 +57,7 @@ select is(can_access_student('ac200000-0000-4000-8000-000000000099'),false,'unre
 select throws_ok($$select update_student_academic_enrollment_start_date('00000000-0000-0000-0000-000000000000',current_date)$$,'P0001','Unauthorized','academic RPC checks auth before data');
 select ok(not has_function_privilege('anon','public.recalculate_enrollment_tuition_effective_end(uuid)','EXECUTE'),'anon cannot recalculate tuition');
 select ok(not has_function_privilege('authenticated','public.recalculate_enrollment_tuition_effective_end(uuid)','EXECUTE'),'internal recalculation not public RPC');
-select ok(not exists(select 1 from pg_proc where pronamespace='public'::regnamespace and prosecdef and not coalesce(proconfig @> array['search_path=public, pg_temp'],false)), 'all definers have trusted explicit search path');
+select ok(not exists(select 1 from pg_proc where pronamespace='public'::regnamespace and prosecdef and not (coalesce(proconfig @> array['search_path=public, pg_temp'],false) or coalesce(proconfig @> array['search_path=pg_catalog, pg_temp'],false))), 'all definers have trusted explicit search path');
 select ok(not exists(select 1 from pg_class where relnamespace='public'::regnamespace and relkind='r' and has_table_privilege('authenticated',oid,'TRUNCATE')), 'authenticated cannot truncate public tables');
 select ok(not has_table_privilege('authenticated','public.payments','INSERT,UPDATE,DELETE'), 'payments only writable through RPC');
 reset role;

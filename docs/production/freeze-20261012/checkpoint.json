@@ -1,0 +1,25 @@
+{
+  "state": "FROZEN",
+  "scope": "PRODUCTION_RELEASE",
+  "frozen_at": "2026-10-12T22:28:23.221354+07:00",
+  "domain": "manage.vibe.edu.vn",
+  "deployment_id": "dpl_2rWYz4ktKaHEGkxhXQXhuwnAwfLW",
+  "deployment_url": "https://vibeacademy-qwc94v855-vibeacademyofmusic.vercel.app",
+  "project_id": "prj_NAIBJsctlaU316pQge3O63aAd9Fr",
+  "production_database_ref": "qhznfywwrhmcwbkujclm",
+  "source_commit": "9d67447",
+  "source_archive_sha256": "f9848793e8220d372af7d312fda4ca68008b848e608d5891de1c9974d3731bf7",
+  "approved_manifest_sha256": "1209bff0a3770b676e3ded08cb356a3267948fb4a90cdf876975ac2cbbe2903d",
+  "enforcement": {
+    "autoAssignCustomDomains": false,
+    "new_production_builds_blocked": true,
+    "guard_exit_code_verified": 1
+  },
+  "runtime_operations": "UNCHANGED",
+  "gateway_upstream": "https://manage.vibe.edu.vn/api/integrations/zalo/webhook",
+  "limits": [
+    "Project owners can still manually override settings or promote an existing deployment. Agent rules prohibit bypassing the freeze.",
+    "This is a release freeze, not a read-only database or suspension of staff business operations.",
+    "No student/employee data export, API keys, tokens or .env files included in the source archive."
+  ]
+}

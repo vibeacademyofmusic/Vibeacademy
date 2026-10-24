@@ -1,0 +1,36 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select no_plan();
+insert into auth.users(id) values('de980000-0000-4000-8000-000000000001'),('de980000-0000-4000-8000-000000000002');
+insert into profiles(id) select id from auth.users where id::text like 'de980000-%';
+insert into user_roles(user_id,role_id) select 'de980000-0000-4000-8000-000000000001',id from roles where code='SUPER_ADMIN';
+insert into curriculums(id,code,name) values('de980000-0000-4000-8000-000000000010','THEORY-CONTRACT','Synthetic theory');
+insert into curriculum_levels(id,curriculum_id,code,name,sequence_no,level_number) values
+('de980000-0000-4000-8000-000000000011','de980000-0000-4000-8000-000000000010','THEORY-CONTRACT-G1','Grade 1',1,1),
+('de980000-0000-4000-8000-000000000012','de980000-0000-4000-8000-000000000010','THEORY-CONTRACT-G2','Grade 2',2,2),
+('de980000-0000-4000-8000-000000000015','de980000-0000-4000-8000-000000000010','THEORY-CONTRACT-G5','Grade 5',5,5);
+select set_config('request.jwt.claim.sub','de980000-0000-4000-8000-000000000001',true);
+set local role authenticated;
+select is((select count(*) from learning_theory_contents),87::bigint,'All source modules preserved');
+select is((select source_state from learning_theory_contents where code='MT5.15'),'SOURCE_MISSING','Missing source preserved');
+select set_config('test.theory_content','{"theory_grade": 1, "source_sha256": "474b61c92c47208d944fc23b8137372ef074af6594ebac24b3b4f375269ba4a6", "modules": [{"code": "MT1.01", "title": "Time Names and Time Values", "source_pages": "pp. 4-5", "lessons": [{"code": "MT1.01.L01", "title": "Synthetic test lesson", "blocks": [{"type": "TEXT", "text": "Synthetic fixture, never official curriculum"}]}]}, {"code": "MT1.02", "title": "Bar-lines and Time Signatures", "source_pages": "pp. 6-8", "lessons": [{"code": "MT1.02.L01", "title": "Synthetic test lesson", "blocks": [{"type": "TEXT", "text": "Synthetic fixture, never official curriculum"}]}]}]}',true);
+select lives_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',1,'Synthetic pilot',current_setting('test.theory_content')::jsonb,'Synthetic original test')$$,'Ordered canonical multi-module content accepted');
+select is((select state from learning_versions where level_id='de980000-0000-4000-8000-000000000011'),'DRAFT','Technical creation never publishes lesson');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid',(current_setting('test.theory_content')::jsonb)-'theory_grade','Synthetic test')$$,'P0001','Theory source identity required','Reserved MT identity cannot use generic bypass');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid',jsonb_set(current_setting('test.theory_content')::jsonb,'{source_sha256}','"forged"'),'Synthetic test')$$,'P0001','Theory source identity required','Source fingerprint required');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid',jsonb_set(current_setting('test.theory_content')::jsonb,'{modules,0,title}','"Rhythm domain"'),'Synthetic test')$$,'P0001','Theory modules must follow approved Contents identity and order','Cannot rename Contents to domain');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid',jsonb_set(current_setting('test.theory_content')::jsonb,'{modules,0,source_pages}','"pp. 99-100"'),'Synthetic test')$$,'P0001','Theory modules must follow approved Contents identity and order','Cannot fabricate source pages');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid','{"theory_grade": 1, "source_sha256": "474b61c92c47208d944fc23b8137372ef074af6594ebac24b3b4f375269ba4a6", "modules": [{"code": "MT1.02", "title": "Bar-lines and Time Signatures", "source_pages": "pp. 6-8", "lessons": [{"code": "MT1.02.L01", "title": "Synthetic test lesson", "blocks": [{"type": "TEXT", "text": "Synthetic fixture, never official curriculum"}]}]}, {"code": "MT1.01", "title": "Time Names and Time Values", "source_pages": "pp. 4-5", "lessons": [{"code": "MT1.01.L01", "title": "Synthetic test lesson", "blocks": [{"type": "TEXT", "text": "Synthetic fixture, never official curriculum"}]}]}]}'::jsonb,'Synthetic test')$$,'P0001','Theory modules must follow approved Contents identity and order','Contents order fixed');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid','{"theory_grade": 1, "source_sha256": "474b61c92c47208d944fc23b8137372ef074af6594ebac24b3b4f375269ba4a6", "modules": [{"code": "MT2.01", "title": "Ledger Lines", "source_pages": "pp. 4-8", "lessons": [{"code": "MT2.01.L01", "title": "Synthetic test lesson", "blocks": [{"type": "TEXT", "text": "Synthetic fixture, never official curriculum"}]}]}]}'::jsonb,'Synthetic test')$$,'P0001','Theory modules must follow approved Contents identity and order','Cannot mix module Grades');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Synthetic invalid',jsonb_set(current_setting('test.theory_content')::jsonb,'{modules,0,lessons,0,code}','"MT1.04.L01"'),'Synthetic test')$$,'P0001','Theory lesson must belong to its Contents module','Lesson stays within its module');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000012',1,'Wrong grade',current_setting('test.theory_content')::jsonb,'Synthetic')$$,'P0001','Theory Grade must match active Academic Grade number','Academic Grade is exact, not inferred from name');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000015',1,'Missing source','{"theory_grade": 5, "source_sha256": "474b61c92c47208d944fc23b8137372ef074af6594ebac24b3b4f375269ba4a6", "modules": [{"code": "MT5.15", "title": "Revision Notes", "source_pages": "p. 86 (SOURCE_MISSING)", "lessons": [{"code": "MT5.15.L01", "title": "Synthetic test lesson", "blocks": [{"type": "TEXT", "text": "Synthetic fixture, never official curriculum"}]}]}]}'::jsonb,'Synthetic')$$,'P0001','SOURCE_MISSING: module cannot contain authored lessons','Missing source cannot be replaced by invented lessons');
+select set_config('request.jwt.claim.sub','de980000-0000-4000-8000-000000000002',true);
+select is((select count(*) from learning_theory_contents),0::bigint,'Unprivileged account cannot browse admin source catalogue');
+select throws_ok($$select create_learning_version('de980000-0000-4000-8000-000000000011',2,'Unauthorized',current_setting('test.theory_content')::jsonb,'Synthetic')$$,'P0001','Unauthorized','No unprivileged content creation');
+reset role;
+select throws_ok($$update learning_theory_contents set title='Changed' where code='MT1.01'$$,'P0001','Learning history is immutable','Canonical catalogue cannot be rewritten');
+select ok(not has_table_privilege('service_role','learning_theory_contents','INSERT'),'No service client insert bypass');
+select is((select count(*) from learning_versions where level_id in('de980000-0000-4000-8000-000000000011','de980000-0000-4000-8000-000000000012','de980000-0000-4000-8000-000000000015')),1::bigint,'Invalid drafts leave no records');
+select * from finish();
+rollback;

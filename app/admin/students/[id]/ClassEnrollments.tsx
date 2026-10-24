@@ -34,7 +34,7 @@ export default async function ClassEnrollments({
 
   return (
     <section className="mt-6 rounded-xl border bg-white p-5">
-      <h2 className="font-semibold">Ghi danh lớp học & Bảo lưu</h2>
+      <h2 className="font-semibold">Ghi danh ca dạy & Bảo lưu</h2>
 
       <p className="mt-1 text-sm text-gray-500">
         Ngày ghi danh là ngày đăng ký vào lớp. Ngày bắt đầu học là mốc bắt đầu
@@ -43,11 +43,11 @@ export default async function ClassEnrollments({
 
       {error ? (
         <p role="alert" className="mt-3 text-sm text-red-700">
-          Không thể tải danh sách ghi danh lớp học.
+          Không thể tải danh sách ghi danh ca dạy.
         </p>
       ) : !data?.length ? (
         <p className="mt-3 text-sm text-gray-500">
-          Chưa ghi danh lớp học nào.
+          Chưa ghi danh ca dạy nào.
         </p>
       ) : (
         <div className="mt-4 space-y-4">
@@ -67,7 +67,7 @@ export default async function ClassEnrollments({
                       href={`/admin/classes/${row.class_id}`}
                       className="font-medium text-blue-700 underline"
                     >
-                      {item?.name ?? item?.code ?? 'Lớp học'}
+                      {item?.name ?? item?.code ?? 'Ca dạy'}
                     </Link>
 
                     <p className="mt-1 text-sm text-gray-500">

@@ -1,0 +1,9 @@
+# Not deployed. Install this on a host whose public address is in Vietnam.
+# DNS for the chosen hostname must be an A and/or AAAA record only.
+# Do not enable a CDN, Cloudflare proxy, or a foreign relay in front of it.
+# Caddy terminates TLS and forwards the raw body and signature to the local app.
+# The app and its database stay on this Vietnam host. Do not forward the body onward.
+
+zbs-hook.example.vn {
+	reverse_proxy 127.0.0.1:3000
+}

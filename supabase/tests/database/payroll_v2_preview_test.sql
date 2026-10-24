@@ -1,0 +1,37 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select no_plan();
+insert into public.branches(id,code,name) values ('fa100000-0000-0000-0000-000000000001','HR-PREVIEW-TEST','Preview isolated test');
+insert into auth.users(id) values ('fa200000-0000-0000-0000-000000000001');
+insert into public.profiles(id,status) values ('fa200000-0000-0000-0000-000000000001','ACTIVE');
+insert into public.user_roles(user_id,role_id) select 'fa200000-0000-0000-0000-000000000001',id from public.roles where code='SUPER_ADMIN';
+insert into public.employees(id,employee_code,home_unit,hire_date,created_by) values ('fa300000-0000-0000-0000-000000000001','HR-PREVIEW-TEST','HQ','2026-01-01','fa200000-0000-0000-0000-000000000001');
+insert into public.employee_versions(employee_id,version,effective_on,full_name,unit_code,employee_group,employment_status,pay_type,reason,created_by) values ('fa300000-0000-0000-0000-000000000001',1,'2026-01-01','Preview isolated employee','HQ','TEST','ACTIVE','MONTHLY','Rollback-only test','fa200000-0000-0000-0000-000000000001');
+insert into public.payroll_periods(id,branch_id,starts_on,ends_on) values ('fa400000-0000-0000-0000-000000000001','fa100000-0000-0000-0000-000000000001','2026-09-01','2026-09-30');
+insert into public.staff_compensation_components(id,employee_id,branch_id,component_code,calculation_method,amount,currency,effective_from,reason,created_by) values
+ ('fa500000-0000-0000-0000-000000000001','fa300000-0000-0000-0000-000000000001','fa100000-0000-0000-0000-000000000001','BASE_SALARY','FIXED_AMOUNT',1000,'VND','2026-09-01','Rollback-only test','fa200000-0000-0000-0000-000000000001'),
+ ('fa500000-0000-0000-0000-000000000002','fa300000-0000-0000-0000-000000000001','fa100000-0000-0000-0000-000000000001','SOCIAL_LABOR_INSURANCE','FIXED_AMOUNT',100,'VND','2026-09-01','Rollback-only test','fa200000-0000-0000-0000-000000000001');
+select throws_ok($$insert into public.staff_compensation_components(employee_id,branch_id,component_code,calculation_method,amount,currency,effective_from,reason,created_by) values ('fa300000-0000-0000-0000-000000000001','fa100000-0000-0000-0000-000000000001','SOCIAL_INSURANCE','FIXED_AMOUNT',50,'VND','2026-09-01','Rollback-only conflict','fa200000-0000-0000-0000-000000000001')$$,'23P01',null,'Combined insurance rejects overlapping legacy insurance');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','fa200000-0000-0000-0000-000000000001',true);
+select is(public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->'rows'->0->>'projected','900.00','Fixed amount less combined insurance projected exactly');
+select is(public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->'rows'->0->>'current',null,'Not calculated remains unknown');
+select is((select count(*) from public.teacher_payrolls where period_id='fa400000-0000-0000-0000-000000000001'),0::bigint,'Preview never writes payroll');
+select throws_ok($$select public.confirm_staff_payroll_v2('fa400000-0000-0000-0000-000000000001',999,'stale')$$,'P0001','PAYROLL_PREVIEW_CHANGED_RELOAD','Stale version is blocked');
+select throws_ok($$select public.confirm_staff_payroll_v2('fa400000-0000-0000-0000-000000000001',1,repeat('0',32))$$,'P0001','PAYROLL_PREVIEW_CHANGED_RELOAD','Changed source is blocked');
+select lives_ok($$select public.confirm_staff_payroll_v2('fa400000-0000-0000-0000-000000000001',1,public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->>'fingerprint')$$,'Valid confirmation uses authoritative generator');
+select is((select v2_net_amount::text from public.teacher_payrolls where period_id='fa400000-0000-0000-0000-000000000001'),'900.00','Stored result equals supported projection');
+select lives_ok($$select public.add_payroll_v2_bonus('fa400000-0000-0000-0000-000000000001',(select version from public.payroll_periods where id='fa400000-0000-0000-0000-000000000001'),'fa300000-0000-0000-0000-000000000001',50,'VND','Rollback bonus','fa600000-0000-0000-0000-000000000001')$$,'Bonus uses existing guarded action');
+select is(public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->'rows'->0->>'projected','950.00','Preview includes active bonus exactly once');
+select lives_ok($$select public.transition_payroll('fa400000-0000-0000-0000-000000000001',(select version from public.payroll_periods where id='fa400000-0000-0000-0000-000000000001'),'DRAFT','Rollback regeneration test')$$,'Existing transition returns period to draft');
+select lives_ok($$select public.confirm_staff_payroll_v2('fa400000-0000-0000-0000-000000000001',(select version from public.payroll_periods where id='fa400000-0000-0000-0000-000000000001'),public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->>'fingerprint')$$,'Regeneration preserves actions');
+select is((select v2_net_amount::text from public.teacher_payrolls where period_id='fa400000-0000-0000-0000-000000000001'),'950.00','Regeneration does not duplicate bonus');
+reset role;
+insert into public.staff_compensation_components(employee_id,branch_id,component_code,calculation_method,amount,currency,effective_from,reason,created_by) values ('fa300000-0000-0000-0000-000000000001','fa100000-0000-0000-0000-000000000001','POSITION_PAY','FIXED_AMOUNT',200,'VND','2026-09-15','Partial test','fa200000-0000-0000-0000-000000000001');
+set local role authenticated;
+select is(public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->>'blocked','true','Partial fixed configuration blocks projection');
+select is(public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')->'rows'->0->>'projected',null,'Partial month never fabricates prorating');
+select set_config('request.jwt.claim.sub','fa200000-0000-0000-0000-000000000099',true);
+select throws_ok($$select public.preview_staff_payroll_v2('fa400000-0000-0000-0000-000000000001')$$,'P0001','PAYROLL_V2_UNAUTHORIZED','Unauthorized preview denied');
+select * from finish();
+rollback;

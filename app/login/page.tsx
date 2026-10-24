@@ -1,86 +1,73 @@
+import Link from 'next/link'
+import AuthShell from '@/app/_components/auth/AuthShell'
+import styles from '@/app/_components/auth/auth-shell.module.css'
 import { login } from './actions'
+import RecoveryLinkNotice from './RecoveryLinkNotice'
 
 type LoginPageProps = {
   searchParams: Promise<{
     error?: string
+    recovery?: string
+    next?: string
+    notice?: string
   }>
 }
 
 export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
-  const { error } = await searchParams
+  const { error, recovery, next, notice } = await searchParams
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Vibe Academy
-          </h1>
-
-          <p className="mt-2 text-sm text-gray-500">
-            Management System
-          </p>
-        </div>
-
-        {error && (
-          <div className="mb-5 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        <form action={login} className="space-y-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-gray-900"
-              placeholder="admin@vibeacademy..."
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-gray-900"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-gray-900 px-4 py-3 font-medium text-white hover:bg-gray-800"
-          >
-            Sign in
-          </button>
-        </form>
-
-        <p className="mt-8 text-center text-xs text-gray-400">
-          Vibe Academy of Music & Cinema
+    <AuthShell title="Đăng nhập" description="Dùng email và mật khẩu đã được cấp cho tài khoản của bạn.">
+      <RecoveryLinkNotice />
+      {recovery === 'success' && (
+        <p className={styles.success} role="status">
+          Mật khẩu đã được cập nhật. Hãy đăng nhập bằng mật khẩu mới.
         </p>
-      </div>
-    </main>
+      )}
+      {notice && (
+        <p className={styles.success} role="status">
+          {notice}
+        </p>
+      )}
+      {error && (
+        <p className={styles.alert} role="alert">
+          {error}
+        </p>
+      )}
+      <form action={login} className={styles.form}>
+        <input type="hidden" name="next" value={next ?? ''}/>
+        <label className={styles.field} htmlFor="email">
+          <span>Email</span>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+          />
+        </label>
+        <label className={styles.field} htmlFor="password">
+          <span>Mật khẩu</span>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+          />
+        </label>
+        <div className={styles.assist}>
+          <Link href="/forgot-password">Quên mật khẩu?</Link>
+        </div>
+        <button className={styles.submit} type="submit">
+          Đăng nhập
+        </button>
+      </form>
+      <p className={styles.secondary}>
+        <Link href="/login/recover">Thiết lập hoặc đặt lại mật khẩu</Link>
+      </p>
+    </AuthShell>
   )
 }

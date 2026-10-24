@@ -1,0 +1,44 @@
+name: Registration and Zalo business lock
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'codex/**']
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:auth-design
+      - run: npx --no-install next typegen
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run test:business-lock
+      - name: Teaching schedule application contracts
+        run: |
+          node --test \
+            tests/coordination-calendar-db.test.mjs \
+            tests/coordination-calendar-loader.test.cjs \
+            tests/coordination-calendar.test.mjs \
+            tests/coordination-workspace.test.cjs \
+            tests/independent-shifts.test.mjs \
+            tests/schedule-release-safety.test.cjs \
+            tests/teaching-shift-parallel-readiness.test.mjs \
+            tests/mixed-level-class-ops.test.cjs
+      - run: npx --no-install supabase start
+      - run: npx --no-install supabase db reset
+      - run: npm run test:business-lock:db
+        env:
+          SUPABASE_DISABLE_TELEMETRY: '1'
+      - name: Tuition Zalo reply regression on clean database
+        run: node --test tests/tuition-zalo-reply.test.cjs
+      - name: Teaching schedule concurrent write contracts
+        run: node scripts/local-schedule-room-race.cjs

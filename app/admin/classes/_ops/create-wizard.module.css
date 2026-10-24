@@ -1,0 +1,27 @@
+.form { display: grid; gap: 16px; }
+.steps { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: flex; align-items: center; gap: 8px; color: var(--vibe-muted); font-size: 13px; font-weight: 650; }
+.steps li[data-state='current'] { color: var(--vibe-navy); }
+.mark { display: grid; width: 22px; height: 22px; place-items: center; border: 1px solid var(--vibe-line); border-radius: 999px; font-size: 12px; }
+.steps li[data-state='current'] .mark { border-color: var(--vibe-navy); background: var(--vibe-navy); color: white; }
+.steps li[data-state='done'] .mark { border-color: var(--vibe-gold); background: var(--vibe-gold-soft); color: var(--vibe-navy); }
+.panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.hint, .alert { margin: 0; font-size: 13px; font-weight: 500; }
+.hint { color: var(--vibe-muted); }
+.alert { color: var(--vibe-red); }
+.nav { display: flex; justify-content: flex-end; gap: 8px; }
+.days { grid-column: 1 / -1; margin: 0; border: 0; padding: 0; }
+.days legend { margin-bottom: 8px; color: var(--vibe-navy); font-size: 13px; font-weight: 700; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.day { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--vibe-line); border-radius: 999px; background: white; color: var(--vibe-navy); padding: 6px 12px; font-size: 13px; font-weight: 650; }
+.day[data-on='true'] { border-color: var(--vibe-navy); background: var(--vibe-navy); color: white; }
+.preview { grid-column: 1 / -1; border: 1px solid var(--vibe-line); border-radius: 12px; background: white; padding: 12px; }
+.preview p, .preview span, .preview a { font-size: 13px; }
+.preview ul { display: grid; gap: 8px; margin: 8px 0 0; padding: 0; list-style: none; }
+.preview li { display: grid; gap: 2px; }
+.preview strong { color: var(--vibe-navy); }
+@media (max-width: 720px) {
+  .panel { grid-template-columns: 1fr; }
+  .nav { flex-direction: column-reverse; }
+  .nav :global(.vibe-button) { width: 100%; }
+}

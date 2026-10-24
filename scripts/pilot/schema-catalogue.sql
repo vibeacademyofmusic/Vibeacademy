@@ -1,0 +1,7 @@
+select jsonb_build_object(
+ 'database',current_database(),
+ 'owner',(select pg_get_userbyid(datdba) from pg_database where datname=current_database()),
+ 'functions',(select jsonb_object_agg(n.nspname||'.'||p.proname||'('||pg_get_function_identity_arguments(p.oid)||')',jsonb_build_object('definition',md5(pg_get_functiondef(p.oid)),'owner',pg_get_userbyid(p.proowner),'security_definer',p.prosecdef,'config',p.proconfig,'acl',p.proacl)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where p.prokind='f' and n.nspname in ('public','hr_private','notification_private','finance_private','learning_private')),
+ 'tables',(select jsonb_object_agg(n.nspname||'.'||c.relname,jsonb_build_object('rls',c.relrowsecurity,'acl',c.relacl,'columns',(select jsonb_agg(jsonb_build_object('name',a.attname,'type',format_type(a.atttypid,a.atttypmod),'not_null',a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped))) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname in ('public','hr_private','notification_private','finance_private','learning_private')),
+ 'policies',(select jsonb_object_agg(schemaname||'.'||tablename||'.'||policyname,jsonb_build_object('roles',roles,'cmd',cmd,'qual',qual,'with_check',with_check)) from pg_policies where schemaname in ('public','hr_private','notification_private','finance_private','learning_private'))
+);

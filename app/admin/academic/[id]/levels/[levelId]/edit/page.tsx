@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AcademicTrail } from '@/app/admin/programs/trail'
 
 import { createClient } from '@/lib/supabase/server'
 import { updateCurriculumLevel } from '../../../../actions'
@@ -48,14 +48,11 @@ export default async function EditLevelPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <Link
-          href={`/admin/academic/${curriculum.id}`}
-          className="text-sm font-medium text-gray-500 hover:text-gray-900"
-        >
-          ← Back to {curriculum.name}
-        </Link>
-      </div>
+      <AcademicTrail items={[
+        { label: curriculum.name, href: `/admin/academic/${curriculum.id}` },
+        { label: level.name, href: `/admin/academic/${curriculum.id}/levels/${level.id}` },
+        { label: 'Chỉnh sửa cấp độ' },
+      ]} />
 
       <div className="mb-8">
         <p className="text-sm font-medium text-gray-500">
@@ -63,7 +60,7 @@ export default async function EditLevelPage({
         </p>
 
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
-          Edit Grade / Level
+          Chỉnh sửa cấp độ
         </h1>
 
         <p className="mt-2 text-sm text-gray-500">
@@ -99,7 +96,7 @@ export default async function EditLevelPage({
               htmlFor="code"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Level Code *
+              Mã cấp độ *
             </label>
 
             <input
@@ -116,7 +113,7 @@ export default async function EditLevelPage({
               htmlFor="name"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Level Name *
+              Tên cấp độ *
             </label>
 
             <input
@@ -133,7 +130,7 @@ export default async function EditLevelPage({
               htmlFor="level_type"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Level Type *
+              Loại cấp độ *
             </label>
 
             <select
@@ -143,19 +140,19 @@ export default async function EditLevelPage({
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
             >
               <option value="FOUNDATION">
-                Foundation
+                Nền tảng
               </option>
 
               <option value="GRADE">
-                Grade
+                Cấp độ
               </option>
 
               <option value="DIPLOMA">
-                Diploma
+                Văn bằng
               </option>
 
               <option value="OTHER">
-                Other
+                Khác
               </option>
             </select>
           </div>
@@ -166,7 +163,7 @@ export default async function EditLevelPage({
                 htmlFor="sequence_no"
                 className="mb-2 block text-sm font-medium text-gray-700"
               >
-                Sequence *
+                Thứ tự *
               </label>
 
               <input
@@ -185,7 +182,7 @@ export default async function EditLevelPage({
                 htmlFor="level_number"
                 className="mb-2 block text-sm font-medium text-gray-700"
               >
-                Grade No.
+                Số cấp
               </label>
 
               <input
@@ -204,7 +201,7 @@ export default async function EditLevelPage({
               htmlFor="completion_rule"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Completion Rule
+              Cách hoàn thành
             </label>
 
             <select
@@ -214,11 +211,11 @@ export default async function EditLevelPage({
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
             >
               <option value="ALL_REQUIRED_SUBJECTS">
-                All Required Subjects
+                Hoàn thành mọi môn bắt buộc
               </option>
 
               <option value="MANUAL">
-                Manual
+                Thủ công
               </option>
             </select>
           </div>
@@ -227,7 +224,7 @@ export default async function EditLevelPage({
             type="submit"
             className="rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800"
           >
-            Save Changes
+            Lưu thay đổi
           </button>
         </form>
       </section>

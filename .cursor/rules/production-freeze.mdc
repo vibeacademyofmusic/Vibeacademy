@@ -1,0 +1,9 @@
+---
+description: Production release freeze lifted by the user on 21 October 2026
+alwaysApply: true
+---
+
+The user explicitly authorized reopening production on 21 October 2026 to update the system.
+The 12 October 2026 release freeze is lifted. Read docs/production/freeze-20261012/README.md for the historical checkpoint and reopening record.
+Vercel production build and automatic custom-domain assignment settings were restored to previous-project-settings.json.
+Validate the intended release before deployment. Reopening itself does not request deploying the current working tree, schema migrations, permission changes, or gateway changes. Preserve approved design checks.

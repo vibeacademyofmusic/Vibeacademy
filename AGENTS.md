@@ -7,3 +7,31 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+<!-- BEGIN:vibe-design-consistency -->
+
+# VIBE design consistency
+
+All future UI work must follow the approved VIBE design language. Use the approved Công tác phí implementation as the current reference and reuse shared design tokens and components.
+
+Apply this to new features, fixes, redesigns, parent and child pages, navigation, tabs, forms, dialogs, cards, tables, filters, buttons, badges, and loading, empty, error, and success states.
+
+Maintain consistent typography, colors, spacing, borders, radii, sizing, and interaction patterns. Use the established warm background, navy typography, restrained gold accents, and white cards through existing tokens.
+
+Extend shared components where needed instead of creating divergent local copies. Use clear Vietnamese wording and accessible desktop and mobile layouts.
+
+Bring affected UI into alignment without unrelated redesigns. Preserve business behavior and permissions.
+
+A UI task is not complete if it works functionally but deviates from the approved design. Compilation and automated tests alone do not establish visual acceptance. Every UI implementation report must include rendered design-consistency verification.
+
+<!-- END:vibe-design-consistency -->
+
+<!-- BEGIN:vibe-production-freeze-20261012 -->
+
+# Production reopened on 21 October 2026
+
+The user explicitly authorized lifting the 12 October release freeze on 21 October 2026 to update the system. The Vercel production build command and automatic custom-domain assignment were restored to the pre-freeze settings. See [the checkpoint and reopening record](docs/production/freeze-20261012/README.md).
+
+The release freeze no longer blocks production updates. Validate the intended release before deploying. Reopening alone does not request deployment of the current working tree, schema migrations, permission changes, or gateway changes. Preserve the approved VIBE design and existing release checks.
+
+<!-- END:vibe-production-freeze-20261012 -->

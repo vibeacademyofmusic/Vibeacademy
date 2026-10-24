@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AcademicTrail } from '@/app/admin/programs/trail'
 
 import { createClient } from '@/lib/supabase/server'
 import { updateCurriculum } from '../../actions'
@@ -38,22 +38,15 @@ export default async function EditCurriculumPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <Link
-          href={`/admin/academic/${curriculum.id}`}
-          className="text-sm font-medium text-gray-500 hover:text-gray-900"
-        >
-          ← Back to {curriculum.name}
-        </Link>
-      </div>
+      <AcademicTrail items={[{ label: curriculum.name, href: `/admin/academic/${curriculum.id}` }, { label: 'Chỉnh sửa chương trình' }]} />
 
       <div className="mb-8">
         <p className="text-sm font-medium text-gray-500">
-          Academic
+          Chương trình
         </p>
 
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
-          Edit Curriculum
+          Chỉnh sửa chương trình
         </h1>
 
         <p className="mt-2 text-sm text-gray-500">
@@ -89,7 +82,7 @@ export default async function EditCurriculumPage({
               htmlFor="code"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Curriculum Code *
+              Mã chương trình *
             </label>
 
             <input
@@ -107,7 +100,7 @@ export default async function EditCurriculumPage({
               htmlFor="name"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Curriculum Name *
+              Tên chương trình *
             </label>
 
             <input
@@ -140,7 +133,7 @@ export default async function EditCurriculumPage({
             type="submit"
             className="rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800"
           >
-            Save Changes
+            Lưu thay đổi
           </button>
         </form>
       </section>

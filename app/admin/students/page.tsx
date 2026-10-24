@@ -1,11 +1,30 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import CoordinationWorkspace from '../coordination/Workspace'
 
 import {
   createStudent,
   setStudentStatus,
 } from './actions'
 
-import { createClient } from '@/lib/supabase/server'
+import {
+  AppPage,
+  PageHeader,
+  InlineNotice,
+  StatusBadge,
+  EmptyState,
+  OperationsFilterBar,
+  OpsTabs,
+  OpsMetricLink,
+  buildQuery,
+} from '@/app/admin/_components/vibe'
+import { businessDate, shiftBusinessDate } from '@/app/admin/_lib/business-date'
+import { requestClient, requestRole, requestOperationalAdmin } from '@/lib/auth/request'
+import { placementLabel } from '@/app/admin/business/crm/model'
+import { StudentOpsHub } from './hub'
+import { StudentOpsShell, type StudentOpsTab } from './ops-shell'
+import { loadReferencePrograms, type ReferenceProgram } from './legacy-reference-programs'
+import { pageNumber, pageSize, uuidPattern } from '@/app/admin/finance/operations'
 
 type StudentsPageProps = {
     searchParams: Promise<{
@@ -13,32 +32,60 @@ type StudentsPageProps = {
       success?: string
       q?: string
       branch?: string
-        status?: string
+      class?: string
+      curriculum?: string
+      teacher?: string
+      status?: string
+      view?: string
+      filter?: string
+      page?: string
+      class_page?: string
+      tab?: string
+      lifecycle?: string
     }>
   }
+
+  const opsTabs = ['overview', 'students', 'waiting', 'teaching-shifts', 'schedule', 'attendance', 'reports', 'feedback'] as const
   
   export default async function StudentsPage({
     searchParams,
   }: StudentsPageProps) {
     const params = await searchParams
+    const curriculumId = uuidPattern.test(params.curriculum ?? '') ? params.curriculum! : ''
+    if (params.tab === 'waiting' || params.tab === 'teaching-shifts' || params.tab === 'schedule' || params.view === 'waiting') {
+      const query = new URLSearchParams({ tab: 'coordination', view: params.tab === 'schedule' ? 'week' : params.tab === 'teaching-shifts' ? 'shifts' : 'queue' })
+      for (const [key, value] of Object.entries(params)) {
+        if (value && key !== 'tab' && key !== 'view') query.set(key, value)
+      }
+      redirect(`/admin/students?${query}`)
+    }
+    if (params.tab === 'coordination') {
+      return <AppPage><CoordinationWorkspace params={params} /></AppPage>
+    }
+    const tab = opsTabs.includes(params.tab as StudentOpsTab) ? params.tab as StudentOpsTab : 'overview'
+    if (tab !== 'students') {
+      return <StudentOpsHub tab={tab} searchParams={searchParams} />
+    }
     const q = (params.q ?? '').trim()
     const branch = (params.branch ?? '').trim()
+    const classId = uuidPattern.test(params.class ?? '') ? params.class! : ''
+    const teacherId = uuidPattern.test(params.teacher ?? '') ? params.teacher! : ''
     const status = (params.status ?? '').trim()
-    const todayInVietnam = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Ho_Chi_Minh',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(new Date())
+    const todayInVietnam = businessDate()
+    const earliestFutureStart = shiftBusinessDate(todayInVietnam, 1)
+    const page = pageNumber(params.page)
+    const lifecycle = params.lifecycle === 'future' || params.lifecycle === 'paused' ? params.lifecycle : 'active'
   
-    const supabase = await createClient()
-  
-    const branchesQuery = supabase
+    const supabase = await requestClient()
+    const { data: isSuperAdmin } = await requestRole('SUPER_ADMIN')
+    const showRecords = params.view === 'records' && isSuperAdmin === true
+
+    const branchesQuery = showRecords ? supabase
   .from('branches')
   .select('id, code, name, status')
-  .order('name')
+  .order('name') : null
 
-let studentsQuery = supabase
+let studentsQuery = showRecords ? supabase
   .from('students')
   .select(`
     id,
@@ -49,9 +96,9 @@ let studentsQuery = supabase
     status,
     created_at
   `)
-  .order('created_at', { ascending: false })
+  .order('created_at', { ascending: false }) : null
 
-  if (q) {
+  if (studentsQuery && q) {
     const safeQuery = q
       .replace(/[%_,()]/g, ' ')
       .trim()
@@ -61,7 +108,7 @@ let studentsQuery = supabase
     )
   }
   
-  if (branch) {
+  if (studentsQuery && branch) {
     studentsQuery = studentsQuery.eq(
       'default_branch_id',
       branch
@@ -69,17 +116,31 @@ let studentsQuery = supabase
   }
   
   if (
+    studentsQuery && (
     status === 'ACTIVE' ||
     status === 'INACTIVE'
-  ) {
+  )) {
     studentsQuery = studentsQuery.eq(
       'status',
       status
     )
   }
   
-  const [{ data: branches }, { data: students, error: studentsError }] =
-    await Promise.all([branchesQuery, studentsQuery])
+  const [{ data: branches }, studentsResult] = showRecords && branchesQuery && studentsQuery
+    ? await Promise.all([branchesQuery, studentsQuery])
+    : [{ data: [] }, { data: [], error: null }]
+  const students = studentsResult.data
+  const studentsError = studentsResult.error
+  let referencePrograms = new Map<string, ReferenceProgram[]>()
+  let referenceProgramsError = false
+  if (students?.length) {
+    try {
+      referencePrograms = await loadReferencePrograms(supabase, students.map(student => student.id))
+    } catch (error) {
+      console.error('Cần Thơ reference programs could not be loaded', error)
+      referenceProgramsError = true
+    }
+  }
   const branchMap = new Map(
     (branches ?? []).map((branch) => [
       branch.id,
@@ -87,26 +148,53 @@ let studentsQuery = supabase
     ])
   )
 
+  const studentsHref = (patch: Record<string, string | undefined> = {}) => {
+    const query = buildQuery({
+      tab: 'students',
+      curriculum: curriculumId || undefined,
+      lifecycle: lifecycle === 'active' ? undefined : lifecycle,
+      class_page: params.class_page,
+      branch: branch || undefined,
+      class: classId || undefined,
+      teacher: teacherId || undefined,
+      q: q || undefined,
+      page: undefined,
+    }, patch)
+    return query ? `/admin/students?${query}` : '/admin/students'
+  }
+  const lifecycleCopy = {
+    active: ['Học viên đang hoạt động', 'Ghi danh đã vào ca dạy và đã tới ngày bắt đầu theo ngày Việt Nam.'],
+    future: ['Đã vào ca dạy – chờ bắt đầu', 'Ca dạy đã xác nhận. Học viên chưa tính là đang học cho đến ngày bắt đầu.'],
+    paused: ['Đang bảo lưu', 'Ghi danh đang trong kỳ bảo lưu theo ngày Việt Nam.'],
+  } as const
+
   return (
-    <div>
-      <div className="mb-8">
-        <p className="text-sm font-medium text-gray-500">
-          People
-        </p>
-
-        <h1 className="mt-1 text-3xl font-bold text-gray-950">
-          Students
-        </h1>
-
-        <p className="mt-2 text-sm text-gray-500">
-          Manage Vibe Academy students.
-        </p>
-      </div>
-
-      {params.error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
+    <AppPage>
+    <StudentOpsShell tab="students">
+      <PageHeader
+        title={showRecords ? 'Hồ sơ học viên' : lifecycleCopy[lifecycle][0]}
+        description={showRecords ? 'Tạo hồ sơ thủ công khi chưa có đăng ký.' : lifecycleCopy[lifecycle][1]}
+        actions={isSuperAdmin === true ? <Link prefetch={false} href="/admin/students?tab=students&view=records" className="vibe-button">Tạo hồ sơ thủ công</Link> : undefined}
+      />
+      {params.error && <InlineNotice tone="error">{params.error}</InlineNotice>}
+      {showRecords && referenceProgramsError && <InlineNotice tone="error">Không tải được chương trình tham chiếu. Vui lòng thử lại; dữ liệu ghi danh học tập không bị thay đổi.</InlineNotice>}
+      {!showRecords && (
+        <>
+          <StudentPlacementBoard
+            curriculumId={curriculumId}
+            view={lifecycle}
+            branch={branch}
+            classId={classId}
+            teacherId={teacherId}
+            q={q}
+            filter={params.filter ?? 'ALL'}
+            page={page}
+            shiftPage={pageNumber(params.class_page)}
+            canOpenStudent={(await requestOperationalAdmin()).data === true}
+            earliestStart={earliestFutureStart}
+            hrefBuilder={studentsHref}
+          />
+        </>
       )}
 
       {params.success && (
@@ -115,7 +203,7 @@ let studentsQuery = supabase
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
+      {showRecords && <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
         <section className="rounded-2xl border border-gray-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-gray-950">
             Add Student
@@ -325,6 +413,10 @@ let studentsQuery = supabase
     </th>
 
     <th className="px-6 py-3">
+      Chương trình tham chiếu
+    </th>
+
+    <th className="px-6 py-3">
       Admission
     </th>
 
@@ -354,6 +446,20 @@ let studentsQuery = supabase
                         {branchMap.get(
                           student.default_branch_id
                         ) ?? '—'}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        {referencePrograms.get(student.id)?.length ? (
+                          <ul className="space-y-1.5" aria-label="Chương trình từ danh sách nguồn Cần Thơ">
+                            {referencePrograms.get(student.id)?.map(program => (
+                              <li key={`${program.name}-${program.grade ?? ''}`} className="flex flex-wrap items-center gap-1.5">
+                                <span className="font-medium text-[var(--vibe-navy)]">{program.name}</span>
+                                {program.grade && <span className="text-xs text-[var(--vibe-muted)]">· {program.grade}</span>}
+                                {!program.mapped && <StatusBadge tone="warning">Chưa ánh xạ</StatusBadge>}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : '—'}
                       </td>
 
                       <td className="px-6 py-4 text-gray-600">
@@ -410,7 +516,350 @@ let studentsQuery = supabase
             </div>
           )}
         </section>
-      </div>
+      </div>}
+    </StudentOpsShell>
+    </AppPage>
+  )
+}
+
+type WaitingRow = {
+  placement_id: string
+  placement_version: number
+  student_id: string
+  student_name: string
+  parent_name: string | null
+  branch_id: string
+  branch_name: string
+  program_name: string | null
+  level_name: string | null
+  desired_start: string | null
+  preferred_schedule: string | null
+  placement_status: string
+  class_name: string | null
+  teacher_name: string | null
+  scheduled_start: string | null
+  owner_name: string | null
+  days_waiting: number
+  enrollment_id: string | null
+  class_id: string | null
+  course_id: string | null
+}
+
+type ClassOption = {
+  id: string
+  name: string
+  branch_id: string
+  open_seats: number
+  code: string | null
+  branch_name: string | null
+  course_id: string | null
+  curriculum_name: string | null
+  level_label: string | null
+  teacher_name: string | null
+  room_name: string | null
+  schedule_label: string | null
+  duration_minutes: number | null
+  enrolled_count: number | null
+  capacity: number | null
+  status: string | null
+}
+
+type CurrentRow = {
+  enrollment_id: string
+  student_id: string
+  student_code: string
+  student_name: string
+  branch_name: string
+  course_name: string
+  level_name: string | null
+  class_name: string
+  teacher_name: string | null
+  schedule_label: string | null
+  started_on: string
+  package_name: string | null
+  attendance_marked: number
+  class_id?: string
+  branch_id?: string
+  student_status?: string
+  enrollment_status?: string
+}
+
+function PlacementLink({ row }: { row: WaitingRow }) {
+  const label = row.placement_status === 'SCHEDULED_FUTURE' ? 'Đổi ca dạy' : 'Xếp ca'
+  return <Link className="vibe-button" href={`/admin/students?tab=coordination&view=queue&place=${row.placement_id}`}>{label}</Link>
+}
+
+// Phase 2: Student Class Transfer Workflow.
+// A learner who has already started needs a separate transfer that considers
+// past attendance, future sessions, the teacher relationship, makeup credits,
+// learning journals, academic progress, tuition, and reporting history.
+async function StudentPlacementBoard({
+  view,
+  branch,
+  classId,
+  teacherId,
+  curriculumId,
+  q,
+  filter,
+  page,
+  shiftPage,
+  canOpenStudent,
+  earliestStart,
+  hrefBuilder,
+}: {
+  view: 'active' | 'future' | 'paused' | 'waiting'
+  branch: string
+  classId: string
+  teacherId: string
+  curriculumId: string
+  q: string
+  filter: string
+  page: number
+  shiftPage: number
+  canOpenStudent: boolean
+  earliestStart: string
+  hrefBuilder: (patch?: Record<string, string | undefined>) => string
+}) {
+  const db = await requestClient()
+  let classQuery = db.from('classes').select('id,name,branch_id').eq('status', 'ACTIVE').order('name').limit(200)
+  if (branch) classQuery = classQuery.eq('branch_id', branch)
+  const [{ data: classRows }, { data: teacherOptions }, { data: branchOptions }, { data: curriculumOptions }] = await Promise.all([
+    view === 'active' || view === 'paused' ? classQuery : Promise.resolve({ data: [] }),
+    view === 'active' || view === 'paused' ? db.from('teachers').select('id,full_name,teacher_code').eq('status', 'ACTIVE').order('teacher_code').limit(200) : Promise.resolve({ data: [] }),
+    db.from('branches').select('id,name').order('name').limit(200),
+    db.from('operational_curriculums').select('id,name').order('name'),
+  ])
+  const classSelect = (classRows ?? []).map(c => ({ id: c.id, name: c.name }))
+  const teacherSelect = (teacherOptions ?? []).map(t => ({ id: t.id, name: t.full_name || t.teacher_code }))
+  const branchSelect = (branchOptions ?? []).map(b => ({ id: b.id, name: b.name }))
+
+  if (view === 'waiting') {
+    const waitingFilter = filter === 'MATCHING' || filter === 'UNASSIGNED' ? filter : 'ALL'
+    const [{ data: rows }, { data: summary }, { data: waitingCount }, { data: unassignedCount }, { data: matchingCount }, { data: futureCount }] = await Promise.all([
+      db.rpc('list_waiting_placements_by_curriculum', { p_curriculum: curriculumId || null,
+        p_branch: branch || null,
+        p_filter: waitingFilter,
+        p_search: q,
+        p_limit: pageSize + 1,
+        p_offset: (page - 1) * pageSize,
+      }),
+      db.rpc('waiting_placement_summary', { p_branch: branch || null }),
+      db.rpc('count_waiting_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_filter: 'ALL', p_search: q || null }),
+      db.rpc('count_waiting_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_filter: 'UNASSIGNED', p_search: q || null }),
+      db.rpc('count_waiting_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_filter: 'MATCHING', p_search: q || null }),
+      db.rpc('count_future_start_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_search: q || null }),
+    ])
+    const waiting = ((rows ?? []) as WaitingRow[]).slice(0, pageSize)
+    const more = ((rows ?? []) as WaitingRow[]).length > pageSize
+    const kpi = Array.isArray(summary) ? summary[0] : summary
+    return (
+      <section className="space-y-4">
+        <div className="vibe-metrics">
+          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Chờ vào ca dạy" value={waitingCount ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'UNASSIGNED' })} title="Chưa vào ca dạy" value={unassignedCount ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'MATCHING' })} title="Đang tìm ca phù hợp" value={matchingCount ?? 0} />
+          <OpsMetricLink href={`/admin/students?tab=students&lifecycle=future${curriculumId ? `&curriculum=${curriculumId}` : ''}${branch ? `&branch=${branch}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`} title="Đã vào ca dạy – chờ bắt đầu" value={futureCount ?? 0} />
+          <section className="vibe-card vibe-metric"><p>Số ngày chờ trung bình</p><strong>{kpi?.average_wait ?? 0}</strong></section>
+          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Chờ hơn 3 ngày" value={kpi?.over_3 ?? 0} />
+          <OpsMetricLink href={hrefBuilder({ filter: 'ALL' })} title="Chờ hơn 7 ngày" value={kpi?.over_7 ?? 0} />
+        </div>
+        <InlineNotice tone="info">Hành trình học thuật đã được ghi từ lúc đăng ký. Thao tác còn lại là sắp học viên vào một ca dạy cùng chương trình và trình độ.</InlineNotice>
+        <OperationsFilterBar
+          action="/admin/students"
+          hidden={{ tab: 'waiting', filter }}
+          resetHref="/admin/students?tab=waiting"
+          fields={[
+            { name: 'curriculum', label: 'Bộ môn', type: 'select', value: curriculumId, options: curriculumOptions ?? [], allLabel: 'Tất cả bộ môn' },
+            { name: 'branch', label: 'Chi nhánh', type: 'select', value: branch, options: branchSelect },
+            { name: 'q', label: 'Tìm học viên', type: 'search', value: q, placeholder: 'Tên / mã học viên' },
+          ]}
+        />
+        <OpsTabs
+          ariaLabel="Lọc chờ vào ca dạy"
+          tabs={[
+            ['ALL', 'Tất cả'],
+            ['UNASSIGNED', 'Chưa vào ca dạy'],
+            ['MATCHING', 'Đang tìm ca phù hợp'],
+          ].map(([id, label]) => ({
+            href: hrefBuilder({ view: 'waiting', filter: id }),
+            label,
+            active: waitingFilter === id,
+          }))}
+        />
+        <div className="vibe-table-scroll">
+          <table className="vibe-table">
+            <thead><tr>{['Học viên', 'Phụ huynh', 'Chi nhánh', 'Chương trình', 'Trình độ', 'Lịch mong muốn', 'Trạng thái', 'Ca dạy hiện tại', 'Giáo viên', 'Ngày vào ca', 'Người phụ trách', 'Số ngày chờ', 'Hành động'].map(h => <th key={h}>{h}</th>)}</tr></thead>
+            <tbody>
+              {waiting.map(row => (
+                <tr key={row.placement_id}>
+                  <td>{canOpenStudent ? <Link href={`/admin/students/${row.student_id}`}>{row.student_name}</Link> : row.student_name}</td>
+                  <td>{row.parent_name || '—'}</td>
+                  <td>{row.branch_name}</td>
+                  <td>{row.program_name || '—'}</td>
+                  <td>{row.level_name || '—'}</td>
+                  <td>{row.preferred_schedule || '—'}</td>
+                  <td><StatusBadge tone="warning">{placementLabel(row.placement_status)}</StatusBadge></td>
+                  <td>{row.class_name || '—'}</td>
+                  <td>{row.teacher_name || '—'}</td>
+                  <td>{row.scheduled_start || row.desired_start || '—'}</td>
+                  <td>{row.owner_name || '—'}</td>
+                  <td>{row.days_waiting}</td>
+                  <td><PlacementLink row={row} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {!waiting.length && <EmptyState>Không tìm thấy học viên phù hợp với bộ lọc.</EmptyState>}
+        <div className="vibe-actions">
+          {page > 1 && <Link prefetch={false} href={hrefBuilder({ view: 'waiting', page: String(page - 1) })} className="vibe-button">Trang trước</Link>}
+          {more && <Link prefetch={false} href={hrefBuilder({ view: 'waiting', page: String(page + 1) })} className="vibe-button">Trang sau</Link>}
+        </div>
+      </section>
+    )
+  }
+
+  const listArgs = {
+    p_curriculum: curriculumId || null,
+    p_branch: branch || null,
+    p_search: q || null,
+    p_limit: pageSize + 1,
+    p_offset: (page - 1) * pageSize,
+    p_class: classId || null,
+    p_teacher: teacherId || null,
+  }
+  const [{ data: activeCount }, { data: pausedCount }, { data: futureCount }, { data: waitingCount }, listResult] = await Promise.all([
+    db.rpc('count_current_student_enrollments_by_curriculum', { p_curriculum: curriculumId || null,
+      p_branch: branch || null,
+      p_search: q || null,
+      p_class: classId || null,
+      p_teacher: teacherId || null,
+    }),
+    db.rpc('count_paused_student_enrollments_by_curriculum', { p_curriculum: curriculumId || null,
+      p_branch: branch || null,
+      p_search: q || null,
+      p_class: classId || null,
+      p_teacher: teacherId || null,
+    }),
+    db.rpc('count_future_start_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_search: q || null }),
+    db.rpc('count_waiting_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_filter: 'ALL', p_search: q || null }),
+    view === 'future'
+      ? db.rpc('list_future_start_placements_by_curriculum', { p_curriculum: curriculumId || null,
+          p_branch: branch || null,
+          p_filter: 'ALL',
+          p_search: q || null,
+          p_limit: pageSize + 1,
+          p_offset: (page - 1) * pageSize,
+        })
+      : db.rpc(view === 'paused' ? 'list_paused_student_enrollments_by_curriculum' : 'list_current_student_enrollments_by_curriculum', listArgs),
+  ])
+  const metrics = (
+    <div className="vibe-metrics">
+      <OpsMetricLink href={hrefBuilder({ lifecycle: undefined })} title="Học viên đang hoạt động" value={activeCount ?? 0} />
+      <OpsMetricLink href={`/admin/students?tab=waiting${curriculumId ? `&curriculum=${curriculumId}` : ''}${branch ? `&branch=${branch}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`} title="Chờ vào ca dạy" value={waitingCount ?? 0} />
+      <OpsMetricLink href={hrefBuilder({ lifecycle: 'future' })} title="Đã vào ca dạy – chờ bắt đầu" value={futureCount ?? 0} />
+      <OpsMetricLink href={hrefBuilder({ lifecycle: 'paused' })} title="Đang bảo lưu" value={pausedCount ?? 0} />
     </div>
+  )
+
+  if (view === 'future') {
+    const future = ((listResult.data ?? []) as WaitingRow[]).slice(0, pageSize)
+    const more = ((listResult.data ?? []) as WaitingRow[]).length > pageSize
+    return (
+      <section className="space-y-4">
+        {metrics}
+        <OperationsFilterBar
+          action="/admin/students"
+          hidden={{ tab: 'students', lifecycle: 'future' }}
+          resetHref="/admin/students?tab=students&lifecycle=future"
+          fields={[
+            { name: 'curriculum', label: 'Bộ môn', type: 'select', value: curriculumId, options: curriculumOptions ?? [], allLabel: 'Tất cả bộ môn' },
+            { name: 'branch', label: 'Chi nhánh', type: 'select', value: branch, options: branchSelect },
+            { name: 'q', label: 'Tìm học viên', type: 'search', value: q, placeholder: 'Tên / mã học viên' },
+          ]}
+        />
+        <div className="vibe-table-scroll">
+          <table className="vibe-table">
+            <thead>
+              <tr>{['Học viên', 'Chi nhánh', 'Chương trình / Bộ môn', 'Grade', 'Ca dạy', 'Giáo viên chính', 'Ngày bắt đầu', 'Trạng thái', 'Hành động'].map(h => <th key={h}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {future.map(row => (
+                <tr key={row.placement_id}>
+                  <td>{canOpenStudent ? <Link href={`/admin/students/${row.student_id}`}>{row.student_name}</Link> : row.student_name}</td>
+                  <td>{row.branch_name}</td>
+                  <td>{row.program_name || '—'}</td>
+                  <td>{row.level_name || '—'}</td>
+                  <td>{row.class_name || '—'}</td>
+                  <td>{row.teacher_name || '—'}</td>
+                  <td>{row.scheduled_start || '—'}</td>
+                  <td><StatusBadge tone="info">{placementLabel(row.placement_status)}</StatusBadge></td>
+                  <td><PlacementLink row={row} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {!future.length && <EmptyState>Không có học viên đã vào ca dạy mà chưa tới ngày bắt đầu.</EmptyState>}
+        <div className="vibe-actions">
+          {page > 1 && <Link prefetch={false} href={hrefBuilder({ lifecycle: 'future', page: String(page - 1) })} className="vibe-button">Trang trước</Link>}
+          {more && <Link prefetch={false} href={hrefBuilder({ lifecycle: 'future', page: String(page + 1) })} className="vibe-button">Trang sau</Link>}
+        </div>
+      </section>
+    )
+  }
+
+  const current = ((listResult.data ?? []) as CurrentRow[]).slice(0, pageSize)
+  const more = ((listResult.data ?? []) as CurrentRow[]).length > pageSize
+  const statusLabel = view === 'paused' ? 'Đang bảo lưu' : 'Đang học'
+
+  return (
+    <section className="space-y-4">
+      {metrics}
+      <OperationsFilterBar
+        action="/admin/students"
+        hidden={{ tab: 'students', lifecycle: view === 'paused' ? 'paused' : undefined }}
+        resetHref={view === 'paused' ? '/admin/students?tab=students&lifecycle=paused' : '/admin/students?tab=students'}
+        fields={[
+          { name: 'curriculum', label: 'Bộ môn', type: 'select', value: curriculumId, options: curriculumOptions ?? [], allLabel: 'Tất cả bộ môn' },
+            { name: 'branch', label: 'Chi nhánh', type: 'select', value: branch, options: branchSelect },
+          { name: 'class', label: 'Ca dạy', type: 'select', value: classId, options: classSelect },
+          { name: 'teacher', label: 'Giáo viên', type: 'select', value: teacherId, options: teacherSelect },
+          { name: 'q', label: 'Tìm học viên', type: 'search', value: q, placeholder: 'Tên / mã học viên' },
+        ]}
+      />
+      <div className="vibe-table-scroll">
+        <table className="vibe-table">
+          <thead>
+            <tr>{['Học viên', 'Chi nhánh', 'Chương trình / Bộ môn', 'Grade', 'Ca dạy', 'Giáo viên chính', 'Lịch học', 'Ngày bắt đầu', 'Gói học', 'Điểm danh đã ghi', 'Trạng thái'].map(h => <th key={h}>{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {current.map(row => (
+              <tr key={row.enrollment_id}>
+                <td>
+                  {canOpenStudent ? <Link href={`/admin/students/${row.student_id}`}>{row.student_name}</Link> : row.student_name}
+                  <p className="text-xs text-[var(--vibe-muted)]">{row.student_code}</p>
+                </td>
+                <td>{row.branch_name}</td>
+                <td>{row.course_name}</td>
+                <td>{row.level_name || '—'}</td>
+                <td>{row.class_id ? <Link href={`/admin/classes/${row.class_id}`}>{row.class_name}</Link> : row.class_name}</td>
+                <td>{row.teacher_name || '—'}</td>
+                <td>{row.schedule_label || '—'}</td>
+                <td>{row.started_on}</td>
+                <td>{row.package_name || '—'}</td>
+                <td>{row.attendance_marked}</td>
+                <td><StatusBadge tone={view === 'paused' ? 'warning' : 'success'}>{statusLabel}</StatusBadge></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {!current.length && <EmptyState>Không tìm thấy học viên phù hợp với bộ lọc.</EmptyState>}
+      <div className="vibe-actions">
+        {page > 1 && <Link prefetch={false} href={hrefBuilder({ page: String(page - 1) })} className="vibe-button">Trang trước</Link>}
+        {more && <Link prefetch={false} href={hrefBuilder({ page: String(page + 1) })} className="vibe-button">Trang sau</Link>}
+      </div>
+    </section>
   )
 }

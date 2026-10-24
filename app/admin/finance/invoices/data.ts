@@ -1,5 +1,5 @@
 import { pageNumber, pageSize, uuidPattern, type Params } from '../operations'
-import { rows, type DB } from '../query'
+import { all, rows, type DB } from '../query'
 export type Tuition = { id: string; starts_on: string; effective_ends_on: string; plan_name_snapshot: string; branch_name_snapshot: string; amount: number; discount_amount: number; currency: string; enrollments: { students: { full_name: string; student_code: string } } }
 export async function tuitionCandidates(db: DB, params: Params) {
   const page = pageNumber(params.terms_page)
@@ -8,4 +8,11 @@ export async function tuitionCandidates(db: DB, params: Params) {
   if (uuidPattern.test(params.student ?? '')) query = query.eq('enrollments.student_id', params.student!)
   const data = await rows(query.order('starts_on', { ascending: false }).order('id').range((page - 1) * pageSize, page * pageSize).returns<Tuition[]>())
   return { data: data.slice(0, pageSize), page, more: data.length > pageSize }
+}
+
+export type InvoicePayment = { id: string; amount: number; payments: { id: string; payment_number: string; paid_at: string; payment_method: string; reference: string | null; amount: number; currency: string; status: string } | null }
+export async function invoicePaymentHistory(db: DB, invoiceId: string) {
+  return all<InvoicePayment>((a, b) => db.from('payment_allocations')
+    .select('id,amount,payments(id,payment_number,paid_at,payment_method,reference,amount,currency,status)')
+    .eq('invoice_id', invoiceId).order('created_at').order('id').range(a, b).returns<InvoicePayment[]>())
 }

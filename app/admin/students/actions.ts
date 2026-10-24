@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { requestOperationalAdmin } from '@/lib/auth/request'
 import { createClient } from '@/lib/supabase/server'
 import { requireOperationsStaff } from '../../../lib/authorization'
 
@@ -17,9 +18,7 @@ async function requireSuperAdmin() {
   }
 
   const { data: isSuperAdmin, error: roleError } =
-    await supabase.rpc('has_role', {
-      role_code: 'SUPER_ADMIN',
-    })
+    await requestOperationalAdmin()
 
   if (roleError || !isSuperAdmin) {
     redirect('/login?error=B%E1%BA%A1n%20kh%C3%B4ng%20c%C3%B3%20quy%E1%BB%81n%20truy%20c%E1%BA%ADp')
@@ -251,8 +250,13 @@ const ACADEMIC_PROGRESS_STATUSES = [
     'NOT_STARTED',
     'IN_PROGRESS',
     'PASS',
-    'NOT_PASSED',
-    'EXEMPT',
+    'MERIT',
+    'DISTINCTION',
+  ] as const
+
+  const COMPONENT_PROGRESS_STATUSES = [
+    'IN_PROGRESS',
+    'PASS',
   ] as const
 
   export async function updateComponentProgressStatus(
@@ -277,19 +281,20 @@ const ACADEMIC_PROGRESS_STATUSES = [
     if (
       !progressId ||
       !studentId ||
-      !ACADEMIC_PROGRESS_STATUSES.includes(
-        status as (typeof ACADEMIC_PROGRESS_STATUSES)[number]
+      !COMPONENT_PROGRESS_STATUSES.includes(
+        status as (typeof COMPONENT_PROGRESS_STATUSES)[number]
       )
     ) {
       throw new Error("Thông tin cập nhật tiến độ môn học không hợp lệ")
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('student_component_progress')
       .update({ status })
       .eq('id', progressId)
+      .select('id')
 
-    if (error) {
+    if (error || !data?.length) {
       console.error(
         'Component progress update error:',
         error
@@ -301,6 +306,142 @@ const ACADEMIC_PROGRESS_STATUSES = [
     }
 
     revalidatePath(`/admin/students/${studentId}`)
+  }
+
+  export async function updateLessonProgressStatus(
+    formData: FormData
+  ) {
+    const supabase = await requireSuperAdmin()
+    const progressId = String(formData.get('progress_id') ?? '').trim()
+    const levelProgressId = String(formData.get('level_progress_id') ?? '').trim()
+    const subjectId = String(formData.get('subject_id') ?? '').trim()
+    const componentId = String(formData.get('component_id') ?? '').trim()
+    const itemId = String(formData.get('item_id') ?? '').trim()
+    const studentId = String(formData.get('student_id') ?? '').trim()
+    const status = String(formData.get('status') ?? '').trim()
+    const path = `/admin/students/${studentId}`
+    const invalid = (): never => {
+      redirect(`${path}?error=${encodeURIComponent('Thông tin cập nhật bài học không hợp lệ')}`)
+      throw new Error('redirect')
+    }
+
+    if (
+      !studentId ||
+      !COMPONENT_PROGRESS_STATUSES.includes(status as (typeof COMPONENT_PROGRESS_STATUSES)[number]) ||
+      (!progressId && !(levelProgressId && subjectId && componentId && itemId))
+    ) return invalid()
+
+    let targetId = progressId
+    if (!targetId) {
+      const { data: level, error: levelError } = await supabase
+        .from('student_level_progress')
+        .select('id, enrollment_id, level_id')
+        .eq('id', levelProgressId)
+        .maybeSingle()
+      if (levelError || !level) return invalid()
+      const { data: enrollment, error: enrollmentError } = await supabase
+        .from('student_curriculum_enrollments')
+        .select('student_id')
+        .eq('id', level.enrollment_id)
+        .maybeSingle()
+      const { data: subject, error: subjectError } = await supabase
+        .from('curriculum_subjects')
+        .select('id, level_id')
+        .eq('id', subjectId)
+        .maybeSingle()
+      const { data: component, error: componentError } = await supabase
+        .from('curriculum_subject_components')
+        .select('id, subject_id')
+        .eq('id', componentId)
+        .maybeSingle()
+      const { data: lesson, error: lessonError } = await supabase
+        .from('curriculum_component_items')
+        .select('id, component_id')
+        .eq('id', itemId)
+        .maybeSingle()
+      if (
+        enrollmentError || subjectError || componentError || lessonError ||
+        enrollment?.student_id !== studentId ||
+        subject?.level_id !== level.level_id ||
+        component?.subject_id !== subjectId ||
+        lesson?.component_id !== componentId
+      ) return invalid()
+
+      const { data: subjectProgress, error: subjectProgressError } = await supabase
+        .from('student_subject_progress')
+        .select('id')
+        .eq('level_progress_id', levelProgressId)
+        .eq('subject_id', subjectId)
+        .maybeSingle()
+      if (subjectProgressError) return invalid()
+      let subjectProgressId = subjectProgress?.id
+      if (!subjectProgressId) {
+        const inserted = await supabase.from('student_subject_progress')
+          .insert({ level_progress_id: levelProgressId, subject_id: subjectId, status: 'NOT_STARTED' })
+          .select('id').single()
+        if (inserted.error || !inserted.data) return invalid()
+        subjectProgressId = inserted.data.id
+      }
+
+      const { data: componentProgress, error: componentProgressError } = await supabase
+        .from('student_component_progress')
+        .select('id')
+        .eq('subject_progress_id', subjectProgressId)
+        .eq('component_id', componentId)
+        .maybeSingle()
+      if (componentProgressError) return invalid()
+      let componentProgressId = componentProgress?.id
+      if (!componentProgressId) {
+        const inserted = await supabase.from('student_component_progress')
+          .insert({ subject_progress_id: subjectProgressId, component_id: componentId, status: 'NOT_STARTED' })
+          .select('id').single()
+        if (inserted.error || !inserted.data) return invalid()
+        componentProgressId = inserted.data.id
+      }
+
+      const { data: lessonProgress, error: lessonProgressError } = await supabase
+        .from('student_component_item_progress')
+        .select('id')
+        .eq('component_progress_id', componentProgressId)
+        .eq('item_id', itemId)
+        .maybeSingle()
+      if (lessonProgressError) return invalid()
+      targetId = lessonProgress?.id
+      if (!targetId) {
+        const inserted = await supabase.from('student_component_item_progress')
+          .insert({ component_progress_id: componentProgressId, item_id: itemId, status })
+          .select('id').single()
+        if (!inserted.error) {
+          revalidatePath(path)
+          return
+        }
+        if (inserted.error.code !== '23505') {
+          const scheduled = inserted.error.message.includes('scheduled start')
+          redirect(`${path}?error=${encodeURIComponent(scheduled
+            ? 'Academic progress cannot be updated before the scheduled start date'
+            : 'Không thể cập nhật tiến độ bài học')}`)
+        }
+        const existing = await supabase.from('student_component_item_progress')
+          .select('id')
+          .eq('component_progress_id', componentProgressId)
+          .eq('item_id', itemId)
+          .maybeSingle()
+        targetId = existing.data?.id
+        if (!targetId) return invalid()
+      }
+    }
+
+    if (!targetId) return invalid()
+    const write = await supabase.from('student_component_item_progress').update({ status }).eq('id', targetId).select('id')
+
+    if (write.error || !write.data?.length) {
+      const scheduled = Boolean(write.error?.message?.includes('scheduled start'))
+      redirect(`${path}?error=${encodeURIComponent(scheduled
+        ? 'Academic progress cannot be updated before the scheduled start date'
+        : 'Không thể cập nhật tiến độ bài học')}`)
+    }
+
+    revalidatePath(path)
   }
 
   export async function updateDirectSubjectProgressStatus(
@@ -330,12 +471,13 @@ const ACADEMIC_PROGRESS_STATUSES = [
       throw new Error("Thông tin cập nhật tiến độ môn học không hợp lệ")
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('student_subject_progress')
       .update({ status })
       .eq('id', progressId)
+      .select('id')
 
-    if (error) {
+    if (error || !data?.length) {
       console.error(
         'Subject progress update error:',
         error
@@ -391,6 +533,20 @@ const ACADEMIC_PROGRESS_STATUSES = [
       redirect(
         `${returnPath}?error=${encodeURIComponent(
           "Ngày bắt đầu học không hợp lệ"
+        )}`
+      )
+    }
+
+    const { data: operationalCurriculum } = await supabase
+      .from('operational_curriculums')
+      .select('id')
+      .eq('id', curriculumId)
+      .maybeSingle()
+
+    if (!operationalCurriculum) {
+      redirect(
+        `${returnPath}?error=${encodeURIComponent(
+          "Chỉ được ghi danh vào Piano, Guitar, Violin hoặc Trống"
         )}`
       )
     }

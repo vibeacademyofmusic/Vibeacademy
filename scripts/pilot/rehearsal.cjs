@@ -1,0 +1,33 @@
+/* Local authenticated HTTP/API rehearsal. It measures server response, not browser paint. */
+const fs=require('node:fs'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process')
+const {createServerClient}=require('@supabase/ssr'),{id,dir}=require('./academic-fixture.cjs')
+const {fingerprint}=require('../local-preview.cjs')
+const sleep=ms=>new Promise(r=>setTimeout(r,ms))
+async function main(){
+ const env=Object.fromEntries([...execFileSync('node_modules/.bin/supabase',['status','-o','env'],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).matchAll(/^([A-Z0-9_]+)="([^"]*)"$/gm)].map(m=>[m[1],m[2]]));assert.equal(env.API_URL,'http://127.0.0.1:54321')
+ const accounts=JSON.parse(fs.readFileSync('/private/tmp/vibe-pilot-20260928T032001Z/accounts.json'))
+ const actors=[{ref:'ADMIN',path:'/admin/students?tab=attendance',needle:'TEST-P032001-SEP'},{ref:'BA',path:'/admin/students?tab=students',needle:'TEST-P032001-S1'},{ref:'T1',path:'/operations/teacher',needle:'Không gian giáo viên'},{ref:'P1',path:'/my-learning',needle:'Hồ sơ học tập'},{ref:'FIN',path:'/finance',needle:'Phê duyệt tài chính'}]
+ for(const a of actors){a.jar=new Map();a.client=createServerClient(env.API_URL,env.ANON_KEY,{cookies:{getAll:()=>[...a.jar].map(([name,value])=>({name,value})),setAll:rows=>rows.forEach(r=>a.jar.set(r.name,r.value))},global:{fetch:(u,o)=>{assert.equal(new URL(u).origin,env.API_URL);return fetch(u,{...o,redirect:'error'})}}});const r=await a.client.auth.signInWithPassword(accounts[a.ref]);assert.ok(!r.error)}
+ const source=fingerprint(),start=Date.now(),samples=[],checkpoints=[]
+ async function sample(a,phase,concurrency){const at=Date.now();let status=0,bytes=0,error=null,page_ms=null,rpc_ms=null;try{
+  const r=await fetch('http://localhost:3000'+a.path,{headers:{cookie:[...a.jar].map(([k,v])=>`${k}=${v}`).join('; ')},redirect:'manual',signal:AbortSignal.timeout(20000)});status=r.status;const body=await r.text();bytes=Buffer.byteLength(body);assert.equal(status,200);assert.ok(body.includes(a.needle),'Expected authorized page content missing')
+  page_ms=Date.now()-at;const rpcStart=Date.now()
+  const check=a.ref==='P1'?await a.client.rpc('portal_students',{}):a.ref==='T1'?await a.client.rpc('teacher_session_workspace',{p_session:id('SEP-28')}):a.ref==='FIN'?await a.client.rpc('has_role',{role_code:'FINANCE'}):await a.client.rpc('attendance_session_search',{p_date:'2026-09-28',p_branch:id('branch-A')});assert.ok(!check.error);if(a.ref==='P1')assert.deepEqual(check.data.map(x=>x.id).sort(),[id('S1'),id('S2')].sort());if(a.ref==='T1')assert.ok(check.data);if(a.ref==='FIN')assert.equal(check.data,true);rpc_ms=Date.now()-rpcStart
+ }catch(e){error=e.message}const entry={actor:a.ref,path:a.path,phase,concurrency,at:new Date(at).toISOString(),ms:Date.now()-at,page_ms,rpc_ms,status,bytes,error};samples.push(entry);fs.appendFileSync(`${dir}/raw/rehearsal-samples.jsonl`,JSON.stringify(entry)+'\n')}
+ fs.writeFileSync(`${dir}/raw/rehearsal-samples.jsonl`,'')
+ for(const a of actors)await sample(a,'first-touch',1)
+ for(const concurrency of [2,5])for(let round=0;round<30;round++)for(let offset=0;offset<actors.length;offset+=concurrency)await Promise.all(actors.slice(offset,offset+concurrency).map(a=>sample(a,'warm',concurrency)))
+ const rehearsalStart=Date.now();let lastCheckpoint=-1,round=0
+ do{
+  await Promise.all(actors.map(a=>sample(a,'rehearsal',5)));round++
+  const minute=Math.floor((Date.now()-rehearsalStart)/60000),checkpoint=Math.floor(minute/10)
+  if(checkpoint!==lastCheckpoint){lastCheckpoint=checkpoint;const cp={at:new Date().toISOString(),elapsed_seconds:(Date.now()-rehearsalStart)/1000,rounds:round,samples:samples.length,errors:samples.filter(x=>x.error).length,source_unchanged:fingerprint()===source};checkpoints.push(cp);fs.writeFileSync(`${dir}/rehearsal-progress.json`,JSON.stringify({started_at:new Date(start).toISOString(),rehearsal_started_at:new Date(rehearsalStart).toISOString(),fingerprint:source,checkpoints},null,2));console.log(JSON.stringify(cp))}
+  if(Date.now()-rehearsalStart>=3600000)break
+  await sleep(Math.min(30000,3600000-(Date.now()-rehearsalStart)))
+ }while(true)
+ const group={};for(const row of samples){const k=[row.phase,row.concurrency,row.actor].join('/');(group[k]??=[]).push(row)}
+ const metrics=Object.fromEntries(Object.entries(group).map(([k,v])=>{const sorted=v.map(x=>x.ms).sort((a,b)=>a-b);return[k,{n:v.length,p50:sorted[Math.ceil(v.length*.5)-1],p95:sorted[Math.ceil(v.length*.95)-1],max:sorted.at(-1),errors:v.filter(x=>x.error).length,max_bytes:Math.max(...v.map(x=>x.bytes))}]}))
+ const report={started_at:new Date(start).toISOString(),finished_at:new Date().toISOString(),rehearsal_seconds:(Date.now()-rehearsalStart)/1000,mode:'verified Next production build, local port 3000',measurement:'HTTP page plus scoped read RPC roundtrip; not browser paint; first-touch is not a guaranteed cold OS/DB cache',fingerprint:source,source_unchanged:fingerprint()===source,checkpoints,metrics};fs.writeFileSync(`${dir}/performance.json`,JSON.stringify(report,null,2)+'\n');console.log('REHEARSAL_COMPLETE',report.rehearsal_seconds)
+ if(samples.some(x=>x.error)||!report.source_unchanged)process.exitCode=1
+}
+main().catch(e=>{console.error(e.message);process.exitCode=1})
