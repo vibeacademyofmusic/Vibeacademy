@@ -1,7 +1,8 @@
 {
   "git": {
     "deploymentEnabled": {
-      "codex/caday-source-sync-20261024": false
+      "codex/caday-source-sync-20261024": false,
+      "codex/caday-weekly-dashboard-20261024": false
     }
   }
 }

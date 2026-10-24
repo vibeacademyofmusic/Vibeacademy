@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
+import WeeklyDashboard from './WeeklyDashboard'
 import { requestClient, requestOperationalAdmin } from '@/lib/auth/request'
 import { businessDate } from '@/app/admin/_lib/business-date'
 import { EmptyState, InlineNotice, OperationsFilterBar, OpsMetricLink, OpsTabs, StatusBadge, buildQuery } from '@/app/admin/_components/vibe'
@@ -11,7 +13,7 @@ import { dayChoices } from '@/lib/teaching-shifts/independent'
 import { placementLabel } from '../business/crm/model'
 import { generateSessions } from '../attendance/actions'
 import { changeRecurringSchedule } from './actions'
-import { coordinationView, loadCoordination, loadWeek, type CandidateRow, type WaitingRow } from './data'
+import { coordinationView, loadCoordination, type CandidateRow, type WaitingRow } from './data'
 import styles from './panel.module.css'
 import { blockerLabel, dayOptions, fitLabel, formatSession, proposedParticipationDate, reasonLabel, suggestionLink } from './rules'
 
@@ -49,6 +51,9 @@ export default async function CoordinationWorkspace({ params }: { params: Params
           Mỗi ca định kỳ là một thứ và một khung giờ. Chọn nhiều thứ khi tạo ca sẽ tạo nhiều ca độc lập. Học viên được xếp vào từng ca đã chọn.
         </p>
       </header>
+      <Suspense fallback={<div className="vibe-card" role="status">Đang tải lịch và sĩ số trong tuần…</div>}>
+        <WeeklyDashboard params={scoped} />
+      </Suspense>
       {(params.error || params.success) && <InlineNotice tone={params.error ? 'error' : 'success'}>{params.error || params.success}</InlineNotice>}
       {params.placed && <InlineNotice tone="success">Đã xếp ca. Học viên bắt đầu trong tương lai vẫn ở mục Đã xếp ca – chờ bắt đầu cho đến đúng ngày.{' '}
         <Link href={href(scoped, { view: 'queue' })}>Xếp học viên tiếp theo</Link>
@@ -299,63 +304,20 @@ async function Shifts({ params }: { params: Params }) {
 }
 
 async function Week({ params }: { params: Params }) {
-  const db = await requestClient()
-  const week = await loadWeek(db, params)
-  if (week.error) {
-    return <InlineNotice tone="error">{week.error} {week.reference ? `Mã đối chiếu ${week.reference}.` : ''} <Link href={href(params, { view: 'week', date: week.date })}>Tải lại</Link></InlineNotice>
-  }
   const recur = params.recur
+  if (!recur) return <p className="text-sm text-[var(--vibe-muted)]">Xem lịch tuần ở bảng phía trên. Chọn “Đổi lịch định kỳ” trong ca cần điều chỉnh.</p>
+  const db = await requestClient()
+  const { data: rooms, error } = await db.from('rooms').select('id,name,branch_id').eq('status', 'ACTIVE').order('name')
+  if (error) return <InlineNotice tone="error">Chưa tải được phòng để đổi lịch. Hãy thử lại.</InlineNotice>
   return (
     <div className="space-y-4">
-      <OperationsFilterBar
-        action="/admin/students"
-        hidden={{ tab: 'coordination', view: 'week' }}
-        resetHref="/admin/students?tab=coordination&view=week"
-        fields={[
-          { name: 'branch', label: 'Chi nhánh', type: 'select', value: week.branch, options: week.branches },
-          { name: 'date', label: 'Tuần của ngày', type: 'date', value: week.date },
-        ]}
-      />
-      <p className="text-sm text-[var(--vibe-muted)]">Tuần {week.bounds.monday} đến {shiftLabel(week.bounds.next)}. Đổi riêng một buổi không sửa lịch lặp. Đổi lịch định kỳ chỉ có hiệu lực từ ngày đã chọn và không sửa buổi đã điểm danh.</p>
-      <div className="vibe-actions">
-        <Link className="vibe-button" href={href(params, { view: 'week', date: previousWeek(week.bounds.monday) })}>Tuần trước</Link>
-        <Link className="vibe-button" href={href(params, { view: 'week', date: week.bounds.next })}>Tuần sau</Link>
-      </div>
-      {!week.sessions?.length ? <EmptyState>Tuần này chưa có buổi học trong phạm vi lọc.</EmptyState> : (
-        <div className="vibe-table-scroll">
-          <table className="vibe-table">
-            <thead><tr>{['Ngày', 'Giờ', 'Ca dạy', 'Phòng', 'Trạng thái', ''].map(label => <th key={label}>{label}</th>)}</tr></thead>
-            <tbody>
-              {week.sessions.map(row => {
-                const schedule = rel(row.schedules as unknown as { id: string; class_id: string; classes: { id: string; name: string; code: string } | { id: string; name: string; code: string }[] } | { id: string; class_id: string; classes: { id: string; name: string; code: string } | { id: string; name: string; code: string }[] }[] | null)
-                const klass = rel(schedule?.classes ?? null)
-                const historical = row.status !== 'SCHEDULED'
-                return (
-                  <tr key={row.id}>
-                    <td>{row.occurrence_date}</td>
-                    <td>{formatSession(row.starts_at)}</td>
-                    <td>{klass?.name || '—'}<small className="block">{klass?.code}</small></td>
-                    <td>{row.rescheduled_at ? 'Đã đổi riêng buổi này' : 'Theo lịch định kỳ'}</td>
-                    <td><StatusBadge tone={historical ? 'neutral' : 'info'}>{row.status === 'SCHEDULED' ? 'Chưa diễn ra' : row.status === 'COMPLETED' ? 'Đã ghi nhận' : row.status === 'CANCELLED' ? 'Đã hủy' : row.status}</StatusBadge></td>
-                    <td className="space-y-1">
-                      {row.status === 'SCHEDULED' && <p><Link href={`/admin/attendance/${row.id}`}>Đổi riêng buổi này</Link></p>}
-                      {schedule && <p><Link href={href(params, { view: 'week', date: week.date, recur: schedule.id })}>Đổi lịch định kỳ từ ngày…</Link></p>}
-                      {historical && <p className="text-xs text-[var(--vibe-muted)]">Buổi đã ghi nhận được giữ nguyên.</p>}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
       {recur && (
         <form action={changeRecurringSchedule} className="vibe-card space-y-3">
           <h2 className="text-lg font-semibold">Đổi lịch định kỳ từ ngày…</h2>
           <p className="text-sm text-[var(--vibe-muted)]">Lịch lặp cũ khép lại trước ngày này. Buổi đã điểm danh không bị viết lại.</p>
           <input type="hidden" name="schedule_id" value={recur} />
-          <input type="hidden" name="return_to" value={href(params, { view: 'week', date: week.date })} />
-          <label className="vibe-field"><span>Từ ngày</span><input name="effective_from" type="date" required defaultValue={week.date} /></label>
+          <input type="hidden" name="return_to" value={href(params, { view: 'week', date: params.date || businessDate() })} />
+          <label className="vibe-field"><span>Từ ngày</span><input name="effective_from" type="date" required defaultValue={params.date || businessDate()} /></label>
           <label className="vibe-field"><span>Thứ</span>
             <select name="day_of_week" required defaultValue="1">
               {dayOptions.map(([day, label]) => <option key={day} value={day}>{label}</option>)}
@@ -366,7 +328,7 @@ async function Week({ params }: { params: Params }) {
           <label className="vibe-field"><span>Phòng</span>
             <select name="room_id" required defaultValue="">
               <option value="">Chọn phòng</option>
-              {week.rooms.map(room => <option key={room.id} value={room.id}>{room.name}</option>)}
+              {(rooms ?? []).map(room => <option key={room.id} value={room.id}>{room.name}</option>)}
             </select>
           </label>
           <button className="vibe-button vibe-button-primary" type="submit">Lưu lịch định kỳ</button>
@@ -471,16 +433,4 @@ async function Today({ params, canOperate }: { params: Params; canOperate: boole
       )}
     </div>
   )
-}
-
-function previousWeek(monday: string) {
-  const [year, month, day] = monday.split('-').map(Number)
-  const date = new Date(Date.UTC(year, month - 1, day - 7))
-  return date.toISOString().slice(0, 10)
-}
-
-function shiftLabel(next: string) {
-  const [year, month, day] = next.split('-').map(Number)
-  const date = new Date(Date.UTC(year, month - 1, day - 1))
-  return date.toISOString().slice(0, 10)
 }
