@@ -3,6 +3,45 @@
 Bản sửa dựa trên `51993b32506bf93392ddac1f65eb6269613dd99d`.
 Đây là sửa mã và kiểm thử, chưa phải biên bản triển khai production.
 
+## Bổ sung 26/10: lưu điểm danh học bù từ ca khác
+
+Trên `a65f3cf`, `saveAttendance` lọc ghi danh theo ca đích trước khi xét
+danh sách học bù. Vì thế form gửi cả học viên của ca và học viên ca khác,
+nhưng chỉ học viên của ca được lưu. Đường ghi hiện đọc RPC đã có phân quyền
+`attendance_roster_read`, cùng nguồn danh sách buổi học với lịch tuần, rồi
+upsert một lô theo `(session_occurrence_id, enrollment_id)`. Không cấp thêm
+quyền và không gọi trực tiếp hàm nội bộ `session_teaching_roster`.
+
+Danh sách lỗi, sai dạng, trùng ID hoặc form còn gửi học viên đã rời buổi thì
+dừng trước khi ghi. Trạng thái không hợp lệ không bị âm thầm bỏ qua. Sau khi
+lưu, làm mới cả lịch tuần, màn hình điều phối và sổ điểm danh. Bộ kiểm thử
+`tests/attendance-save.test.cjs` chạy chính server action, RPC đọc roster và
+trigger kiểm điểm danh bằng SQL trong PGlite; HTTP được thay bằng adapter,
+quyền học bù và RLS toàn bộ được kiểm riêng trong bộ Supabase. Kiểm thử bao
+gồm học viên khác ca, buổi chỉ có khách, đọc lại hai dòng đã lưu, lưu lại,
+form cũ, hủy chỗ trước/lúc lưu, ngày học/bảo lưu, quyền truy cập, buổi đã
+chốt/hủy và không xóa trạng thái học viên chưa chọn.
+
+**Không sửa tám migration, manifest hoặc runner trong bổ sung này.** Clone
+đã áp đúng bản `a65f3cf` và đạt ledger 273 có thể giữ lại để kiểm ứng dụng.
+Hướng dẫn dựng clone mới ở phần dưới chỉ dành cho clone dùng file thứ tám
+trước `a65f3cf`.
+
+Theo biên bản người vận hành gửi ngày 26/10, Chrome sạch trên Mac không có
+lỗi hydration; lệch `data-cursor-ref` chỉ xuất hiện do công cụ trình duyệt.
+Đây là kết quả được người vận hành cung cấp, không phải lần bấm lại từ môi
+trường sửa mã này. Việc chọn học viên ca khác trong giao diện tạo học bù
+chưa được bổ sung ở bản sửa điểm danh này; ca thử đã đặt chỗ bằng RPC.
+
+```sh
+node --test tests/attendance-save.test.cjs
+```
+
+Kiểm chứng tại môi trường sửa mã: 11 kiểm thử đường lưu mới và 37 kiểm thử
+tập trung tổng cộng đạt; build, typecheck, lint các tệp thay đổi và
+`git diff --check` đạt. Bộ đường lưu đã tái hiện việc mã `a65f3cf` báo lưu
+một học viên dù form gửi hai học viên. Chưa bấm lại ứng dụng trên máy Mac.
+
 ## Thay đổi đã thực hiện
 
 - Runner dùng một kết nối, giữ advisory lock xuyên suốt đợt chạy. Mỗi file

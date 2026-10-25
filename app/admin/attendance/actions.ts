@@ -304,70 +304,43 @@ export async function saveAttendance(
     )
   }
 
-  const { data: schedule } = await supabase
-    .from('schedules')
-    .select('id, class_id')
-    .eq('id', occurrence.schedule_id)
-    .maybeSingle()
+  // Use the authorized, canonical session roster. A booked makeup student can
+  // belong to another class; filtering the host class silently drops that save.
+  const { data: roster, error: rosterError } = await supabase.rpc(
+    'attendance_roster_read',
+    { p_session: occurrenceId }
+  )
 
-  if (!schedule) {
-    redirect(
-      `/admin/attendance/${occurrenceId}?${context}error=Session%20schedule%20not%20found`
-    )
-  }
-
-  const { data: enrollments, error: rosterError } =
-    await supabase
-      .from('enrollments')
-      .select(
-        'id, enrolled_at, started_at, ended_at'
-      )
-      .eq('class_id', schedule.class_id)
-
-  const {
-    data: makeupParticipants,
-    error: participantsError,
-  } = occurrence.occurrence_type === 'MAKEUP'
-    ? await supabase
-        .from('session_occurrence_participants')
-        .select('enrollment_id')
-        .eq('session_occurrence_id', occurrenceId)
-    : { data: [], error: null }
-
-  if (rosterError || participantsError) {
-    console.error(
-      'Load attendance roster error:',
-      rosterError ?? participantsError
-    )
+  if (
+    rosterError ||
+    !Array.isArray(roster) ||
+    roster.some((row) =>
+      !row || typeof row.enrollment_id !== 'string' || !UUID_PATTERN.test(row.enrollment_id)
+    ) ||
+    new Set(roster.map((row) => row.enrollment_id)).size !== roster.length
+  ) {
+    console.error('Load attendance roster error:', rosterError?.code ?? 'INVALID_ROSTER')
 
     redirect(
       `/admin/attendance/${occurrenceId}?${context}error=Could%20not%20load%20the%20session%20roster`
     )
   }
 
-  const makeupParticipantIds = new Set(
-    (makeupParticipants ?? []).map(
-      (participant) => participant.enrollment_id
-    )
-  )
-
-  const roster = (enrollments ?? []).filter(
-    (enrollment) => {
-      if (occurrence.occurrence_type === 'MAKEUP') {
-        return makeupParticipantIds.has(enrollment.id)
-      }
-
-      if (!enrollment.started_at) {
-        return false
-      }
-
-      return (
-        enrollment.started_at <= occurrence.occurrence_date &&
-        (!enrollment.ended_at ||
-          enrollment.ended_at >= occurrence.occurrence_date)
+  const rosterIds = new Set<string>(roster.map((row) => row.enrollment_id))
+  for (const [key, value] of formData.entries()) {
+    if (!key.startsWith('status_') || value === '') continue
+    // A stale form must not report success for only the remaining students.
+    if (!rosterIds.has(key.slice('status_'.length))) {
+      redirect(
+        `/admin/attendance/${occurrenceId}?${context}error=${encodeURIComponent('Danh sách buổi học đã thay đổi. Vui lòng tải lại trước khi lưu điểm danh.')}`
       )
     }
-  )
+    if (typeof value !== 'string' || !ATTENDANCE_STATUSES.has(value.trim())) {
+      redirect(
+        `/admin/attendance/${occurrenceId}?${context}error=${encodeURIComponent('Trạng thái điểm danh không hợp lệ.')}`
+      )
+    }
+  }
 
   const markedAt = new Date().toISOString()
 
@@ -375,7 +348,7 @@ export async function saveAttendance(
     (enrollment) => {
       const status = String(
         formData.get(
-          `status_${enrollment.id}`
+          `status_${enrollment.enrollment_id}`
         ) ?? ''
       ).trim()
 
@@ -385,14 +358,14 @@ export async function saveAttendance(
 
       const notes = String(
         formData.get(
-          `notes_${enrollment.id}`
+          `notes_${enrollment.enrollment_id}`
         ) ?? ''
       ).trim()
 
       return [
         {
           session_occurrence_id: occurrenceId,
-          enrollment_id: enrollment.id,
+          enrollment_id: enrollment.enrollment_id,
           status,
           notes: notes || null,
           marked_at: markedAt,
@@ -425,6 +398,9 @@ export async function saveAttendance(
 
   revalidatePath('/admin/attendance')
   revalidatePath('/admin/students')
+  revalidatePath('/admin/classes')
+  revalidatePath('/admin/coordination')
+  revalidatePath('/admin')
   revalidatePath(
     `/admin/attendance/${occurrenceId}`
   )

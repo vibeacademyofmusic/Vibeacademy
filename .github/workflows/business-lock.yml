@@ -28,6 +28,7 @@ jobs:
             tests/caday-release-manifest.test.mjs \
             tests/caday-release-runner.test.mjs \
             tests/caday-write-gate.test.mjs \
+            tests/attendance-save.test.cjs \
             tests/cross-class-makeup-roster.test.mjs \
             tests/coordination-calendar-db.test.mjs \
             tests/coordination-calendar-loader.test.cjs \
