@@ -40,4 +40,17 @@ alter table public.rooms enable trigger trg_room_schedule_configuration;
 alter table public.classes enable trigger trg_class_room_capacity;
 alter table public.enrollments enable trigger trg_room_capacity_enrollment_guard;
 
+do $gate$
+begin
+  update maintenance_private.teaching_shift_write_gate
+  set writes = 'open',
+      reason = 'All eleven room and teacher guards are enabled again.',
+      changed_at = now()
+  where singleton and writes = 'stopped';
+  if not found then
+    raise exception 'CADAY_WRITE_GATE_NOT_STOPPED';
+  end if;
+end;
+$gate$;
+
 commit;

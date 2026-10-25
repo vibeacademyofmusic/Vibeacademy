@@ -150,4 +150,109 @@ begin
 end;
 $$;
 
+-- Writes stay open after this release. The guard rollback script stops them
+-- in the same transaction that disables the eleven room and teacher guards.
+-- Disabling those guards does not drop schema or data.
+create table if not exists maintenance_private.teaching_shift_write_gate (
+  singleton boolean primary key default true check (singleton),
+  writes text not null check (writes in ('open', 'stopped')),
+  reason text not null,
+  changed_at timestamptz not null default now()
+);
+
+insert into maintenance_private.teaching_shift_write_gate (singleton, writes, reason)
+values (true, 'open', 'Teaching-shift writes stay open until the guard rollback script stops them.')
+on conflict (singleton) do nothing;
+
+revoke all on table maintenance_private.teaching_shift_write_gate from public, anon, authenticated, service_role;
+
+create or replace function maintenance_private.reject_stopped_teaching_shift_write()
+returns trigger
+language plpgsql
+security definer
+set search_path to pg_catalog, maintenance_private, pg_temp
+as $$
+declare
+  state text;
+begin
+  select gate.writes into state
+  from maintenance_private.teaching_shift_write_gate gate
+  where gate.singleton;
+  if state = 'stopped' then
+    raise exception 'TEACHING_SHIFT_WRITES_STOPPED';
+  end if;
+  if tg_op = 'DELETE' then
+    return old;
+  end if;
+  return new;
+end;
+$$;
+
+revoke all on function maintenance_private.reject_stopped_teaching_shift_write() from public, anon, authenticated, service_role;
+
+do $$
+declare
+  target regclass;
+begin
+  foreach target in array array[
+    'public.schedules'::regclass,
+    'public.classes'::regclass,
+    'public.class_teachers'::regclass,
+    'public.session_occurrences'::regclass,
+    'public.enrollments'::regclass,
+    'public.attendance_records'::regclass,
+    'public.session_occurrence_participants'::regclass,
+    'public.placement_time_windows'::regclass
+  ]
+  loop
+    execute format('drop trigger if exists trg_teaching_shift_write_gate on %s', target);
+    execute format('drop trigger if exists trg_00_teaching_shift_write_gate on %s', target);
+    execute format(
+      'create trigger trg_00_teaching_shift_write_gate before insert or update or delete on %s for each row execute function maintenance_private.reject_stopped_teaching_shift_write()',
+      target
+    );
+  end loop;
+end;
+$$;
+
+create or replace function maintenance_private.stop_writes_when_teaching_shift_guard_disabled()
+returns event_trigger
+language plpgsql
+as $$
+begin
+  if exists (
+    select 1
+    from pg_trigger
+    where not tgisinternal
+      and tgenabled <> 'O'
+      and tgname in (
+        'trg_schedule_single_weekly_shift',
+        'trg_schedule_room_booking',
+        'trg_zz_schedule_teacher_parallel_atomic',
+        'trg_zz_class_teacher_parallel_atomic',
+        'trg_zz_occurrence_teacher_atomic',
+        'trg_zzz_class_teacher_occurrence_atomic',
+        'trg_occurrence_room_booking',
+        'trg_makeup_room_capacity',
+        'trg_room_schedule_configuration',
+        'trg_class_room_capacity',
+        'trg_room_capacity_enrollment_guard'
+      )
+  ) then
+    update maintenance_private.teaching_shift_write_gate
+    set writes = 'stopped',
+        reason = 'A teaching-shift guard is disabled. Related writes stay stopped until the guard restore script enables all eleven.',
+        changed_at = now()
+    where singleton
+      and writes = 'open';
+  end if;
+end;
+$$;
+
+drop event trigger if exists caday_teaching_shift_guard_write_gate;
+create event trigger caday_teaching_shift_guard_write_gate
+  on ddl_command_end
+  when tag in ('ALTER TABLE')
+  execute function maintenance_private.stop_writes_when_teaching_shift_guard_disabled();
+
 notify pgrst, 'reload schema';

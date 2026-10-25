@@ -16,7 +16,7 @@
 
 ## Migration và lịch sử khác nhau
 
-Thứ tự mới cho phạm vi này: `20261023163000_independent_teaching_shifts` → `20261024002601_coordination_week_dashboard_read` → `20261024010000_placement_time_windows` → `20261024020000_schedule_without_academic_grade` → `20261024030000_schedule_room_atomic_guard` → `20261024040000_teacher_parallel_atomic_guard` → `20261024050000_teacher_occurrence_atomic_guard`.
+Thứ tự của bộ tám file, checksum và ledger dự kiến 265→273 nằm trong [manifest 25/10/2026](20261025-caday-release-manifest.json). Trình chạy là `scripts/apply-caday-release-migrations.mjs`. Không dùng `supabase db push` cho cả thư mục: `20261023163000` đứng trước version đã ghi `20261023163944`, và nhiều file khác trong thư mục không thuộc đợt này.
 
 Production đã ghi `20261021112000_waiting_queue_excludes_enrolled`; không chạy lại. Hồ sơ tham chiếu đã ghi dưới version `20261022183829_legacy_student_opening_profile_staging` và các bảng/hàm hiện diện; không chạy bản địa phương cũ `20261022182651`. Có nhiều migration khác biệt giữa source và ledger; **không dùng `supabase db push` cho toàn bộ thư mục**. Bản sửa lịch sử `20260923040000_zalo_interaction_link_v1` chỉ phục hồi khả năng replay database sạch của CI; migration này đã được ghi ở production và không được chạy lại. Hai migration Zalo fixture cũ `20261012071120` và `20261012122003` đã được thay dữ liệu nhận diện thật bằng cấu hình riêng cho việc dựng mới; **không chạy lại trên production**. Lược đồ fixture của bản dựng mới vì thế khác lược đồ fixture hiện tại trên production cho đến khi có migration tiến về sau riêng. Danh sách email khôi phục tài khoản thử không còn nằm trong source; nếu staging còn dùng chức năng này, cấu hình riêng `VIBE_PREVIEW_RECOVERY_EMAIL_ALLOWLIST`. Thiếu biến thì chức năng thử đóng; luồng production vẫn bị giới hạn theo host như trước.
 
@@ -50,4 +50,31 @@ Trạng thái hiện tại của tài liệu này là **ứng viên**, không ph
 
 ## Bổ sung 25/10/2026
 
-Commit `acdd5c0060399cb33d627f2b99fda79cb65009b0` đã có required check `regression` thành công trên GitHub. Phần học bù từ ca khác nằm ở commit sau đó. Production vẫn NO-GO: nguồn deployment đang phục vụ chưa được gắn bằng Git SHA, bản sao 24/10 chưa phải mốc atomic/offsite, và tắt 11 guard không phải rollback schema. Không đổi domain.
+Mốc mã trước đợt này là `93ab178048315dae1ee40dbad2bcbe24789d6602`. Required check `regression` của mốc đó đã thành công. Bộ phát hành sau bổ sung là đúng 8 migration trong [manifest](20261025-caday-release-manifest.json): bảy file đã diễn tập cộng `20261025013000_cross_class_makeup_roster.sql`. Checksum, thứ tự, điều kiện tiên quyết và ledger dự kiến 265→273 nằm trong manifest. Trình chạy là `scripts/apply-caday-release-migrations.mjs`. Không dùng `supabase db push`.
+
+`20261023163000` đứng trước version đã ghi `20261023163944`. Ledger phải có `20260923040000`, `20261021112000`, `20261022183829`, `20261023163944`. Không được có `20261022182651`. Các version `20261012071120` và `20261012122003` đã có trên ledger production và không được chạy lại.
+
+Diễn tập dùng database mới `caday_pre` trong container `supabase_db_vibe-caday-eight-20261025`, image `17.6.1.166`, network nội bộ, không publish cổng Postgres. Nguồn là dump 24/10. Container bằng chứng `supabase_db_vibe-caday-prod-restore-20261024` giữ ledger 272. File không có `commit` được bọc một giao dịch và chỉ ghi ledger khi cả file thành công. File đã có `commit` được chạy nguyên văn, rồi ghi ledger ở giao dịch sau. Lỗi giữa file 3 khi `CREATE OR REPLACE` chờ khóa quá 5 giây: bảng `placement_time_windows` không còn, ledger vẫn 267. Chạy lại bỏ qua hai file đã ghi và áp file 3 một lần. File 5 chờ khóa `classes` quá hạn: hàm guard phòng không xuất hiện, bốn file trước vẫn còn. Mất tiến trình sau khi file 5 đã `COMMIT` và trước dòng ledger: sentinel còn, version chưa ghi. `--repair-ledger` chỉ ghi ledger vì sentinel đã có; lần gọi sau bỏ qua, không chạy lại file. Kết thúc ledger 273, classes/schedules/enrollments 27/27/0.
+
+Cùng cặp lớp `1dc4a13e-ad93-49e3-adf3-89426557c614` và học viên `0008554b-1968-4caf-9e73-63bfe18346ec` trả `ACADEMIC_PROGRAM_MISSING` cả trước và sau 8 migration. Đó là thiếu ghi danh học thuật, không phải hàm bị mất. Tổng trên mọi lớp và học viên đang hoạt động đổi từ 105/2756/1 (`ACADEMIC_PROGRAM_MISSING` / `CLASS_SCOPE_UNCONFIGURED` / `WRONG_PROGRAM`) thành 1989/855/18 (`ACADEMIC_PROGRAM_MISSING` / `IN_SCOPE` / `WRONG_PROGRAM`). Migration 4 không còn trả `CLASS_SCOPE_UNCONFIGURED` trước khi xét chương trình; phạm vi trình độ để trống cả hai đầu được coi là nhận nhiều trình độ. Hàm `set_placement_availability` 6 tham số vẫn còn. Lịch trùng phòng vẫn bị `SCHEDULE_ROOM_CONFLICT`.
+
+Tắt 11 guard không phải rollback schema: `placement_time_windows` và cổng ghi vẫn còn. Script tắt guard dừng ghi trong cùng giao dịch. Trigger `trg_00_teaching_shift_write_gate` chặn INSERT, UPDATE và DELETE, kể cả `service_role` và hàm security definer, với lỗi `TEACHING_SHIFT_WRITES_STOPPED`. Tắt một guard bằng `ALTER TABLE` cũng dừng ghi qua event trigger. Bật lại 11 guard thì cổng mở và lịch trùng phòng lại bị guard chặn. Số lớp, lịch và ghi danh không đổi.
+
+Bản sao 24/10 vẫn đúng 16/16 checksum. Đã tạo file mã hóa tại chỗ `/Users/macbookair/VIBE-private-backups/2026-10-24-qhznfywwrhmcwbkujclm.tar.gz.enc`, SHA-256 `987dd890fae2ea7ca7c401d2402ad21706c60b79c1e9474cf0d953ec2980be2a`, quyền `0600`. Giải mã thử khớp `MANIFEST.json`. Mật khẩu nằm ở file riêng quyền `0600`, không nằm trong kho mã. File này vẫn trên máy này, không phải bản offsite, và không phải mốc mới ngay trước phát hành. `roles.sql` không có `CREATE ROLE`: role nền tảng phải lấy từ nền tảng. Phần tùy chỉnh cần khôi phục là schema ứng dụng, dữ liệu, ledger ứng dụng và đối tượng Storage đã xuất. Không dùng `created_at` hay số dòng mới làm bằng chứng đủ. Cửa sổ bảo trì trước phát hành phải dừng mọi ghi, lấy một snapshot trong một giao dịch, xuất object Storage cùng thời điểm, rồi mới áp 8 migration. Chưa dừng ghi production, chưa đổi gói, chưa tải bản sao đi nơi khác.
+
+Đăng nhập cô lập trên ứng dụng mới, schema sau 8 migration, tài khoản thử chỉ có trên database `caday_ui`: vào được `/admin` với vai trò quản trị cấp cao. Lịch tuần 26/10/2026 hiện các ca dự kiến, ví dụ Guitar 16:00–17:30, 0 học viên, giới hạn 6. Khung chi tiết ghi “Chưa gồm học viên học bù từ ca khác”. Chưa bấm được một lượt đặt học bù khác ca rồi mở điểm danh, vì các ca này chưa có ghi danh và chưa có buổi học bù. Ô “danh sách tải thiếu” chưa hiện trên trình duyệt; kiểm thử đơn vị của helper vẫn nằm trong CI của mốc `93ab178`. Có overlay hydration trên lịch tuần.
+
+Liên hệ nguồn `dpl_3EAKF2Ergmxiddq4pKfH4T9LyyjS` với commit `60ce447` vẫn chưa xác minh: metadata không có Git SHA và không đối chiếu được artifact. Không đẩy `60ce447` lên GitHub.
+
+### Bàn giao
+
+| Điều kiện | Bằng chứng | Kết quả | Việc còn thiếu |
+|---|---|---|---|
+| Đúng 8 migration, checksum, tiên quyết, ledger 273 | Manifest và trình chạy trên clone cô lập. Không `db push`. | PASS local. CI của SHA mới chưa chạy. Production không áp. | Chờ CI SHA cuối. Không áp production. |
+| Nguồn deployment và đường quay lại | API đã chỉ `dpl_3EAKF2Ergmxiddq4pKfH4T9LyyjS`, không có Git SHA. | HOLD | Đối chiếu artifact với `60ce447` hoặc ghi SHA lên deployment. Không đẩy commit đó chỉ để có SHA. |
+| Diễn tập lỗi giữa file, giữa các file, mất kết nối | Clone mới từ dump trước migration. Container bằng chứng vẫn 272. | PASS local | Không lặp trên production. |
+| Ứng dụng cũ trên schema mới và cổng ghi khi tắt guard | Hàm 6 tham số còn. Cùng cặp vẫn `ACADEMIC_PROGRAM_MISSING`. Cổng ghi chặn `service_role` và hàm definer. | HOLD cho tiến trình ứng dụng cũ. PASS local cho cổng ghi và phân loại dữ liệu. | Chưa khởi động đúng checkout `60ce447` trên schema này. |
+| Backup nhất quán, phục hồi, bản mã hóa ngoài máy | 16/16 checksum. File mã hóa giải được tại chỗ. | HOLD | Cần nơi lưu ngoài máy. Cần dump mới trong cửa sổ bảo trì, trước khi phát hành. |
+| Bấm học bù khác ca, sĩ số, điểm danh, lịch tuần | Đăng nhập cô lập, lịch tuần và khung chi tiết ca dự kiến. | HOLD | Chưa đặt học bù trên UI và chưa mở điểm danh của buổi đó, kể cả danh sách tải thiếu. |
+
+Production vẫn NO-GO. Không đổi domain. Không nhập học viên, Level hoặc học phí trong đợt mã này.

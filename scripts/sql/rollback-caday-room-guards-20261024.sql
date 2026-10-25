@@ -1,8 +1,9 @@
--- Manual emergency rollback for ONLY the eleven schedule/room/capacity/teacher
--- guards introduced by 20261024030000, 20261024040000 and 20261024050000.
--- Do not run during normal use.
--- First revert the Vercel alias to the verified previous deployment and stop
--- new teaching-shift writes. This leaves all data and helper functions intact.
+-- Emergency application rollback for the eleven schedule/room/capacity/teacher
+-- guards. This does not drop tables, functions, or rows, and it is not a schema
+-- rollback. First point manage.vibe.edu.vn back at the verified previous
+-- deployment. In this same transaction the write gate stops inserts, updates,
+-- and deletes on the teaching-shift tables, including API and background
+-- writers, and then the eleven guards are disabled.
 begin;
 set local lock_timeout = '5s';
 
@@ -27,6 +28,31 @@ begin
       )
   ) <> 11 then
     raise exception 'CADAY_ROLLBACK_GUARD_SET_CHANGED';
+  end if;
+  if (
+    select count(*)
+    from pg_trigger
+    where not tgisinternal and tgenabled = 'O' and tgname = 'trg_00_teaching_shift_write_gate'
+      and tgrelid in (
+        'public.schedules'::regclass,
+        'public.classes'::regclass,
+        'public.class_teachers'::regclass,
+        'public.session_occurrences'::regclass,
+        'public.enrollments'::regclass,
+        'public.attendance_records'::regclass,
+        'public.session_occurrence_participants'::regclass,
+        'public.placement_time_windows'::regclass
+      )
+  ) <> 8 then
+    raise exception 'CADAY_WRITE_GATE_TRIGGER_SET_CHANGED';
+  end if;
+  update maintenance_private.teaching_shift_write_gate
+  set writes = 'stopped',
+      reason = 'Eleven room and teacher guards are being disabled. Related writes stay stopped until those guards are enabled again.',
+      changed_at = now()
+  where singleton and writes = 'open';
+  if not found then
+    raise exception 'CADAY_WRITE_GATE_NOT_OPEN';
   end if;
 end;
 $guard$;

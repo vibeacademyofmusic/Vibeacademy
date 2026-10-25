@@ -1,0 +1,108 @@
+{
+  "release": "caday-lich-hoc",
+  "anchor_sha": "93ab178048315dae1ee40dbad2bcbe24789d6602",
+  "apply_with": "scripts/apply-caday-release-migrations.mjs",
+  "forbidden_apply": "supabase db push",
+  "forbidden_reason": "20261023163000 sorts before the already recorded version 20261023163944. A full migrations-folder push can also replay versions that production already has.",
+  "baseline_ledger_count": 265,
+  "expected_ledger_count": 273,
+  "prerequisites": {
+    "must_exist": [
+      "20260923040000",
+      "20261021112000",
+      "20261022183829",
+      "20261023163944"
+    ],
+    "must_be_absent": [
+      "20261022182651"
+    ],
+    "already_recorded_do_not_rerun": [
+      "20261021112000",
+      "20261012071120",
+      "20261012122003",
+      "20260923040000"
+    ]
+  },
+  "migrations": [
+    {
+      "order": 1,
+      "version": "20261023163000",
+      "file": "supabase/migrations/20261023163000_independent_teaching_shifts.sql",
+      "sha256": "82ff8750f8d1343b16ee4d3abac28a4ff7f067e80d31762ec1e9fc94483ff442",
+      "bytes": 31517,
+      "transaction": "runner-wraps",
+      "sentinel_sql": "select coalesce(to_regprocedure('public.placement_weekly_session_count(uuid,date)')::text, '')",
+      "sentinel_contains": "placement_weekly_session_count"
+    },
+    {
+      "order": 2,
+      "version": "20261024002601",
+      "file": "supabase/migrations/20261024002601_coordination_week_dashboard_read.sql",
+      "sha256": "b33995f9346228c53373a5daa235786f08a3884e1f79811df0c789361357817e",
+      "bytes": 6598,
+      "transaction": "self",
+      "sentinel_sql": "select coalesce(to_regprocedure('public.coordination_week_dashboard(date,uuid)')::text, '')",
+      "sentinel_contains": "coordination_week_dashboard"
+    },
+    {
+      "order": 3,
+      "version": "20261024010000",
+      "file": "supabase/migrations/20261024010000_placement_time_windows.sql",
+      "sha256": "989717c74f635cee11e6eeb2cdeec1c4f23cd4903b131b88a6a550518e86cfa8",
+      "bytes": 19676,
+      "transaction": "runner-wraps",
+      "sentinel_sql": "select coalesce(to_regclass('public.placement_time_windows')::text, '')",
+      "sentinel_contains": "placement_time_windows"
+    },
+    {
+      "order": 4,
+      "version": "20261024020000",
+      "file": "supabase/migrations/20261024020000_schedule_without_academic_grade.sql",
+      "sha256": "a5acf1535328372e384a17c1cd8452dbea9eee16de1097196fe92a3a1883d50d",
+      "bytes": 12761,
+      "transaction": "runner-wraps",
+      "sentinel_sql": "select coalesce(to_regprocedure('public.has_verified_legacy_schedule_program(uuid,uuid,uuid)')::text, '')",
+      "sentinel_contains": "has_verified_legacy_schedule_program"
+    },
+    {
+      "order": 5,
+      "version": "20261024030000",
+      "file": "supabase/migrations/20261024030000_schedule_room_atomic_guard.sql",
+      "sha256": "09250a973830059386c31e42f25437bbcb2d39fa1e02b7afaf214f111f3cb810",
+      "bytes": 23379,
+      "transaction": "self",
+      "sentinel_sql": "select coalesce(string_agg(p.proname, ','), '') from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'maintenance_private' and p.proname = 'guard_schedule_room_booking'",
+      "sentinel_contains": "guard_schedule_room_booking"
+    },
+    {
+      "order": 6,
+      "version": "20261024040000",
+      "file": "supabase/migrations/20261024040000_teacher_parallel_atomic_guard.sql",
+      "sha256": "1495784b155204ae6490ac18de1b1f3c555418fa1b187f8fd326c43eba1f7d1b",
+      "bytes": 6046,
+      "transaction": "self",
+      "sentinel_sql": "select coalesce(string_agg(p.proname, ','), '') from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'maintenance_private' and p.proname = 'guard_schedule_teacher_parallel_atomic'",
+      "sentinel_contains": "guard_schedule_teacher_parallel_atomic"
+    },
+    {
+      "order": 7,
+      "version": "20261024050000",
+      "file": "supabase/migrations/20261024050000_teacher_occurrence_atomic_guard.sql",
+      "sha256": "7cd5a529a1306c722b5915ef1a4e6c41d338bc53c8425c6e96b0653bd685490e",
+      "bytes": 7119,
+      "transaction": "self",
+      "sentinel_sql": "select coalesce(string_agg(p.proname, ','), '') from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'maintenance_private' and p.proname = 'guard_occurrence_teacher_atomic'",
+      "sentinel_contains": "guard_occurrence_teacher_atomic"
+    },
+    {
+      "order": 8,
+      "version": "20261025013000",
+      "file": "supabase/migrations/20261025013000_cross_class_makeup_roster.sql",
+      "sha256": "2ada47007b83bafc93237c74e5788c801248e685e7c79394007cb161cd4b8614",
+      "bytes": 8886,
+      "transaction": "runner-wraps",
+      "sentinel_sql": "select case when to_regclass('maintenance_private.teaching_shift_write_gate') is not null and exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'validate_makeup_participant' and pg_get_functiondef(p.oid) ilike '%compatible program%') then 'ready' else '' end",
+      "sentinel_contains": "ready"
+    }
+  ]
+}
