@@ -125,7 +125,7 @@ export default function WeeklyBoard({ snapshot, error, reference, date, branch, 
         })}</div>
       </div>
       {!filtered.length && <p role="status" className={styles.legend}>Không có lịch trong tuần và phạm vi lọc này. Điều này không xác nhận phòng hoặc giáo viên đang rảnh ngoài hệ thống.</p>}
-      <details className={styles.help}><summary>Cách đọc lịch và sĩ số</summary><p>Sáng trước 12:00, chiều 12:00–17:59, tối từ 18:00; mỗi buổi chỉ xuất hiện một lần theo giờ bắt đầu. Ca dự kiến chưa tạo buổi, sĩ số tính theo ghi danh có hiệu lực tại ngày học. “Lượt học” gồm cả lịch dự kiến. Sức chứa lấy giới hạn nhỏ hơn giữa ca và phòng khi đã biết cả hai. Tổng luôn theo cả tuần và bộ lọc, kể cả khi xem một ngày. Bấm Làm mới để lấy dữ liệu mới nhất.</p></details>
+      <details className={styles.help}><summary>Cách đọc lịch và sĩ số</summary><p>Sáng trước 12:00, chiều 12:00–17:59, tối từ 18:00; mỗi buổi chỉ xuất hiện một lần theo giờ bắt đầu. Ca dự kiến chưa tạo buổi; số học viên dự kiến chỉ là ghi danh của chính ca đó và chưa gồm học viên học bù từ ca khác. Buổi đã tạo, kể cả buổi học bù, tính mọi học viên đã đặt vào buổi đó. “Lượt học” gồm cả lịch dự kiến. Sức chứa lấy giới hạn nhỏ hơn giữa ca và phòng khi đã biết cả hai. Tổng luôn theo cả tuần và bộ lọc, kể cả khi xem một ngày. Bấm Làm mới để lấy dữ liệu mới nhất.</p></details>
     </>}
     <dialog ref={dialog} className={styles.detail} aria-labelledby="slot-detail-title" onClose={() => setSelectedId(null)} onClick={event => { if (event.target === event.currentTarget) event.currentTarget.close() }}>
       {selected && <SlotDetail row={selected} issues={issues.get(selected.id) ?? []} now={snapshot!.snapshot_at} onClose={() => dialog.current?.close()} />}
@@ -162,7 +162,9 @@ function SlotDetail({ row, issues, now, onClose }: { row: CalendarSlot; issues: 
     <div className="vibe-actions"><StatusBadge tone={cancelled ? 'neutral' : planned ? 'warning' : 'info'}>{slotState(row, now)}</StatusBadge>{row.occurrence_type === 'MAKEUP' && <StatusBadge tone="info">Học bù</StatusBadge>}</div>
     {row.original_starts_at && <p>Đổi từ {localTime(row.original_starts_at)} · {dateLabel(localDate(row.original_starts_at))}</p>}
     {issues.length > 0 && <InlineNotice tone="warning"><ul>{issues.map(issue => <li key={issue}>{issue}</li>)}</ul></InlineNotice>}
-    <section className={styles.roster}><h3>{counts.total}/{slotCapacity(row) ?? '—'} học viên{planned ? ' dự kiến' : ' trong danh sách'}</h3><p>Giới hạn ca: {row.class_capacity ?? 'chưa biết'} · Phòng: {row.room_capacity ?? 'chưa biết'}</p>
+    <section className={styles.roster}><h3>{counts.total}/{slotCapacity(row) ?? '—'} học viên{planned ? ' dự kiến của ca này' : ' trong danh sách buổi'}</h3><p>Giới hạn ca: {row.class_capacity ?? 'chưa biết'} · Phòng: {row.room_capacity ?? 'chưa biết'}</p>
+      {planned && <p>Chưa gồm học viên học bù từ ca khác. Số dự kiến không phải sĩ số đầy đủ của buổi.</p>}
+      {row.occurrence_type === 'MAKEUP' && !planned && <p>Danh sách gồm học viên được đặt vào buổi bù, kể cả học viên của ca khác.</p>}
       {!planned && !cancelled && <p>Có mặt {counts.present} · Vắng {counts.absent} · Chưa điểm danh {counts.unmarked}</p>}
       {row.roster.length ? <ul>{row.roster.map(person => <li key={person.enrollment_id}><span>{person.name}</span><small>{cancelled ? 'Buổi đã hủy' : planned ? 'Ghi danh hiệu lực' : person.attendance ? attendanceLabels[person.attendance] : 'Chưa điểm danh'}</small></li>)}</ul> : <p>Chưa có học viên trong danh sách hệ thống.</p>}
     </section>

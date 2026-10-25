@@ -34,6 +34,7 @@ const databaseTests = [
   'supabase/tests/database/class_teacher_temporal_test.sql',
   'supabase/tests/database/counter_intake_test.sql',
   'supabase/tests/database/create_makeup_session_occurrence_test.sql',
+  'supabase/tests/database/cross_class_makeup_roster_test.sql',
   'supabase/tests/database/crm_campaign_report_test.sql',
   'supabase/tests/database/crm_channel_state_test.sql',
   'supabase/tests/database/crm_conversion_test.sql',

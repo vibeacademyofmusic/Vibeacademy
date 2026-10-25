@@ -25,6 +25,7 @@ jobs:
       - name: Teaching schedule application contracts
         run: |
           node --test \
+            tests/cross-class-makeup-roster.test.mjs \
             tests/coordination-calendar-db.test.mjs \
             tests/coordination-calendar-loader.test.cjs \
             tests/coordination-calendar.test.mjs \

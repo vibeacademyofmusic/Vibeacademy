@@ -36,7 +36,7 @@ Khi kiểm thử phản hồi Zalo trên bản phục hồi, hàm `begin_tuition
 - Snapshot đọc production trước phát hành: 27 ca lặp đang hoạt động, không có lịch lặp đè phòng, không có ca vượt sức chứa phòng đang cấu hình. CT01 có đúng một Piano 1 và một Piano 2, mỗi phòng 6 chỗ; Piano 1 có 9 lịch lặp, Piano 2 chưa có. Cần kiểm tra lại khi thực sự tạo/xếp ca, vì snapshot có thể đổi và database chưa lưu giờ phòng ngừng sử dụng.
 - Một giáo viên chính có thể phụ trách tối đa hai ca đồng thời theo quy tắc chủ trường; cách giám sát hai phòng là quyết định vận hành, không tự thêm ràng buộc kỹ thuật bắt buộc.
 - Guard SQL một lịch tuần áp dụng cho các lớp tạo **sau** migration. Toàn bộ lớp đã tồn tại tại thời điểm migration được ghi vào allowlist riêng trong giao dịch để giữ các lịch nhiều ngày và khả năng kích hoạt lại lịch cũ; thao tác tạo lịch qua ứng dụng vẫn chặn lịch tuần thứ hai. Quản trị viên có quyền ghi SQL trực tiếp vào lớp cũ có thể vượt chốt ứng dụng này. Migration đặt thời gian chờ khóa 5 giây; phải chạy ở cửa sổ ít ghi và kiểm tra lỗi khóa trước khi triển khai ứng dụng.
-- Không tự ghép danh tính X001–X122, chia nhóm, đổi thứ/giờ hoặc tạo ghi danh production từ bảng lịch cũ. Bảng lịch tuần chưa hỗ trợ đủ học viên học bù từ ca khác; luồng điểm danh hiện hành cũng chưa hỗ trợ trường hợp đó.
+- Không tự ghép danh tính X001–X122, chia nhóm, đổi thứ/giờ hoặc tạo ghi danh production từ bảng lịch cũ. Học viên học bù từ ca khác được đưa vào danh sách, sĩ số và điểm danh của buổi đã đặt khi cùng chương trình, trình độ phù hợp. Ca chưa tạo buổi chỉ hiện ghi danh của chính ca đó và ghi rõ số đó chưa gồm học bù. Nếu danh sách học bù tải thiếu, màn điểm danh không hiện tỷ lệ đã điểm danh như sĩ số đầy đủ.
 - Quy trình tạo ca và ghi danh chỉ được mô tả là bảo toàn giao dịch khi đường ghi cụ thể đã được kiểm thử đồng thời; giao diện không được hứa lưu cả nhóm ca nếu các lệnh thực tế tách rời.
 
 ## Rollback
@@ -47,3 +47,7 @@ Khi kiểm thử phản hồi Zalo trên bản phục hồi, hàm `begin_tuition
 4. Khôi phục database đầy đủ chỉ từ mốc sao lưu đã xác minh, sau khi đối chiếu giao dịch phát sinh kể từ mốc đó. Không ghi đè các giao dịch mới bằng một bản sao cũ một cách tự động.
 
 Trạng thái hiện tại của tài liệu này là **ứng viên**, không phải biên bản đã triển khai. Chỉ đổi thành GO khi từng cổng bên trên có bằng chứng trên đúng commit phát hành.
+
+## Bổ sung 25/10/2026
+
+Commit `acdd5c0060399cb33d627f2b99fda79cb65009b0` đã có required check `regression` thành công trên GitHub. Phần học bù từ ca khác nằm ở commit sau đó. Production vẫn NO-GO: nguồn deployment đang phục vụ chưa được gắn bằng Git SHA, bản sao 24/10 chưa phải mốc atomic/offsite, và tắt 11 guard không phải rollback schema. Không đổi domain.

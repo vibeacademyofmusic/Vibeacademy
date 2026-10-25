@@ -12,6 +12,7 @@ import {
   saveAttendance,
   setSessionStatus,
 } from '../actions'
+import { makeupSessionRoster } from '../roster'
 
 type SessionDetailPageProps = {
   params: Promise<{
@@ -282,6 +283,20 @@ export default async function SessionDetailPage({
       (participant) => participant.enrollment_id
     )
   )
+  let participantEnrollments: { id: string; student_id: string }[] = []
+  let participantEnrollmentError: { message: string } | null = null
+  if (canManage && occurrence.occurrence_type === 'MAKEUP' && makeupParticipantIds.size > 0) {
+    const loadedParticipants = await supabase
+      .from('enrollments')
+      .select('id, student_id')
+      .in('id', [...makeupParticipantIds])
+    participantEnrollments = loadedParticipants.data ?? []
+    participantEnrollmentError = loadedParticipants.error
+  }
+  const bookedMakeupRoster = canManage && occurrence.occurrence_type === 'MAKEUP'
+    ? makeupSessionRoster([...makeupParticipantIds], participantEnrollments)
+    : null
+  let makeupRosterIncomplete = Boolean(bookedMakeupRoster && !bookedMakeupRoster.complete)
   let pausedEnrollmentIds = new Set<string>()
 
 if (
@@ -315,12 +330,10 @@ if (
     ])
   )
 
-  let roster: { id: string; student_id: string }[] = (enrollments ?? []).filter(
+  let roster: { id: string; student_id: string }[] = bookedMakeupRoster
+    ? bookedMakeupRoster.roster
+    : (enrollments ?? []).filter(
     (enrollment) => {
-      if (occurrence.occurrence_type === 'MAKEUP') {
-        return makeupParticipantIds.has(enrollment.id)
-      }
-
       if (!enrollment.started_at) {
         return false
       }
@@ -343,6 +356,10 @@ if (
     attendance = branchRoster.filter(row => row.attendance_id).map(row => ({
       id: row.attendance_id, enrollment_id: row.enrollment_id, status: row.status, notes: row.notes,
     }))
+    if (occurrence.occurrence_type === 'MAKEUP') {
+      const returned = new Set(roster.map(row => row.id))
+      makeupRosterIncomplete = [...makeupParticipantIds].some(id => !returned.has(id))
+    }
   }
   const canCreateMakeup =
     occurrence.occurrence_type === 'REGULAR' &&
@@ -458,10 +475,12 @@ if (
     roomsError ||
     enrollmentsError ||
     participantsError ||
+    participantEnrollmentError ||
     attendanceError ||
     relatedMakeupSessionsError ||
     makeupCreditsError ||
-    studentsError
+    studentsError ||
+    (makeupRosterIncomplete ? { message: 'incomplete makeup roster' } : null)
 
   const studentMap = new Map(
     students.map((student) => [
@@ -489,6 +508,7 @@ if (
     occurrence.status !== 'SCHEDULED'
 
   const isFullyMarked =
+    !makeupRosterIncomplete &&
     (occurrence.occurrence_type !== 'MAKEUP' ||
       roster.length > 0) &&
     (attendance?.length ?? 0) === roster.length
@@ -650,12 +670,15 @@ if (
             </p>
 
             <p className="mt-2 font-semibold text-gray-950">
-              {attendance?.length ?? 0} /{' '}
-              {roster.length} đã điểm danh
+              {loadError || makeupRosterIncomplete
+                ? 'Chưa đủ danh sách. Số này không phải sĩ số đầy đủ.'
+                : `${attendance?.length ?? 0} / ${roster.length} đã điểm danh`}
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
-              Danh sách buổi học
+              {makeupRosterIncomplete
+                ? 'Học viên học bù từ ca khác chưa tải đủ.'
+                : 'Danh sách buổi học'}
             </p>
           </div>
         </div>
