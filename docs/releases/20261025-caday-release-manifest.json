@@ -98,8 +98,8 @@
       "order": 8,
       "version": "20261025013000",
       "file": "supabase/migrations/20261025013000_cross_class_makeup_roster.sql",
-      "sha256": "2ada47007b83bafc93237c74e5788c801248e685e7c79394007cb161cd4b8614",
-      "bytes": 8886,
+      "sha256": "31f68edb964a0fc2c97a02c5d1108c704ba096cfcae49c6f0af692f27e4a3892",
+      "bytes": 9094,
       "transaction": "runner-wraps",
       "sentinel_sql": "select case when to_regclass('maintenance_private.teaching_shift_write_gate') is not null and exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'validate_makeup_participant' and pg_get_functiondef(p.oid) ilike '%compatible program%') then 'ready' else '' end",
       "sentinel_contains": "ready"

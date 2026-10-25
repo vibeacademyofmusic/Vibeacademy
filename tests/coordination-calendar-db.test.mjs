@@ -35,8 +35,8 @@ create function can_access_session(p_session uuid) returns boolean language sql 
 `)
 const pauseSource = fs.readFileSync('supabase/migrations/20260907020106_enrollment_pause_engine.sql','utf8')
 await db.exec(pauseSource.match(/create or replace function public\.is_enrollment_paused_on\([\s\S]+?\$\$;/i)[0])
-const rosterSource = fs.readFileSync('supabase/migrations/20261001100000_excused_makeup_entitlement.sql','utf8')
-await db.exec(rosterSource.match(/CREATE OR REPLACE FUNCTION public\.session_teaching_roster\([\s\S]+?\$function\$;/)[0])
+const rosterSource = fs.readFileSync('supabase/migrations/20261025013000_cross_class_makeup_roster.sql','utf8')
+await db.exec(rosterSource.match(/create or replace function public\.session_teaching_roster\([\s\S]+?\$\$;/i)[0])
 const teacherSource = fs.readFileSync('supabase/migrations/20260915170000_session_teacher_assignment_v1.sql','utf8')
 await db.exec(teacherSource.match(/create view public\.session_actual_teachers[\s\S]+?primary_teacher on true;/)[0])
 await db.exec(fs.readFileSync('supabase/migrations/20261024002601_coordination_week_dashboard_read.sql','utf8'))
@@ -92,6 +92,16 @@ test('SQL calendar contracts', async t => {
     await db.exec(`insert into attendance_records values('${uid(80)}','${uid(70)}','${uid(60)}','LATE'); insert into session_teacher_assignments(id,session_id,teacher_id,assignment_type,effective_status) values('${uid(90)}','${uid(70)}','${uid(31)}','SUBSTITUTE','ACTIVE');`)
     const row=(await read()).rows[0]
     assert.equal(row.teacher_name,'Substitute'); assert.equal(row.roster[0].attendance,'LATE')
+  })
+  await t.test('a booked guest from another class is counted once with their own attendance', async () => {
+    await fixture(); await occurrence({type:'MAKEUP',date:'2026-10-27',start:'2026-10-27T09:00:00Z',end:'2026-10-27T10:30:00Z'})
+    await db.exec(`insert into classes values('${uid(12)}','Guest class','G1','${uid(1)}',null,null,6,'ACTIVE','2026-10-26',null);
+      insert into enrollments values('${uid(63)}','${uid(51)}','${uid(12)}','2026-10-26',null,'ACTIVE');
+      insert into session_occurrence_participants values('${uid(70)}','${uid(60)}','ACTIVE'),('${uid(70)}','${uid(63)}','ACTIVE');
+      insert into attendance_records values('${uid(81)}','${uid(70)}','${uid(63)}','PRESENT');`)
+    const row=(await read()).rows.find(row=>row.session_id===uid(70))
+    assert.equal(row.roster.length,2)
+    assert.equal(row.roster.find(person=>person.enrollment_id===uid(63)).attendance,'PRESENT')
   })
   await t.test('a denied materialized session never reappears as a projected roster', async () => {
     await fixture(); await occurrence()

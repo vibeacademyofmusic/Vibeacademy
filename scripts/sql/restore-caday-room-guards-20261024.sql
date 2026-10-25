@@ -3,6 +3,11 @@
 begin;
 set local lock_timeout = '5s';
 
+lock table public.attendance_records, public.class_teachers, public.classes,
+  public.enrollments, public.placement_time_windows, public.rooms,
+  public.schedules, public.session_occurrence_participants, public.session_occurrences
+  in share row exclusive mode;
+
 do $guard$
 begin
   if (
@@ -42,6 +47,21 @@ alter table public.enrollments enable trigger trg_room_capacity_enrollment_guard
 
 do $gate$
 begin
+  if (
+    select count(*) from pg_trigger
+    where not tgisinternal and tgenabled = 'O'
+      and tgname = 'trg_00_teaching_shift_write_gate'
+      and tgrelid in (
+        'public.rooms'::regclass, 'public.schedules'::regclass,
+        'public.classes'::regclass, 'public.class_teachers'::regclass,
+        'public.session_occurrences'::regclass, 'public.enrollments'::regclass,
+        'public.attendance_records'::regclass,
+        'public.session_occurrence_participants'::regclass,
+        'public.placement_time_windows'::regclass
+      )
+  ) <> 9 then
+    raise exception 'CADAY_WRITE_GATE_TRIGGER_SET_CHANGED';
+  end if;
   update maintenance_private.teaching_shift_write_gate
   set writes = 'open',
       reason = 'All eleven room and teacher guards are enabled again.',

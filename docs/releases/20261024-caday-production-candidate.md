@@ -1,5 +1,9 @@
 # Ứng viên phát hành Ca dạy & Lịch học, 24/10/2026
 
+> Cập nhật: [bản sửa runner và cổng phòng ngày 25/10](20261025-caday-release-fixes.md)
+> thay thế quy trình `--repair-ledger` và cổng tám bảng mô tả trong bằng chứng
+> lịch sử bên dưới. Runner hiện ghi SQL và ledger cùng transaction; cổng có chín bảng.
+
 ## Phạm vi và nguồn
 
 - Nền mã: commit `60ce44786960cdfa1a5c22aaedbc7c9b79e3338a` của bản tách riêng đã dùng cho lần triển khai production gần nhất. Vercel đang gắn `manage.vibe.edu.vn` với deployment `dpl_3EAKF2Ergmxiddq4pKfH4T9LyyjS`. Metadata của deployment CLI không chứa Git SHA; liên hệ giữa commit và deployment dựa trên hồ sơ phát hành trước.

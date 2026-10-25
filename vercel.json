@@ -1,4 +1,9 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "codex/caday-release-fixes-20261025": false
+    }
+  },
   "crons": [
     {
       "path": "/api/internal/zalo/renewal",
