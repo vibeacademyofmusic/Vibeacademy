@@ -42,6 +42,13 @@ tập trung tổng cộng đạt; build, typecheck, lint các tệp thay đổi 
 `git diff --check` đạt. Bộ đường lưu đã tái hiện việc mã `a65f3cf` báo lưu
 một học viên dù form gửi hai học viên. Chưa bấm lại ứng dụng trên máy Mac.
 
+Lượt CI đầu của bổ sung điểm danh phát hiện một fixture phân quyền dùng
+`current_date` UTC trong `student_ops_shell_test.sql`. Sau 17:00 UTC, Việt Nam
+đã sang ngày mới nên kiểm tra ngày quá khứ chạy trước kiểm tra phân quyền.
+Fixture được đổi sang `registration_vietnam_today()` như các trường hợp
+cùng bộ; vẫn yêu cầu đúng lỗi `PLACEMENT_UNAUTHORIZED`, không bỏ assertion
+và không thay đổi hàm nghiệp vụ hay migration.
+
 ## Thay đổi đã thực hiện
 
 - Runner dùng một kết nối, giữ advisory lock xuyên suốt đợt chạy. Mỗi file
