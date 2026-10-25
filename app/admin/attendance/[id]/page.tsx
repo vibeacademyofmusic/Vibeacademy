@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import SessionJournals from '@/app/admin/learning-journals/SessionJournals'
 import {
+  bookCrossClassMakeup,
   createMakeupSession,
   rescheduleSession,
   saveAttendance,
@@ -433,6 +434,47 @@ if (
   ).filter((enrollment) =>
     availableCreditCounts.has(enrollment.id)
   )
+
+  type CrossClassOption = { creditId: string, label: string }
+  let crossClassOptions: CrossClassOption[] = []
+  let crossClassError = false
+  if (canManage && occurrence.occurrence_type === 'MAKEUP' && occurrence.status === 'SCHEDULED') {
+    const creditResult = await supabase
+      .from('makeup_credits')
+      .select(`
+        id,
+        status,
+        source_reason,
+        reserved_occurrence_id,
+        enrollment:enrollments!inner (
+          status,
+          class_id,
+          student:students!inner (student_code, full_name, preferred_name),
+          class:classes!inner (id, code, name, branch_id)
+        )
+      `)
+      .in('status', ['AVAILABLE', 'RESERVED'])
+    if (creditResult.error) {
+      crossClassError = true
+    } else {
+      const reasonLabel = (reason: string) => reason === 'EXCUSED' ? 'nghỉ có phép' : 'buổi thường bị hủy'
+      crossClassOptions = (creditResult.data ?? []).flatMap(credit => {
+        const enrollment = Array.isArray(credit.enrollment) ? credit.enrollment[0] : credit.enrollment
+        const student = enrollment && (Array.isArray(enrollment.student) ? enrollment.student[0] : enrollment.student)
+        const sourceClass = enrollment && (Array.isArray(enrollment.class) ? enrollment.class[0] : enrollment.class)
+        if (!enrollment || !student || !sourceClass || enrollment.status !== 'ACTIVE') return []
+        if (sourceClass.branch_id !== classItem.branch_id || sourceClass.id === classItem.id) return []
+        const reservedHere = credit.status === 'RESERVED' && credit.reserved_occurrence_id === occurrence.id
+        if (credit.status !== 'AVAILABLE' && !reservedHere) return []
+        const name = student.preferred_name || student.full_name || student.student_code
+        const state = reservedHere ? 'Đã đặt vào buổi này' : 'Còn quyền'
+        return [{
+          creditId: credit.id,
+          label: `${name} · ${student.student_code} · ${sourceClass.name} · ${reasonLabel(credit.source_reason)} · ${state}`,
+        }]
+      }).sort((left, right) => left.label.localeCompare(right.label, 'vi'))
+    }
+  }
 
   let students: StudentSummary[] = []
   let studentsError = null
@@ -873,6 +915,28 @@ if (
                 </section>
 
 <div className="vibe-actions mt-4"><Link href={returnTo} className="vibe-button vibe-button-primary">Quay lại danh sách điểm danh</Link>{nextSession && <Link className="vibe-button" href={`/admin/attendance/${nextSession.id}?return_to=${encodeURIComponent(returnTo)}#attendance-roster`}>Buổi tiếp theo</Link>}{canManage && <Link className="vibe-button" href={`/admin/classes/${classItem.id}`}>Xem ca dạy</Link>}</div>
+{canManage && occurrence.occurrence_type === 'MAKEUP' && occurrence.status === 'SCHEDULED' && (
+  <section className="mt-6 rounded-2xl border border-purple-200 bg-white p-6" aria-labelledby="cross-class-makeup-title">
+    <h2 id="cross-class-makeup-title" className="text-lg font-semibold text-gray-950">Thêm học viên từ ca khác</h2>
+    <p className="mt-1 max-w-3xl text-sm leading-6 text-gray-500">Chọn học viên đang có quyền học bù ở ca khác của cùng chi nhánh. Chỗ chỉ được đặt khi quyền còn dùng được, chương trình và trình độ phù hợp, buổi còn chỗ và không trùng giờ đã có. Bài học tương đương cần được ghi nhận, ít nhất 8 ký tự.</p>
+    {crossClassError ? <p className="mt-4 text-sm text-red-700">Chưa tải được danh sách học viên từ ca khác.</p> : crossClassOptions.length === 0 ? <p className="mt-4 text-sm text-gray-600">Không có học viên ca khác đang còn quyền học bù.</p> : (
+      <form action={bookCrossClassMakeup} className="mt-5 grid gap-4">
+        <input type="hidden" name="occurrence_id" value={occurrence.id} />
+        <input type="hidden" name="return_to" value={returnTo} />
+        <label className="text-sm font-medium text-gray-700">Học viên
+          <select name="credit_id" required defaultValue="" className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-purple-700">
+            <option value="" disabled>Chọn học viên từ ca khác</option>
+            {crossClassOptions.map(option => <option key={option.creditId} value={option.creditId}>{option.label}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-medium text-gray-700">Bài học tương đương được chấp nhận
+          <textarea name="acceptance_note" required minLength={8} maxLength={500} rows={3} className="mt-2 w-full resize-y rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-purple-700" placeholder="Ghi bài học tương đương, ít nhất 8 ký tự" />
+        </label>
+        <div className="flex justify-end"><button type="submit" className="rounded-lg bg-purple-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-800">Đặt chỗ học bù</button></div>
+      </form>
+    )}
+  </section>
+)}
 {canManage && <details className="mt-6"><summary className="cursor-pointer text-sm font-semibold">Quản lý buổi học</summary><SessionTeacher id={id} />        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
           <div>
             <h2 className="text-lg font-semibold text-gray-950">

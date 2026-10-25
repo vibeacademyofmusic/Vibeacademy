@@ -899,3 +899,46 @@ export async function createMakeupSession(
     `/admin/attendance/${sourceOccurrenceId}?success=Makeup%20session%20created`
   )
 }
+
+export async function bookCrossClassMakeup(formData: FormData) {
+  const { supabase } = await requireSuperAdmin()
+  const occurrenceId = String(formData.get('occurrence_id') ?? '').trim()
+  const creditId = String(formData.get('credit_id') ?? '').trim()
+  const note = String(formData.get('acceptance_note') ?? '')
+  const returnTo = attendanceReturn(formData.get('return_to'))
+  const context = `return_to=${encodeURIComponent(returnTo)}&`
+  const target = UUID_PATTERN.test(occurrenceId)
+    ? `/admin/attendance/${occurrenceId}?${context}`
+    : '/admin/attendance?'
+
+  if (!UUID_PATTERN.test(occurrenceId) || !UUID_PATTERN.test(creditId)) {
+    redirect(`${target}error=${encodeURIComponent('Chọn học viên từ ca khác.')}`)
+  }
+
+  const { data, error } = await supabase.rpc('book_makeup_seat', {
+    p_credit_id: creditId,
+    p_occurrence_id: occurrenceId,
+    p_acceptance_note: note,
+  })
+  const payload = data && typeof data === 'object' ? data as { ok?: boolean, blockers?: unknown } : null
+  const blockers = Array.isArray(payload?.blockers)
+    ? payload.blockers.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+    : []
+
+  if (error || payload?.ok !== true) {
+    const message = blockers.length
+      ? blockers.join(' ')
+      : error?.message?.includes('Không có quyền')
+        ? 'Không có quyền bảo lưu và học bù.'
+        : 'Không đặt được chỗ học bù.'
+    redirect(`${target}error=${encodeURIComponent(message)}`)
+  }
+
+  revalidatePath('/admin/attendance')
+  revalidatePath('/admin/students')
+  revalidatePath('/admin/classes')
+  revalidatePath('/admin/coordination')
+  revalidatePath('/admin')
+  revalidatePath(`/admin/attendance/${occurrenceId}`)
+  redirect(`${target}success=${encodeURIComponent('Đã đặt chỗ học bù từ ca khác.')}`)
+}
