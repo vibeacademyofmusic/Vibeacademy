@@ -455,8 +455,8 @@ select throws_ok(
     )
   $$,
   'P0001',
-  'Makeup participant must belong to the occurrence class',
-  'rejects a participant from another class'
+  'Selected student does not have an available makeup credit for this class',
+  'does not book another class without a credit for this makeup session'
 );
 
 select throws_ok(
