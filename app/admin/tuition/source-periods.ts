@@ -29,5 +29,6 @@ export async function sourcePeriods(db: DB) {
   return all<SourceRow>((from, to) => db.from('legacy_student_opening_rows')
     .select('id,source_excel_row,target_student_id,disposition,fee_starts_on,source_effective_ends_on,is_unlimited,normalized_payload,students(full_name,student_code)')
     .eq('import_batch_id', sourceBatch).neq('disposition', 'EXCLUDED')
+    .is('normalized_payload->tuition_list_exclusion', null)
     .order('source_excel_row').range(from, to).returns<SourceRow[]>())
 }

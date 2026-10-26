@@ -24,7 +24,8 @@ export default function SourcePeriods({ data, params, today }: { data: SourceRow
       { name: 'period_student', label: 'Tên / mã học viên / dòng nguồn', type: 'search', value: params.period_student },
       { name: 'period_state', label: 'Trạng thái kỳ', type: 'select', value: params.period_state, options: Object.entries(labels).map(([id, name]) => ({ id, name })) },
     ]} resetHref="/admin/tuition" submitLabel="Lọc kỳ học phí" />
-    <DataTable headers={['Học viên', 'Môn / gói nguồn', 'Bắt đầu kỳ', 'Kết thúc kỳ', 'Trạng thái', 'Thời gian còn lại', 'Đối soát']} rows={visible.map(({ row, state, days }) => [
+    <DataTable headers={['STT', 'Học viên', 'Môn / gói nguồn', 'Bắt đầu kỳ', 'Kết thúc kỳ', 'Trạng thái', 'Thời gian còn lại', 'Đối soát']} rows={visible.map(({ row, state, days }, index) => [
+      (page - 1) * pageSize + index + 1,
       <div key="student">{row.target_student_id && row.students ? <Link prefetch={false} href={`/admin/students/${row.target_student_id}`}>{row.students.full_name} · {row.students.student_code}</Link> : 'Chưa xác nhận hồ sơ'}<small className="block">Dòng Excel {row.source_excel_row}</small></div>,
       <div key="program">{String(row.normalized_payload.source_program ?? '—')}<small className="block">{row.is_unlimited ? 'Vô hạn' : String((row.normalized_payload.tuition_tracking as Record<string, unknown> | undefined)?.plan_label ?? 'Chờ đối chiếu gói')}</small></div>,
       state === 'HOLD' ? 'Chờ xác nhận' : dateText(row.fee_starts_on),
