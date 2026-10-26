@@ -177,8 +177,10 @@ declare
 begin
   select gate.writes into state
   from maintenance_private.teaching_shift_write_gate gate
-  where gate.singleton;
-  if state = 'stopped' then
+  where gate.singleton for share;
+  -- Hold the shared row lock until the write commits. Stopping the gate waits
+  -- for in-flight writes; a missing gate must never silently reopen writes.
+  if state is distinct from 'open' then
     raise exception 'TEACHING_SHIFT_WRITES_STOPPED';
   end if;
   if tg_op = 'DELETE' then
@@ -195,6 +197,7 @@ declare
   target regclass;
 begin
   foreach target in array array[
+    'public.rooms'::regclass,
     'public.schedules'::regclass,
     'public.classes'::regclass,
     'public.class_teachers'::regclass,

@@ -26,6 +26,9 @@ jobs:
         run: |
           node --test \
             tests/caday-release-manifest.test.mjs \
+            tests/caday-release-runner.test.mjs \
+            tests/caday-write-gate.test.mjs \
+            tests/attendance-save.test.cjs \
             tests/cross-class-makeup-roster.test.mjs \
             tests/coordination-calendar-db.test.mjs \
             tests/coordination-calendar-loader.test.cjs \
@@ -36,6 +39,10 @@ jobs:
             tests/teaching-shift-parallel-readiness.test.mjs \
             tests/mixed-level-class-ops.test.cjs
       - run: npx --no-install supabase start
+      - name: Calendar browser regression
+        run: |
+          npx --no-install playwright install --with-deps chromium
+          node scripts/test-caday-browser.mjs
       - run: npx --no-install supabase db reset
       - run: npm run test:business-lock:db
         env:
@@ -44,3 +51,5 @@ jobs:
         run: node --test tests/tuition-zalo-reply.test.cjs
       - name: Teaching schedule concurrent write contracts
         run: node scripts/local-schedule-room-race.cjs
+      - name: Release runner interruption and concurrency
+        run: node scripts/test-caday-release-concurrency.mjs

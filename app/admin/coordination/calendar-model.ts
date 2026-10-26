@@ -33,11 +33,15 @@ export function addDays(date: string, days: number) {
 }
 
 export function localDate(value: string) {
-  return dateFormatter.format(new Date(value))
+  // Locale punctuation/order differs between browser and server ICU versions.
+  // Dates also act as map keys, so construct the ISO date from named parts.
+  const parts = Object.fromEntries(dateFormatter.formatToParts(new Date(value)).map(part => [part.type, part.value]))
+  return `${parts.year}-${parts.month}-${parts.day}`
 }
 
 export function localTime(value: string) {
-  return timeFormatter.format(new Date(value))
+  const parts = Object.fromEntries(timeFormatter.formatToParts(new Date(value)).map(part => [part.type, part.value]))
+  return `${parts.hour}:${parts.minute}`
 }
 
 export function periodFor(value: string) {

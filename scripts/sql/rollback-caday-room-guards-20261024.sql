@@ -7,6 +7,12 @@
 begin;
 set local lock_timeout = '5s';
 
+-- Drain writers before taking the gate row lock, in a stable table order.
+lock table public.attendance_records, public.class_teachers, public.classes,
+  public.enrollments, public.placement_time_windows, public.rooms,
+  public.schedules, public.session_occurrence_participants, public.session_occurrences
+  in share row exclusive mode;
+
 do $guard$
 begin
   if (
@@ -34,6 +40,7 @@ begin
     from pg_trigger
     where not tgisinternal and tgenabled = 'O' and tgname = 'trg_00_teaching_shift_write_gate'
       and tgrelid in (
+        'public.rooms'::regclass,
         'public.schedules'::regclass,
         'public.classes'::regclass,
         'public.class_teachers'::regclass,
@@ -43,7 +50,7 @@ begin
         'public.session_occurrence_participants'::regclass,
         'public.placement_time_windows'::regclass
       )
-  ) <> 8 then
+  ) <> 9 then
     raise exception 'CADAY_WRITE_GATE_TRIGGER_SET_CHANGED';
   end if;
   update maintenance_private.teaching_shift_write_gate
