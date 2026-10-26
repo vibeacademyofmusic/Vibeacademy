@@ -5,18 +5,21 @@ import { money } from '../finance/data'
 import { Field, Select, Panel, Table, Pager, Notice, LoadError, dateText } from '../finance/_components/ui'
 import { terms, selectedTerm, plans, enrollmentChoices, debts, daysBetween, statuses } from './data'
 import TuitionForm from './TuitionForm'
+import SourcePeriods from './SourcePeriods'
+import { sourcePeriods } from './source-periods'
 export default async function TuitionPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams, db = await adminClient()
   let loaded
   try {
-    const base = await Promise.all([terms(db, params), selectedTerm(db, params.selected), branches(db), plans(db), enrollmentChoices(db, params)])
+    const base = await Promise.all([terms(db, params), selectedTerm(db, params.selected), branches(db), plans(db), enrollmentChoices(db, params), sourcePeriods(db)])
     const debtRows = await debts(db, base[1] ? [base[1].id] : [])
     loaded = { base, debtRows }
   } catch { return <LoadError /> }
-  const { base: [list, selected, branchRows, planRows, enrollments], debtRows } = loaded
+  const { base: [list, selected, branchRows, planRows, enrollments, sourceRows], debtRows } = loaded
   const enrollment = enrollments.data.find(e => e.id === params.create)
   const today = vietnamDateTime().slice(0, 10)
   return <div className="min-w-0 space-y-6"><h1 className="text-3xl font-bold">Vận hành học phí</h1><Notice params={params} />
+    <SourcePeriods data={sourceRows} params={params} today={today} />
     <form className="grid gap-3 sm:grid-cols-3">
       <Select name="branch" label="Chi nhánh" options={branchRows} value={params.branch} />
       <Select name="status" label="Trạng thái" options={statuses.map(id => ({ id, name: id }))} value={params.status} />
