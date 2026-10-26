@@ -67,4 +67,3 @@ test('SQL binds literals, preimages, transaction locks, ledger and side-effect g
   assert.match(sql,/O''Brien/);assert.match(sql,/pg_try_advisory_xact_lock/);assert.match(sql,/ROLLOUT_PREIMAGE_CHANGED/);assert.match(sql,/ROLLOUT_UNEXPECTED_SIDE_EFFECT/)
   assert.match(sql,/^begin;/);assert.match(sql,/commit;\s*$/)
 })
-
