@@ -24,6 +24,10 @@ export function periodTiming(row: SourceRow, today: string): { state: PeriodStat
   const days = daysBetween(today, row.source_effective_ends_on!)
   return { state: row.fee_starts_on! > today ? 'UPCOMING' : days < 0 ? 'EXPIRED' : 'ACTIVE', days }
 }
+export function matchesPeriodFilter(timing: { state: PeriodState; days: number | null }, filter?: string) {
+  if (filter === 'DUE_SOON') return timing.state === 'ACTIVE' && timing.days !== null && timing.days >= 0 && timing.days <= 35
+  return !filter || timing.state === filter
+}
 export async function sourcePeriods(db: DB) {
   // Existing branch-scoped RLS governs visibility. Do not use a service-role client.
   return all<SourceRow>((from, to) => db.from('legacy_student_opening_rows')

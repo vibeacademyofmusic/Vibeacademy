@@ -11,7 +11,7 @@ const mocks={
  '../finance/operations':{validDate:v=>/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v},
 };
 new Function('require','module','exports',moduleOutput)(name=>{if(!(name in mocks))throw Error('Unexpected dependency '+name);return mocks[name]},m,m.exports);
-const {periodTiming,sourcePeriods,periodSourceHash,sourceBatch}=m.exports;
+const {matchesPeriodFilter,periodTiming,sourcePeriods,periodSourceHash,sourceBatch}=m.exports;
 function row(start='2026-10-01',end='2026-10-27',extra={}){
  const r={id:'row1',source_excel_row:7,target_student_id:'student1',disposition:'IMPORT',fee_starts_on:start,source_effective_ends_on:end,is_unlimited:false,...extra};
  r.normalized_payload={tuition_tracking:{version:'SOURCE_PERIOD_V1',source_sha256:periodSourceHash,source_excel_row:r.source_excel_row,student_id:r.target_student_id,starts_on:start,ends_on:end,is_unlimited:r.is_unlimited,money_state:'UNVERIFIED',notifications_eligible:false}};
@@ -39,4 +39,15 @@ test('loader uses the supplied RLS client, correct batch and excludes retired so
  const db={from:name=>{calls.push(['from',name]);return query;}};
  assert.deepEqual(await sourcePeriods(db),data);assert.ok(calls.some(c=>c[0]==='eq'&&c[1]==='import_batch_id'&&c[2]===sourceBatch));assert.ok(calls.some(c=>c[0]==='neq'&&c[1]==='disposition'&&c[2]==='EXCLUDED'));
  assert.ok(calls.every(c=>!['insert','update','rpc','delete','upsert'].includes(c[0])));
+});
+
+test('near-due filter includes days 0 through 35 and excludes expired, future and held periods',()=>{
+ for(const [end,expected] of [['2026-10-26',false],['2026-10-27',true],['2026-10-28',true],['2026-12-01',true],['2026-12-02',false]]) {
+  const timing=periodTiming(row('2026-10-01',end),'2026-10-27');
+  assert.equal(matchesPeriodFilter(timing,'DUE_SOON'),expected,end);
+  assert.equal(matchesPeriodFilter(timing,''),true);
+  assert.equal(matchesPeriodFilter(timing,'ACTIVE'),timing.state==='ACTIVE');
+ }
+ for(const r of [row('2026-11-01','2026-11-15'),row(null,null,{is_unlimited:true}),{...row(),normalized_payload:{}}])
+  assert.equal(matchesPeriodFilter(periodTiming(r,'2026-10-27'),'DUE_SOON'),false);
 });
