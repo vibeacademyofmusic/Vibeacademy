@@ -51,3 +51,29 @@ test('near-due filter includes days 0 through 35 and excludes expired, future an
  for(const r of [row('2026-11-01','2026-11-15'),row(null,null,{is_unlimited:true}),{...row(),normalized_payload:{}}])
   assert.equal(matchesPeriodFilter(periodTiming(r,'2026-10-27'),'DUE_SOON'),false);
 });
+const exportModule={exports:{}};
+new Function('require','module','exports',ts.transpileModule(fs.readFileSync('app/admin/tuition/source-periods-export.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText)(name=>{assert.equal(name,'./source-periods');return m.exports},exportModule,exportModule.exports);
+const {sourcePeriodsCsv}=exportModule.exports;
+test('CSV exports every filtered row beyond the first page with Vietnamese text and sequential numbers',()=>{
+ const rows=Array.from({length:30},(_,i)=>({...row('2026-10-01','2026-11-01'),students:{full_name:'Nguyễn An',student_code:'VIBE-'+i}}));
+ const csv=sourcePeriodsCsv(rows,'2026-10-27',{period_state:'DUE_SOON'});
+ assert.ok(csv.startsWith('\uFEFF'));assert.equal(csv.trim().split('\r\n').length,31);assert.ok(csv.includes('"30","Nguyễn An"'));assert.ok(csv.includes('"Còn 5 ngày"'));
+ assert.equal(sourcePeriodsCsv(rows,'2026-10-27',{period_state:'EXPIRED'}).trim().split('\r\n').length,1);
+ assert.equal(sourcePeriodsCsv(rows,'2026-10-27',{period_student:'VIBE-29'}).trim().split('\r\n').length,2);
+});
+test('CSV safely escapes formulas, commas, quotes and line breaks, and hides held dates',()=>{
+ const r={...row(),students:{full_name:' =HYPERLINK("x")\n,',student_code:'@formula'}};
+ const csv=sourcePeriodsCsv([r],'2026-10-27',{});
+ assert.ok(csv.includes('"\' =HYPERLINK(""x"")\n,"'));assert.ok(csv.includes('"\'@formula"'));
+ const held=sourcePeriodsCsv([{...r,normalized_payload:{}}],'2026-10-27',{});
+ assert.ok(held.includes('"Chờ xác nhận","Chờ xác nhận","Chờ xác nhận","Chưa tính"'));
+});
+test('export route requires admin authorization before querying and never caches private files',async()=>{
+ const route={exports:{}};let authorized=false,queried=false;
+ const code=ts.transpileModule(fs.readFileSync('app/admin/tuition/export/route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
+ const deps={'../../finance/operations':{adminClient:async()=>{if(!authorized)throw Error('LOGIN');return{}},vietnamDateTime:()=> '2026-10-27T10:00'},'../source-periods':{sourcePeriods:async()=>{queried=true;return[row()]}},'../source-periods-export':{sourcePeriodsCsv}};
+ new Function('require','module','exports',code)(name=>deps[name],route,route.exports);
+ await assert.rejects(route.exports.GET(new Request('https://example.test/admin/tuition/export')),/LOGIN/);assert.equal(queried,false);
+ authorized=true;const response=await route.exports.GET(new Request('https://example.test/admin/tuition/export?period_state=DUE_SOON'));
+ assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'private, no-store');assert.match(response.headers.get('content-disposition'),/attachment.*\.csv/);assert.ok((await response.text()).includes('Hết hạn hôm nay'));
+});

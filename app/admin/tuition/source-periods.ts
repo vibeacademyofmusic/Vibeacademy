@@ -36,3 +36,14 @@ export async function sourcePeriods(db: DB) {
     .is('normalized_payload->tuition_list_exclusion', null)
     .order('source_excel_row').range(from, to).returns<SourceRow[]>())
 }
+
+export const periodLabels: Record<PeriodState, string> = { ACTIVE: 'Trong kỳ', UPCOMING: 'Chưa bắt đầu', EXPIRED: 'Đã hết hạn', UNLIMITED: 'Vô hạn', HOLD: 'Chờ xác nhận' }
+export function filterSourcePeriods(data: SourceRow[], today: string, params: { period_state?: string; period_student?: string }) {
+  const search = (params.period_student ?? '').trim().normalize('NFC').toLocaleLowerCase('vi')
+  return data.map(row => ({ row, ...periodTiming(row, today) })).filter(({ row, state, days }) =>
+    matchesPeriodFilter({ state, days }, params.period_state) &&
+    (!search || `${row.students?.full_name ?? ''} ${row.students?.student_code ?? ''} ${row.source_excel_row}`.normalize('NFC').toLocaleLowerCase('vi').includes(search)))
+}
+export function periodRemaining(row: SourceRow, state: PeriodState, days: number | null, today: string) {
+  return state === 'HOLD' ? 'Chưa tính' : state === 'UNLIMITED' ? 'Không hết hạn' : state === 'UPCOMING' ? `Bắt đầu sau ${daysBetween(today, row.fee_starts_on!)} ngày` : days! < 0 ? `Đã hết hạn ${Math.abs(days!)} ngày` : days === 0 ? 'Hết hạn hôm nay' : `Còn ${days} ngày`
+}

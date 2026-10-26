@@ -2,17 +2,15 @@ import Link from 'next/link'
 import { DataTable, InlineNotice, MetricCard, OperationsFilterBar, SectionCard, StatusBadge } from '../_components/vibe'
 import { Pager, dateText } from '../finance/_components/ui'
 import { pageNumber, pageSize, type Params } from '../finance/operations'
-import { matchesPeriodFilter, periodTiming, type PeriodState, type SourceRow } from './source-periods'
+import { filterSourcePeriods, periodLabels as labels, periodRemaining, periodTiming, type PeriodState, type SourceRow } from './source-periods'
 
-const labels: Record<PeriodState, string> = { ACTIVE: 'Trong kỳ', UPCOMING: 'Chưa bắt đầu', EXPIRED: 'Đã hết hạn', UNLIMITED: 'Vô hạn', HOLD: 'Chờ xác nhận' }
 const tones = { ACTIVE: 'success', UPCOMING: 'info', EXPIRED: 'warning', UNLIMITED: 'neutral', HOLD: 'warning' } as const
 export default function SourcePeriods({ data, params, today }: { data: SourceRow[]; params: Params; today: string }) {
   if (!data.length) return null
   const timed = data.map(row => ({ row, ...periodTiming(row, today) }))
   const count = (state: PeriodState) => timed.filter(r => r.state === state).length
-  const search = (params.period_student ?? '').trim().normalize('NFC').toLocaleLowerCase('vi')
-  const filtered = timed.filter(({ row, state, days }) => matchesPeriodFilter({ state, days }, params.period_state) &&
-    (!search || `${row.students?.full_name ?? ''} ${row.students?.student_code ?? ''} ${row.source_excel_row}`.normalize('NFC').toLocaleLowerCase('vi').includes(search)))
+  const filtered = filterSourcePeriods(data, today, params)
+  const exportHref = '/admin/tuition/export?' + new URLSearchParams({ period_student: params.period_student ?? '', period_state: params.period_state ?? '' })
   const page = pageNumber(params.period_page), visible = filtered.slice((page - 1) * pageSize, page * pageSize)
   return <SectionCard title="Kỳ học phí từ danh sách Cần Thơ">
     <p className="text-sm">Theo dõi đến ngày {dateText(today)}. Ngày kết thúc giữ đúng danh sách đã cung cấp; số ngày còn lại được tính theo ngày Việt Nam.</p>
@@ -24,6 +22,10 @@ export default function SourcePeriods({ data, params, today }: { data: SourceRow
       { name: 'period_student', label: 'Tên / mã học viên / dòng nguồn', type: 'search', value: params.period_student },
       { name: 'period_state', label: 'Trạng thái kỳ', type: 'select', value: params.period_state, options: [...Object.entries(labels).map(([id, name]) => ({ id, name })), { id: 'DUE_SOON', name: 'Gần đến kỳ (còn tối đa 35 ngày)' }] },
     ]} resetHref="/admin/tuition" submitLabel="Lọc kỳ học phí" />
+    <div className="flex flex-wrap items-center gap-3">
+      <a className="vibe-button" href={exportHref} download>Xuất Excel (.csv)</a>
+      <span className="text-sm">Xuất toàn bộ {filtered.length} dòng theo bộ lọc đang áp dụng.</span>
+    </div>
     {params.period_state === 'DUE_SOON' && <p className="text-sm">Các kỳ đang học còn từ 0 đến 35 ngày trước ngày kết thúc, gồm cả kỳ hết hạn hôm nay.</p>}
     <DataTable headers={['STT', 'Học viên', 'Môn / gói nguồn', 'Bắt đầu kỳ', 'Kết thúc kỳ', 'Trạng thái', 'Thời gian còn lại', 'Đối soát']} rows={visible.map(({ row, state, days }, index) => [
       (page - 1) * pageSize + index + 1,
@@ -32,10 +34,9 @@ export default function SourcePeriods({ data, params, today }: { data: SourceRow
       state === 'HOLD' ? 'Chờ xác nhận' : dateText(row.fee_starts_on),
       state === 'UNLIMITED' ? 'Không giới hạn' : state === 'HOLD' ? 'Chờ xác nhận' : dateText(row.source_effective_ends_on),
       <StatusBadge key="status" tone={tones[state]}>{labels[state]}</StatusBadge>,
-      state === 'HOLD' ? 'Chưa tính' : state === 'UNLIMITED' ? 'Không hết hạn' : state === 'UPCOMING' ? `Bắt đầu sau ${Math.abs(daysBetweenStart(today, row.fee_starts_on!))} ngày` : days! < 0 ? `Đã hết hạn ${Math.abs(days!)} ngày` : days === 0 ? 'Hết hạn hôm nay' : `Còn ${days} ngày`,
+      periodRemaining(row, state, days, today),
       'Chưa đối soát số tiền',
     ])} />
     <Pager path="/admin/tuition" params={params} page={page} more={filtered.length > page * pageSize} keyName="period_page" />
   </SectionCard>
 }
-function daysBetweenStart(today: string, start: string) { return Math.round((Date.parse(start + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86400000) }
