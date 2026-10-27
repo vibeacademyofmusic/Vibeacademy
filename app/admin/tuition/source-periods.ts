@@ -47,3 +47,13 @@ export function filterSourcePeriods(data: SourceRow[], today: string, params: { 
 export function periodRemaining(row: SourceRow, state: PeriodState, days: number | null, today: string) {
   return state === 'HOLD' ? 'Chưa tính' : state === 'UNLIMITED' ? 'Không hết hạn' : state === 'UPCOMING' ? `Bắt đầu sau ${daysBetween(today, row.fee_starts_on!)} ngày` : days! < 0 ? `Đã hết hạn ${Math.abs(days!)} ngày` : days === 0 ? 'Hết hạn hôm nay' : `Còn ${days} ngày`
 }
+
+export function sourceMoneyLabel(row: SourceRow) {
+  const value = row.normalized_payload.tuition_money_confirmation as Record<string, unknown> | undefined
+  if (!value || value.version !== 'OWNER_CONFIRMED_V1') return 'Chưa đối soát số tiền'
+  if (value.student_id !== row.target_student_id || value.starts_on !== row.fee_starts_on || value.ends_on !== row.source_effective_ends_on || value.currency !== 'VND' ||
+      ![value.total_amount, value.paid_amount, value.outstanding_amount].every(n => typeof n === 'number' && Number.isSafeInteger(n) && n >= 0) ||
+      Number(value.total_amount) !== Number(value.paid_amount) + Number(value.outstanding_amount)) return 'Cần đối chiếu lại số tiền'
+  const format = (n: unknown) => Number(n).toLocaleString('vi-VN') + 'đ'
+  return `Tổng ${format(value.total_amount)} · Đã đóng ${format(value.paid_amount)} · Còn nợ ${format(value.outstanding_amount)} (chủ trường xác nhận; chờ ghi sổ)`
+}

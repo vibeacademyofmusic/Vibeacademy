@@ -1,4 +1,4 @@
-import { filterSourcePeriods, periodLabels, periodRemaining, type SourceRow } from './source-periods'
+import { sourceMoneyLabel, filterSourcePeriods, periodLabels, periodRemaining, type SourceRow } from './source-periods'
 
 // Quote every cell and keep user-supplied text from being evaluated as a formula.
 function csvCell(value: string | number) {
@@ -16,7 +16,7 @@ export function sourcePeriodsCsv(data: SourceRow[], today: string, params: { per
       row.is_unlimited ? 'Vô hạn' : String((row.normalized_payload.tuition_tracking as Record<string, unknown> | undefined)?.plan_label ?? 'Chờ đối chiếu gói'),
       state === 'HOLD' ? 'Chờ xác nhận' : date(row.fee_starts_on),
       state === 'HOLD' ? 'Chờ xác nhận' : state === 'UNLIMITED' ? 'Không giới hạn' : date(row.source_effective_ends_on),
-      periodLabels[state], periodRemaining(row, state, days, today), 'Chưa đối soát số tiền', row.source_excel_row, date(today),
+      periodLabels[state], periodRemaining(row, state, days, today), sourceMoneyLabel(row), row.source_excel_row, date(today),
     ]),
   ]
   return '\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n') + '\r\n'

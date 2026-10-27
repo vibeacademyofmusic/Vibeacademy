@@ -85,3 +85,9 @@ function trackedRow(){const r=row();r.normalized_payload.tuition_reminder_tracki
 test('only explicitly tracked source periods enter reminder follow-up',()=>{assert.equal(trackedSourceReminders([row(),trackedRow()],'2026-10-27').length,1)});
 test('tracked period remains visible after expiry without enabling outbound messages',()=>{const r=trackedRow();const out=trackedSourceReminders([r],'2026-10-28');assert.equal(out[0].state,'EXPIRED');assert.equal(out[0].needsReview,false);assert.equal(r.normalized_payload.tuition_reminder_tracking.notifications_eligible,false)});
 test('changed period requires reconciliation instead of displaying an obsolete reminder window',()=>{const r=trackedRow();r.source_effective_ends_on='2026-11-30';assert.equal(trackedSourceReminders([r],'2026-10-27')[0].needsReview,true)});
+test('owner-confirmed amounts are displayed only for the matching period and balanced totals',()=>{
+ const r=row();r.normalized_payload.tuition_money_confirmation={version:'OWNER_CONFIRMED_V1',student_id:r.target_student_id,starts_on:r.fee_starts_on,ends_on:r.source_effective_ends_on,currency:'VND',total_amount:17000000,paid_amount:8500000,outstanding_amount:8500000};
+ assert.match(m.exports.sourceMoneyLabel(r),/17\.000\.000đ.*8\.500\.000đ.*8\.500\.000đ/);
+ r.normalized_payload.tuition_money_confirmation.total_amount=16000000;assert.equal(m.exports.sourceMoneyLabel(r),'Cần đối chiếu lại số tiền');
+});
+test('excluded student does not appear in reminder drafts',()=>{const r=trackedRow();r.normalized_payload.tuition_reminder_tracking.state='EXCLUDED';assert.deepEqual(trackedSourceReminders([r],'2026-10-27'),[])});

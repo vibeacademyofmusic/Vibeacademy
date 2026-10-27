@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { DataTable, InlineNotice, MetricCard, OperationsFilterBar, SectionCard, StatusBadge } from '../_components/vibe'
 import { Pager, dateText } from '../finance/_components/ui'
 import { pageNumber, pageSize, type Params } from '../finance/operations'
-import { filterSourcePeriods, periodLabels as labels, periodRemaining, periodTiming, type PeriodState, type SourceRow } from './source-periods'
+import { sourceMoneyLabel, filterSourcePeriods, periodLabels as labels, periodRemaining, periodTiming, type PeriodState, type SourceRow } from './source-periods'
 
 const tones = { ACTIVE: 'success', UPCOMING: 'info', EXPIRED: 'warning', UNLIMITED: 'neutral', HOLD: 'warning' } as const
 export default function SourcePeriods({ data, params, today }: { data: SourceRow[]; params: Params; today: string }) {
@@ -36,7 +36,7 @@ export default function SourcePeriods({ data, params, today }: { data: SourceRow
       state === 'UNLIMITED' ? 'Không giới hạn' : state === 'HOLD' ? 'Chờ xác nhận' : dateText(row.source_effective_ends_on),
       <StatusBadge key="status" tone={tones[state]}>{labels[state]}</StatusBadge>,
       periodRemaining(row, state, days, today),
-      'Chưa đối soát số tiền',
+      sourceMoneyLabel(row),
     ])} />
     <Pager path="/admin/tuition" params={params} page={page} more={filtered.length > page * pageSize} keyName="period_page" />
   </SectionCard>
