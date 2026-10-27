@@ -1,3 +1,6 @@
+import SourceReminderPeriods from './SourceReminderPeriods'
+import { sourcePeriods } from '../source-periods'
+import { vietnamDateTime } from '../../finance/operations'
 import ActionDropdown from '../../_components/vibe/ActionDropdown'
 import AuthorizedFixtureTests from './AuthorizedFixtureTests'
 import Link from 'next/link'
@@ -82,10 +85,10 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   const { db, superAdmin } = await reminderReader()
   let loaded
   try {
-    const base = await Promise.all([reminders(db, params), kpis(db), visibleBranches(db), plans(db), prepareBranches(db)])
+    const base = await Promise.all([reminders(db, params), kpis(db), visibleBranches(db), plans(db), prepareBranches(db), superAdmin ? sourcePeriods(db) : Promise.resolve([])])
     loaded = { base, debtRows: await debts(db, base[0].data.map(r => r.enrollment_tuition_id)) }
   } catch { return <LoadError /> }
-  const { base: [list, counts, branchRows, planRows, prepareIds], debtRows } = loaded
+  const { base: [list, counts, branchRows, planRows, prepareIds, sourceRows], debtRows } = loaded
   const canPrepare = new Set(prepareIds)
   const debtMap = new Map(debtRows.map(d => [d.enrollment_tuition_id, d]))
   // Selected detail is independently scoped by database RLS, not by current pagination/filters.
@@ -140,6 +143,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
   return <AppPage>
     <PageHeader title="Nhắc học phí" description="Gói 3 tháng: tuần đầu của tháng thứ ba hệ thống cập nhật lịch báo. Từ tuần thứ ba của tháng đó đến hết kỳ vẫn trong hạn và cảnh báo đỏ. Qua ngày cuối kỳ là quá hạn, cảnh báo đỏ và vàng. Gói 3 tháng đã thanh toán 50%: phần còn lại đến hạn thanh toán trong tuần đầu của tháng thứ hai; qua tuần đó là quá hạn thanh toán nợ. Học phí năm đã thanh toán 50%: phần còn lại đến hạn ở tuần thứ tư của tháng thứ ba, và qua tuần đầu của tháng thứ tư thì quá hạn thanh toán nợ. Bảo lưu không dịch các mốc này. Gói năm thanh toán đủ vẫn nhắc gia hạn ở tháng thứ mười. Chưa gửi tin cho phụ huynh." actions={<Link scroll={false} prefetch={false} href={returnHref + (returnHref.includes('?') ? '&' : '?') + 'auto=1'}>Gửi báo tự động qua Zalo</Link>} />
     {!uuidPattern.test(params.renew ?? '') && !selectedId && !uuidPattern.test(params.process ?? '') && params.auto !== '1' && <Notice params={params} />}
+    <SourceReminderPeriods data={sourceRows} today={vietnamDateTime().slice(0, 10)} />
     <div className="vibe-metrics">
       <MetricCard title="Sắp đến hạn" value={counts.upcoming} note="Chưa tới tuần cập nhật lịch" />
       <MetricCard title="Đến hạn thanh toán" value={counts.payment} note="Gói 3 tháng đã thanh toán 50%, tuần đầu tháng thứ hai" />

@@ -77,3 +77,11 @@ test('export route requires admin authorization before querying and never caches
  authorized=true;const response=await route.exports.GET(new Request('https://example.test/admin/tuition/export?period_state=DUE_SOON'));
  assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'private, no-store');assert.match(response.headers.get('content-disposition'),/attachment.*\.csv/);assert.ok((await response.text()).includes('Hết hạn hôm nay'));
 });
+
+const reminderModule={exports:{}};
+new Function('require','module','exports',ts.transpileModule(fs.readFileSync('app/admin/tuition/reminders/source-reminder-periods.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText)(()=>m.exports,reminderModule,reminderModule.exports);
+const {trackedSourceReminders}=reminderModule.exports;
+function trackedRow(){const r=row();r.normalized_payload.tuition_reminder_tracking={version:'SOURCE_REMINDER_V1',state:'TRACKING',student_id:r.target_student_id,starts_on:r.fee_starts_on,ends_on:r.source_effective_ends_on,notifications_eligible:false};return r;}
+test('only explicitly tracked source periods enter reminder follow-up',()=>{assert.equal(trackedSourceReminders([row(),trackedRow()],'2026-10-27').length,1)});
+test('tracked period remains visible after expiry without enabling outbound messages',()=>{const r=trackedRow();const out=trackedSourceReminders([r],'2026-10-28');assert.equal(out[0].state,'EXPIRED');assert.equal(out[0].needsReview,false);assert.equal(r.normalized_payload.tuition_reminder_tracking.notifications_eligible,false)});
+test('changed period requires reconciliation instead of displaying an obsolete reminder window',()=>{const r=trackedRow();r.source_effective_ends_on='2026-11-30';assert.equal(trackedSourceReminders([r],'2026-10-27')[0].needsReview,true)});

@@ -23,6 +23,7 @@ export default function SourcePeriods({ data, params, today }: { data: SourceRow
       { name: 'period_state', label: 'Trạng thái kỳ', type: 'select', value: params.period_state, options: [...Object.entries(labels).map(([id, name]) => ({ id, name })), { id: 'DUE_SOON', name: 'Gần đến kỳ (còn tối đa 35 ngày)' }] },
     ]} resetHref="/admin/tuition" submitLabel="Lọc kỳ học phí" />
     <div className="flex flex-wrap items-center gap-3">
+      <Link className="vibe-button" href="/admin/tuition/reminders">Xem kỳ nhắc học phí</Link>
       <a className="vibe-button" href={exportHref} download>Xuất Excel (.csv)</a>
       <span className="text-sm">Xuất toàn bộ {filtered.length} dòng theo bộ lọc đang áp dụng.</span>
     </div>
