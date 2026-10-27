@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { groupStudentRows, loadStudentRows } from './student-list'
 import { redirect } from 'next/navigation'
 import CoordinationWorkspace from '../coordination/Workspace'
 
@@ -163,7 +164,7 @@ let studentsQuery = showRecords ? supabase
     return query ? `/admin/students?${query}` : '/admin/students'
   }
   const lifecycleCopy = {
-    active: ['Học viên đang hoạt động', 'Ghi danh đã vào ca dạy và đã tới ngày bắt đầu theo ngày Việt Nam.'],
+    active: ['Học viên đang hoạt động', 'Mỗi học viên hiển thị một lần, kèm các ca dạy đã bắt đầu theo ngày Việt Nam.'],
     future: ['Đã vào ca dạy – chờ bắt đầu', 'Ca dạy đã xác nhận. Học viên chưa tính là đang học cho đến ngày bắt đầu.'],
     paused: ['Đang bảo lưu', 'Ghi danh đang trong kỳ bảo lưu theo ngày Việt Nam.'],
   } as const
@@ -728,31 +729,28 @@ async function StudentPlacementBoard({
     p_class: classId || null,
     p_teacher: teacherId || null,
   }
-  const [{ data: activeCount }, { data: pausedCount }, { data: futureCount }, { data: waitingCount }, listResult] = await Promise.all([
-    db.rpc('count_current_student_enrollments_by_curriculum', { p_curriculum: curriculumId || null,
-      p_branch: branch || null,
-      p_search: q || null,
-      p_class: classId || null,
-      p_teacher: teacherId || null,
-    }),
-    db.rpc('count_paused_student_enrollments_by_curriculum', { p_curriculum: curriculumId || null,
-      p_branch: branch || null,
-      p_search: q || null,
-      p_class: classId || null,
-      p_teacher: teacherId || null,
-    }),
+  const fetchRows = (rpc: string) => loadStudentRows<CurrentRow>(async (offset, limit) => {
+    const result = await db.rpc(rpc, { ...listArgs, p_limit: null, p_offset: 0 })
+      .order('student_name').order('student_id').order('enrollment_id')
+      .range(offset, offset + limit - 1)
+    if (result.error) throw new Error('Không tải được danh sách học viên. Vui lòng thử lại.')
+    return (result.data ?? []) as CurrentRow[]
+  })
+  const [activeRows, pausedRows, { data: futureCount }, { data: waitingCount }, futureResult] = await Promise.all([
+    fetchRows('list_current_student_enrollments_by_curriculum'),
+    fetchRows('list_paused_student_enrollments_by_curriculum'),
     db.rpc('count_future_start_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_search: q || null }),
     db.rpc('count_waiting_placements_by_curriculum', { p_curriculum: curriculumId || null, p_branch: branch || null, p_filter: 'ALL', p_search: q || null }),
-    view === 'future'
-      ? db.rpc('list_future_start_placements_by_curriculum', { p_curriculum: curriculumId || null,
-          p_branch: branch || null,
-          p_filter: 'ALL',
-          p_search: q || null,
-          p_limit: pageSize + 1,
-          p_offset: (page - 1) * pageSize,
-        })
-      : db.rpc(view === 'paused' ? 'list_paused_student_enrollments_by_curriculum' : 'list_current_student_enrollments_by_curriculum', listArgs),
+    view === 'future' ? db.rpc('list_future_start_placements_by_curriculum', {
+      p_curriculum: curriculumId || null, p_branch: branch || null, p_filter: 'ALL',
+      p_search: q || null, p_limit: pageSize + 1, p_offset: (page - 1) * pageSize,
+    }) : Promise.resolve({ data: [] }),
   ])
+  const activeStudents = groupStudentRows(activeRows)
+  const pausedStudents = groupStudentRows(pausedRows)
+  const activeCount = activeStudents.length
+  const pausedCount = pausedStudents.length
+  const listResult = futureResult
   const metrics = (
     <div className="vibe-metrics">
       <OpsMetricLink href={hrefBuilder({ lifecycle: undefined })} title="Học viên đang hoạt động" value={activeCount ?? 0} />
@@ -809,8 +807,9 @@ async function StudentPlacementBoard({
     )
   }
 
-  const current = ((listResult.data ?? []) as CurrentRow[]).slice(0, pageSize)
-  const more = ((listResult.data ?? []) as CurrentRow[]).length > pageSize
+  const groups = view === 'paused' ? pausedStudents : activeStudents
+  const current = groups.slice((page - 1) * pageSize, page * pageSize)
+  const more = groups.length > page * pageSize
   const statusLabel = view === 'paused' ? 'Đang bảo lưu' : 'Đang học'
 
   return (
@@ -831,27 +830,28 @@ async function StudentPlacementBoard({
       <div className="vibe-table-scroll">
         <table className="vibe-table">
           <thead>
-            <tr>{['Học viên', 'Chi nhánh', 'Chương trình / Bộ môn', 'Grade', 'Ca dạy', 'Giáo viên chính', 'Lịch học', 'Ngày bắt đầu', 'Gói học', 'Điểm danh đã ghi', 'Trạng thái'].map(h => <th key={h}>{h}</th>)}</tr>
+            <tr>{['STT', 'Học viên', 'Chi nhánh', 'Chương trình / Level', 'Ca dạy và lịch học', 'Điểm danh đã ghi', 'Trạng thái'].map(h => <th key={h}>{h}</th>)}</tr>
           </thead>
           <tbody>
-            {current.map(row => (
-              <tr key={row.enrollment_id}>
+            {current.map((group, index) => {
+              const row = group.rows[0]
+              return <tr key={row.student_id}>
+                <td>{(page - 1) * pageSize + index + 1}</td>
                 <td>
                   {canOpenStudent ? <Link href={`/admin/students/${row.student_id}`}>{row.student_name}</Link> : row.student_name}
                   <p className="text-xs text-[var(--vibe-muted)]">{row.student_code}</p>
                 </td>
-                <td>{row.branch_name}</td>
-                <td>{row.course_name}</td>
-                <td>{row.level_name || '—'}</td>
-                <td>{row.class_id ? <Link href={`/admin/classes/${row.class_id}`}>{row.class_name}</Link> : row.class_name}</td>
-                <td>{row.teacher_name || '—'}</td>
-                <td>{row.schedule_label || '—'}</td>
-                <td>{row.started_on}</td>
-                <td>{row.package_name || '—'}</td>
-                <td>{row.attendance_marked}</td>
+                <td>{[...new Set(group.rows.map(item => item.branch_name))].join(', ')}</td>
+                <td>{[...new Set(group.rows.map(item => `${item.course_name}${item.level_name ? ` · ${item.level_name}` : ''}`))].map(label => <div key={label}>{label}</div>)}</td>
+                <td><div className="space-y-3">{group.rows.map(item => <div key={item.enrollment_id}>
+                  <div>{item.class_id ? <Link href={`/admin/classes/${item.class_id}`}>{item.class_name}</Link> : item.class_name}</div>
+                  <p className="text-sm text-[var(--vibe-muted)]">{item.schedule_label || 'Chưa có lịch'} · GV: {item.teacher_name || 'Chưa phân công'}</p>
+                  <p className="text-xs text-[var(--vibe-muted)]">Bắt đầu: {item.started_on}{item.package_name ? ` · ${item.package_name}` : ''}</p>
+                </div>)}</div></td>
+                <td>{group.rows.reduce((total, item) => total + item.attendance_marked, 0)}</td>
                 <td><StatusBadge tone={view === 'paused' ? 'warning' : 'success'}>{statusLabel}</StatusBadge></td>
               </tr>
-            ))}
+            })}
           </tbody>
         </table>
       </div>
