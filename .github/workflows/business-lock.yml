@@ -22,6 +22,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm run test:business-lock
+      - name: Counter cash transaction and application contracts
+        run: node --test tests/counter-cash-database.test.cjs tests/counter-cash-actions.test.cjs
       - name: Teaching schedule application contracts
         run: |
           node --test \
@@ -43,6 +45,7 @@ jobs:
         run: |
           npx --no-install playwright install --with-deps chromium
           node scripts/test-caday-browser.mjs
+          node scripts/test-counter-cash-browser.cjs
       - run: npx --no-install supabase db reset
       - run: npm run test:business-lock:db
         env:
@@ -53,3 +56,5 @@ jobs:
         run: node scripts/local-schedule-room-race.cjs
       - name: Release runner interruption and concurrency
         run: node scripts/test-caday-release-concurrency.mjs
+      - name: Cash posting concurrent connections
+        run: node scripts/test-counter-cash-concurrency.cjs

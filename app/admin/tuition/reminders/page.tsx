@@ -1,3 +1,4 @@
+import CashCollection from '@/app/admin/finance/counter-cash/CashCollection'
 import SourceReminderPeriods from './SourceReminderPeriods'
 import { sourcePeriods } from '../source-periods'
 import { vietnamDateTime } from '../../finance/operations'
@@ -207,12 +208,26 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
             <input type="hidden" name="reminder_id" value={renewRow.id} />
             <label className="vibe-field"><span>Gói học phí</span><select name="plan_code" required defaultValue={renewal?.plan_code ?? 'VIBE_3_MONTHS'}><option value="VIBE_3_MONTHS">3 tháng</option><option value="VIBE_12_MONTHS">1 năm</option></select></label>
             <label className="vibe-field"><span>Cách thanh toán</span><select name="payment_option" required defaultValue={renewal?.payment_option ?? 'DEPOSIT_50'}><option value="DEPOSIT_50">Đặt cọc 50%</option><option value="FULL">Thanh toán 100%</option></select></label>
+            <label className="vibe-field"><span>Phương thức thu</span><select name="collection_method" required defaultValue="PAYOS"><option value="PAYOS">Chuyển khoản / QR payOS</option><option value="CASH">Tiền mặt tại quầy</option></select></label>
             <label className="vibe-field"><span>Ngày bắt đầu kỳ mới</span><input name="starts_on" type="date" required defaultValue={renewal?.starts_on ?? start} /></label>
             <label className="vibe-field"><span>Hạn thanh toán</span><input name="due_on" type="date" required defaultValue={renewal?.due_on ?? renewRow.window_end} /></label>
             <label className="vibe-field"><span>Ghi chú nội bộ</span><textarea name="note" maxLength={2000} rows={3} /></label>
             <SubmitButton className="vibe-button vibe-button-primary" pendingLabel="Đang tạo gia hạn">Tạo gia hạn học phí</SubmitButton>
           </form>
           {renewal && await (async () => {
+            const [permission, summary] = await Promise.all([
+              db.rpc('has_permission', { p_permission: 'finance.cash.record', p_branch: renewRow.branch_id_snapshot }),
+              db.rpc('counter_cash_summary', { p_kind: 'RENEWAL', p_source: renewal.id }),
+            ])
+            const receipts = (summary.data?.receipts ?? []) as { payment_id: string; status: string }[]
+            const blocked = orderRows.some(o => o.case_id === renewal.id && ['RESERVED', 'PENDING', 'EXCEPTION'].includes(o.state))
+            return <CashCollection kind="RENEWAL" sourceId={renewal.id} reminderId={renewRow.id}
+              total={Number(renewal.list_price)} paid={Number(summary.data?.paid_amount ?? renewal.paid_amount)} threshold={Number(renewal.amount_due)}
+              allowed={permission.data === true} blocked={Boolean(blocked || summary.error || !summary.data)} today={vietnamDateTime().slice(0, 10)}
+              requestId={params.cash_request} receiptId={receipts.some(r => r.payment_id === params.cash_receipt && r.status === 'POSTED') ? params.cash_receipt : undefined}
+              error={summary.error ? 'Chưa tải được công nợ. Tải lại trước khi thu tiền.' : params.cash_error} />
+          })()}
+          {renewal && order && ['RESERVED', 'PENDING', 'EXCEPTION'].includes(order.state) && await (async () => {
             const invoice = invoiceById.get(renewal.invoice_id)
             const parent = renewal.parent_id ? await db.from('parents').select('parent_code,user_id').eq('id', renewal.parent_id).maybeSingle() : { data: null }
             const profile = parent.data?.user_id ? await db.from('profiles').select('full_name,phone').eq('id', parent.data.user_id).maybeSingle() : { data: null }
@@ -249,7 +264,7 @@ export default async function ReminderPage({ searchParams }: { searchParams: Pro
               </div>
             </>
           })()}
-          {order && tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) && <CheckoutLink url={tuitionCheckoutUrl(order.payment_link_id, order.checkout_url)!} />}
+          {order?.state === 'PENDING' && tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) && <CheckoutLink url={tuitionCheckoutUrl(order.payment_link_id, order.checkout_url)!} />}
           {order?.checkout_url && !tuitionCheckoutUrl(order.payment_link_id, order.checkout_url) && <p role="alert">Link payOS đã lưu không hợp lệ. Cần đối chiếu đơn trước khi thử lại.</p>}
           {renewal && <p>Lịch sử đã lưu: {paymentGate.sendingEnabled && renewal.zbs_status === 'HELD' ? 'Đã lưu: chờ nhân viên gửi' : storedZbsStatusLabel(renewal.zbs_status)}. Xác nhận sau thu: {renewal.confirmation_status}. Mẫu 645028 không phải biên nhận. Bắt đầu kỳ mới: {dateText(renewal.starts_on)}.</p>}
         </div>
