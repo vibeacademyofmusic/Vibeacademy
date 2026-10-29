@@ -141,6 +141,32 @@ test('a late QR transfer after cancellation is durably held for review, never co
 
 test('cash invoice is reused when the registered learner is later placed into the first tuition period', async () => {
   const app = await application(), receipt = await cash(app)
+  const period = await place(app)
+  assert.equal(await scalar('select create_tuition_invoice($1,null)',[period]),receipt.invoice_id)
+  assert.equal(await scalar('select create_tuition_invoice($1,null)',[period]),receipt.invoice_id)
+  assert.equal(Number(await scalar('select count(*) from invoices where enrollment_tuition_id=$1',[period])),1)
+  assert.equal(Number(await scalar('select outstanding_balance from invoice_receivables where invoice_id=$1',[receipt.invoice_id])),2750000)
+})
+
+test('an existing assigned QR invoice accepts cash for its balance without replacing the invoice', async () => {
+  const app=await application(),order=randomUUID()
+  await db.query('select reserve_registration_payos_order($1,$2,3)',[app,order])
+  const code=await scalar('select order_code from registration_payos_orders where id=$1',[order])
+  await db.exec("select set_config('request.jwt.claim.role','service_role',true)")
+  await db.query("select activate_registration_payos_order($1,2750000,'existing-cash-link','https://pay.payos.vn/web/existing-cash-link','qr')",[code])
+  await db.query("select record_verified_payos_webhook($1,'existing-cash-link','EXISTING-CASH-QR',2750000,'VND')",[code])
+  await db.exec("select set_config('request.jwt.claim.role','authenticated',true)")
+  const period=await place(app)
+  const invoice=await scalar('select create_tuition_invoice($1,null)',[period])
+  await db.query('select issue_invoice($1,current_date,current_date+30)',[invoice])
+  await db.query('select allocate_registration_deposits_to_invoice($1,$2)',[app,invoice])
+  const receipt=await cash(app,2750000,2750000)
+  assert.equal(receipt.invoice_id,invoice)
+  assert.equal(Number(await scalar('select outstanding_balance from invoice_receivables where invoice_id=$1',[invoice])),0)
+  assert.equal(Number(await scalar('select count(*) from invoices where enrollment_tuition_id=$1',[period])),1)
+})
+
+async function place(app) {
   const placement = await scalar('select id from student_placement_cases where registration_application_id=$1',[app])
   const course = randomUUID(), shift = randomUUID(), room = randomUUID()
   await db.query("insert into courses(id,curriculum_id,level_id,code,name) values($1,'e9500000-0000-4000-8000-000000000020','e9500000-0000-4000-8000-000000000021','CASH-COURSE','Cash course')",[course])
@@ -150,8 +176,5 @@ test('cash invoice is reused when the registered learner is later placed into th
   await db.query("insert into schedules(class_id,room_id,day_of_week,start_time,end_time,effective_from,timezone,status) values($1,$2,7,'09:00','10:30',current_date,'Asia/Ho_Chi_Minh','ACTIVE')",[shift,room])
   await db.query('select assign_student_placement($1,$2,(select version from student_placement_cases where id=$2),$3,current_date+7)',[randomUUID(),placement,shift])
   const period = await scalar("insert into enrollment_tuition(enrollment_id,tuition_plan_id,starts_on,status,discount_type,discount_value) select enrollment_id,(select id from tuition_plans where code='VIBE_3_MONTHS'),current_date+7,'SCHEDULED','NONE',0 from student_placement_cases where id=$1 returning id",[placement])
-  assert.equal(await scalar('select create_tuition_invoice($1,null)',[period]),receipt.invoice_id)
-  assert.equal(await scalar('select create_tuition_invoice($1,null)',[period]),receipt.invoice_id)
-  assert.equal(Number(await scalar('select count(*) from invoices where enrollment_tuition_id=$1',[period])),1)
-  assert.equal(Number(await scalar('select outstanding_balance from invoice_receivables where invoice_id=$1',[receipt.invoice_id])),2750000)
-})
+  return period
+}

@@ -159,7 +159,8 @@ begin
     total := terms.tuition_amount; threshold := terms.amount_due;
     if app.invoice_id is not null then
       select * into inv from public.invoices where id=app.invoice_id for update;
-      if inv.registration_application_id is distinct from app.id then raise exception 'CASH_INVOICE_REVIEW'; end if;
+      if not found or (inv.registration_application_id is not null and inv.registration_application_id <> app.id) then
+        raise exception 'CASH_INVOICE_REVIEW'; end if;
     end if;
     if inv.id is null then
       paid := public.registration_payos_paid_total(app.id)
