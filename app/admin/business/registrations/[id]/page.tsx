@@ -1,3 +1,4 @@
+import CashCollection from '@/app/admin/finance/counter-cash/CashCollection'
 import { RecoveryControls } from '@/app/admin/system/integrations/zalo/RecoveryControls'
 import { readRecovery } from '@/lib/integrations/zalo/registration-recovery'
 import { zaloServiceClient } from '@/lib/integrations/zalo/service'
@@ -18,7 +19,7 @@ import { CounterForm } from '../new/CounterForm'
 
 const steps = ['Bản nháp', 'Đã nộp', 'Đã xác minh', 'Thanh toán', 'Xác nhận thanh toán', 'Chờ vào ca dạy']
 
-export default async function RegistrationDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; payos?: string; channel?: string }> }) {
+export default async function RegistrationDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; payos?: string; channel?: string; cash_request?: string; cash_receipt?: string; cash_error?: string }> }) {
   const { id } = await params
   const query = await searchParams
   const db = await createClient()
@@ -53,6 +54,13 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   ])
   const branch = Array.isArray(app.branches) ? app.branches[0] : app.branches
   const hidden = { application_id: app.id, version: String(app.version) }
+  const [cashRead, cashPermission, completePermission] = await Promise.all([
+    db.rpc('counter_cash_summary', { p_kind: 'REGISTRATION', p_source: app.id }),
+    db.rpc('has_permission', { p_permission: 'finance.cash.record', p_branch: app.branch_id }),
+    db.rpc('registration_can', { p_permission: 'registration.complete', p_branch: app.branch_id }),
+  ])
+  const cashSummary = cashRead.data as { paid_amount: number | null; receipts: { payment_id: string; amount: number; status: string }[] } | null
+  const cashReceipts = Array.isArray(cashSummary?.receipts) ? cashSummary.receipts : []
   const paidOrders = (momoOrders ?? []).filter(order => order.state === 'PAID')
   const paidPayos = (payosOrders ?? []).filter(order => order.state === 'PAID')
   const checkoutRecorded = (payosOrders ?? []).some(order => order.state === 'RESERVED' || order.state === 'PENDING' || order.state === 'PAID')
@@ -63,12 +71,13 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
   const openOrder = (momoOrders ?? []).find(order => order.state === 'READY' || order.state === 'RESERVED')
   const openPayos = (payosOrders ?? []).find(order => order.state === 'RESERVED' || order.state === 'PENDING')
   const payosException = (payosOrders ?? []).find(order => order.state === 'EXCEPTION')
-  const paidTotal = paidOrders.reduce((sum, order) => sum + Number(order.amount), 0) + paidPayos.reduce((sum, order) => sum + Number(order.attributed_amount ?? order.amount), 0)
+  const onlinePaidTotal = paidOrders.reduce((sum, order) => sum + Number(order.amount), 0) + paidPayos.reduce((sum, order) => sum + Number(order.attributed_amount ?? order.amount), 0)
+  const paidTotal = cashSummary?.paid_amount != null ? Number(cashSummary.paid_amount) : onlinePaidTotal
   const depositDue = Number(terms?.amount_due ?? terms?.deposit_due ?? 0)
   const agreed = Number(terms?.tuition_amount ?? 0)
   const depositRemaining = Math.max(0, depositDue - paidTotal)
   const tuitionRemaining = Math.max(0, agreed - paidTotal)
-  const receiptIds = [...paidOrders, ...paidPayos].map(order => order.finance_payment_id).filter((value): value is string => Boolean(value))
+  const receiptIds = [...new Set([...paidOrders, ...paidPayos].map(order => order.finance_payment_id).filter((value): value is string => Boolean(value)).concat(cashReceipts.map(receipt => receipt.payment_id)))]
   const { data: allocations } = receiptIds.length
     ? await db.from('payment_allocations').select('payment_id, amount').in('payment_id', receiptIds)
     : { data: [] }
@@ -142,6 +151,13 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
               <button className="vibe-button vibe-button-primary" type="submit">{terms ? 'Xác nhận lại học phí' : 'Xác nhận học phí'}</button>
             </form>}
           </SectionCard>
+          {terms && ['VERIFIED', 'PAYMENT_PENDING', 'PAID', 'COMPLETED'].includes(app.status) && <CashCollection
+            kind="REGISTRATION" sourceId={app.id} total={agreed} paid={paidTotal} threshold={depositDue}
+            allowed={cashPermission.data === true && completePermission.data === true}
+            blocked={Boolean(cashRead.error || !cashSummary || openPayos || openOrder || payosException)}
+            requiresDueDate={!app.invoice_id} today={vietnamToday()}
+            requestId={query.cash_request} receiptId={cashReceipts.some(r => r.payment_id === query.cash_receipt && r.status === 'POSTED') ? query.cash_receipt : undefined}
+            error={cashRead.error ? 'Chưa tải được số tiền đã thu. Tải lại trước khi thu tiền.' : query.cash_error} />}
           <SectionCard title="Bước tiếp theo">
             {app.status === 'DRAFT' && intakeCatalogs && <CounterForm branches={intakeCatalogs[0].data ?? []} lead={null} curriculums={[...(intakeCatalogs[1].data ?? []), ...(app.curriculum_id && curriculum?.name && !(intakeCatalogs[1].data ?? []).some(item => item.id === app.curriculum_id) ? [{ id: app.curriculum_id, name: `${curriculum.name} (hồ sơ lịch sử)` }] : [])]} levels={intakeCatalogs[2].data ?? []} today={vietnamToday()} existing={app} consentPhone={phone?.consent_present ? app.zalo_phone : null} />}
             {app.status === 'DRAFT' && <ActionForm action={transitionRegistration} hidden={hidden} name="SUBMIT" label="Nộp hồ sơ" />}
@@ -174,7 +190,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
               <label className="vibe-field"><span>ID phụ huynh đã xác nhận</span><input name="parent_id" /></label>
               <button className="vibe-button vibe-button-primary" type="submit">Liên kết danh tính đã đối soát</button>
             </form>}
-            {app.status === 'COMPLETED' && <form action={allocateRegistrationDeposits} className="grid gap-3">
+            {app.status === 'COMPLETED' && !cashReceipts.length && <form action={allocateRegistrationDeposits} className="grid gap-3">
               <input type="hidden" name="application_id" value={app.id} />
               <label className="vibe-field"><span>ID công nợ học phí nội bộ đã phát hành</span><input name="invoice_id" defaultValue={app.invoice_id ?? ''} required /></label>
               <p className="text-sm text-slate-600">Chỉ phân bổ sau khi lớp và kỳ học phí đã tạo công nợ. Đây không phải hóa đơn thuế điện tử. Mỗi phiếu thu chỉ phân bổ một lần.</p>
@@ -189,6 +205,7 @@ export default async function RegistrationDetailPage({ params, searchParams }: {
             <p className="text-sm">Đăng ký: {app.status === 'COMPLETED' ? 'đã hoàn tất' : 'chưa hoàn tất'}. Học phí: {paidTotal >= agreed && agreed > 0 ? 'đã thu đủ' : 'chưa thu đủ'}. Đây là hai việc khác nhau.</p>
             <p className="text-sm">Mã hồ sơ {app.application_code}. {student?.student_code ? <>Mã học viên {student.student_code}. {app.linked_student_id && <Link className={styles.button} href={`/admin/students/${app.linked_student_id}`}>Mở học viên</Link>}</> : 'Chưa có mã học viên.'}</p>
             {app.status === 'COMPLETED' && <p className="text-sm"><Link className={styles.button} href={placement ? `/admin/students?tab=coordination&view=queue&place=${placement.id}` : '/admin/students?tab=coordination&view=queue'}>Mở hàng chờ vào ca dạy</Link></p>}
+            {cashReceipts.length > 0 && <ul className="grid gap-1 text-sm">{cashReceipts.map(receipt => <li key={receipt.payment_id}>Tiền mặt · {vnd(receipt.amount)} · {receipt.status === 'POSTED' ? 'Đã ghi thu' : 'Đã vô hiệu'}</li>)}</ul>}
             {paidOrders.length > 0 && <ul className="grid gap-1 text-sm">{paidOrders.map(order => <li key={order.id}>{order.partner_code === 'FIXTURE' ? 'Fixture thử nghiệm local, không phải giao dịch MoMo' : 'MoMo'} · {order.provider_transaction_id} · {vnd(order.amount)}</li>)}</ul>}
             {paidPayos.length > 0 && <ul className="grid gap-1 text-sm">{paidPayos.map(order => <li key={order.id}>{order.provider_reference?.startsWith('FIXTURE') ? 'Dữ liệu thử nghiệm, chưa phải giao dịch payOS' : 'payOS đã xác thực'} · {order.order_code} · {vnd(order.amount)}</li>)}</ul>}
             <p className="text-sm">{placement ? `Hồ sơ chờ lớp: ${registrationProgressLabel('COMPLETED', placement.status, placement.scheduled_start_date)}` : 'Chưa có hồ sơ chờ lớp.'}</p>

@@ -41,7 +41,7 @@ export default async function FinanceDocument({ params }: { params: Promise<{ ki
       const [balance, items, tuition, contact] = await Promise.all([
         selectedInvoice(db, id),
         all((a, b) => db.from('invoice_items').select('id,description,quantity,unit_amount,line_total').eq('invoice_id', id).order('line_no').order('id').range(a, b)),
-        rows(db.from('enrollment_tuition').select('starts_on,effective_ends_on,plan_name_snapshot,list_price,discount_amount').eq('id', text('enrollment_tuition_id'))),
+        uuidPattern.test(text('enrollment_tuition_id')) ? rows(db.from('enrollment_tuition').select('starts_on,effective_ends_on,plan_name_snapshot,list_price,discount_amount').eq('id', text('enrollment_tuition_id'))) : Promise.resolve([]),
         uuidPattern.test(text('branch_id_snapshot')) ? rows(db.from('branches').select('address,phone').eq('id', text('branch_id_snapshot'))) : Promise.resolve([]),
       ])
       if (!balance) return <LoadError/>

@@ -1,7 +1,8 @@
 {
   "git": {
     "deploymentEnabled": {
-      "codex/caday-release-fixes-20261025": false
+      "codex/caday-release-fixes-20261025": false,
+      "codex/counter-cash-20261029": false
     }
   },
   "crons": [

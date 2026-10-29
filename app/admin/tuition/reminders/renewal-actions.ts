@@ -123,6 +123,7 @@ function openCheckout(url: string) {
 }
 
 export async function createTuitionRenewal(form: FormData) {
+  const cash = form.get('collection_method') === 'CASH'
   const reminderId = String(form.get('reminder_id') ?? '')
   const plan = String(form.get('plan_code') ?? '')
   const option = String(form.get('payment_option') ?? '')
@@ -136,18 +137,20 @@ export async function createTuitionRenewal(form: FormData) {
   const db = await signedInClient()
   const allowed = await db.rpc('tuition_reminder_prepare_allowed', { p_reminder: reminderId })
   if (allowed.error || allowed.data !== true) return back(form, 'Bạn không có quyền tạo gia hạn tại chi nhánh này.', 'error', reminderId)
-  const begun = await db.rpc('begin_tuition_renewal', {
+  const begun = await db.rpc(cash ? 'begin_tuition_cash_renewal' : 'begin_tuition_renewal', {
     p_reminder: reminderId,
     p_plan_code: plan,
     p_payment_option: option,
     p_starts_on: starts,
     p_due_on: due,
     p_note: note || null,
-    p_asserted_price: null,
+    ...(cash ? {} : { p_asserted_price: null }),
   })
   const payload = begunRecord(begun.data)
   if (begun.error || !payload?.case_id) {
     const code = begun.error?.message ?? ''
+    if (code.includes('CASH_UNAUTHORIZED')) return back(form, 'Bạn chưa có quyền thu tiền mặt tại chi nhánh này.', 'error', reminderId)
+    if (code.includes('CASH_ONLINE_ORDER_OPEN')) return back(form, 'Đang có đơn QR cần đối soát. Chưa chuyển sang thu tiền mặt.', 'error', reminderId)
     if (code.includes('TUITION_RENEWAL_UNAUTHORIZED')) return back(form, 'Bạn không có quyền tạo gia hạn tại chi nhánh này.', 'error', reminderId)
     if (code.includes('TUITION_PRICE_REJECTED')) return back(form, 'Giá gửi lên không khớp bảng giá chi nhánh.', 'error', reminderId)
     if (code.includes('TUITION_RENEWAL_ALREADY_SCHEDULED')) return back(form, 'Đã có kỳ gia hạn đang mở. Chưa tạo thêm hóa đơn.', 'error', reminderId)
@@ -156,6 +159,7 @@ export async function createTuitionRenewal(form: FormData) {
     return back(form, `Không tạo được gia hạn (${reason}). ${advice[reason] ?? 'Hãy tải lại và kiểm tra hồ sơ.'}`, 'error', reminderId)
   }
   if (payload.result === 'open_renewal') return back(form, 'Đã có gia hạn hoặc hóa đơn mở cho học viên này. Chưa tạo bản ghi mới.', 'error', reminderId)
+  if (cash) return back(form, 'Đã chuẩn bị hóa đơn. Xác nhận số tiền thực nhận ở phần Thu tiền mặt tại quầy bên dưới.', 'success', reminderId)
   const checkout = await activateCheckout(payload.case_id, payload.result === 'created')
   if (!checkout.url) return back(form, checkout.error ?? 'Chưa tạo được checkout.', 'error', reminderId)
   return openCheckout(checkout.url)
