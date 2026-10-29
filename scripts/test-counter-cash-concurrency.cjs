@@ -14,7 +14,9 @@ function session(sql, held=false) {
   child.stdout.on('data',data=>{output+=data;if(output.includes('CASH_RACE_HELD'))signal()})
   child.stderr.on('data',data=>{output+=data})
   const done=new Promise(resolve=>child.on('close',code=>{signal();resolve({code,output})}))
-  if(held) child.stdin.write(sql);else child.stdin.end(sql)
+  // psql consumes an open stdin pipe line by line: flush the complete batch
+  // with a newline while keeping the transaction/connection alive for the race.
+  if(held) child.stdin.write(sql+'\n');else child.stdin.end(sql+'\n')
   return {ready,done,finish:()=>child.stdin.end('commit;'),abort:()=>child.kill('SIGTERM')}
 }
 function application() {
